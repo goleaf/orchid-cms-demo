@@ -18,9 +18,10 @@ class CreateLeadTaskAction
         ?Carbon $dueAt,
         LeadTaskPriority $priority = LeadTaskPriority::Normal,
         ?string $notes = null,
+        ?int $assignedToUserId = null,
     ): MarketingLeadTask {
         $task = $lead->tasks()->create([
-            'assigned_to_user_id' => $lead->responsible_manager_id,
+            'assigned_to_user_id' => $assignedToUserId ?? $lead->responsible_manager_id,
             'created_by_user_id' => $createdBy?->id,
             'title' => $title,
             'status' => LeadTaskStatus::Open,

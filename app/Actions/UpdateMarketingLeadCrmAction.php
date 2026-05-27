@@ -45,11 +45,15 @@ class UpdateMarketingLeadCrmAction
             'priority' => $data['priority'] ?? $lead->priority ?? 'normal',
             'lead_score' => (int) ($data['lead_score'] ?? $lead->lead_score ?? 0),
             'next_follow_up_at' => $data['next_follow_up_at'] ?? $lead->next_follow_up_at,
+            'last_contacted_at' => $data['last_contacted_at'] ?? $lead->last_contacted_at,
             'rejection_reason' => $data['rejection_reason'] ?? null,
             'lost_reason_code' => $data['lost_reason_code'] ?? null,
             'message' => $data['message'] ?? null,
             'internal_comment' => $data['internal_comment'] ?? null,
             'duplicate_of_id' => $data['duplicate_of_id'] ?? $duplicate?->id,
+            'consent_accepted' => (bool) ($data['consent_accepted'] ?? $lead->consent_accepted),
+            'consent_accepted_at' => $data['consent_accepted_at'] ?? $lead->consent_accepted_at,
+            'consent_text_version' => $data['consent_text_version'] ?? $lead->consent_text_version,
             'updated_by_user_id' => $data['updated_by_user_id'] ?? $lead->updated_by_user_id,
         ])->save();
 

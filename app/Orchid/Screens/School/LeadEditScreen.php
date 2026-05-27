@@ -656,12 +656,12 @@ class LeadEditScreen extends Screen
     }
 
     public function save(
-        MarketingLead $lead,
         Request $request,
         UpdateMarketingLeadCrmAction $updateLead,
         MoveLeadToStatusAction $moveLead,
     ): RedirectResponse {
         $data = $request->validate([
+            'lead.id' => ['nullable', 'integer', 'exists:marketing_leads,id'],
             'lead.responsible_manager_id' => ['nullable', 'integer', 'exists:users,id'],
             'lead.branch_id' => ['nullable', 'integer', 'exists:branches,id'],
             'lead.training_program_id' => ['nullable', 'integer', 'exists:training_programs,id'],
@@ -670,7 +670,7 @@ class LeadEditScreen extends Screen
             'lead.first_name' => ['required', 'string', 'max:120'],
             'lead.last_name' => ['nullable', 'string', 'max:120'],
             'lead.email' => ['nullable', 'email:rfc', 'max:190'],
-            'lead.phone' => ['nullable', 'string', 'max:60'],
+            'lead.phone' => ['nullable', 'required_without:lead.email', 'string', 'max:60'],
             'lead.messenger' => ['nullable', 'string', 'max:80'],
             'lead.city' => ['nullable', 'string', 'max:120'],
             'lead.source' => ['required', 'string', 'max:120'],
@@ -680,27 +680,74 @@ class LeadEditScreen extends Screen
             'lead.preferred_language' => ['nullable', 'string', 'max:60'],
             'lead.preferred_time' => ['nullable', 'string', 'max:120'],
             'lead.is_hot' => ['nullable', 'boolean'],
+            'lead.priority' => ['required', Rule::in(array_keys($this->leadPriorityOptions()))],
+            'lead.lead_score' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'lead.last_contacted_at' => ['nullable', 'date'],
             'lead.next_follow_up_at' => ['nullable', 'date'],
             'lead.message' => ['nullable', 'string', 'max:2000'],
+            'lead.internal_comment' => ['nullable', 'string', 'max:2000'],
             'lead.lost_reason_code' => ['nullable', 'string', Rule::in(array_keys(LeadLostReason::translatedLabels()))],
             'lead.rejection_reason' => ['nullable', 'string', 'max:2000'],
+            'lead.duplicate_of_id' => ['nullable', 'integer', 'exists:marketing_leads,id'],
+            'lead.tag_ids' => ['nullable', 'array'],
+            'lead.tag_ids.*' => ['integer', 'exists:lead_tags,id'],
+            'lead.consent_accepted' => ['nullable', 'boolean'],
+            'lead.consent_text_version' => ['nullable', 'string', 'max:120'],
             'lead_budget_eur' => ['nullable', 'numeric', 'min:0', 'max:100000'],
         ]);
 
+        $lead = filled($data['lead']['id'] ?? null)
+            ? MarketingLead::query()->findOrFail($data['lead']['id'])
+            : new MarketingLead([
+                'uuid' => (string) \Illuminate\Support\Str::uuid(),
+                'status' => LeadStatus::New,
+                'last_status_changed_at' => now(),
+                'created_by_user_id' => $request->user()?->id,
+            ]);
+        $isNew = ! $lead->exists;
         $targetStatus = LeadStatus::from($data['lead_status']);
         $currentStatus = $lead->status;
+        $tagIds = $data['lead']['tag_ids'] ?? [];
+
+        if (($data['lead']['duplicate_of_id'] ?? null) !== null && (int) $data['lead']['duplicate_of_id'] === (int) $lead->getKey()) {
+            return redirect()
+                ->back()
+                ->withErrors(['lead.duplicate_of_id' => tkey('crm.leads.validation.duplicate_self')]);
+        }
 
         $updateLead->handle($lead, [
             ...$data['lead'],
             'status' => $currentStatus,
             'budget_eur' => $data['lead_budget_eur'] ?? null,
+            'updated_by_user_id' => $request->user()?->id,
+            'consent_accepted_at' => ($data['lead']['consent_accepted'] ?? false) ? ($lead->consent_accepted_at ?? now()) : null,
         ]);
+        $lead->refresh();
+        $lead->tags()->sync($tagIds);
 
         if ($currentStatus !== $targetStatus) {
             $moveLead->handle($lead->refresh(), $targetStatus, $request->user(), tkey('crm.activities.reasons.crm_card_status_update'));
         }
 
-        Toast::info(tkey('crm.leads.messages.updated'));
+        if ($isNew && $currentStatus === $targetStatus) {
+            $lead->statusHistories()->create([
+                'user_id' => $request->user()?->id,
+                'from_status' => null,
+                'to_status' => $targetStatus,
+                'reason' => tkey('crm.activities.reasons.manual_lead_created'),
+                'changed_at' => now(),
+            ]);
+
+            app(RecordLeadActivityAction::class)->handle(
+                $lead->refresh(),
+                $request->user(),
+                'created',
+                tkey('crm.activities.titles.created'),
+                tkey('crm.activities.messages.manual_lead_created'),
+            );
+        }
+
+        Toast::info($isNew ? tkey('crm.leads.messages.created') : tkey('crm.leads.messages.updated'));
 
         return redirect()->route('platform.marketing.leads.edit', $lead);
     }
@@ -731,6 +778,8 @@ class LeadEditScreen extends Screen
             'communication.callback_required_at' => ['nullable', 'date'],
             'communication.call_recording_url' => ['nullable', 'url', 'max:500'],
             'communication.call_recording_reference' => ['nullable', 'string', 'max:190'],
+            'communication.call_result' => ['nullable', 'string', Rule::in(array_keys($this->callResults()))],
+            'communication.duration_minutes' => ['nullable', 'integer', 'min:0', 'max:1440'],
         ]);
         $payload = $data['communication'];
         $template = filled($payload['template_id'] ?? null)
@@ -755,9 +804,107 @@ class LeadEditScreen extends Screen
             filled($payload['callback_required_at'] ?? null) ? Carbon::parse($payload['callback_required_at']) : null,
             $payload['call_recording_url'] ?? null,
             $payload['call_recording_reference'] ?? null,
+            $payload['call_result'] ?? null,
+            filled($payload['duration_minutes'] ?? null) ? ((int) $payload['duration_minutes']) * 60 : null,
         );
 
         Toast::info(tkey('crm.leads.messages.communication_added'));
+
+        return redirect()->route('platform.marketing.leads.edit', $lead);
+    }
+
+    public function createTask(MarketingLead $lead, Request $request, CreateLeadTaskAction $createTask): RedirectResponse
+    {
+        $data = $request->validate([
+            'task.title' => ['required', 'string', 'max:190'],
+            'task.notes' => ['nullable', 'string', 'max:2000'],
+            'task.assigned_to_user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'task.priority' => ['required', Rule::enum(LeadTaskPriority::class)],
+            'task.due_at' => ['nullable', 'date'],
+        ]);
+
+        $payload = $data['task'];
+        $createTask->handle(
+            $lead,
+            $request->user(),
+            $payload['title'],
+            filled($payload['due_at'] ?? null) ? Carbon::parse($payload['due_at']) : null,
+            LeadTaskPriority::from($payload['priority']),
+            $payload['notes'] ?? null,
+            $payload['assigned_to_user_id'] ?? null,
+        );
+
+        Toast::info(tkey('crm.tasks.messages.created'));
+
+        return redirect()->route('platform.marketing.leads.edit', $lead);
+    }
+
+    public function completeTask(MarketingLead $lead, Request $request, CompleteLeadTaskAction $completeTask): RedirectResponse
+    {
+        $task = $lead->tasks()->findOrFail($request->integer('task'));
+
+        $completeTask->handle($task, $request->user());
+
+        Toast::info(tkey('crm.tasks.messages.completed'));
+
+        return redirect()->route('platform.marketing.leads.edit', $lead);
+    }
+
+    public function markLost(MarketingLead $lead, Request $request, MoveLeadToStatusAction $moveLead): RedirectResponse
+    {
+        $data = $request->validate([
+            'lost.reason' => ['required', 'string', Rule::in(array_keys(LeadLostReason::translatedLabels()))],
+            'lost.comment' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $lead->fill([
+            'lost_reason_code' => $data['lost']['reason'],
+            'rejection_reason' => $data['lost']['comment'] ?? null,
+        ])->save();
+
+        $moveLead->handle($lead->refresh(), LeadStatus::Lost, $request->user(), $data['lost']['comment'] ?? null);
+
+        Toast::info(tkey('crm.leads.messages.marked_lost'));
+
+        return redirect()->route('platform.marketing.leads.edit', $lead);
+    }
+
+    public function markDuplicate(MarketingLead $lead, Request $request, MoveLeadToStatusAction $moveLead): RedirectResponse
+    {
+        $data = $request->validate([
+            'duplicate.original_id' => ['required', 'integer', 'exists:marketing_leads,id'],
+            'duplicate.comment' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        if ((int) $data['duplicate']['original_id'] === (int) $lead->id) {
+            return redirect()
+                ->back()
+                ->withErrors(['duplicate.original_id' => tkey('crm.leads.validation.duplicate_self')]);
+        }
+
+        $lead->forceFill(['duplicate_of_id' => (int) $data['duplicate']['original_id']])->save();
+
+        $moveLead->handle($lead->refresh(), LeadStatus::Duplicate, $request->user(), $data['duplicate']['comment'] ?? null);
+
+        Toast::info(tkey('crm.leads.messages.marked_duplicate'));
+
+        return redirect()->route('platform.marketing.leads.edit', $lead);
+    }
+
+    public function markSpam(MarketingLead $lead, Request $request, MoveLeadToStatusAction $moveLead): RedirectResponse
+    {
+        $moveLead->handle($lead, LeadStatus::Spam, $request->user(), tkey('crm.activities.reasons.marked_spam'));
+
+        Toast::info(tkey('crm.leads.messages.marked_spam'));
+
+        return redirect()->route('platform.marketing.leads.edit', $lead);
+    }
+
+    public function prepareEnrollment(MarketingLead $lead, Request $request, MoveLeadToStatusAction $moveLead): RedirectResponse
+    {
+        $moveLead->handle($lead, LeadStatus::ReadyToEnroll, $request->user(), tkey('crm.activities.reasons.ready_to_enroll'));
+
+        Toast::info(tkey('crm.leads.messages.student_module_next_block'));
 
         return redirect()->route('platform.marketing.leads.edit', $lead);
     }
@@ -777,6 +924,27 @@ class LeadEditScreen extends Screen
     /**
      * @return array<string, string>
      */
+    private function leadPriorityOptions(): array
+    {
+        return [
+            'low' => tkey('crm.tasks.priorities.low'),
+            'normal' => tkey('crm.tasks.priorities.normal'),
+            'high' => tkey('crm.tasks.priorities.high'),
+            'urgent' => tkey('crm.tasks.priorities.urgent'),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function taskPriorityOptions(): array
+    {
+        return $this->leadPriorityOptions();
+    }
+
+    /**
+     * @return array<string, string>
+     */
     private function communicationChannels(): array
     {
         return MarketingMessageTemplate::channelOptions();
@@ -790,6 +958,22 @@ class LeadEditScreen extends Screen
         return [
             'inbound' => tkey('crm.communications.directions.inbound'),
             'outbound' => tkey('crm.communications.directions.outbound'),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function callResults(): array
+    {
+        return [
+            'answered' => tkey('crm.communications.call_results.answered'),
+            'no_answer' => tkey('crm.communications.call_results.no_answer'),
+            'wrong_number' => tkey('crm.communications.call_results.wrong_number'),
+            'callback_requested' => tkey('crm.communications.call_results.callback_requested'),
+            'thinking' => tkey('crm.communications.call_results.thinking'),
+            'ready_to_pay' => tkey('crm.communications.call_results.ready_to_pay'),
+            'lost' => tkey('crm.communications.call_results.lost'),
         ];
     }
 
