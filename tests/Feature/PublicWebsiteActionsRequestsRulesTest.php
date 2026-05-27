@@ -20,9 +20,18 @@ use App\Models\User;
 use App\Notifications\EnrollmentLeadAutoReplyNotification;
 use App\Notifications\EnrollmentLeadSubmittedNotification;
 use App\Rules\ConsentAcceptedRule;
+use App\Rules\PhoneOrEmailRequiredRule;
+use App\Rules\PublicBranchCanBePublishedRule;
+use App\Rules\PublicCourseCanBePublishedRule;
+use App\Rules\PublishedPageRequirementRule;
+use App\Rules\SeoMetadataRule;
 use App\Rules\TranslatedFieldRequiredRule;
+use App\Rules\ValidLocaleRule;
+use App\Rules\ValidPriceRule;
+use App\Rules\ValidPublicBranchRule;
 use App\Rules\ValidPublicCourseRule;
 use App\Rules\ValidPublicTrainingGroupRule;
+use App\Rules\ValidSlugRule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -128,6 +137,11 @@ class PublicWebsiteActionsRequestsRulesTest extends TestCase
 
         app(StoreUtmInSessionAction::class)->handle($landing);
 
+        $secondLanding = Request::create('/prices?utm_source=bing&utm_campaign=second-touch', 'GET');
+        $secondLanding->setLaravelSession($session);
+
+        $tracking = app(StoreUtmInSessionAction::class)->handle($secondLanding);
+
         $form = Request::create('/apply?utm_medium=cpc', 'POST', [
             'utm_campaign' => 'hidden-campaign',
             'form_name' => 'enrollment',
@@ -136,6 +150,11 @@ class PublicWebsiteActionsRequestsRulesTest extends TestCase
 
         $payload = app(CaptureUtmDataAction::class)->handle($form);
 
+        $this->assertSame('google', $tracking['utm_source']);
+        $this->assertSame('first-touch', $tracking['utm_campaign']);
+        $this->assertStringContainsString('/prices?', (string) $tracking['current_page']);
+        $this->assertStringContainsString('utm_source=bing', (string) $tracking['current_page']);
+        $this->assertStringContainsString('utm_campaign=second-touch', (string) $tracking['current_page']);
         $this->assertSame('google', $payload['utm_source']);
         $this->assertSame('cpc', $payload['utm_medium']);
         $this->assertSame('hidden-campaign', $payload['utm_campaign']);
@@ -236,6 +255,57 @@ class PublicWebsiteActionsRequestsRulesTest extends TestCase
         $this->assertSame(tkey('website.validation.consent_required'), $consent->errors()->first('privacy_consent'));
         $this->assertSame(tkey('website.validation.default_translation_required'), $translation->errors()->first('name_translations'));
         $this->assertNotSame('website.validation.consent_required', tkey('website.validation.consent_required', [], 'en'));
+    }
+
+    public function test_public_website_validation_rule_messages_are_translated(): void
+    {
+        $this->seed();
+        $hiddenBranch = Branch::factory()->create([
+            'is_active' => true,
+            'is_visible_on_site' => false,
+        ]);
+        $unpublishableCourse = Course::factory()->create([
+            'slug' => '',
+            'name_translations' => [],
+            'title_translations' => [],
+            'description_translations' => [],
+            'price_cents' => 0,
+            'is_active' => true,
+            'is_visible_on_site' => false,
+        ]);
+        $unpublishableBranch = Branch::factory()->create([
+            'slug' => '',
+            'name_translations' => [],
+            'phone' => null,
+            'email' => null,
+            'is_active' => true,
+            'is_visible_on_site' => false,
+        ]);
+
+        $cases = [
+            ['contact', ['contact' => null], ['contact' => [new PhoneOrEmailRequiredRule]], 'website.validation.phone_or_email_required'],
+            ['branch_id', ['branch_id' => $hiddenBranch->id], ['branch_id' => [new ValidPublicBranchRule]], 'website.validation.invalid_public_branch'],
+            ['slug', ['slug' => 'Invalid Slug'], ['slug' => [new ValidSlugRule]], 'website.validation.invalid_slug'],
+            ['price', ['price' => '-1'], ['price' => [new ValidPriceRule]], 'website.validation.invalid_price'],
+            ['locale', ['locale' => 'zz'], ['locale' => [new ValidLocaleRule]], 'website.validation.invalid_locale'],
+            ['seo_title', ['seo_title' => str_repeat('A', 71)], ['seo_title' => [new SeoMetadataRule(70)]], 'website.validation.invalid_seo_metadata'],
+            [
+                'publish',
+                ['publish' => true, 'slug' => '', 'title_translations' => [], 'content_translations' => []],
+                ['publish' => [new PublishedPageRequirementRule]],
+                'website.validation.page_cannot_be_published',
+            ],
+            ['course', ['course' => $unpublishableCourse->id], ['course' => [new PublicCourseCanBePublishedRule]], 'website.validation.course_cannot_be_published'],
+            ['branch', ['branch' => $unpublishableBranch->id], ['branch' => [new PublicBranchCanBePublishedRule]], 'website.validation.branch_cannot_be_published'],
+        ];
+
+        foreach ($cases as [$field, $data, $rules, $key]) {
+            $validator = Validator::make($data, $rules);
+
+            $this->assertTrue($validator->fails(), $key);
+            $this->assertSame(tkey($key), $validator->errors()->first($field));
+            $this->assertNotSame($key, tkey($key, [], 'en'));
+        }
     }
 
     public function test_publish_course_action_validates_and_makes_course_visible(): void
