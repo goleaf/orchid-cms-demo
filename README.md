@@ -9,6 +9,13 @@
 
 ## Project Integrations
 
+### Public Website Foundation
+
+The local driving school public website foundation is documented in
+[`docs/public-website-foundation.md`](docs/public-website-foundation.md). It
+covers public routes, Orchid management screens, CRM lead intake, UTM tracking,
+multilingual content, and tests.
+
 ### System Design Vibecoding Corpus
 
 The `nimin1/system-design-vibecoding` Markdown corpus is vendored under

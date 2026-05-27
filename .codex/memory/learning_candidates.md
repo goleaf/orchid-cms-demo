@@ -790,3 +790,30 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T18:08:00+00:00
+
+```json
+{
+  "ts": "2026-05-27T18:08:00+00:00",
+  "event": "Stop",
+  "session_id": "019e6a96-6279-73a2-bd62-e85432689ea8",
+  "turn_id": "019e6a9b-a232-7523-9937-683391ce6864",
+  "branch": "main",
+  "changed_file_count": 6,
+  "changed_file_groups": {
+    "code": 1,
+    "database": 4,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "EADME.md",
+    "database/migrations/2026_05_27_180000_add_crm_block_two_fields_to_marketing_leads_table.php",
+    "database/migrations/2026_05_27_180001_create_marketing_lead_activities_and_tags_table.php",
+    "database/migrations/2026_05_27_180002_expand_crm_dictionary_fields.php",
+    "database/migrations/2026_05_27_180003_add_call_details_and_soft_deletes_to_crm_tasks.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
