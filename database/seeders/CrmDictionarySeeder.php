@@ -96,9 +96,9 @@ class CrmDictionarySeeder extends Seeder
     private function lostReasons(): array
     {
         return [
-            ['code' => 'budget_too_low', 'values' => ['ru' => 'Бюджет слишком низкий', 'en' => 'Budget too low', 'lt' => 'Biudzetas per mazas', 'pl' => 'Budzet za niski']],
+            ['code' => 'budget_too_low', 'values' => ['ru' => 'Бюджет слишком низкий', 'en' => 'Budget too low', 'lt' => 'Biudzetas per mazas', 'pl' => 'Budzet jest za niski']],
             ['code' => 'no_answer', 'values' => ['ru' => 'Нет ответа', 'en' => 'No answer', 'lt' => 'Nera atsakymo', 'pl' => 'Brak odpowiedzi']],
-            ['code' => 'chose_competitor', 'values' => ['ru' => 'Выбрал конкурента', 'en' => 'Chose competitor', 'lt' => 'Pasirinko konkurenta', 'pl' => 'Wybral konkurencje']],
+            ['code' => 'chose_competitor', 'values' => ['ru' => 'Выбрал конкурента', 'en' => 'Chose a competitor', 'lt' => 'Pasirinko konkurenta', 'pl' => 'Wybral konkurencje']],
             ['code' => 'not_ready', 'values' => ['ru' => 'Пока не готов', 'en' => 'Not ready yet', 'lt' => 'Dar nepasiruoses', 'pl' => 'Jeszcze nie gotowy']],
             ['code' => 'duplicate', 'values' => ['ru' => 'Дубликат заявки', 'en' => 'Duplicate lead', 'lt' => 'Pasikartojanti uzklausa', 'pl' => 'Duplikat leada']],
             ['code' => 'spam', 'values' => ['ru' => 'Спам', 'en' => 'Spam', 'lt' => 'Slamstas', 'pl' => 'Spam']],

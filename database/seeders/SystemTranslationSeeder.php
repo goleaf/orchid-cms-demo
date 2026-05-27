@@ -92,7 +92,7 @@ class SystemTranslationSeeder extends Seeder
             $this->entry('menu', 'menu.crm.sources', ['ru' => 'Источники', 'en' => 'Sources', 'lt' => 'Saltiniai', 'pl' => 'Zrodla']),
             $this->entry('menu', 'menu.crm.lost_reasons', ['ru' => 'Причины отказа', 'en' => 'Lost reasons', 'lt' => 'Praradimo priezastys', 'pl' => 'Powody utraty']),
             $this->entry('menu', 'menu.crm.tags', ['ru' => 'Теги', 'en' => 'Tags', 'lt' => 'Zymos', 'pl' => 'Tagi']),
-            $this->entry('menu', 'menu.lms.programs', ['ru' => 'Учебные программы', 'en' => 'LMS Programs', 'lt' => 'Mokymo programos', 'pl' => 'Programy LMS']),
+            $this->entry('menu', 'menu.lms.programs', ['ru' => 'Учебные программы', 'en' => 'LMS programs', 'lt' => 'Mokymo programos', 'pl' => 'Programy LMS']),
             $this->entry('menu', 'menu.schedule.lessons', ['ru' => 'Расписание', 'en' => 'Schedule', 'lt' => 'Tvarkarastis', 'pl' => 'Harmonogram']),
             $this->entry('menu', 'menu.fleet.vehicles', ['ru' => 'Автопарк', 'en' => 'Fleet', 'lt' => 'Transportas', 'pl' => 'Flota']),
             $this->entry('menu', 'menu.exams', ['ru' => 'Экзамены', 'en' => 'Exams', 'lt' => 'Egzaminai', 'pl' => 'Egzaminy']),
@@ -103,11 +103,11 @@ class SystemTranslationSeeder extends Seeder
             $this->entry('menu', 'menu.marketing.pipeline', ['ru' => 'Воронка продаж', 'en' => 'Pipeline', 'lt' => 'Pardavimu eiga', 'pl' => 'Lejek']),
             $this->entry('menu', 'menu.marketing.leads', ['ru' => 'Лиды', 'en' => 'Leads', 'lt' => 'Uzkalusos', 'pl' => 'Leady']),
             $this->entry('menu', 'menu.marketing.templates', ['ru' => 'Шаблоны сообщений', 'en' => 'Message templates', 'lt' => 'Zinuciu sablonai', 'pl' => 'Szablony wiadomosci']),
-            $this->entry('menu', 'menu.website.view', ['ru' => 'Открыть сайт', 'en' => 'View Website', 'lt' => 'Atidaryti svetaine', 'pl' => 'Zobacz strone']),
+            $this->entry('menu', 'menu.website.view', ['ru' => 'Открыть сайт', 'en' => 'View website', 'lt' => 'Atidaryti svetaine', 'pl' => 'Zobacz strone']),
             $this->entry('menu', 'menu.settings', ['ru' => 'Настройки', 'en' => 'Settings', 'lt' => 'Nustatymai', 'pl' => 'Ustawienia']),
             $this->entry('menu', 'menu.settings.languages', ['ru' => 'Языки', 'en' => 'Languages', 'lt' => 'Kalbos', 'pl' => 'Jezyki']),
             $this->entry('menu', 'menu.settings.translations', ['ru' => 'Переводы', 'en' => 'Translations', 'lt' => 'Vertimai', 'pl' => 'Tlumaczenia']),
-            $this->entry('menu', 'menu.access_controls', ['ru' => 'Управление доступом', 'en' => 'Access Controls', 'lt' => 'Prieigos valdymas', 'pl' => 'Kontrola dostepu']),
+            $this->entry('menu', 'menu.access_controls', ['ru' => 'Управление доступом', 'en' => 'Access controls', 'lt' => 'Prieigos valdymas', 'pl' => 'Kontrola dostepu']),
             $this->entry('menu', 'menu.system.users', ['ru' => 'Пользователи', 'en' => 'Users', 'lt' => 'Vartotojai', 'pl' => 'Uzytkownicy']),
             $this->entry('menu', 'menu.system.roles', ['ru' => 'Роли', 'en' => 'Roles', 'lt' => 'Roles', 'pl' => 'Role']),
             $this->entry('menu', 'menu.docs', ['ru' => 'Документация', 'en' => 'Documentation', 'lt' => 'Dokumentacija', 'pl' => 'Dokumentacja']),
@@ -207,14 +207,14 @@ class SystemTranslationSeeder extends Seeder
             $this->entry('permissions', 'permissions.system.translations.export', ['ru' => 'Экспорт переводов', 'en' => 'Export translations', 'lt' => 'Eksportuoti vertimus', 'pl' => 'Eksport tlumaczen']),
             $this->entry('permissions', 'permissions.system.translations.import', ['ru' => 'Импорт переводов', 'en' => 'Import translations', 'lt' => 'Importuoti vertimus', 'pl' => 'Import tlumaczen']),
 
-            $this->entry('profile', 'profile.title', ['ru' => 'Мой аккаунт', 'en' => 'My Account', 'lt' => 'Mano paskyra', 'pl' => 'Moje konto']),
+            $this->entry('profile', 'profile.title', ['ru' => 'Мой аккаунт', 'en' => 'My account', 'lt' => 'Mano paskyra', 'pl' => 'Moje konto']),
             $this->entry('profile', 'profile.description', ['ru' => 'Обновите данные аккаунта, email, пароль и язык интерфейса.', 'en' => 'Update your account details, email, password, and interface language.', 'lt' => 'Atnaujinkite paskyros duomenis, el. pasta, slaptazodi ir sasajos kalba.', 'pl' => 'Zaktualizuj dane konta, email, haslo i jezyk interfejsu.']),
             $this->entry('profile', 'profile.actions.back_to_account', ['ru' => 'Вернуться в аккаунт', 'en' => 'Back to my account', 'lt' => 'Grizti i paskyra', 'pl' => 'Wroc do konta']),
             $this->entry('profile', 'profile.actions.sign_out', ['ru' => 'Выйти', 'en' => 'Sign out', 'lt' => 'Atsijungti', 'pl' => 'Wyloguj']),
             $this->entry('profile', 'profile.actions.update_password', ['ru' => 'Обновить пароль', 'en' => 'Update password', 'lt' => 'Atnaujinti slaptazodi', 'pl' => 'Zaktualizuj haslo']),
-            $this->entry('profile', 'profile.blocks.information.title', ['ru' => 'Данные профиля', 'en' => 'Profile Information', 'lt' => 'Profilio informacija', 'pl' => 'Informacje profilu']),
+            $this->entry('profile', 'profile.blocks.information.title', ['ru' => 'Данные профиля', 'en' => 'Profile information', 'lt' => 'Profilio informacija', 'pl' => 'Informacje profilu']),
             $this->entry('profile', 'profile.blocks.information.description', ['ru' => 'Обновите имя и email аккаунта.', 'en' => 'Update your account profile information and email address.', 'lt' => 'Atnaujinkite paskyros profilio informacija ir el. pasta.', 'pl' => 'Zaktualizuj informacje profilu i adres email.']),
-            $this->entry('profile', 'profile.blocks.password.title', ['ru' => 'Обновить пароль', 'en' => 'Update Password', 'lt' => 'Atnaujinti slaptazodi', 'pl' => 'Zaktualizuj haslo']),
+            $this->entry('profile', 'profile.blocks.password.title', ['ru' => 'Обновить пароль', 'en' => 'Update password', 'lt' => 'Atnaujinti slaptazodi', 'pl' => 'Zaktualizuj haslo']),
             $this->entry('profile', 'profile.blocks.password.description', ['ru' => 'Используйте длинный случайный пароль для защиты аккаунта.', 'en' => 'Ensure your account is using a long, random password to stay secure.', 'lt' => 'Naudokite ilga atsitiktini slaptazodi paskyros saugumui.', 'pl' => 'Uzywaj dlugiego losowego hasla, aby konto bylo bezpieczne.']),
             $this->entry('profile', 'profile.messages.updated', ['ru' => 'Профиль обновлён.', 'en' => 'Profile updated.', 'lt' => 'Profilis atnaujintas.', 'pl' => 'Profil zaktualizowany.']),
             $this->entry('profile', 'profile.messages.password_changed', ['ru' => 'Пароль изменён.', 'en' => 'Password changed.', 'lt' => 'Slaptazodis pakeistas.', 'pl' => 'Haslo zmienione.']),
@@ -258,6 +258,7 @@ class SystemTranslationSeeder extends Seeder
             ...$this->crmTaskEntries(),
             ...$this->crmDictionaryEntries(),
             ...$this->crmActivityEntries(),
+            ...$this->crmNotificationEntries(),
             ...$this->statusEntries(),
             ...$this->sourceEntries(),
             ...$this->websiteEntries(),
@@ -454,10 +455,10 @@ class SystemTranslationSeeder extends Seeder
             $this->entry('crm', 'crm.pipeline.report.loss_rate', ['ru' => 'Доля отказов', 'en' => 'Loss rate', 'lt' => 'Praradimu dalis', 'pl' => 'Udzial utrat']),
             $this->entry('crm', 'crm.pipeline.report.status_conversion', ['ru' => 'Отчёт по статусам', 'en' => 'Status conversion report', 'lt' => 'Busenu konversijos ataskaita', 'pl' => 'Raport konwersji statusow']),
             $this->entry('crm', 'crm.pipeline.report.loss_reasons', ['ru' => 'Причины отказа', 'en' => 'Loss reasons', 'lt' => 'Praradimo priezastys', 'pl' => 'Powody utraty']),
-            $this->entry('crm', 'crm.pipeline.empty.no_statuses_in_filter', ['ru' => 'В текущем фильтре нет статусов.', 'en' => 'No statuses in current filter.', 'lt' => 'Dabartiniame filtre nera busenu.', 'pl' => 'Brak statusow w biezacym filtrze.']),
-            $this->entry('crm', 'crm.pipeline.empty.no_loss_reasons', ['ru' => 'Нет причин отказа в текущем фильтре.', 'en' => 'No rejected lead reasons in current filter.', 'lt' => 'Dabartiniame filtre nera praradimo priezasciu.', 'pl' => 'Brak powodow utraty w biezacym filtrze.']),
+            $this->entry('crm', 'crm.pipeline.empty.no_statuses_in_filter', ['ru' => 'В текущем фильтре нет статусов.', 'en' => 'No statuses in the current filter.', 'lt' => 'Dabartiniame filtre nera busenu.', 'pl' => 'Brak statusow w biezacym filtrze.']),
+            $this->entry('crm', 'crm.pipeline.empty.no_loss_reasons', ['ru' => 'Нет причин отказа в текущем фильтре.', 'en' => 'No lost reasons in the current filter.', 'lt' => 'Dabartiniame filtre nera praradimo priezasciu.', 'pl' => 'Brak powodow utraty w biezacym filtrze.']),
             $this->entry('crm', 'crm.pipeline.empty.no_statuses', ['ru' => 'Нет статусов', 'en' => 'No statuses', 'lt' => 'Nera busenu', 'pl' => 'Brak statusow']),
-            $this->entry('crm', 'crm.pipeline.empty.no_pipeline_statuses', ['ru' => 'Статусы воронки не настроены', 'en' => 'No pipeline statuses configured', 'lt' => 'Eigos busenos nesukonfiguruotos', 'pl' => 'Statusy lejka nie sa skonfigurowane']),
+            $this->entry('crm', 'crm.pipeline.empty.no_pipeline_statuses', ['ru' => 'Статусы воронки не настроены', 'en' => 'No pipeline statuses are configured', 'lt' => 'Eigos busenos nesukonfiguruotos', 'pl' => 'Statusy lejka nie sa skonfigurowane']),
         ];
     }
 
@@ -517,13 +518,13 @@ class SystemTranslationSeeder extends Seeder
             $this->entry('crm', 'crm.tasks.priorities.high', ['ru' => 'Высокий', 'en' => 'High', 'lt' => 'Aukstas', 'pl' => 'Wysoki']),
             $this->entry('crm', 'crm.tasks.priorities.urgent', ['ru' => 'Срочный', 'en' => 'Urgent', 'lt' => 'Skubus', 'pl' => 'Pilny']),
             $this->entry('crm', 'crm.tasks.summary', ['ru' => ':tasks задач · :communications сообщ. · :comments замет.', 'en' => ':tasks tasks · :communications comms · :comments notes', 'lt' => ':tasks uzd. · :communications zin. · :comments past.', 'pl' => ':tasks zad. · :communications kom. · :comments not.']),
-            $this->entry('crm', 'crm.tasks.system_titles.call_new_application', ['ru' => 'Позвонить по новой заявке', 'en' => 'Call new application', 'lt' => 'Paskambinti del naujos uzklausos', 'pl' => 'Zadzwon do nowego zgloszenia']),
+            $this->entry('crm', 'crm.tasks.system_titles.call_new_application', ['ru' => 'Позвонить по новой заявке', 'en' => 'Call the new applicant', 'lt' => 'Paskambinti del naujos uzklausos', 'pl' => 'Zadzwon do nowego zgloszenia']),
             $this->entry('crm', 'crm.tasks.system_titles.call_back', ['ru' => 'Перезвонить: :name', 'en' => 'Call back: :name', 'lt' => 'Perskambinti: :name', 'pl' => 'Oddzwon: :name']),
             $this->entry('crm', 'crm.tasks.system_titles.follow_up', ['ru' => 'Контакт: :status', 'en' => 'Follow up: :status', 'lt' => 'Kontaktas: :status', 'pl' => 'Kontakt: :status']),
             $this->entry('crm', 'crm.tasks.system_notes.new_public_lead_reminder', ['ru' => 'Автоматическое напоминание по новой заявке с сайта.', 'en' => 'Automatic reminder for a new public website lead.', 'lt' => 'Automatinis priminimas apie nauja svetaines uzklausa.', 'pl' => 'Automatyczne przypomnienie o nowym leadzie ze strony.']),
-            $this->entry('crm', 'crm.tasks.system_notes.callback_reminder', ['ru' => 'Автоматическое напоминание о звонке из коммуникации лида.', 'en' => 'Automatic callback reminder from lead communication.', 'lt' => 'Automatinis perskambinimo priminimas is komunikacijos.', 'pl' => 'Automatyczne przypomnienie callbacku z komunikacji.']),
-            $this->entry('crm', 'crm.tasks.system_notes.status_move_reminder', ['ru' => 'Автоматическое напоминание после смены статуса.', 'en' => 'Automatic reminder after status move.', 'lt' => 'Automatinis priminimas pakeitus busena.', 'pl' => 'Automatyczne przypomnienie po zmianie statusu.']),
-            $this->entry('crm', 'crm.tasks.system_notes.seeded_pipeline_reminder', ['ru' => 'Демо-напоминание для CRM воронки.', 'en' => 'Seeded reminder for CRM funnel demo.', 'lt' => 'Demo priminimas CRM eigai.', 'pl' => 'Demo przypomnienie dla lejka CRM.']),
+            $this->entry('crm', 'crm.tasks.system_notes.callback_reminder', ['ru' => 'Автоматическое напоминание о звонке из коммуникации лида.', 'en' => 'Automatic callback reminder from a lead communication.', 'lt' => 'Automatinis perskambinimo priminimas is komunikacijos.', 'pl' => 'Automatyczne przypomnienie callbacku z komunikacji.']),
+            $this->entry('crm', 'crm.tasks.system_notes.status_move_reminder', ['ru' => 'Автоматическое напоминание после смены статуса.', 'en' => 'Automatic reminder after a status change.', 'lt' => 'Automatinis priminimas pakeitus busena.', 'pl' => 'Automatyczne przypomnienie po zmianie statusu.']),
+            $this->entry('crm', 'crm.tasks.system_notes.seeded_pipeline_reminder', ['ru' => 'Демо-напоминание для CRM воронки.', 'en' => 'Demo reminder for the CRM pipeline.', 'lt' => 'Demo priminimas CRM eigai.', 'pl' => 'Demo przypomnienie dla lejka CRM.']),
         ];
     }
 
@@ -540,7 +541,7 @@ class SystemTranslationSeeder extends Seeder
             $this->entry('crm', 'crm.dictionaries.sources.title', ['ru' => 'Источники лидов', 'en' => 'Lead sources', 'lt' => 'Uzklausu saltiniai', 'pl' => 'Zrodla leadow']),
             $this->entry('crm', 'crm.dictionaries.sources.description', ['ru' => 'Источники заявок с сайта, рекламы, звонков и рекомендаций.', 'en' => 'Lead sources from website, ads, calls, and referrals.', 'lt' => 'Uzklausu saltiniai is svetaines, reklamos, skambuciu ir rekomendaciju.', 'pl' => 'Zrodla leadow ze strony, reklam, rozmow i polecen.']),
             $this->entry('crm', 'crm.dictionaries.lost_reasons.title', ['ru' => 'Причины отказа', 'en' => 'Lost reasons', 'lt' => 'Praradimo priezastys', 'pl' => 'Powody utraty']),
-            $this->entry('crm', 'crm.dictionaries.lost_reasons.description', ['ru' => 'Причины закрытия лида без продажи.', 'en' => 'Reasons for closing a lead without sale.', 'lt' => 'Priezastys uzdaryti uzklausa be pardavimo.', 'pl' => 'Powody zamkniecia leada bez sprzedazy.']),
+            $this->entry('crm', 'crm.dictionaries.lost_reasons.description', ['ru' => 'Причины закрытия лида без продажи.', 'en' => 'Reasons for closing a lead without a sale.', 'lt' => 'Priezastys uzdaryti uzklausa be pardavimo.', 'pl' => 'Powody zamkniecia leada bez sprzedazy.']),
             $this->entry('crm', 'crm.dictionaries.tags.title', ['ru' => 'Теги лидов', 'en' => 'Lead tags', 'lt' => 'Uzklausu zymos', 'pl' => 'Tagi leadow']),
             $this->entry('crm', 'crm.dictionaries.tags.description', ['ru' => 'Метки для сегментации и быстрых CRM действий.', 'en' => 'Tags for segmentation and quick CRM actions.', 'lt' => 'Zymos segmentavimui ir greitiems CRM veiksmams.', 'pl' => 'Tagi do segmentacji i szybkich akcji CRM.']),
             $this->entry('crm', 'crm.dictionaries.fields.key', ['ru' => 'Ключ', 'en' => 'Key', 'lt' => 'Raktas', 'pl' => 'Klucz']),
@@ -569,18 +570,18 @@ class SystemTranslationSeeder extends Seeder
             $this->entry('crm', 'crm.activities.types.note_added', ['ru' => 'Добавлена заметка', 'en' => 'Note added', 'lt' => 'Pastaba prideta', 'pl' => 'Notatka dodana']),
             $this->entry('crm', 'crm.activities.types.call_logged', ['ru' => 'Звонок зафиксирован', 'en' => 'Call logged', 'lt' => 'Skambutis uzfiksuotas', 'pl' => 'Rozmowa zapisana']),
             $this->entry('crm', 'crm.activities.types.email_logged', ['ru' => 'Email зафиксирован', 'en' => 'Email logged', 'lt' => 'Email uzfiksuotas', 'pl' => 'Email zapisany']),
-            $this->entry('crm', 'crm.activities.types.messenger_logged', ['ru' => 'Сообщение зафиксировано', 'en' => 'Messenger logged', 'lt' => 'Zinute uzfiksuota', 'pl' => 'Komunikator zapisany']),
+            $this->entry('crm', 'crm.activities.types.messenger_logged', ['ru' => 'Сообщение зафиксировано', 'en' => 'Messenger message logged', 'lt' => 'Zinute uzfiksuota', 'pl' => 'Komunikator zapisany']),
             $this->entry('crm', 'crm.activities.types.task_created', ['ru' => 'Задача создана', 'en' => 'Task created', 'lt' => 'Uzduotis sukurta', 'pl' => 'Zadanie utworzone']),
             $this->entry('crm', 'crm.activities.types.task_completed', ['ru' => 'Задача выполнена', 'en' => 'Task completed', 'lt' => 'Uzduotis atlikta', 'pl' => 'Zadanie ukonczone']),
-            $this->entry('crm', 'crm.activities.types.marked_duplicate', ['ru' => 'Отмечено дублем', 'en' => 'Marked duplicate', 'lt' => 'Pazymeta kaip dublikatas', 'pl' => 'Oznaczono duplikat']),
-            $this->entry('crm', 'crm.activities.types.marked_lost', ['ru' => 'Отмечено отказом', 'en' => 'Marked lost', 'lt' => 'Pazymeta kaip prarasta', 'pl' => 'Oznaczono jako utracone']),
-            $this->entry('crm', 'crm.activities.types.marked_spam', ['ru' => 'Отмечено спамом', 'en' => 'Marked spam', 'lt' => 'Pazymeta kaip slamstas', 'pl' => 'Oznaczono spam']),
+            $this->entry('crm', 'crm.activities.types.marked_duplicate', ['ru' => 'Отмечено дублем', 'en' => 'Marked as duplicate', 'lt' => 'Pazymeta kaip dublikatas', 'pl' => 'Oznaczono duplikat']),
+            $this->entry('crm', 'crm.activities.types.marked_lost', ['ru' => 'Отмечено отказом', 'en' => 'Marked as lost', 'lt' => 'Pazymeta kaip prarasta', 'pl' => 'Oznaczono jako utracone']),
+            $this->entry('crm', 'crm.activities.types.marked_spam', ['ru' => 'Отмечено спамом', 'en' => 'Marked as spam', 'lt' => 'Pazymeta kaip slamstas', 'pl' => 'Oznaczono spam']),
             $this->entry('crm', 'crm.activities.types.converted', ['ru' => 'Конвертировано', 'en' => 'Converted', 'lt' => 'Konvertuota', 'pl' => 'Skonwertowano']),
             $this->entry('crm', 'crm.activities.reasons.crm_card_status_update', ['ru' => 'Статус изменён из карточки CRM.', 'en' => 'CRM card status update.', 'lt' => 'Busena pakeista CRM korteleje.', 'pl' => 'Aktualizacja statusu z karty CRM.']),
             $this->entry('crm', 'crm.activities.reasons.public_application_received', ['ru' => 'Получена заявка с сайта.', 'en' => 'Public application received.', 'lt' => 'Gauta svetaines paraiska.', 'pl' => 'Otrzymano zgloszenie publiczne.']),
-            $this->entry('crm', 'crm.activities.reasons.seeded_pipeline_state', ['ru' => 'Демо-состояние CRM воронки.', 'en' => 'Seeded CRM pipeline state.', 'lt' => 'Demo CRM eigos busena.', 'pl' => 'Demo stan lejka CRM.']),
-            $this->entry('crm', 'crm.activities.messages.public_enrollment_created', ['ru' => 'Лид автоматически создан из формы записи на сайте.', 'en' => 'Lead created automatically from public enrollment form.', 'lt' => 'Uzklausa automatiskai sukurta is svetaines registracijos formos.', 'pl' => 'Lead automatycznie utworzony z formularza zapisow.']),
-            $this->entry('crm', 'crm.activities.messages.seeded_pipeline_import', ['ru' => 'Лид импортирован в CRM воронку продаж.', 'en' => 'Lead imported into sales CRM pipeline.', 'lt' => 'Uzklausa importuota i CRM pardavimu eiga.', 'pl' => 'Lead zaimportowany do lejka CRM.']),
+            $this->entry('crm', 'crm.activities.reasons.seeded_pipeline_state', ['ru' => 'Демо-состояние CRM воронки.', 'en' => 'Demo CRM pipeline state.', 'lt' => 'Demo CRM eigos busena.', 'pl' => 'Demo stan lejka CRM.']),
+            $this->entry('crm', 'crm.activities.messages.public_enrollment_created', ['ru' => 'Лид автоматически создан из формы записи на сайте.', 'en' => 'Lead created automatically from the public enrollment form.', 'lt' => 'Uzklausa automatiskai sukurta is svetaines registracijos formos.', 'pl' => 'Lead automatycznie utworzony z formularza zapisow.']),
+            $this->entry('crm', 'crm.activities.messages.seeded_pipeline_import', ['ru' => 'Лид импортирован в CRM воронку продаж.', 'en' => 'Lead imported into the CRM sales pipeline.', 'lt' => 'Uzklausa importuota i CRM pardavimu eiga.', 'pl' => 'Lead zaimportowany do lejka CRM.']),
             $this->entry('crm', 'crm.status_history.title', ['ru' => 'История статусов', 'en' => 'Status history', 'lt' => 'Busenu istorija', 'pl' => 'Historia statusow']),
             $this->entry('crm', 'crm.status_history.fields.changed_at', ['ru' => 'Изменено', 'en' => 'Changed', 'lt' => 'Pakeista', 'pl' => 'Zmieniono']),
             $this->entry('crm', 'crm.status_history.fields.from_status', ['ru' => 'Из статуса', 'en' => 'From', 'lt' => 'Is busenos', 'pl' => 'Ze statusu']),
@@ -591,6 +592,28 @@ class SystemTranslationSeeder extends Seeder
             $this->entry('crm', 'crm.documents.fields.type', ['ru' => 'Тип', 'en' => 'Type', 'lt' => 'Tipas', 'pl' => 'Typ']),
             $this->entry('crm', 'crm.documents.fields.size', ['ru' => 'Размер', 'en' => 'Size', 'lt' => 'Dydis', 'pl' => 'Rozmiar']),
             $this->entry('crm', 'crm.documents.fields.uploaded_at', ['ru' => 'Загружено', 'en' => 'Uploaded', 'lt' => 'Ikeltas', 'pl' => 'Przeslano']),
+        ];
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function crmNotificationEntries(): array
+    {
+        return [
+            $this->entry('crm', 'crm.notifications.enrollment.submitted.subject', ['ru' => 'Новая заявка в автошколу', 'en' => 'New driving school application', 'lt' => 'Nauja vairavimo mokyklos paraiska', 'pl' => 'Nowe zgloszenie do szkoly jazdy']),
+            $this->entry('crm', 'crm.notifications.enrollment.submitted.lines.request_submitted', ['ru' => ':name отправил онлайн-заявку на обучение.', 'en' => ':name submitted an online enrollment request.', 'lt' => ':name pateike internetine registracijos uzklausa.', 'pl' => ':name wyslal zgloszenie online na kurs.']),
+            $this->entry('crm', 'crm.notifications.enrollment.submitted.lines.contact', ['ru' => 'Контакт: :contact', 'en' => 'Contact: :contact', 'lt' => 'Kontaktas: :contact', 'pl' => 'Kontakt: :contact']),
+            $this->entry('crm', 'crm.notifications.enrollment.submitted.lines.preferred_time', ['ru' => 'Предпочитаемое время: :time', 'en' => 'Preferred time: :time', 'lt' => 'Pageidaujamas laikas: :time', 'pl' => 'Preferowany czas: :time']),
+            $this->entry('crm', 'crm.notifications.enrollment.submitted.empty.not_provided', ['ru' => 'не указано', 'en' => 'not provided', 'lt' => 'nenurodyta', 'pl' => 'nie podano']),
+            $this->entry('crm', 'crm.notifications.enrollment.submitted.actions.open_leads', ['ru' => 'Открыть лиды', 'en' => 'Open leads', 'lt' => 'Atidaryti uzklausas', 'pl' => 'Otworz leady']),
+
+            $this->entry('crm', 'crm.notifications.enrollment.auto_reply.subject', ['ru' => 'Заявка DrivePro Academy получена', 'en' => 'DrivePro Academy application received', 'lt' => 'DrivePro Academy paraiska gauta', 'pl' => 'Zgloszenie DrivePro Academy otrzymane']),
+            $this->entry('crm', 'crm.notifications.enrollment.auto_reply.greeting', ['ru' => 'Здравствуйте, :name', 'en' => 'Hello :name', 'lt' => 'Sveiki, :name', 'pl' => 'Dzien dobry, :name']),
+            $this->entry('crm', 'crm.notifications.enrollment.auto_reply.lines.received', ['ru' => 'Мы получили вашу заявку и свяжемся с вами, чтобы подтвердить программу, филиал, группу и удобное расписание.', 'en' => 'We received your application and will contact you to confirm the program, branch, group, and preferred schedule.', 'lt' => 'Gavome jusu paraiska ir susisieksime del programos, filialo, grupes ir patogaus grafiko patvirtinimo.', 'pl' => 'Otrzymalismy zgloszenie i skontaktujemy sie, aby potwierdzic program, oddzial, grupe i preferowany harmonogram.']),
+            $this->entry('crm', 'crm.notifications.enrollment.auto_reply.lines.preferred_format', ['ru' => 'Формат обучения: :format', 'en' => 'Preferred format: :format', 'lt' => 'Pageidaujamas formatas: :format', 'pl' => 'Preferowany format: :format']),
+            $this->entry('crm', 'crm.notifications.enrollment.auto_reply.empty.not_selected', ['ru' => 'не выбран', 'en' => 'not selected', 'lt' => 'nepasirinkta', 'pl' => 'nie wybrano']),
+            $this->entry('crm', 'crm.notifications.enrollment.auto_reply.actions.open_website', ['ru' => 'Открыть сайт', 'en' => 'Open website', 'lt' => 'Atidaryti svetaine', 'pl' => 'Otworz strone']),
         ];
     }
 

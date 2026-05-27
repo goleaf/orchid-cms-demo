@@ -102,7 +102,7 @@ class DatabaseSeeder extends Seeder
                 'format' => 'mixed',
                 'available_languages' => ['Lithuanian', 'English', 'Russian'],
                 'price_cents' => 129000,
-                'description' => 'Complete category B training with theory, practice, exams, and document tracking.',
+                'description' => 'Complete Category B training with theory, practice, exams, and document tracking.',
                 'required_documents' => ['ID card', 'Medical certificate', 'Photo', 'Training contract'],
                 'admission_requirements' => 'Students must meet local age and medical eligibility requirements before practical driving lessons.',
                 'is_active' => true,
@@ -173,7 +173,7 @@ class DatabaseSeeder extends Seeder
                 'duration_weeks' => 3,
                 'format' => 'mixed',
                 'price_cents' => 39000,
-                'description' => 'Driving confidence recovery for licensed drivers returning to the road.',
+                'description' => 'Confidence-building driving lessons for licensed drivers returning to the road.',
             ],
             [
                 'slug' => 'individual-driving-lessons',
@@ -197,7 +197,7 @@ class DatabaseSeeder extends Seeder
                 'duration_weeks' => 6,
                 'format' => 'mixed',
                 'price_cents' => 149000,
-                'description' => 'Condensed category B course for students who need a faster training plan.',
+                'description' => 'Condensed Category B course for students who need a faster training plan.',
             ],
             [
                 'slug' => 'beginner-driving-course',
@@ -252,7 +252,7 @@ class DatabaseSeeder extends Seeder
         ));
 
         collect([
-            ['title' => 'Traffic rules foundation', 'module_type' => 'theory', 'sort_order' => 1, 'duration_minutes' => 90],
+            ['title' => 'Traffic rules fundamentals', 'module_type' => 'theory', 'sort_order' => 1, 'duration_minutes' => 90],
             ['title' => 'Vehicle control basics', 'module_type' => 'practice', 'sort_order' => 2, 'duration_minutes' => 90],
             ['title' => 'City driving and junctions', 'module_type' => 'practice', 'sort_order' => 3, 'duration_minutes' => 90],
             ['title' => 'Exam route preparation', 'module_type' => 'practice', 'sort_order' => 4, 'duration_minutes' => 90],
@@ -282,7 +282,7 @@ class DatabaseSeeder extends Seeder
                 'languages' => ['Lithuanian', 'English', 'Russian'],
                 'availability_summary' => 'Weekday evenings and Saturday mornings',
                 'teaching_style' => 'Calm city-driving coach with structured feedback after every lesson.',
-                'bio' => 'Jonas prepares beginners and exam-retake students for category B routes in Vilnius.',
+                'bio' => 'Jonas prepares beginners and exam-retake students for Category B routes in Vilnius.',
                 'status' => InstructorStatus::Active,
                 'hired_at' => now()->subYears(3)->toDateString(),
             ],
@@ -303,7 +303,7 @@ class DatabaseSeeder extends Seeder
                 'languages' => ['Lithuanian', 'English'],
                 'availability_summary' => 'Mornings and selected weekends',
                 'teaching_style' => 'Precise maneuver training with a strong focus on risk awareness.',
-                'bio' => 'Aiste teaches motorcycle control, confidence recovery, and category B basics.',
+                'bio' => 'Aiste teaches motorcycle control, confidence-building lessons, and Category B basics.',
                 'status' => InstructorStatus::Active,
                 'hired_at' => now()->subYears(2)->toDateString(),
             ],
@@ -359,7 +359,7 @@ class DatabaseSeeder extends Seeder
                 'starts_on' => now()->subDays(12)->toDateString(),
                 'ends_on' => now()->addDays(35)->toDateString(),
                 'utm_source' => 'google',
-                'notes' => 'Main acquisition campaign for category B groups.',
+                'notes' => 'Main acquisition campaign for Category B groups.',
             ],
         );
 
@@ -376,7 +376,7 @@ class DatabaseSeeder extends Seeder
                 'transmission' => 'manual',
                 'odometer_km' => 24800,
                 'status' => VehicleStatus::Active,
-                'availability_summary' => 'Available for evening category B lessons',
+                'availability_summary' => 'Available for evening Category B lessons',
                 'description' => 'Compact manual training car with city-friendly visibility and predictable clutch control.',
                 'features' => ['Dual controls', 'Parking sensors', 'Manual gearbox'],
                 'next_service_at' => now()->addDays(45)->toDateString(),
@@ -450,7 +450,7 @@ class DatabaseSeeder extends Seeder
                 'privacy_accepted_at' => now()->subDays(18),
                 'contacted_at' => now()->subDays(18),
                 'converted_at' => now()->subDays(14),
-                'message' => 'Interested in evening manual category B lessons.',
+                'message' => 'Interested in evening manual Category B lessons.',
                 'rejection_reason' => null,
                 'lost_reason_code' => null,
                 'crm_snapshot' => ['form' => 'public_enrollment', 'captured_at' => now()->subDays(18)->toIso8601String()],
@@ -488,7 +488,7 @@ class DatabaseSeeder extends Seeder
                 'privacy_accepted_at' => now()->subDays(2),
                 'contacted_at' => now()->subDays(1),
                 'converted_at' => null,
-                'message' => 'Asked for intensive course availability.',
+                'message' => 'Asked about intensive course availability.',
                 'rejection_reason' => null,
                 'lost_reason_code' => null,
                 'crm_snapshot' => ['form' => 'public_enrollment', 'captured_at' => now()->subDays(2)->toIso8601String()],
@@ -634,7 +634,7 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Good recovery after a failed exam',
                 'author_name' => 'Egle Stankeviciene',
-                'body' => 'The retake preparation focused on my real mistakes and made the second attempt calmer.',
+                'body' => 'The retake preparation focused on my actual mistakes and made the second attempt calmer.',
                 'rating' => 4,
                 'admin_reply' => null,
             ],
@@ -702,7 +702,7 @@ class DatabaseSeeder extends Seeder
             [
                 'channel' => 'phone',
                 'subject' => 'Consultation follow-up',
-                'body' => 'Thank you for the consultation. We can reserve your place after documents and payment.',
+                'body' => 'Thank you for the consultation. We can reserve your place after we receive your documents and payment.',
                 'is_active' => true,
                 'sort_order' => 10,
             ],
@@ -722,7 +722,7 @@ class DatabaseSeeder extends Seeder
             [
                 'channel' => null,
                 'subject' => 'Missing documents',
-                'body' => 'Please send your ID copy and medical certificate so we can confirm your group place.',
+                'body' => 'Please send a copy of your ID and your medical certificate so we can confirm your group place.',
                 'is_active' => true,
                 'sort_order' => 30,
             ],

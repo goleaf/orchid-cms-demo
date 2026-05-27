@@ -23,11 +23,17 @@ class EnrollmentLeadAutoReplyNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
+        $format = $this->lead->preferred_format ?? tkey('crm.notifications.enrollment.auto_reply.empty.not_selected');
+
         return (new MailMessage)
-            ->subject('DrivePro Academy application received')
-            ->greeting('Hello '.$this->lead->first_name)
-            ->line('We received your application and will contact you to confirm the program, branch, group, and preferred schedule.')
-            ->line('Preferred format: '.($this->lead->preferred_format ?? 'not selected'))
-            ->action('Open website', route('site.home'));
+            ->subject(tkey('crm.notifications.enrollment.auto_reply.subject'))
+            ->greeting(tkey('crm.notifications.enrollment.auto_reply.greeting', [
+                'name' => $this->lead->first_name,
+            ]))
+            ->line(tkey('crm.notifications.enrollment.auto_reply.lines.received'))
+            ->line(tkey('crm.notifications.enrollment.auto_reply.lines.preferred_format', [
+                'format' => $format,
+            ]))
+            ->action(tkey('crm.notifications.enrollment.auto_reply.actions.open_website'), route('site.home'));
     }
 }
