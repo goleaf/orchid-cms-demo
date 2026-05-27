@@ -23,6 +23,7 @@ class MarketingLead extends Model
 
     protected $fillable = [
         'uuid',
+        'lead_number',
         'marketing_campaign_id',
         'responsible_manager_id',
         'assigned_by_user_id',
@@ -33,11 +34,13 @@ class MarketingLead extends Model
         'training_group_id',
         'instructor_id',
         'converted_student_profile_id',
+        'converted_enrollment_id',
         'created_by_user_id',
         'updated_by_user_id',
         'full_name',
         'first_name',
         'last_name',
+        'middle_name',
         'email',
         'phone',
         'normalized_phone',
@@ -50,6 +53,8 @@ class MarketingLead extends Model
         'preferred_format',
         'preferred_language',
         'preferred_time',
+        'desired_start_date',
+        'preferred_gearbox',
         'budget_cents',
         'is_hot',
         'priority',
@@ -92,6 +97,7 @@ class MarketingLead extends Model
         'last_status_changed_at' => 'datetime',
         'crm_snapshot' => 'array',
         'assigned_at' => 'datetime',
+        'desired_start_date' => 'date',
         'privacy_accepted_at' => 'datetime',
         'consent_accepted' => 'boolean',
         'consent_accepted_at' => 'datetime',
@@ -112,6 +118,11 @@ class MarketingLead extends Model
         return $this->belongsTo(User::class, 'responsible_manager_id');
     }
 
+    public function manager(): BelongsTo
+    {
+        return $this->responsibleManager();
+    }
+
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by_user_id');
@@ -122,9 +133,34 @@ class MarketingLead extends Model
         return $this->belongsTo(User::class, 'created_by_user_id');
     }
 
+    public function creator(): BelongsTo
+    {
+        return $this->createdBy();
+    }
+
     public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by_user_id');
+    }
+
+    public function updater(): BelongsTo
+    {
+        return $this->updatedBy();
+    }
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\LeadStatus::class, 'status', 'code');
+    }
+
+    public function source(): BelongsTo
+    {
+        return $this->belongsTo(LeadSource::class, 'source', 'code');
+    }
+
+    public function lostReason(): BelongsTo
+    {
+        return $this->belongsTo(LeadLostReason::class, 'lost_reason_code', 'code');
     }
 
     public function branch(): BelongsTo
@@ -160,6 +196,16 @@ class MarketingLead extends Model
     public function convertedStudentProfile(): BelongsTo
     {
         return $this->belongsTo(StudentProfile::class, 'converted_student_profile_id');
+    }
+
+    public function convertedStudent(): BelongsTo
+    {
+        return $this->convertedStudentProfile();
+    }
+
+    public function convertedEnrollment(): BelongsTo
+    {
+        return $this->belongsTo(Enrollment::class, 'converted_enrollment_id');
     }
 
     public function duplicateOf(): BelongsTo
@@ -198,6 +244,11 @@ class MarketingLead extends Model
         return $this->hasMany(MarketingLeadCommunication::class);
     }
 
+    public function callLogs(): HasMany
+    {
+        return $this->communications()->where('channel', 'phone');
+    }
+
     public function statusHistories(): HasMany
     {
         return $this->hasMany(MarketingLeadStatusHistory::class);
@@ -222,7 +273,13 @@ class MarketingLead extends Model
 
     public function fullName(): string
     {
-        $name = trim($this->first_name.' '.($this->last_name ?? ''));
+        $name = collect([
+            $this->first_name,
+            $this->middle_name,
+            $this->last_name,
+        ])
+            ->filter(fn (?string $part): bool => filled($part))
+            ->implode(' ');
 
         if (filled($name)) {
             return $name;
@@ -230,6 +287,68 @@ class MarketingLead extends Model
 
         return ($this->attributes['full_name'] ?? null)
             ?: tkey('crm.leads.fallback.lead');
+    }
+
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->fullName();
+    }
+
+    public function getDisplayContactAttribute(): string
+    {
+        return collect([$this->phone, $this->email])
+            ->filter(fn (?string $value): bool => filled($value))
+            ->implode(' / ') ?: '-';
+    }
+
+    public function getCourseIdAttribute(): ?int
+    {
+        return $this->training_program_id;
+    }
+
+    public function setCourseIdAttribute(?int $value): void
+    {
+        $this->attributes['training_program_id'] = $value;
+    }
+
+    public function getManagerIdAttribute(): ?int
+    {
+        return $this->responsible_manager_id;
+    }
+
+    public function setManagerIdAttribute(?int $value): void
+    {
+        $this->attributes['responsible_manager_id'] = $value;
+    }
+
+    public function getCreatedByIdAttribute(): ?int
+    {
+        return $this->created_by_user_id;
+    }
+
+    public function setCreatedByIdAttribute(?int $value): void
+    {
+        $this->attributes['created_by_user_id'] = $value;
+    }
+
+    public function getUpdatedByIdAttribute(): ?int
+    {
+        return $this->updated_by_user_id;
+    }
+
+    public function setUpdatedByIdAttribute(?int $value): void
+    {
+        $this->attributes['updated_by_user_id'] = $value;
+    }
+
+    public function getConvertedStudentIdAttribute(): ?int
+    {
+        return $this->converted_student_profile_id;
+    }
+
+    public function setConvertedStudentIdAttribute(?int $value): void
+    {
+        $this->attributes['converted_student_profile_id'] = $value;
     }
 
     public function getPreferredMessengerAttribute(): ?string
@@ -252,6 +371,16 @@ class MarketingLead extends Model
         $this->attributes['message'] = $value;
     }
 
+    public function getPreferredTrainingLanguageAttribute(): ?string
+    {
+        return $this->preferred_language;
+    }
+
+    public function setPreferredTrainingLanguageAttribute(?string $value): void
+    {
+        $this->attributes['preferred_language'] = $value;
+    }
+
     public function getReferrerAttribute(): ?string
     {
         return $this->referrer_url;
@@ -260,6 +389,20 @@ class MarketingLead extends Model
     public function setReferrerAttribute(?string $value): void
     {
         $this->attributes['referrer_url'] = $value;
+    }
+
+    public function getBudgetAttribute(): ?float
+    {
+        return $this->budget_cents === null
+            ? null
+            : round($this->budget_cents / 100, 2);
+    }
+
+    public function setBudgetAttribute(mixed $value): void
+    {
+        $this->attributes['budget_cents'] = filled($value)
+            ? (int) round(((float) $value) * 100)
+            : null;
     }
 
     public function setPhoneAttribute(?string $value): void
@@ -282,6 +425,7 @@ class MarketingLead extends Model
         return $query->select([
             'id',
             'uuid',
+            'lead_number',
             'marketing_campaign_id',
             'responsible_manager_id',
             'assigned_by_user_id',
@@ -292,11 +436,13 @@ class MarketingLead extends Model
             'training_group_id',
             'instructor_id',
             'converted_student_profile_id',
+            'converted_enrollment_id',
             'created_by_user_id',
             'updated_by_user_id',
             'full_name',
             'first_name',
             'last_name',
+            'middle_name',
             'email',
             'phone',
             'normalized_phone',
@@ -309,6 +455,8 @@ class MarketingLead extends Model
             'preferred_format',
             'preferred_language',
             'preferred_time',
+            'desired_start_date',
+            'preferred_gearbox',
             'budget_cents',
             'is_hot',
             'priority',
@@ -335,6 +483,7 @@ class MarketingLead extends Model
         return $query->select([
             'id',
             'uuid',
+            'lead_number',
             'marketing_campaign_id',
             'responsible_manager_id',
             'assigned_by_user_id',
@@ -345,11 +494,13 @@ class MarketingLead extends Model
             'training_group_id',
             'instructor_id',
             'converted_student_profile_id',
+            'converted_enrollment_id',
             'created_by_user_id',
             'updated_by_user_id',
             'full_name',
             'first_name',
             'last_name',
+            'middle_name',
             'email',
             'phone',
             'normalized_phone',
@@ -362,6 +513,8 @@ class MarketingLead extends Model
             'preferred_format',
             'preferred_language',
             'preferred_time',
+            'desired_start_date',
+            'preferred_gearbox',
             'budget_cents',
             'is_hot',
             'priority',
@@ -404,7 +557,9 @@ class MarketingLead extends Model
 
         return $query->where(function (Builder $query) use ($search, $phoneToken): void {
             $query
-                ->where('first_name', 'like', '%'.$search.'%')
+                ->where('lead_number', 'like', '%'.$search.'%')
+                ->orWhere('full_name', 'like', '%'.$search.'%')
+                ->orWhere('first_name', 'like', '%'.$search.'%')
                 ->orWhere('last_name', 'like', '%'.$search.'%')
                 ->orWhere('email', 'like', '%'.$search.'%')
                 ->orWhere('phone', 'like', '%'.$search.'%')
@@ -422,13 +577,198 @@ class MarketingLead extends Model
         });
     }
 
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        return filled($search)
+            ? $query->matchingSearch((string) $search)
+            : $query;
+    }
+
+    public function scopeOpen(Builder $query): Builder
+    {
+        return $query
+            ->whereNull('closed_at')
+            ->whereIn('status', LeadStatus::openPipelineValues());
+    }
+
+    public function scopeClosed(Builder $query): Builder
+    {
+        return $query->where(function (Builder $query): void {
+            $query
+                ->whereNotNull('closed_at')
+                ->orWhereIn('status', self::finalStatusValues());
+        });
+    }
+
+    public function scopeNew(Builder $query): Builder
+    {
+        return $query->where('status', LeadStatus::New->value);
+    }
+
+    public function scopeAssignedTo(Builder $query, int|string $managerId): Builder
+    {
+        return $query->where('responsible_manager_id', $managerId);
+    }
+
+    public function scopeUnassigned(Builder $query): Builder
+    {
+        return $query->whereNull('responsible_manager_id');
+    }
+
+    public function scopeOverdueFollowUp(Builder $query): Builder
+    {
+        return $query
+            ->open()
+            ->whereNotNull('next_follow_up_at')
+            ->where('next_follow_up_at', '<', now());
+    }
+
+    public function scopeDueToday(Builder $query): Builder
+    {
+        return $query
+            ->open()
+            ->whereBetween('next_follow_up_at', [now()->startOfDay(), now()->endOfDay()]);
+    }
+
+    public function scopeDuplicates(Builder $query): Builder
+    {
+        return $query->where(function (Builder $query): void {
+            $query
+                ->where('status', LeadStatus::Duplicate->value)
+                ->orWhereNotNull('duplicate_of_id');
+        });
+    }
+
+    public function scopeSpam(Builder $query): Builder
+    {
+        return $query->where('status', LeadStatus::Spam->value);
+    }
+
+    public function scopeLost(Builder $query): Builder
+    {
+        return $query->whereIn('status', [
+            LeadStatus::Lost->value,
+            LeadStatus::Rejected->value,
+        ]);
+    }
+
+    public function scopeConverted(Builder $query): Builder
+    {
+        return $query->where(function (Builder $query): void {
+            $query
+                ->whereNotNull('converted_at')
+                ->orWhereIn('status', self::successStatusValues());
+        });
+    }
+
+    public function scopeNotConverted(Builder $query): Builder
+    {
+        return $query->whereNull('converted_at');
+    }
+
+    public function scopeByStatus(Builder $query, LeadStatus|string|null $status): Builder
+    {
+        return filled($status)
+            ? $query->where('status', $status instanceof LeadStatus ? $status->value : $status)
+            : $query;
+    }
+
+    public function scopeBySource(Builder $query, ?string $source): Builder
+    {
+        return filled($source) ? $query->where('source', $source) : $query;
+    }
+
+    public function scopeByManager(Builder $query, int|string|null $managerId): Builder
+    {
+        return filled($managerId) ? $query->where('responsible_manager_id', $managerId) : $query;
+    }
+
+    public function scopeByCourse(Builder $query, int|string|null $courseId): Builder
+    {
+        return filled($courseId) ? $query->where('training_program_id', $courseId) : $query;
+    }
+
+    public function scopeByBranch(Builder $query, int|string|null $branchId): Builder
+    {
+        return filled($branchId) ? $query->where('branch_id', $branchId) : $query;
+    }
+
+    public function scopeByTrainingGroup(Builder $query, int|string|null $trainingGroupId): Builder
+    {
+        return filled($trainingGroupId) ? $query->where('training_group_id', $trainingGroupId) : $query;
+    }
+
     public function isClosed(): bool
     {
         return $this->closed_at !== null || $this->status->isFinal();
     }
 
+    public function getIsClosedAttribute(): bool
+    {
+        return $this->isClosed();
+    }
+
+    public function getIsConvertedAttribute(): bool
+    {
+        return $this->converted_at !== null || $this->status->isSuccess();
+    }
+
+    public function getIsDuplicateAttribute(): bool
+    {
+        return $this->duplicate_of_id !== null || $this->status === LeadStatus::Duplicate;
+    }
+
+    public function getIsSpamAttribute(): bool
+    {
+        return $this->status === LeadStatus::Spam;
+    }
+
+    public function getIsLostAttribute(): bool
+    {
+        return $this->status->isLost();
+    }
+
+    public function getIsOverdueAttribute(): bool
+    {
+        return ! $this->is_closed
+            && $this->next_follow_up_at !== null
+            && $this->next_follow_up_at->isPast();
+    }
+
+    public function getCanBeConvertedAttribute(): bool
+    {
+        return ! $this->is_converted
+            && ! $this->is_duplicate
+            && ! $this->is_spam
+            && ! $this->is_lost;
+    }
+
     public function priorityLabel(): string
     {
         return tkey('crm.leads.priorities.'.($this->priority ?: 'normal'));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private static function finalStatusValues(): array
+    {
+        return collect(LeadStatus::cases())
+            ->filter(fn (LeadStatus $status): bool => $status->isFinal())
+            ->map(fn (LeadStatus $status): string => $status->value)
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private static function successStatusValues(): array
+    {
+        return collect(LeadStatus::cases())
+            ->filter(fn (LeadStatus $status): bool => $status->isSuccess())
+            ->map(fn (LeadStatus $status): string => $status->value)
+            ->values()
+            ->all();
     }
 }

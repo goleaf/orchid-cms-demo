@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\LeadTaskPriority;
 use App\Enums\LeadTaskStatus;
+use App\Models\Concerns\HasTranslations;
 use Database\Factories\MarketingLeadTaskFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +16,7 @@ class MarketingLeadTask extends Model
 {
     /** @use HasFactory<MarketingLeadTaskFactory> */
     use HasFactory;
+    use HasTranslations;
     use SoftDeletes;
 
     protected $fillable = [
@@ -22,24 +24,35 @@ class MarketingLeadTask extends Model
         'assigned_to_user_id',
         'created_by_user_id',
         'title',
+        'title_translations',
+        'description_translations',
         'status',
         'priority',
         'due_at',
         'completed_at',
+        'cancelled_at',
         'notes',
     ];
 
     protected $casts = [
+        'title_translations' => 'array',
+        'description_translations' => 'array',
         'status' => LeadTaskStatus::class,
         'priority' => LeadTaskPriority::class,
         'due_at' => 'datetime',
         'completed_at' => 'datetime',
+        'cancelled_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
 
     public function marketingLead(): BelongsTo
     {
         return $this->belongsTo(MarketingLead::class);
+    }
+
+    public function lead(): BelongsTo
+    {
+        return $this->belongsTo(Lead::class, 'marketing_lead_id');
     }
 
     public function assignedTo(): BelongsTo
@@ -71,5 +84,16 @@ class MarketingLeadTask extends Model
             && $this->status !== LeadTaskStatus::Cancelled
             && $this->due_at !== null
             && $this->due_at->isPast();
+    }
+
+    public function getIsOverdueAttribute(): bool
+    {
+        return $this->isOverdue();
+    }
+
+    public function getDisplayTitleAttribute(): string
+    {
+        return $this->getTranslation('title')
+            ?: $this->title;
     }
 }

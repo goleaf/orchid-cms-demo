@@ -30,6 +30,11 @@ class MarketingLeadActivity extends Model
         return $this->belongsTo(MarketingLead::class);
     }
 
+    public function lead(): BelongsTo
+    {
+        return $this->belongsTo(Lead::class, 'marketing_lead_id');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

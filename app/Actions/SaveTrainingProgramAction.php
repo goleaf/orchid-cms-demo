@@ -11,9 +11,6 @@ class SaveTrainingProgramAction
      */
     public function handle(TrainingProgram $program, array $attributes): TrainingProgram
     {
-        $program->fill($attributes);
-        $program->save();
-
-        return $program;
+        return app(CreateOrUpdateCourseAction::class)->handle($program, $attributes);
     }
 }

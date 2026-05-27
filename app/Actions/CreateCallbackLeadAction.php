@@ -7,6 +7,7 @@ use App\Enums\LeadTaskPriority;
 use App\Models\MarketingLead;
 use App\Models\User;
 use App\Notifications\EnrollmentLeadSubmittedNotification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
@@ -15,8 +16,23 @@ class CreateCallbackLeadAction
     /**
      * @param  array<string, mixed>  $data
      */
-    public function handle(array $data): MarketingLead
+    public function handle(array $data, ?Request $request = null): MarketingLead
     {
+        $tracking = $request === null
+            ? []
+            : app(CaptureUtmDataAction::class)->handle($request, [
+                'source' => 'callback',
+                'form_name' => 'callback',
+            ]);
+        $data = array_merge($tracking, $data);
+        $context = app(ResolveWebsiteCourseContextAction::class)->handle($data);
+        $fullName = trim((string) ($data['full_name'] ?? trim((string) ($data['first_name'] ?? '').' '.(string) ($data['last_name'] ?? ''))));
+        $firstName = filled($data['first_name'] ?? null)
+            ? (string) $data['first_name']
+            : trim(str($fullName)->before(' ')->toString());
+        $lastName = filled($data['last_name'] ?? null)
+            ? (string) $data['last_name']
+            : (filled($fullName) ? trim(str($fullName)->after(' ')->toString()) : null);
         $manager = User::query()
             ->select(['id', 'name', 'email'])
             ->where('email', 'admin@example.com')
@@ -29,19 +45,21 @@ class CreateCallbackLeadAction
             'responsible_manager_id' => $manager?->id,
             'assigned_by_user_id' => null,
             'assigned_at' => $manager !== null ? now() : null,
-            'branch_id' => $data['branch_id'] ?? null,
-            'training_program_id' => $data['training_program_id'] ?? null,
+            'full_name' => filled($fullName) ? $fullName : null,
+            'branch_id' => $context['branch_id'],
+            'training_program_id' => $context['course_id'],
+            'course_category_id' => $context['course_category_id'],
             'training_group_id' => null,
             'instructor_id' => null,
             'converted_student_profile_id' => null,
             'duplicate_of_id' => $duplicate?->id,
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'] ?? null,
+            'first_name' => $firstName ?: tkey('crm.leads.fallback.lead'),
+            'last_name' => filled($lastName) ? $lastName : null,
             'email' => $data['email'] ?? null,
             'phone' => $data['phone'],
-            'messenger' => $data['messenger'] ?? null,
+            'messenger' => $data['messenger'] ?? $data['preferred_messenger'] ?? null,
             'city' => $data['city'] ?? null,
-            'source' => $data['source'] ?? 'callback',
+            'source' => 'callback',
             'status' => LeadStatus::New,
             'license_category' => null,
             'preferred_format' => null,
@@ -73,7 +91,7 @@ class CreateCallbackLeadAction
             'referrer_url' => $data['referrer_url'] ?? null,
             'landing_page' => $data['landing_page'] ?? null,
             'form_page' => $data['form_page'] ?? null,
-            'form_name' => $data['form_name'] ?? 'callback',
+            'form_name' => 'callback',
             'locale' => $data['locale'] ?? app()->getLocale(),
             'ip_address' => $data['ip_address'] ?? null,
             'user_agent' => $data['user_agent'] ?? null,

@@ -24,6 +24,7 @@ class LeadTagFactory extends Factory
                 'lt' => $name,
                 'pl' => $name,
             ],
+            'description_translations' => null,
             'color' => '#2563eb',
             'is_system' => false,
             'is_active' => true,

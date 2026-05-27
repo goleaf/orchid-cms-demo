@@ -11,9 +11,6 @@ class SaveBranchAction
      */
     public function handle(Branch $branch, array $attributes): Branch
     {
-        $branch->fill($attributes);
-        $branch->save();
-
-        return $branch;
+        return app(CreateOrUpdateBranchAction::class)->handle($branch, $attributes);
     }
 }

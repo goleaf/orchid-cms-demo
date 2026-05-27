@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Enums\LeadStatus;
 use App\Enums\LeadTaskPriority;
+use App\Models\Course;
 use App\Models\Lead;
 use App\Models\User;
 use App\Notifications\EnrollmentLeadAutoReplyNotification;
@@ -30,6 +31,19 @@ class CreateWebsiteLeadAction
         $data = array_merge($tracking, $data);
         $context = app(ResolveWebsiteCourseContextAction::class)->handle($data);
         $data['phone'] = app(NormalizePhoneAction::class)->handle($data['phone'] ?? null);
+        $fullName = trim((string) ($data['full_name'] ?? trim((string) ($data['first_name'] ?? '').' '.(string) ($data['last_name'] ?? ''))));
+        $firstName = filled($data['first_name'] ?? null)
+            ? (string) $data['first_name']
+            : trim(str($fullName)->before(' ')->toString());
+        $lastName = filled($data['last_name'] ?? null)
+            ? (string) $data['last_name']
+            : (filled($fullName) ? trim(str($fullName)->after(' ')->toString()) : null);
+        $course = filled($context['course_id'])
+            ? Course::query()
+                ->select(['id', 'course_category_id', 'license_category'])
+                ->whereKey($context['course_id'])
+                ->first()
+            : null;
 
         $manager = User::query()
             ->select(['id', 'name', 'email'])
@@ -43,27 +57,27 @@ class CreateWebsiteLeadAction
 
         $lead = Lead::query()->create([
             'uuid' => (string) Str::uuid(),
-            'full_name' => trim((string) ($data['first_name'] ?? '').' '.(string) ($data['last_name'] ?? '')),
+            'full_name' => filled($fullName) ? $fullName : null,
             'marketing_campaign_id' => null,
             'responsible_manager_id' => $manager?->id,
             'assigned_by_user_id' => null,
             'assigned_at' => $manager !== null ? now() : null,
             'branch_id' => $context['branch_id'],
             'training_program_id' => $context['course_id'],
-            'course_category_id' => $context['course_category_id'],
+            'course_category_id' => $context['course_category_id'] ?? $course?->course_category_id,
             'training_group_id' => $context['training_group_id'],
             'instructor_id' => $data['instructor_id'] ?? null,
             'converted_student_profile_id' => null,
             'duplicate_of_id' => $duplicate?->id,
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'] ?? null,
+            'first_name' => $firstName ?: tkey('crm.leads.fallback.lead'),
+            'last_name' => filled($lastName) ? $lastName : null,
             'email' => $data['email'] ?? null,
             'phone' => $data['phone'] ?? null,
-            'messenger' => $data['messenger'] ?? null,
+            'messenger' => $data['messenger'] ?? $data['preferred_messenger'] ?? null,
             'city' => $data['city'] ?? null,
             'source' => 'website',
             'status' => LeadStatus::New,
-            'license_category' => $data['license_category'] ?? null,
+            'license_category' => $data['license_category'] ?? $course?->license_category,
             'preferred_format' => $data['preferred_format'] ?? null,
             'preferred_language' => $data['preferred_language'] ?? null,
             'preferred_time' => $data['preferred_time'] ?? null,

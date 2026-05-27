@@ -20,15 +20,23 @@ class MarketingLeadTaskFactory extends Factory
      */
     public function definition(): array
     {
+        $title = $this->faker->sentence(5);
+
         return [
             'marketing_lead_id' => MarketingLead::factory(),
             'assigned_to_user_id' => null,
             'created_by_user_id' => null,
-            'title' => $this->faker->sentence(5),
+            'title' => $title,
+            'title_translations' => [
+                'ru' => $title,
+                'en' => $title,
+            ],
+            'description_translations' => null,
             'status' => LeadTaskStatus::Open,
             'priority' => LeadTaskPriority::Normal,
             'due_at' => now()->addHours($this->faker->numberBetween(1, 48)),
             'completed_at' => null,
+            'cancelled_at' => null,
             'notes' => $this->faker->optional()->sentence(),
         ];
     }

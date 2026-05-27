@@ -24,6 +24,7 @@ class LeadLostReasonFactory extends Factory
                 'lt' => $name,
                 'pl' => $name,
             ],
+            'description_translations' => null,
             'color' => '#dc2626',
             'is_system' => false,
             'is_active' => true,
