@@ -16,6 +16,7 @@ class PhoneOrEmailRequiredRule implements DataAwareRule, ValidationRule
     public function __construct(
         private readonly string $phoneField = 'phone',
         private readonly string $emailField = 'email',
+        private readonly string $messageKey = 'website.validation.phone_or_email_required',
     ) {}
 
     /**
@@ -34,6 +35,6 @@ class PhoneOrEmailRequiredRule implements DataAwareRule, ValidationRule
             return;
         }
 
-        $fail(tkey('website.validation.phone_or_email_required'));
+        $fail(tkey($this->messageKey));
     }
 }

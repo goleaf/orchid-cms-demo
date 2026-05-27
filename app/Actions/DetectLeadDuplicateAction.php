@@ -20,20 +20,28 @@ class DetectLeadDuplicateAction
             return null;
         }
 
-        return MarketingLead::query()
+        $baseQuery = MarketingLead::query()
             ->forLeadList()
-            ->when($currentLead?->exists, fn (Builder $query): Builder => $query->whereKeyNot($currentLead->getKey()))
-            ->where(function (Builder $query) use ($email, $normalizedPhone): void {
-                if (filled($email)) {
-                    $query->where('email', $email);
-                }
+            ->when($currentLead?->exists, fn (Builder $query): Builder => $query->whereKeyNot($currentLead->getKey()));
 
-                if (filled($normalizedPhone)) {
-                    $method = filled($email) ? 'orWhere' : 'where';
-                    $query->{$method}('normalized_phone', $normalizedPhone);
-                }
-            })
-            ->orderBy('created_at')
-            ->first();
+        if (filled($normalizedPhone)) {
+            $phoneMatch = (clone $baseQuery)
+                ->where('normalized_phone', $normalizedPhone)
+                ->orderBy('created_at')
+                ->first();
+
+            if ($phoneMatch !== null) {
+                return $phoneMatch;
+            }
+        }
+
+        if (filled($email)) {
+            return (clone $baseQuery)
+                ->where('email', 'like', $email)
+                ->orderBy('created_at')
+                ->first();
+        }
+
+        return null;
     }
 }

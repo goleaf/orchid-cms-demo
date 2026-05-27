@@ -10,7 +10,7 @@ use App\Actions\CompleteLeadTaskAction;
 use App\Actions\CreateLeadTaskAction;
 use App\Actions\MarkLeadDuplicateAction;
 use App\Actions\MarkLeadLostAction;
-use App\Actions\MoveLeadToStatusAction;
+use App\Actions\MarkLeadSpamAction;
 use App\Actions\PrepareLeadForEnrollmentAction;
 use App\Actions\SaveMarketingLeadCrmAction;
 use App\Enums\LeadStatus;
@@ -775,9 +775,9 @@ class LeadEditScreen extends Screen
         return redirect()->route('platform.marketing.leads.edit', $lead);
     }
 
-    public function markSpam(MarketingLead $lead, LeadStatusActionRequest $request, MoveLeadToStatusAction $moveLead): RedirectResponse
+    public function markSpam(MarketingLead $lead, LeadStatusActionRequest $request, MarkLeadSpamAction $markLeadSpam): RedirectResponse
     {
-        $moveLead->handle($lead, LeadStatus::Spam, $request->user(), tkey('crm.activities.reasons.marked_spam'));
+        $markLeadSpam->handle($lead, $request->user(), tkey('crm.activities.reasons.marked_spam'));
 
         Toast::info(tkey('crm.leads.messages.marked_spam'));
 

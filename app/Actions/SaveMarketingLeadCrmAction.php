@@ -29,6 +29,7 @@ class SaveMarketingLeadCrmAction
     ): MarketingLead {
         $lead ??= new MarketingLead([
             'uuid' => (string) Str::uuid(),
+            'lead_number' => app(GenerateLeadNumberAction::class)->handle(),
             'status' => LeadStatus::New,
             'last_status_changed_at' => now(),
             'created_by_user_id' => $user?->id,

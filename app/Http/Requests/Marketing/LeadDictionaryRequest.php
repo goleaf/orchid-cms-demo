@@ -4,6 +4,8 @@ namespace App\Http\Requests\Marketing;
 
 use App\Services\TranslatableContentManager;
 use App\Support\Crm\LeadDictionaryRegistry;
+use App\Rules\DictionaryCodeRule;
+use App\Rules\TranslatedDictionaryNameRequiredRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
@@ -41,6 +43,7 @@ class LeadDictionaryRequest extends FormRequest
                 'required',
                 'string',
                 'max:120',
+                new DictionaryCodeRule,
                 Rule::unique($prototype->getTable(), $keyColumn)->ignore($this->recordId()),
             ],
             'item.name' => ['nullable', 'string', 'max:255'],
@@ -55,6 +58,7 @@ class LeadDictionaryRequest extends FormRequest
             'item.is_spam' => ['nullable', 'boolean'],
             'item.sort_order' => ['required', 'integer', 'min:0'],
             ...app(TranslatableContentManager::class)->validationRules(['name'], ['nullable', 'string', 'max:255']),
+            'name_translations' => [new TranslatedDictionaryNameRequiredRule],
             ...app(TranslatableContentManager::class)->validationRules(['description'], ['nullable', 'string', 'max:1000']),
         ];
     }

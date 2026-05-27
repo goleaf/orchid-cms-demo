@@ -9,27 +9,27 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportMarketingLeadsCsvAction
 {
-    public function handle(Builder $query): StreamedResponse
+    public function handle(Builder $query, bool $includeMarketing = true): StreamedResponse
     {
         $filename = 'crm-leads-'.now()->format('Y-m-d-His').'.csv';
 
-        return response()->streamDownload(function () use ($query): void {
+        return response()->streamDownload(function () use ($query, $includeMarketing): void {
             $output = fopen('php://output', 'w');
 
             if ($output === false) {
                 return;
             }
 
-            fputcsv($output, $this->headings());
+            fputcsv($output, $this->headings($includeMarketing));
 
             $sourceLabels = LeadSource::translatedLabels();
             $exportQuery = clone $query;
 
             $exportQuery
                 ->reorder('id')
-                ->chunkById(200, function ($leads) use ($output, $sourceLabels): void {
+                ->chunkById(200, function ($leads) use ($output, $sourceLabels, $includeMarketing): void {
                     foreach ($leads as $lead) {
-                        $this->writeRow($output, $lead, $sourceLabels);
+                        $this->writeRow($output, $lead, $sourceLabels, $includeMarketing);
                     }
                 });
 
@@ -40,9 +40,9 @@ class ExportMarketingLeadsCsvAction
     /**
      * @return array<int, string>
      */
-    private function headings(): array
+    private function headings(bool $includeMarketing): array
     {
-        return [
+        $headings = [
             tkey('crm.leads.columns.id'),
             tkey('crm.leads.fields.uuid'),
             tkey('crm.leads.columns.full_name'),
@@ -57,14 +57,24 @@ class ExportMarketingLeadsCsvAction
             tkey('crm.leads.columns.created_at'),
             tkey('crm.leads.fields.last_contacted_at'),
             tkey('crm.leads.fields.next_follow_up_at'),
-            tkey('crm.leads.fields.utm_source'),
-            tkey('crm.leads.fields.utm_medium'),
-            tkey('crm.leads.fields.utm_campaign'),
-            tkey('crm.leads.fields.utm_content'),
-            tkey('crm.leads.fields.utm_term'),
-            tkey('crm.leads.fields.referrer'),
-            tkey('crm.leads.fields.landing_page'),
-            tkey('crm.leads.fields.form_page'),
+        ];
+
+        if ($includeMarketing) {
+            $headings = [
+                ...$headings,
+                tkey('crm.leads.fields.utm_source'),
+                tkey('crm.leads.fields.utm_medium'),
+                tkey('crm.leads.fields.utm_campaign'),
+                tkey('crm.leads.fields.utm_content'),
+                tkey('crm.leads.fields.utm_term'),
+                tkey('crm.leads.fields.referrer'),
+                tkey('crm.leads.fields.landing_page'),
+                tkey('crm.leads.fields.form_page'),
+            ];
+        }
+
+        return [
+            ...$headings,
             tkey('crm.leads.fields.comment'),
             tkey('crm.leads.fields.internal_comment'),
         ];
@@ -73,9 +83,9 @@ class ExportMarketingLeadsCsvAction
     /**
      * @param  array<string, string>  $sourceLabels
      */
-    private function writeRow(mixed $output, MarketingLead $lead, array $sourceLabels): void
+    private function writeRow(mixed $output, MarketingLead $lead, array $sourceLabels, bool $includeMarketing): void
     {
-        fputcsv($output, [
+        $row = [
             $lead->id,
             $lead->uuid,
             $lead->fullName(),
@@ -90,14 +100,24 @@ class ExportMarketingLeadsCsvAction
             $lead->created_at?->format('Y-m-d H:i:s'),
             $lead->last_contacted_at?->format('Y-m-d H:i:s'),
             $lead->next_follow_up_at?->format('Y-m-d H:i:s'),
-            $lead->utm_source,
-            $lead->utm_medium,
-            $lead->utm_campaign,
-            $lead->utm_content,
-            $lead->utm_term,
-            $lead->referrer_url,
-            $lead->landing_page,
-            $lead->form_page,
+        ];
+
+        if ($includeMarketing) {
+            $row = [
+                ...$row,
+                $lead->utm_source,
+                $lead->utm_medium,
+                $lead->utm_campaign,
+                $lead->utm_content,
+                $lead->utm_term,
+                $lead->referrer_url,
+                $lead->landing_page,
+                $lead->form_page,
+            ];
+        }
+
+        fputcsv($output, [
+            ...$row,
             $lead->message,
             $lead->internal_comment,
         ]);

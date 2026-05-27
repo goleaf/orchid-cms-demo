@@ -45,6 +45,7 @@ class CreateCallbackLeadAction
 
         $lead = MarketingLead::query()->create([
             'uuid' => (string) Str::uuid(),
+            'lead_number' => app(GenerateLeadNumberAction::class)->handle(),
             'marketing_campaign_id' => null,
             'responsible_manager_id' => $manager?->id,
             'assigned_by_user_id' => null,
@@ -104,7 +105,7 @@ class CreateCallbackLeadAction
         app(RecordLeadActivityAction::class)->handle(
             $lead,
             $manager,
-            'created',
+            'created_from_website',
             tkey('crm.activities.titles.created'),
             tkey('website.callback.crm_comment'),
         );

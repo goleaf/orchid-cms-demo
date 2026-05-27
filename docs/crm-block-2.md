@@ -35,27 +35,45 @@ Managers can add notes, log communication and calls, create and complete tasks, 
 
 ## Architecture
 
-CRM write operations use Actions and Form Requests. Custom validation Rules handle active lead sources, channel-compatible message templates, and preventing a lead from being marked as its own duplicate.
+CRM write operations use Actions and Form Requests. Custom validation Rules handle lead state, status transitions, active dictionaries, contact requirements, marketing data access, channel-compatible message templates, and preventing a lead from being marked as its own duplicate.
 
 Seeded dictionaries are built through model factories while preserving update-or-create behavior for stable system records. Tests use factories for CRM records and seeded dictionaries for localized labels.
 
 ### Actions
 
+- `GenerateLeadNumberAction`
+- `NormalizeLeadPhoneAction`
+- `CreateLeadAction`
+- `CreateWebsiteLeadAction`
+- `CreateCallbackLeadAction`
+- `UpdateLeadAction`
+- `ChangeLeadStatusAction`
 - `SaveMarketingLeadCrmAction`
 - `UpdateMarketingLeadCrmAction`
 - `AssignLeadManagerAction`
 - `MoveLeadToStatusAction`
+- `AddLeadNoteAction`
 - `MarkLeadLostAction`
 - `MarkLeadDuplicateAction`
+- `MarkLeadSpamAction`
+- `ReopenLeadAction`
+- `LogLeadCallAction`
 - `PrepareLeadForEnrollmentAction`
+- `PrepareLeadForStudentConversionAction`
 - `DetectLeadDuplicateAction`
 - `RecordLeadActivityAction`
 - `AddLeadCommentAction`
 - `AddLeadCommunicationAction`
 - `CreateLeadTaskAction`
 - `CompleteLeadTaskAction`
+- `CancelLeadTaskAction`
+- `ExportLeadsCsvAction`
 - `ExportMarketingLeadsCsvAction`
 - `GetLeadPipelineAction`
+- `CreateOrUpdateLeadStatusAction`
+- `CreateOrUpdateLeadSourceAction`
+- `CreateOrUpdateLeadLostReasonAction`
+- `CreateOrUpdateLeadTagAction`
 - `SaveMarketingMessageTemplateAction`
 - `DeleteMarketingMessageTemplateAction`
 - `SaveLeadDictionaryAction`
@@ -65,6 +83,28 @@ Seeded dictionaries are built through model factories while preserving update-or
 
 ### Form Requests
 
+- `StoreLeadRequest`
+- `UpdateLeadRequest`
+- `ChangeLeadStatusRequest`
+- `AssignLeadManagerRequest`
+- `AddLeadNoteRequest`
+- `LogLeadCallRequest`
+- `StoreLeadTaskRequest`
+- `CompleteLeadTaskRequest`
+- `CancelLeadTaskRequest`
+- `MarkLeadLostRequest`
+- `MarkLeadDuplicateRequest`
+- `MarkLeadSpamRequest`
+- `ReopenLeadRequest`
+- `ExportLeadsRequest`
+- `StoreLeadStatusRequest`
+- `UpdateLeadStatusRequest`
+- `StoreLeadSourceRequest`
+- `UpdateLeadSourceRequest`
+- `StoreLeadLostReasonRequest`
+- `UpdateLeadLostReasonRequest`
+- `StoreLeadTagRequest`
+- `UpdateLeadTagRequest`
 - `LeadCrmRequest`
 - `LeadCommentRequest`
 - `LeadCommunicationRequest`
@@ -82,6 +122,24 @@ Seeded dictionaries are built through model factories while preserving update-or
 
 ### Custom Rules
 
+- `PhoneOrEmailRequiredRule`
+- `ValidLeadStatusTransitionRule`
+- `LeadCanBeUpdatedRule`
+- `LeadCanBeConvertedRule`
+- `LeadIsNotDuplicateOfItselfRule`
+- `LeadDuplicateOriginalRule`
+- `ActiveLeadStatusRule`
+- `ActiveLeadSourceRule`
+- `ActiveLeadLostReasonRule`
+- `ActiveLeadTagRule`
+- `ValidLeadPriorityRule`
+- `ValidLeadTaskStatusRule`
+- `ValidLeadTaskPriorityRule`
+- `ValidLeadCallResultRule`
+- `FutureFollowUpDateRule`
+- `TranslatedDictionaryNameRequiredRule`
+- `DictionaryCodeRule`
+- `LeadMarketingAccessRule`
 - `ActiveLeadSource`
 - `ActiveMessageTemplateForChannel`
 - `DifferentMarketingLead`

@@ -3,7 +3,8 @@
 namespace App\Http\Requests\Marketing;
 
 use App\Models\MarketingLead;
-use App\Rules\DifferentMarketingLead;
+use App\Rules\LeadDuplicateOriginalRule;
+use App\Rules\LeadIsNotDuplicateOfItselfRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -28,7 +29,8 @@ class LeadDuplicateRequest extends FormRequest
                 'required',
                 'integer',
                 Rule::exists(MarketingLead::class, 'id'),
-                new DifferentMarketingLead($leadId),
+                new LeadIsNotDuplicateOfItselfRule($leadId),
+                new LeadDuplicateOriginalRule($leadId),
             ],
             'duplicate.comment' => ['nullable', 'string', 'max:2000'],
         ];

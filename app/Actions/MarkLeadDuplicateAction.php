@@ -18,6 +18,18 @@ class MarkLeadDuplicateAction
     ): MarketingLead {
         $lead->forceFill(['duplicate_of_id' => $originalLeadId])->save();
 
-        return $this->moveLead->handle($lead->refresh(), LeadStatus::Duplicate, $user, $comment);
+        $lead = $this->moveLead->handle($lead->refresh(), LeadStatus::Duplicate, $user, $comment);
+
+        app(RecordLeadActivityAction::class)->handle(
+            $lead,
+            $user,
+            'marked_duplicate',
+            tkey('crm.activities.types.marked_duplicate'),
+            $comment,
+            null,
+            (string) $originalLeadId,
+        );
+
+        return $lead->refresh();
     }
 }

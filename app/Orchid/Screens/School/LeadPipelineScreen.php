@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Orchid\Screens\School;
 
 use App\Actions\GetLeadPipelineAction;
-use App\Actions\MoveLeadToStatusAction;
+use App\Actions\ChangeLeadStatusAction;
 use App\Http\Requests\Marketing\LeadPipelineMoveRequest;
 use App\Models\MarketingLead;
 use Illuminate\Http\RedirectResponse;
@@ -63,7 +63,7 @@ class LeadPipelineScreen extends Screen
         ];
     }
 
-    public function moveLead(LeadPipelineMoveRequest $request, MoveLeadToStatusAction $moveLead): RedirectResponse
+    public function moveLead(LeadPipelineMoveRequest $request, ChangeLeadStatusAction $moveLead): RedirectResponse
     {
         $lead = MarketingLead::query()
             ->forCrmDetail()

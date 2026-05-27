@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\School;
 
-use App\Actions\ExportMarketingLeadsCsvAction;
+use App\Actions\ExportLeadsCsvAction;
 use App\Enums\LeadStatus;
 use App\Models\Branch;
 use App\Models\LeadSource;
@@ -336,13 +336,13 @@ class LeadListScreen extends Screen
         ], fn (mixed $value): bool => filled($value)));
     }
 
-    public function export(Request $request, ExportMarketingLeadsCsvAction $exportLeads): StreamedResponse
+    public function export(Request $request, ExportLeadsCsvAction $exportLeads): StreamedResponse
     {
         abort_unless($request->user()?->hasAccess('crm.leads.export'), 403);
 
         $this->filters = $this->filtersFromRequest($request);
 
-        return $exportLeads->handle($this->leadQuery($request));
+        return $exportLeads->handle($this->leadQuery($request), $request->user());
     }
 
     /**

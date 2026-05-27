@@ -12,8 +12,16 @@ use App\Models\MarketingLead;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
 use App\Models\User;
-use App\Rules\ActiveLeadSource;
-use App\Rules\DifferentMarketingLead;
+use App\Rules\ActiveLeadLostReasonRule;
+use App\Rules\ActiveLeadSourceRule;
+use App\Rules\ActiveLeadStatusRule;
+use App\Rules\ActiveLeadTagRule;
+use App\Rules\FutureFollowUpDateRule;
+use App\Rules\LeadCanBeUpdatedRule;
+use App\Rules\LeadIsNotDuplicateOfItselfRule;
+use App\Rules\PhoneOrEmailRequiredRule;
+use App\Rules\ValidLeadPriorityRule;
+use App\Rules\ValidLeadStatusTransitionRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -38,6 +46,7 @@ class LeadCrmRequest extends FormRequest
 
         return [
             'lead.id' => ['nullable', 'integer', Rule::exists(MarketingLead::class, 'id')],
+            'lead' => [new LeadCanBeUpdatedRule($this->routeLead(), $this->user())],
             'lead.responsible_manager_id' => ['nullable', 'integer', Rule::exists(User::class, 'id')],
             'lead.branch_id' => ['nullable', 'integer', Rule::exists(Branch::class, 'id')],
             'lead.training_program_id' => ['nullable', 'integer', Rule::exists(TrainingProgram::class, 'id')],
@@ -46,12 +55,23 @@ class LeadCrmRequest extends FormRequest
             'lead.first_name' => ['required', 'string', 'max:120'],
             'lead.middle_name' => ['nullable', 'string', 'max:120'],
             'lead.last_name' => ['nullable', 'string', 'max:120'],
-            'lead.email' => ['nullable', 'required_without:lead.phone', 'email:rfc', 'max:190'],
+            'lead.email' => [
+                'nullable',
+                'required_without:lead.phone',
+                'email:rfc',
+                'max:190',
+                new PhoneOrEmailRequiredRule('lead.phone', 'lead.email', 'crm.leads.validation.phone_or_email_required'),
+            ],
             'lead.phone' => ['nullable', 'required_without:lead.email', 'string', 'max:60'],
             'lead.messenger' => ['nullable', 'string', 'max:80'],
             'lead.city' => ['nullable', 'string', 'max:120'],
-            'lead.source' => ['required', 'string', 'max:120', new ActiveLeadSource],
-            'lead_status' => ['required', Rule::enum(LeadStatus::class)],
+            'lead.source' => ['required', 'string', 'max:120', new ActiveLeadSourceRule],
+            'lead_status' => [
+                'required',
+                Rule::enum(LeadStatus::class),
+                new ActiveLeadStatusRule,
+                new ValidLeadStatusTransitionRule($this->routeLead(), $this->user()),
+            ],
             'lead.license_category' => ['nullable', 'string', 'max:40'],
             'lead.preferred_format' => ['nullable', 'string', 'max:60'],
             'lead.preferred_language' => ['nullable', 'string', 'max:60'],
@@ -59,22 +79,27 @@ class LeadCrmRequest extends FormRequest
             'lead.desired_start_date' => ['nullable', 'date'],
             'lead.preferred_gearbox' => ['nullable', 'string', 'max:60'],
             'lead.is_hot' => ['nullable', 'boolean'],
-            'lead.priority' => ['required', Rule::enum(LeadTaskPriority::class)],
+            'lead.priority' => ['required', Rule::enum(LeadTaskPriority::class), new ValidLeadPriorityRule],
             'lead.lead_score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'lead.last_contacted_at' => ['nullable', 'date'],
-            'lead.next_follow_up_at' => ['nullable', 'date'],
+            'lead.next_follow_up_at' => ['nullable', 'date', new FutureFollowUpDateRule],
             'lead.message' => ['nullable', 'string', 'max:2000'],
             'lead.internal_comment' => ['nullable', 'string', 'max:2000'],
-            'lead.lost_reason_code' => ['nullable', 'string', Rule::in(array_keys(LeadLostReason::translatedLabels()))],
+            'lead.lost_reason_code' => [
+                'nullable',
+                'string',
+                Rule::in(array_keys(LeadLostReason::translatedLabels())),
+                new ActiveLeadLostReasonRule,
+            ],
             'lead.rejection_reason' => ['nullable', 'string', 'max:2000'],
             'lead.duplicate_of_id' => [
                 'nullable',
                 'integer',
                 Rule::exists(MarketingLead::class, 'id'),
-                new DifferentMarketingLead($leadId),
+                new LeadIsNotDuplicateOfItselfRule($leadId),
             ],
             'lead.tag_ids' => ['nullable', 'array'],
-            'lead.tag_ids.*' => ['integer', Rule::exists(LeadTag::class, 'id')],
+            'lead.tag_ids.*' => ['integer', Rule::exists(LeadTag::class, 'id'), new ActiveLeadTagRule],
             'lead.consent_accepted' => ['nullable', 'boolean'],
             'lead.consent_text_version' => ['nullable', 'string', 'max:120'],
             'lead_budget_eur' => ['nullable', 'numeric', 'min:0', 'max:100000'],
@@ -130,6 +155,21 @@ class LeadCrmRequest extends FormRequest
         $value = $this->input('lead.id');
 
         return filled($value) ? (int) $value : null;
+    }
+
+    public function routeLead(): ?MarketingLead
+    {
+        $lead = $this->route('lead');
+
+        if ($lead instanceof MarketingLead) {
+            return $lead;
+        }
+
+        $leadId = $this->leadId();
+
+        return $leadId === null
+            ? null
+            : MarketingLead::query()->find($leadId);
     }
 
     public function targetStatus(): LeadStatus

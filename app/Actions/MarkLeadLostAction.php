@@ -21,6 +21,18 @@ class MarkLeadLostAction
             'rejection_reason' => $comment,
         ])->save();
 
-        return $this->moveLead->handle($lead->refresh(), LeadStatus::Lost, $user, $comment);
+        $lead = $this->moveLead->handle($lead->refresh(), LeadStatus::Lost, $user, $comment);
+
+        app(RecordLeadActivityAction::class)->handle(
+            $lead,
+            $user,
+            'marked_lost',
+            tkey('crm.activities.types.marked_lost'),
+            $comment,
+            null,
+            $lostReasonCode,
+        );
+
+        return $lead->refresh();
     }
 }

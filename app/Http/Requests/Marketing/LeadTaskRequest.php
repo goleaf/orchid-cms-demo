@@ -4,6 +4,7 @@ namespace App\Http\Requests\Marketing;
 
 use App\Enums\LeadTaskPriority;
 use App\Models\User;
+use App\Rules\ValidLeadTaskPriorityRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
@@ -25,7 +26,7 @@ class LeadTaskRequest extends FormRequest
             'task.title' => ['required', 'string', 'max:190'],
             'task.notes' => ['nullable', 'string', 'max:2000'],
             'task.assigned_to_user_id' => ['nullable', 'integer', Rule::exists(User::class, 'id')],
-            'task.priority' => ['required', Rule::enum(LeadTaskPriority::class)],
+            'task.priority' => ['required', Rule::enum(LeadTaskPriority::class), new ValidLeadTaskPriorityRule],
             'task.due_at' => ['nullable', 'date'],
         ];
     }

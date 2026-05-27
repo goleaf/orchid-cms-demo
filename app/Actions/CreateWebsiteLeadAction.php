@@ -60,6 +60,7 @@ class CreateWebsiteLeadAction
 
         $lead = Lead::query()->create([
             'uuid' => (string) Str::uuid(),
+            'lead_number' => app(GenerateLeadNumberAction::class)->handle(),
             'full_name' => filled($fullName) ? $fullName : null,
             'marketing_campaign_id' => null,
             'responsible_manager_id' => $manager?->id,
@@ -119,7 +120,7 @@ class CreateWebsiteLeadAction
         app(RecordLeadActivityAction::class)->handle(
             $lead,
             $manager,
-            'created',
+            'created_from_website',
             tkey('crm.activities.titles.created'),
             tkey('crm.activities.messages.public_enrollment_created'),
         );

@@ -1527,3 +1527,54 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T22:29:01+00:00
+
+```json
+{
+  "ts": "2026-05-27T22:29:01+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6b7d-1ea1-7843-b982-cf6e515f968f",
+  "branch": "main",
+  "changed_file_count": 76,
+  "changed_file_groups": {
+    "code": 72,
+    "orchid": 3,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "app/Actions/AddLeadNoteAction.php",
+    "app/Actions/CancelLeadTaskAction.php",
+    "app/Actions/ChangeLeadStatusAction.php",
+    "app/Actions/CreateLeadAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateLeadTagAction.php",
+    "app/Actions/CreateWebsiteLeadAction.php",
+    "app/Actions/DetectLeadDuplicateAction.php",
+    "app/Actions/ExportLeadsCsvAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateLeadNumberAction.php",
+    "app/Actions/LogLeadCallAction.php",
+    "app/Actions/MarkLeadDuplicateAction.php",
+    "app/Actions/MarkLeadLostAction.php",
+    "app/Actions/MarkLeadSpamAction.php",
+    "app/Actions/NormalizeLeadPhoneAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ReopenLeadAction.php",
+    "app/Actions/SaveMarketingLeadCrmAction.php",
+    "app/Actions/UpdateLeadAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

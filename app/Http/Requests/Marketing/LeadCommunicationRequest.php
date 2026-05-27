@@ -5,6 +5,8 @@ namespace App\Http\Requests\Marketing;
 use App\Models\MarketingLeadCommunication;
 use App\Models\MarketingMessageTemplate;
 use App\Rules\ActiveMessageTemplateForChannel;
+use App\Rules\FutureFollowUpDateRule;
+use App\Rules\ValidLeadCallResultRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
@@ -39,10 +41,15 @@ class LeadCommunicationRequest extends FormRequest
             ],
             'communication.client_replied' => ['nullable', 'boolean'],
             'communication.callback_required' => ['nullable', 'boolean'],
-            'communication.callback_required_at' => ['nullable', 'date'],
+            'communication.callback_required_at' => ['nullable', 'date', new FutureFollowUpDateRule],
             'communication.call_recording_url' => ['nullable', 'url', 'max:500'],
             'communication.call_recording_reference' => ['nullable', 'string', 'max:190'],
-            'communication.call_result' => ['nullable', 'string', Rule::in(MarketingLeadCommunication::callResultValues())],
+            'communication.call_result' => [
+                'nullable',
+                'string',
+                Rule::in(MarketingLeadCommunication::callResultValues()),
+                new ValidLeadCallResultRule,
+            ],
             'communication.duration_minutes' => ['nullable', 'integer', 'min:0', 'max:1440'],
         ];
     }

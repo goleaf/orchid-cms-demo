@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Marketing;
 
 use App\Models\LeadLostReason;
+use App\Rules\ActiveLeadLostReasonRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -20,7 +21,12 @@ class LeadLostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'lost.reason' => ['required', 'string', Rule::in(array_keys(LeadLostReason::translatedLabels()))],
+            'lost.reason' => [
+                'required',
+                'string',
+                Rule::in(array_keys(LeadLostReason::translatedLabels())),
+                new ActiveLeadLostReasonRule,
+            ],
             'lost.comment' => ['nullable', 'string', 'max:2000'],
         ];
     }
