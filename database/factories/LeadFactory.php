@@ -7,7 +7,9 @@ use App\Models\Branch;
 use App\Models\Course;
 use App\Models\CourseCategory;
 use App\Models\Lead;
+use App\Models\LeadTag;
 use App\Models\TrainingGroup;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -104,6 +106,119 @@ class LeadFactory extends Factory
         ]);
     }
 
+    public function newLead(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::New,
+            'closed_at' => null,
+            'converted_at' => null,
+        ]);
+    }
+
+    public function noAnswer(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::NoAnswer,
+            'last_contacted_at' => now()->subHour(),
+            'contacted_at' => now()->subHour(),
+        ]);
+    }
+
+    public function contacted(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::Contacted,
+            'last_contacted_at' => now()->subMinutes(30),
+            'contacted_at' => now()->subMinutes(30),
+        ]);
+    }
+
+    public function waitingDocuments(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::WaitingDocuments,
+            'next_follow_up_at' => now()->addDay(),
+        ]);
+    }
+
+    public function waitingPayment(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::WaitingPayment,
+            'next_follow_up_at' => now()->addDay(),
+        ]);
+    }
+
+    public function readyToEnroll(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::ReadyToEnroll,
+            'next_follow_up_at' => now()->addHours(2),
+        ]);
+    }
+
+    public function enrolled(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::Enrolled,
+            'converted_at' => now(),
+            'closed_at' => now(),
+        ]);
+    }
+
+    public function lost(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::Lost,
+            'lost_reason_code' => 'other',
+            'closed_at' => now(),
+        ]);
+    }
+
+    public function duplicate(?Lead $original = null): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::Duplicate,
+            'duplicate_of_id' => $original?->getKey() ?? Lead::factory(),
+            'closed_at' => now(),
+        ]);
+    }
+
+    public function spam(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::Spam,
+            'closed_at' => now(),
+        ]);
+    }
+
+    public function archived(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::Archived,
+            'closed_at' => now(),
+        ]);
+    }
+
+    public function open(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::New,
+            'closed_at' => null,
+            'converted_at' => null,
+            'duplicate_of_id' => null,
+            'lost_reason_code' => null,
+        ]);
+    }
+
+    public function closed(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::Archived,
+            'closed_at' => now(),
+        ]);
+    }
+
     public function callback(): static
     {
         return $this->state(fn (): array => [
@@ -120,6 +235,19 @@ class LeadFactory extends Factory
             'source' => 'contact_form',
             'form_name' => 'contact',
             'message' => 'Please contact me about driving lessons.',
+        ]);
+    }
+
+    public function manual(): static
+    {
+        return $this->state(fn (): array => [
+            'source' => 'phone',
+            'form_name' => null,
+            'utm_source' => null,
+            'utm_medium' => null,
+            'utm_campaign' => null,
+            'landing_page' => null,
+            'form_page' => null,
         ]);
     }
 
@@ -160,6 +288,63 @@ class LeadFactory extends Factory
         ]);
     }
 
+    public function assigned(User|int|null $manager = null): static
+    {
+        return $this->state(function () use ($manager): array {
+            $managerModel = $manager instanceof User ? $manager : null;
+
+            if ($managerModel === null && $manager === null) {
+                $managerModel = User::factory()->create();
+            }
+
+            return [
+                'responsible_manager_id' => $managerModel?->getKey() ?? $manager,
+                'assigned_at' => now(),
+            ];
+        });
+    }
+
+    public function unassigned(): static
+    {
+        return $this->state(fn (): array => [
+            'responsible_manager_id' => null,
+            'assigned_by_user_id' => null,
+            'assigned_at' => null,
+        ]);
+    }
+
+    public function overdue(): static
+    {
+        return $this->open()->state(fn (): array => [
+            'next_follow_up_at' => now()->subHour(),
+        ]);
+    }
+
+    public function dueToday(): static
+    {
+        return $this->open()->state(fn (): array => [
+            'next_follow_up_at' => now()->addHours(2),
+        ]);
+    }
+
+    public function converted(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => LeadStatus::Enrolled,
+            'converted_at' => now(),
+            'closed_at' => now(),
+        ]);
+    }
+
+    public function notConverted(): static
+    {
+        return $this->state(fn (): array => [
+            'converted_at' => null,
+            'converted_student_profile_id' => null,
+            'converted_enrollment_id' => null,
+        ]);
+    }
+
     public function forCourse(Course|int|null $course = null): static
     {
         return $this->state(function () use ($course): array {
@@ -174,6 +359,11 @@ class LeadFactory extends Factory
                 'course_category_id' => $courseModel?->course_category_id,
             ];
         });
+    }
+
+    public function withCourse(Course|int|null $course = null): static
+    {
+        return $this->forCourse($course);
     }
 
     public function forBranch(Branch|int|null $branch = null): static
@@ -191,6 +381,11 @@ class LeadFactory extends Factory
         });
     }
 
+    public function withBranch(Branch|int|null $branch = null): static
+    {
+        return $this->forBranch($branch);
+    }
+
     public function forTrainingGroup(TrainingGroup|int|null $group = null): static
     {
         return $this->state(function () use ($group): array {
@@ -206,6 +401,62 @@ class LeadFactory extends Factory
                 'course_category_id' => $groupModel?->course_category_id ?: $groupModel?->course?->course_category_id,
                 'branch_id' => $groupModel?->branch_id,
             ];
+        });
+    }
+
+    public function withTrainingGroup(TrainingGroup|int|null $group = null): static
+    {
+        return $this->forTrainingGroup($group);
+    }
+
+    public function highPriority(): static
+    {
+        return $this->state(fn (): array => ['priority' => 'high']);
+    }
+
+    public function urgent(): static
+    {
+        return $this->state(fn (): array => ['priority' => 'urgent']);
+    }
+
+    public function hot(): static
+    {
+        return $this->state(fn (): array => [
+            'is_hot' => true,
+            'priority' => 'high',
+            'lead_score' => 85,
+        ])->withTags(['hot']);
+    }
+
+    /**
+     * @param  array<int, LeadTag|int|string>|null  $tags
+     */
+    public function withTags(?array $tags = null): static
+    {
+        return $this->afterCreating(function (Lead $lead) use ($tags): void {
+            $tagIds = collect($tags ?? [LeadTag::factory()->hot()->create()])
+                ->map(function (LeadTag|int|string $tag): int {
+                    if ($tag instanceof LeadTag) {
+                        return (int) $tag->getKey();
+                    }
+
+                    if (is_int($tag)) {
+                        return $tag;
+                    }
+
+                    return (int) LeadTag::query()
+                        ->firstOrCreate(
+                            ['slug' => $tag],
+                            LeadTag::factory()
+                                ->state(['slug' => $tag])
+                                ->make()
+                                ->only((new LeadTag)->getFillable()),
+                        )
+                        ->getKey();
+                })
+                ->all();
+
+            $lead->tags()->syncWithoutDetaching($tagIds);
         });
     }
 }

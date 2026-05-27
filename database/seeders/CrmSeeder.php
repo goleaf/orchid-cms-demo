@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class CrmDictionarySeeder extends Seeder
+class CrmSeeder extends Seeder
 {
     public function run(): void
     {
@@ -13,6 +13,11 @@ class CrmDictionarySeeder extends Seeder
             CrmSourceSeeder::class,
             CrmLostReasonSeeder::class,
             CrmTagSeeder::class,
+            CrmTranslationSeeder::class,
         ]);
+
+        if (app()->environment(['local', 'demo'])) {
+            $this->call(CrmDemoLeadSeeder::class);
+        }
     }
 }

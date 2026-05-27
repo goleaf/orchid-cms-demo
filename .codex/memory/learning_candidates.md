@@ -1578,3 +1578,41 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T22:48:35+00:00
+
+```json
+{
+  "ts": "2026-05-27T22:48:35+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6b8e-39f1-7391-b12f-82cd0fbfe979",
+  "branch": "main",
+  "changed_file_count": 18,
+  "changed_file_groups": {
+    "code": 17,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "atabase/factories/LeadActivityFactory.php",
+    "database/factories/LeadFactory.php",
+    "[REDACTED_SECRET].php",
+    "database/factories/LeadSourceFactory.php",
+    "database/factories/LeadStatusFactory.php",
+    "database/factories/LeadTagFactory.php",
+    "database/factories/LeadTaskFactory.php",
+    "database/seeders/Concerns/",
+    "database/seeders/CrmDemoLeadSeeder.php",
+    "database/seeders/CrmDictionarySeeder.php",
+    "database/seeders/CrmLostReasonSeeder.php",
+    "database/seeders/CrmSeeder.php",
+    "database/seeders/CrmSourceSeeder.php",
+    "database/seeders/CrmStatusSeeder.php",
+    "database/seeders/CrmTagSeeder.php",
+    "database/seeders/CrmTranslationSeeder.php",
+    "docs/crm-block-2.md",
+    "tests/Feature/CrmFactoriesSeedersTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

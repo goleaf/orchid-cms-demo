@@ -206,7 +206,9 @@ Display and state helpers include `display_name`, `display_contact`, `is_closed`
 
 ## Factories And Seeders
 
-Factories exist for CRM leads, dictionaries, tasks, activities, comments, communications, documents, status history, message templates, and campaigns. CRM dictionaries are seeded by `CrmDictionarySeeder` using factory-built payloads and stable `updateOrCreate` keys.
+Factories exist for CRM leads, statuses, sources, lost reasons, tags, tasks, activities, comments, communications, documents, status history, message templates, and campaigns. Call logs are stored as phone `MarketingLeadCommunication` records, so there is no separate `LeadCallLog` table or factory.
+
+CRM dictionaries are seeded by split idempotent seeders: `CrmStatusSeeder`, `CrmSourceSeeder`, `CrmLostReasonSeeder`, and `CrmTagSeeder`. `CrmDictionarySeeder` remains as a compatibility wrapper over those seeders, while `CrmSeeder` also runs CRM translations. Demo CRM leads are created by `CrmDemoLeadSeeder` through factories and stable demo email keys.
 
 The application demo data in `DatabaseSeeder` seeds local driving school CRM examples, calls `CrmDictionarySeeder`, and uses `SuperadminPermissions::enabled()` for the local superadmin permission set.
 
@@ -277,6 +279,7 @@ Run focused CRM verification first:
 php artisan test --filter=DrivingSchoolPlatformTest
 php artisan test --filter=CrmLocalizationTest
 php artisan test --filter=CrmActionsRequestsRulesTest
+php artisan test --filter=CrmFactoriesSeedersTest
 php artisan test --filter=SuperadminRoleTest
 ```
 
