@@ -12,6 +12,7 @@ use Database\Seeders\LanguageSeeder;
 use Database\Seeders\SystemTranslationSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class SystemLocalizationTest extends TestCase
@@ -107,15 +108,17 @@ class SystemLocalizationTest extends TestCase
     {
         $this->seed([LanguageSeeder::class, SystemTranslationSeeder::class]);
 
+        Route::middleware(['web'])->get('/_test/public-locale', fn () => view('site.layout'));
+
         $this
-            ->from('/')
+            ->from('/_test/public-locale')
             ->post(route('locale.switch'), ['locale' => 'en'])
-            ->assertRedirect('/')
+            ->assertRedirect('/_test/public-locale')
             ->assertSessionHas(LocaleManager::SESSION_KEY, 'en');
 
         $this
             ->withSession([LocaleManager::SESSION_KEY => 'en'])
-            ->get('/')
+            ->get('/_test/public-locale')
             ->assertOk()
             ->assertSee('<html lang="en">', false)
             ->assertSee('Knowledge base');
@@ -194,10 +197,12 @@ class SystemLocalizationTest extends TestCase
 
         $user = User::factory()->create();
 
+        Route::middleware(['web'])->get('/_test/public-locale', fn () => view('site.layout'));
+
         $this
             ->actingAs($user)
             ->withSession([LocaleManager::SESSION_KEY => 'ru'])
-            ->from('/')
+            ->from('/_test/public-locale')
             ->post(route('locale.switch'), ['locale' => 'en'])
             ->assertRedirectBackWithErrors(['locale'])
             ->assertSessionHas(LocaleManager::SESSION_KEY, 'ru');

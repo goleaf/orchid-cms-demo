@@ -125,7 +125,7 @@ class CrmLocalizationTest extends TestCase
                     'is_active' => '1',
                     'sort_order' => 60,
                 ],
-                'translations' => [
+                'name_translations' => [
                     'ru' => 'Реклама Google',
                     'en' => 'Google advertising',
                     'lt' => 'Google reklama',

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\School;
 
-use App\Models\Language;
+use App\Orchid\Support\TranslatableFields;
+use App\Services\TranslatableContentManager;
 use App\Support\Crm\LeadDictionaryRegistry;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
@@ -30,8 +30,6 @@ class LeadDictionaryEditScreen extends Screen
 
     private ?Model $item = null;
 
-    private ?Collection $languages = null;
-
     public function query(string $dictionary, ?string $record = null): iterable
     {
         $this->dictionary = $dictionary;
@@ -51,18 +49,12 @@ class LeadDictionaryEditScreen extends Screen
             ]);
         }
 
-        $languages = Language::active()->ordered()->get();
         $this->item = $item;
-        $this->languages = $languages;
 
         return [
             'dictionary' => $dictionary,
             'item' => $item,
-            'translations' => $languages
-                ->mapWithKeys(fn (Language $language): array => [
-                    $language->code => $item->getTranslation('name', $language->code, $language->code),
-                ])
-                ->all(),
+            'name_translations' => $item->getTranslations('name'),
         ];
     }
 
@@ -127,12 +119,18 @@ class LeadDictionaryEditScreen extends Screen
                     ->required(),
             ]),
 
-            ...$this->translationLayouts(),
+            TranslatableFields::input('name', 'crm.dictionaries.fields.name_translations', [
+                'maxlength' => 255,
+            ]),
         ];
     }
 
-    public function save(Request $request, string $dictionary, ?string $record = null): RedirectResponse
-    {
+    public function save(
+        Request $request,
+        TranslatableContentManager $translations,
+        string $dictionary,
+        ?string $record = null
+    ): RedirectResponse {
         abort_unless($request->user()?->hasAccess('crm.leads.manage_dictionaries'), 403);
 
         $definition = LeadDictionaryRegistry::definition($dictionary);
@@ -156,18 +154,13 @@ class LeadDictionaryEditScreen extends Screen
             'item.name' => ['nullable', 'string', 'max:255'],
             'item.is_active' => ['nullable', 'boolean'],
             'item.sort_order' => ['required', 'integer', 'min:0'],
-            'translations' => ['array'],
-            'translations.*' => ['nullable', 'string', 'max:255'],
+            ...$translations->validationRules(['name'], ['nullable', 'string', 'max:255']),
         ]);
-
-        $translations = collect($data['translations'] ?? [])
-            ->map(fn (?string $value): ?string => filled($value) ? $value : null)
-            ->all();
 
         $item->fill([
             $keyColumn => $data['item'][$keyColumn],
             'name' => $data['item']['name'] ?? null,
-            'name_translations' => $translations,
+            ...$translations->extract($request, ['name']),
             'is_active' => (bool) ($data['item']['is_active'] ?? false),
             'sort_order' => (int) $data['item']['sort_order'],
         ]);
@@ -195,19 +188,5 @@ class LeadDictionaryEditScreen extends Screen
         Toast::info(tkey('crm.dictionaries.messages.deleted'));
 
         return redirect()->route('platform.crm.dictionaries', $dictionary);
-    }
-
-    /**
-     * @return array<int, \Orchid\Screen\Layout>
-     */
-    private function translationLayouts(): array
-    {
-        return ($this->languages ?? collect())
-            ->map(fn (Language $language) => Layout::rows([
-                Input::make('translations.'.$language->code)
-                    ->title(tkey('crm.dictionaries.fields.name_translation', ['language' => $language->native_name]))
-                    ->maxlength(255),
-            ])->title($language->native_name))
-            ->all();
     }
 }

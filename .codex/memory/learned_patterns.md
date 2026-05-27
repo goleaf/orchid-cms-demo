@@ -5,3 +5,7 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - Superadmin platform access is centralized in App\Support\Access\SuperadminPermissions and applied by SuperadminRoleSeeder; seeders should reuse SuperadminPermissions::enabled() instead of duplicating permission arrays.
   Evidence: Observed App\Support\Access\SuperadminPermissions, database/seeders/SuperadminRoleSeeder.php, DatabaseSeeder::run(), and passing SuperadminRoleTest.
   Added: 2026-05-27T16:29:14+00:00
+
+- Locale switching is centralized in App\Services\LocaleManager; it validates active languages, stores the selected locale in session key locale, saves authenticated users to users.preferred_locale, and SetLocale applies it before rendering.
+  Evidence: Implemented app/Services/LocaleManager.php, app/Http/Middleware/SetLocale.php, routes/web.php locale.switch, database migration for users.preferred_locale, and passing SystemLocalizationTest/full php artisan test on 2026-05-27.
+  Added: 2026-05-27T17:00:56+00:00

@@ -289,3 +289,47 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T17:02:34+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:02:34+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a56-e686-7b80-93a4-35a3d6bbedc2",
+  "branch": "main",
+  "changed_file_count": 2,
+  "changed_file_groups": {
+    "code": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "codex/memory/learned_patterns.md",
+    "tests/Feature/SystemLocalizationTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T17:02:34+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:02:34+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a56-e686-7b80-93a4-35a3d6bbedc2",
+  "branch": "main",
+  "changed_file_count": 2,
+  "changed_file_groups": {
+    "code": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "codex/memory/learned_patterns.md",
+    "tests/Feature/SystemLocalizationTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
