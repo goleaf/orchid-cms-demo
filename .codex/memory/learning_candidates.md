@@ -1505,3 +1505,25 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T22:10:20+00:00
+
+```json
+{
+  "ts": "2026-05-27T22:10:20+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6b75-3dfd-7081-9832-3f6e064b3c7f",
+  "branch": "main",
+  "changed_file_count": 2,
+  "changed_file_groups": {
+    "code": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "ocs/crm-block-2.md",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

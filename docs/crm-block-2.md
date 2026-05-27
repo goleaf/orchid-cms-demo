@@ -109,6 +109,43 @@ Lead timeline and work tables use:
 
 The requested CRM concepts are mapped onto existing local-driving-school columns where they already exist: `status` and `source` store dictionary codes, `responsible_manager_id` stores the manager, `lost_reason_code` stores the lost reason, `training_program_id` stores the course, `budget_cents` stores money safely, and `converted_student_profile_id` prepares future student conversion.
 
+### CRM Table Compatibility Map
+
+Block 2 intentionally reuses the existing marketing lead schema instead of creating duplicate lead tables:
+
+| CRM concept | Physical table / column strategy |
+| --- | --- |
+| `leads` | `marketing_leads`, exposed through `App\Models\Lead` |
+| `lead_statuses` | `lead_statuses`, related by `marketing_leads.status = lead_statuses.code` |
+| `lead_sources` | `lead_sources`, related by `marketing_leads.source = lead_sources.code` |
+| `lead_lost_reasons` | `lead_lost_reasons`, related by `marketing_leads.lost_reason_code = lead_lost_reasons.code` |
+| `lead_tags` | `lead_tags` |
+| `lead_lead_tag` | `lead_tag_marketing_lead`, keyed by `marketing_lead_id` and `lead_tag_id` |
+| `lead_activities` | `marketing_lead_activities`, exposed through `App\Models\LeadActivity` |
+| `lead_tasks` | `marketing_lead_tasks`, exposed through `App\Models\LeadTask` |
+| `lead_call_logs` | not a separate table; phone call logs are `marketing_lead_communications` rows with `channel = phone` |
+
+The compatibility models pin the `marketing_lead_id` foreign key for lead-owned relationships so Eloquent does not infer a non-existent `lead_id` column.
+
+### Model Relationships
+
+`Lead` exposes the CRM relationships required by the module:
+
+- dictionary context: `status()`, `source()`, `lostReason()`
+- ownership and audit: `manager()`, `createdBy()`, `creator()`, `updatedBy()`, `updater()`
+- duplicate management: `duplicateOf()`, `duplicates()`
+- tags and timeline: `tags()`, `activities()`, `tasks()`, `callLogs()`
+- business context: `course()`, `courseCategory()`, `branch()`, `trainingGroup()`
+- future conversion: `convertedStudent()`, `convertedEnrollment()`
+
+Dictionary models expose `leads()`. `LeadActivity` exposes `lead()` and `user()`. `LeadTask` exposes `lead()`, `assignedTo()`, and `createdBy()`.
+
+### Lead Scopes And Helpers
+
+`Lead` inherits the CRM scopes from `MarketingLead`: `open`, `closed`, `new`, `assignedTo`, `unassigned`, `overdueFollowUp`, `dueToday`, `duplicates`, `spam`, `lost`, `converted`, `notConverted`, `byStatus`, `bySource`, `byManager`, `byCourse`, `byBranch`, `byTrainingGroup`, and `search`.
+
+Display and state helpers include `display_name`, `display_contact`, `is_closed`, `is_converted`, `is_duplicate`, `is_spam`, `is_lost`, `is_overdue`, and `can_be_converted`. Compatibility accessors expose requested naming such as `course_id`, `manager_id`, `comment`, `preferred_messenger`, `preferred_training_language`, `referrer`, `budget`, and `converted_student_id`.
+
 ## Factories And Seeders
 
 Factories exist for CRM leads, dictionaries, tasks, activities, comments, communications, documents, status history, message templates, and campaigns. CRM dictionaries are seeded by `CrmDictionarySeeder` using factory-built payloads and stable `updateOrCreate` keys.

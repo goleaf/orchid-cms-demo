@@ -11,6 +11,7 @@ use App\Models\LeadSource;
 use App\Models\LeadStatus;
 use App\Models\LeadTag;
 use App\Models\LeadTask;
+use App\Models\MarketingLeadCommunication;
 use App\Models\User;
 use Database\Seeders\CrmDictionarySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,16 +22,84 @@ class CrmLeadDatabaseFoundationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_required_crm_tables_are_mapped_to_existing_lead_storage(): void
+    {
+        foreach ([
+            'lead_statuses',
+            'lead_sources',
+            'lead_lost_reasons',
+            'lead_tags',
+            'lead_tag_marketing_lead',
+            'marketing_leads',
+            'marketing_lead_activities',
+            'marketing_lead_tasks',
+            'marketing_lead_communications',
+        ] as $table) {
+            $this->assertTrue(Schema::hasTable($table), $table);
+        }
+
+        $this->assertFalse(Schema::hasTable('leads'));
+        $this->assertFalse(Schema::hasTable('website_leads'));
+    }
+
     public function test_crm_foundation_columns_and_seeded_dictionaries_exist(): void
     {
         $this->seed(CrmDictionarySeeder::class);
 
         foreach ([
+            'uuid',
             'lead_number',
+            'full_name',
+            'first_name',
+            'last_name',
             'middle_name',
+            'phone',
+            'normalized_phone',
+            'email',
+            'messenger',
+            'city',
+            'locale',
+            'message',
+            'internal_comment',
+            'status',
+            'source',
+            'responsible_manager_id',
+            'lost_reason_code',
+            'duplicate_of_id',
+            'training_program_id',
+            'course_category_id',
+            'branch_id',
+            'training_group_id',
             'desired_start_date',
+            'preferred_time',
+            'preferred_language',
             'preferred_gearbox',
+            'budget_cents',
+            'priority',
+            'lead_score',
+            'last_contacted_at',
+            'next_follow_up_at',
+            'closed_at',
+            'converted_at',
+            'converted_student_profile_id',
             'converted_enrollment_id',
+            'utm_source',
+            'utm_medium',
+            'utm_campaign',
+            'utm_content',
+            'utm_term',
+            'referrer_url',
+            'landing_page',
+            'form_page',
+            'form_name',
+            'ip_address',
+            'user_agent',
+            'consent_accepted',
+            'consent_accepted_at',
+            'consent_text_version',
+            'created_by_user_id',
+            'updated_by_user_id',
+            'deleted_at',
         ] as $column) {
             $this->assertTrue(Schema::hasColumn('marketing_leads', $column), $column);
         }
@@ -47,14 +116,88 @@ class CrmLeadDatabaseFoundationTest extends TestCase
             $this->assertTrue(Schema::hasColumn('marketing_lead_tasks', $column), $column);
         }
 
+        foreach (['call_result', 'duration_seconds'] as $column) {
+            $this->assertTrue(Schema::hasColumn('marketing_lead_communications', $column), $column);
+        }
+
         $this->assertSame(1, LeadStatus::query()->where('is_default', true)->count());
         $this->assertDatabaseHas('lead_statuses', ['code' => 'new', 'is_default' => true]);
         $this->assertDatabaseHas('lead_statuses', ['code' => 'duplicate', 'is_duplicate' => true]);
         $this->assertDatabaseHas('lead_statuses', ['code' => 'spam', 'is_spam' => true]);
-        $this->assertDatabaseHas('lead_sources', ['code' => 'contact_form']);
-        $this->assertDatabaseHas('lead_tags', ['slug' => 'hot']);
-        $this->assertDatabaseHas('lead_tags', ['slug' => 'needs_call']);
-        $this->assertDatabaseHas('lead_tags', ['slug' => 'weekend_training']);
+
+        foreach ([
+            'new',
+            'no_answer',
+            'contacted',
+            'consultation',
+            'waiting_documents',
+            'waiting_payment',
+            'ready_to_enroll',
+            'enrolled',
+            'lost',
+            'duplicate',
+            'spam',
+            'archived',
+        ] as $status) {
+            $this->assertDatabaseHas('lead_statuses', ['code' => $status]);
+        }
+
+        foreach ([
+            'website',
+            'callback',
+            'contact_form',
+            'phone',
+            'office',
+            'google_ads',
+            'facebook',
+            'instagram',
+            'tiktok',
+            'telegram',
+            'whatsapp',
+            'referral',
+            'partner',
+            'other',
+        ] as $source) {
+            $this->assertDatabaseHas('lead_sources', ['code' => $source]);
+        }
+
+        foreach ([
+            'price',
+            'schedule',
+            'location',
+            'competitor',
+            'no_response',
+            'changed_mind',
+            'documents',
+            'payment',
+            'language',
+            'car_type',
+            'duplicate',
+            'spam',
+            'other',
+        ] as $reason) {
+            $this->assertDatabaseHas('lead_lost_reasons', ['code' => $reason]);
+        }
+
+        foreach ([
+            'hot',
+            'vip',
+            'needs_call',
+            'ready_to_pay',
+            'needs_documents',
+            'repeat_request',
+            'problematic',
+            'thinking',
+            'urgent',
+            'individual_schedule',
+            'wants_automatic',
+            'wants_manual',
+            'evening_training',
+            'weekend_training',
+            'corporate_client',
+        ] as $tag) {
+            $this->assertDatabaseHas('lead_tags', ['slug' => $tag]);
+        }
     }
 
     public function test_lead_relationships_helpers_and_translated_dictionary_names_work(): void
@@ -88,9 +231,15 @@ class CrmLeadDatabaseFoundationTest extends TestCase
         ]);
 
         $lead->tags()->attach($tag);
-        LeadActivity::factory()->create(['marketing_lead_id' => $lead->id, 'type' => 'created']);
+        LeadActivity::factory()->create([
+            'marketing_lead_id' => $lead->id,
+            'user_id' => $manager->id,
+            'type' => 'created',
+        ]);
         LeadTask::factory()->create([
             'marketing_lead_id' => $lead->id,
+            'assigned_to_user_id' => $manager->id,
+            'created_by_user_id' => $manager->id,
             'title' => 'Call lead',
             'title_translations' => ['en' => 'Call lead translation'],
         ]);
@@ -107,6 +256,11 @@ class CrmLeadDatabaseFoundationTest extends TestCase
         $this->assertTrue($lead->tags->first()->is($tag));
         $this->assertInstanceOf(LeadActivity::class, $lead->activities()->first());
         $this->assertInstanceOf(LeadTask::class, $lead->tasks()->first());
+        $this->assertTrue($lead->activities()->firstOrFail()->lead->is($lead));
+        $this->assertTrue($lead->activities()->firstOrFail()->user->is($manager));
+        $this->assertTrue($lead->tasks()->firstOrFail()->lead->is($lead));
+        $this->assertTrue($lead->tasks()->firstOrFail()->assignedTo->is($manager));
+        $this->assertTrue($lead->tasks()->firstOrFail()->createdBy->is($manager));
         $this->assertTrue($duplicate->duplicateOf->is($lead));
         $this->assertTrue($lead->duplicates->first()->is($duplicate));
         $this->assertSame('New CRM lead', $status->display_name);
@@ -117,8 +271,34 @@ class CrmLeadDatabaseFoundationTest extends TestCase
         $this->assertSame('Call lead translation', $lead->tasks()->firstOrFail()->display_title);
     }
 
+    public function test_call_logs_are_stored_as_phone_communications(): void
+    {
+        $lead = Lead::factory()->create();
+        $user = User::factory()->create();
+
+        $phoneLog = MarketingLeadCommunication::factory()->create([
+            'marketing_lead_id' => $lead->id,
+            'user_id' => $user->id,
+            'channel' => 'phone',
+            'call_result' => 'reached',
+            'duration_seconds' => 180,
+        ]);
+        $emailLog = MarketingLeadCommunication::factory()->create([
+            'marketing_lead_id' => $lead->id,
+            'user_id' => $user->id,
+            'channel' => 'email',
+        ]);
+
+        $this->assertTrue($lead->callLogs()->whereKey($phoneLog->id)->exists());
+        $this->assertFalse($lead->callLogs()->whereKey($emailLog->id)->exists());
+        $this->assertTrue($phoneLog->lead->is($lead));
+        $this->assertTrue($phoneLog->user->is($user));
+    }
+
     public function test_lead_search_and_pipeline_scopes_work(): void
     {
+        $this->travelTo(now()->startOfDay()->addHours(10));
+
         $lead = Lead::factory()->create([
             'lead_number' => 'CRM-SEARCH-1',
             'uuid' => '11111111-1111-4111-8111-111111111111',
