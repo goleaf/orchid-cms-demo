@@ -1616,3 +1616,26 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T23:03:54+00:00
+
+```json
+{
+  "ts": "2026-05-27T23:03:54+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6ba0-2311-7121-9e87-f90fda9bd9c4",
+  "branch": "main",
+  "changed_file_count": 3,
+  "changed_file_groups": {
+    "code": 2,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "atabase/seeders/CrmTranslationSeeder.php",
+    "database/seeders/DatabaseSeeder.php",
+    "tests/Feature/CrmTranslationModuleTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

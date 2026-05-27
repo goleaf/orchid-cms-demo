@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             LanguageSeeder::class,
-            SystemTranslationSeeder::class,
+            CrmTranslationSeeder::class,
             CrmDictionarySeeder::class,
             SystemDesignVibecodingSeeder::class,
         ]);
