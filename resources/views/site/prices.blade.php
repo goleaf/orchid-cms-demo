@@ -63,6 +63,71 @@
             <div class="section-inner">
                 <div class="section-head">
                     <div>
+                        <p class="kicker">{{ tkey('website.prices.packages.kicker') }}</p>
+                        <h2>{{ tkey('website.prices.packages.title') }}</h2>
+                    </div>
+                    <p class="lead">{{ tkey('website.prices.packages.lead') }}</p>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{ tkey('website.prices.columns.package') }}</th>
+                                <th>{{ tkey('website.prices.columns.course') }}</th>
+                                <th>{{ tkey('website.prices.columns.hours') }}</th>
+                                <th>{{ tkey('website.prices.columns.price') }}</th>
+                                <th>{{ tkey('website.prices.columns.actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($packages as $package)
+                                <tr>
+                                    <td>
+                                        <strong>{{ $package->displayName() }}</strong>
+                                        @if ($package->is_featured)
+                                            <br><span class="fact">{{ tkey('website.prices.packages.featured') }}</span>
+                                        @endif
+                                        @if ($package->displayDescription())
+                                            <br><span class="meta">{{ $package->displayDescription() }}</span>
+                                        @endif
+                                        @foreach ($package->displayFeatures() as $feature)
+                                            <br><span class="meta">{{ $feature }}</span>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @if ($package->course)
+                                            <a href="{{ route('site.courses.show', $package->course) }}">{{ $package->course->displayTitle() }}</a>
+                                        @else
+                                            {{ $package->category?->displayName() ?? tkey('website.prices.packages.no_course') }}
+                                        @endif
+                                    </td>
+                                    <td>{{ tkey('website.prices.hours_value', ['theory' => $package->theory_hours ?? 0, 'practice' => $package->practice_hours ?? 0]) }}</td>
+                                    <td>
+                                        <strong>{{ $package->priceForHumans() }}</strong>
+                                        @if ($package->oldPriceForHumans())
+                                            <br><span class="meta">{{ tkey('website.course.price.old', ['price' => $package->oldPriceForHumans()]) }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <a class="button" href="{{ route('site.apply', array_filter(['program' => $package->course_id])) }}">{{ tkey('website.actions.apply') }}</a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5">{{ tkey('website.prices.packages.empty') }}</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="section soft">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
                         <p class="kicker">{{ tkey('website.prices.payment.kicker') }}</p>
                         <h2>{{ tkey('website.prices.payment.title') }}</h2>
                     </div>

@@ -9,6 +9,7 @@ use App\Models\LeadLostReason;
 use App\Models\LeadTag;
 use App\Models\MarketingLead;
 use App\Models\MarketingMessageTemplate;
+use App\Models\PricingPackage;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
 use App\Models\User;
@@ -231,6 +232,7 @@ class DrivingSchoolPlatformTest extends TestCase
 
         collect([
             'platform.website.courses' => tkey('website.admin.courses.title'),
+            'platform.website.pricing' => tkey('website.admin.pricing.title'),
             'platform.website.branches' => tkey('website.admin.branches.title'),
             'platform.website.groups' => tkey('website.admin.groups.title'),
             'platform.website.leads' => tkey('crm.leads.title'),
@@ -274,10 +276,15 @@ class DrivingSchoolPlatformTest extends TestCase
         $group = TrainingGroup::query()
             ->where('code', 'B-VNO-001')
             ->firstOrFail();
+        $package = PricingPackage::query()
+            ->where('slug', 'category-b-premium')
+            ->firstOrFail();
 
         collect([
             route('platform.website.courses.create') => tkey('website.admin.courses.create_title', [], 'ru'),
             route('platform.website.courses.edit', $program) => tkey('website.admin.courses.edit_title', [], 'ru'),
+            route('platform.website.pricing.create') => tkey('website.admin.pricing.create_title', [], 'ru'),
+            route('platform.website.pricing.edit', $package) => tkey('website.admin.pricing.edit_title', [], 'ru'),
             route('platform.website.branches.create') => tkey('website.admin.branches.create_title', [], 'ru'),
             route('platform.website.branches.edit', $branch) => tkey('website.admin.branches.edit_title', [], 'ru'),
             route('platform.website.groups.create') => tkey('website.admin.groups.create_title', [], 'ru'),

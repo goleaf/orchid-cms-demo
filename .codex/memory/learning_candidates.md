@@ -1143,3 +1143,38 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T19:17:05+00:00
+
+```json
+{
+  "ts": "2026-05-27T19:17:05+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6ad1-81d8-7740-a1f6-2c02dd9e5b94",
+  "branch": "main",
+  "changed_file_count": 13,
+  "changed_file_groups": {
+    "code": 7,
+    "models": 1,
+    "orchid": 3,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    "app/Actions/SavePricingPackageAction.php",
+    "app/Http/Requests/PricingPackageRequest.php",
+    "app/Models/PricingPackage.php",
+    "app/Orchid/PlatformProvider.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "docs/public-website-foundation.md",
+    "pp/Actions/GetPricingPageAction.php",
+    "resources/views/site/prices.blade.php",
+    "routes/platform.php",
+    "tests/Feature/DrivingSchoolPlatformTest.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

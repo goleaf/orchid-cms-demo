@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\GroupStatus;
 use App\Models\Branch;
 use App\Models\MarketingLead;
+use App\Models\PricingPackage;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
 use App\Models\User;
@@ -44,6 +45,11 @@ class PublicWebsiteFoundationTest extends TestCase
                 ->assertOk()
                 ->assertSee($needle);
         });
+
+        $this->get(route('site.prices'))
+            ->assertOk()
+            ->assertSee(tkey('website.prices.packages.title', [], 'ru'))
+            ->assertSee('Premium');
     }
 
     public function test_enrollment_form_creates_crm_lead_with_site_tracking(): void
@@ -188,10 +194,14 @@ class PublicWebsiteFoundationTest extends TestCase
         $group = TrainingGroup::query()
             ->where('code', 'B-VNO-001')
             ->firstOrFail();
+        $package = PricingPackage::query()
+            ->where('slug', 'category-b-premium')
+            ->firstOrFail();
 
         collect([
             route('platform.website.settings'),
             route('platform.website.courses'),
+            route('platform.website.pricing'),
             route('platform.website.branches'),
             route('platform.website.groups'),
             route('platform.website.leads'),
@@ -288,6 +298,31 @@ class PublicWebsiteFoundationTest extends TestCase
             ->assertRedirect(route('platform.website.groups'))
             ->assertSessionHasNoErrors();
 
+        $this->actingAs($admin)
+            ->post(route('platform.website.pricing.edit', ['pricingPackage' => $package, 'method' => 'save']), [
+                'package' => [
+                    'id' => $package->id,
+                    'course_id' => $program->id,
+                    'course_category_id' => $program->course_category_id,
+                    'code' => $package->code,
+                    'slug' => $package->slug,
+                    'price' => '1510.50',
+                    'old_price' => '1610.00',
+                    'currency' => 'EUR',
+                    'theory_hours' => '42',
+                    'practice_hours' => '30',
+                    'is_active' => '1',
+                    'is_visible_on_site' => '1',
+                    'is_featured' => '1',
+                    'sort_order' => 15,
+                ],
+                'name_translations' => ['ru' => 'Premium Block 1', 'en' => 'Premium Block 1'],
+                'description_translations' => ['ru' => 'Пакет для сайта', 'en' => 'Website package'],
+                'features_translations' => ['ru' => "Теория\nПрактика", 'en' => "Theory\nPractice"],
+            ])
+            ->assertRedirect(route('platform.website.pricing'))
+            ->assertSessionHasNoErrors();
+
         $this->assertDatabaseHas('training_programs', [
             'id' => $program->id,
             'title' => 'Категория B Block 1',
@@ -305,5 +340,12 @@ class PublicWebsiteFoundationTest extends TestCase
             'places_taken' => 6,
             'is_visible_on_site' => true,
         ]);
+
+        $package->refresh();
+
+        $this->assertSame('Premium Block 1', $package->displayName('en'));
+        $this->assertSame(['Theory', 'Practice'], $package->displayFeatures('en'));
+        $this->assertSame(1510.50, (float) $package->price);
+        $this->assertTrue($package->is_featured);
     }
 }

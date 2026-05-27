@@ -20,6 +20,7 @@ Orchid exposes website management under `platform.website.*` routes:
 
 - `platform.website.settings`: homepage content.
 - `platform.website.courses`: public course catalog and SEO.
+- `platform.website.pricing`: public pricing packages and tariff display.
 - `platform.website.branches`: branch public content and SEO.
 - `platform.website.groups`: publicly visible training groups.
 - `platform.website.leads`: CRM lead list for website intake.
@@ -45,6 +46,7 @@ Public content management actions:
 - `CreateOrUpdateCourseAction`
 - `CreateOrUpdateCourseCategoryAction`
 - `CreateOrUpdatePricingPackageAction`
+- `SavePricingPackageAction`
 - `CreateOrUpdateBranchAction`
 - `CreateOrUpdateFaqAction`
 - `CreateOrUpdateTestimonialAction`
@@ -90,6 +92,10 @@ New website-only tables:
 - `site_settings` for public website settings.
 
 Existing school tables are extended with UUIDs, multilingual website fields, site visibility flags, SEO/media references where practical, audit fields, and soft deletes where the public website needs lifecycle management.
+
+## Pricing Packages
+
+The public pricing page renders both course-level prices from `training_programs` and package-level tariffs from `pricing_packages`. Pricing packages can be attached to a course and/or course category, include multilingual name, description, and feature lists, and are managed in Orchid through `platform.website.pricing`.
 
 ## Tests
 

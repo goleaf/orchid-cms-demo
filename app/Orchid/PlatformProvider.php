@@ -45,6 +45,11 @@ class PlatformProvider extends OrchidServiceProvider
                 ->permission('website.manage_courses')
                 ->title(tkey('menu.website')),
 
+            Menu::make(tkey('menu.website.pricing'))
+                ->icon('bs.cash-coin')
+                ->route('platform.website.pricing')
+                ->permission('website.manage_courses'),
+
             Menu::make(tkey('menu.website.branches'))
                 ->icon('bs.building')
                 ->route('platform.website.branches')

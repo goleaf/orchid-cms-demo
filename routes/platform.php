@@ -24,6 +24,8 @@ use App\Orchid\Screens\School\LeadTaskListScreen;
 use App\Orchid\Screens\School\MessageTemplateEditScreen;
 use App\Orchid\Screens\School\MessageTemplateListScreen;
 use App\Orchid\Screens\School\PaymentListScreen;
+use App\Orchid\Screens\School\PricingPackageEditScreen;
+use App\Orchid\Screens\School\PricingPackageListScreen;
 use App\Orchid\Screens\School\ProgramEditScreen;
 use App\Orchid\Screens\School\ProgramListScreen;
 use App\Orchid\Screens\School\ScheduleListScreen;
@@ -86,6 +88,25 @@ Route::screen('website/courses', ProgramListScreen::class)
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
         ->push(tkey('menu.website.courses'), route('platform.website.courses')));
+
+// Website > Pricing
+Route::screen('website/pricing/create', PricingPackageEditScreen::class)
+    ->name('platform.website.pricing.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.website.pricing')
+        ->push(tkey('website.admin.pricing.create_title'), route('platform.website.pricing.create')));
+
+Route::screen('website/pricing/{pricingPackage}/edit', PricingPackageEditScreen::class)
+    ->name('platform.website.pricing.edit')
+    ->breadcrumbs(fn (Trail $trail, $pricingPackage) => $trail
+        ->parent('platform.website.pricing')
+        ->push(tkey('website.admin.pricing.edit_title'), route('platform.website.pricing.edit', $pricingPackage)));
+
+Route::screen('website/pricing', PricingPackageListScreen::class)
+    ->name('platform.website.pricing')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.website.pricing'), route('platform.website.pricing')));
 
 // Website > Branches
 Route::screen('website/branches/create', BranchEditScreen::class)
