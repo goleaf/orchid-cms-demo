@@ -885,3 +885,30 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T18:15:00+00:00
+
+```json
+{
+  "ts": "2026-05-27T18:15:00+00:00",
+  "event": "Stop",
+  "session_id": "019e6a96-6279-73a2-bd62-e85432689ea8",
+  "turn_id": "019e6aa4-1e29-7a42-8feb-ad78fbf59dc3",
+  "branch": "main",
+  "changed_file_count": 6,
+  "changed_file_groups": {
+    "orchid": 2,
+    "code": 3,
+    "database": 1
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "composer.json",
+    "composer.lock",
+    "config/dbstan.php",
+    "database/migrations/2026_05_27_190000_create_public_website_foundation_tables.php",
+    "pp/Orchid/Screens/School/LeadEditScreen.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

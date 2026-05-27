@@ -6,14 +6,20 @@ namespace App\Orchid\Screens\School;
 
 use App\Actions\AddLeadCommentAction;
 use App\Actions\AddLeadCommunicationAction;
+use App\Actions\CompleteLeadTaskAction;
+use App\Actions\CreateLeadTaskAction;
 use App\Actions\MoveLeadToStatusAction;
+use App\Actions\RecordLeadActivityAction;
 use App\Actions\UpdateMarketingLeadCrmAction;
 use App\Enums\LeadStatus;
+use App\Enums\LeadTaskPriority;
 use App\Models\Branch;
 use App\Models\Instructor;
 use App\Models\LeadLostReason;
 use App\Models\LeadSource;
+use App\Models\LeadTag;
 use App\Models\MarketingLead;
+use App\Models\MarketingLeadActivity;
 use App\Models\MarketingLeadComment;
 use App\Models\MarketingLeadCommunication;
 use App\Models\MarketingLeadDocument;
@@ -80,61 +86,85 @@ class LeadEditScreen extends Screen
     /**
      * @var array<int, string>
      */
+    private array $tags = [];
+
+    /**
+     * @var array<int, string>
+     */
     private array $messageTemplates = [];
 
     /**
      * @return array<string, mixed>
      */
-    public function query(MarketingLead $lead): iterable
+    public function query(?MarketingLead $lead = null): iterable
     {
-        $this->lead = MarketingLead::query()
-            ->forCrmDetail()
-            ->with([
-                'responsibleManager:id,name,email',
-                'branch:id,name,city',
-                'trainingProgram:id,title,slug,license_category',
-                'trainingGroup:id,name,code',
-                'instructor:id,name',
-                'marketingCampaign:id,name,channel',
-                'convertedStudentProfile:id,first_name,last_name',
-                'documents:id,marketing_lead_id,original_name,mime_type,size,created_at',
-                'comments' => fn ($query) => $query
-                    ->select(['id', 'marketing_lead_id', 'user_id', 'body', 'is_internal', 'created_at'])
-                    ->with('user:id,name')
-                    ->latest()
-                    ->limit(10),
-                'communications' => fn ($query) => $query
-                    ->select([
-                        'id',
-                        'marketing_lead_id',
-                        'user_id',
-                        'marketing_message_template_id',
-                        'channel',
-                        'direction',
-                        'subject',
-                        'body',
-                        'communicated_at',
-                        'client_replied_at',
-                        'callback_required_at',
-                        'call_recording_url',
-                        'call_recording_reference',
-                    ])
-                    ->with(['user:id,name', 'messageTemplate:id,name'])
-                    ->latest('communicated_at')
-                    ->limit(20),
-                'statusHistories' => fn ($query) => $query
-                    ->select(['id', 'marketing_lead_id', 'user_id', 'from_status', 'to_status', 'reason', 'changed_at'])
-                    ->with('user:id,name')
-                    ->latest('changed_at')
-                    ->limit(10),
-                'tasks' => fn ($query) => $query
-                    ->select(['id', 'marketing_lead_id', 'assigned_to_user_id', 'title', 'status', 'priority', 'due_at', 'completed_at'])
-                    ->with('assignedTo:id,name')
-                    ->latest('due_at')
-                    ->limit(10),
-            ])
-            ->whereKey($lead->id)
-            ->firstOrFail();
+        $this->lead = $lead?->exists
+            ? MarketingLead::query()
+                ->forCrmDetail()
+                ->with([
+                    'responsibleManager:id,name,email',
+                    'assignedBy:id,name',
+                    'branch:id,name,name_translations,city,city_translations',
+                    'trainingProgram:id,title,title_translations,slug,license_category',
+                    'trainingGroup:id,name,name_translations,code',
+                    'instructor:id,name',
+                    'marketingCampaign:id,name,channel',
+                    'convertedStudentProfile:id,first_name,last_name',
+                    'duplicateOf:id,first_name,last_name,phone,email,status',
+                    'duplicates:id,duplicate_of_id,first_name,last_name,phone,email,status,created_at',
+                    'tags:id,slug,name,name_translations,color',
+                    'documents:id,marketing_lead_id,original_name,mime_type,size,created_at',
+                    'comments' => fn ($query) => $query
+                        ->select(['id', 'marketing_lead_id', 'user_id', 'body', 'is_internal', 'created_at'])
+                        ->with('user:id,name')
+                        ->latest()
+                        ->limit(10),
+                    'communications' => fn ($query) => $query
+                        ->select([
+                            'id',
+                            'marketing_lead_id',
+                            'user_id',
+                            'marketing_message_template_id',
+                            'channel',
+                            'direction',
+                            'subject',
+                            'body',
+                            'communicated_at',
+                            'client_replied_at',
+                            'callback_required_at',
+                            'call_recording_url',
+                            'call_recording_reference',
+                            'call_result',
+                            'duration_seconds',
+                        ])
+                        ->with(['user:id,name', 'messageTemplate:id,name'])
+                        ->latest('communicated_at')
+                        ->limit(20),
+                    'statusHistories' => fn ($query) => $query
+                        ->select(['id', 'marketing_lead_id', 'user_id', 'from_status', 'to_status', 'reason', 'changed_at'])
+                        ->with('user:id,name')
+                        ->latest('changed_at')
+                        ->limit(10),
+                    'tasks' => fn ($query) => $query
+                        ->select(['id', 'marketing_lead_id', 'assigned_to_user_id', 'title', 'status', 'priority', 'due_at', 'completed_at', 'notes'])
+                        ->with('assignedTo:id,name')
+                        ->latest('due_at')
+                        ->limit(10),
+                    'activities' => fn ($query) => $query
+                        ->select(['id', 'marketing_lead_id', 'user_id', 'type', 'title', 'body', 'old_value', 'new_value', 'created_at'])
+                        ->with('user:id,name')
+                        ->latest()
+                        ->limit(20),
+                ])
+                ->whereKey($lead->id)
+                ->firstOrFail()
+            : new MarketingLead([
+                'status' => LeadStatus::New,
+                'source' => 'phone',
+                'priority' => 'normal',
+                'lead_score' => 0,
+                'consent_accepted' => false,
+            ]);
 
         $this->managers = User::query()
             ->select(['id', 'name'])
@@ -145,17 +175,20 @@ class LeadEditScreen extends Screen
         $this->branches = Branch::query()
             ->forAdminList()
             ->orderBy('city')
-            ->pluck('name', 'id')
+            ->get()
+            ->mapWithKeys(fn (Branch $branch): array => [$branch->id => $branch->displayName()])
             ->all();
         $this->programs = TrainingProgram::query()
             ->forAcademyList()
             ->orderBy('title')
-            ->pluck('title', 'id')
+            ->get()
+            ->mapWithKeys(fn (TrainingProgram $program): array => [$program->id => $program->displayTitle()])
             ->all();
         $this->groups = TrainingGroup::query()
             ->operationalList()
             ->orderBy('starts_on')
-            ->pluck('code', 'id')
+            ->get()
+            ->mapWithKeys(fn (TrainingGroup $group): array => [$group->id => $group->displayName()])
             ->all();
         $this->instructors = Instructor::query()
             ->forAdminList()
@@ -164,6 +197,12 @@ class LeadEditScreen extends Screen
             ->all();
         $this->sources = LeadSource::translatedLabels();
         $this->lostReasons = LeadLostReason::translatedLabels();
+        $this->tags = LeadTag::query()
+            ->active()
+            ->ordered()
+            ->get(['id', 'slug', 'name', 'name_translations'])
+            ->mapWithKeys(fn (LeadTag $tag): array => [$tag->id => $tag->displayName()])
+            ->all();
         $this->messageTemplates = MarketingMessageTemplate::query()
             ->active()
             ->select(['id', 'name', 'channel', 'sort_order'])
@@ -179,7 +218,9 @@ class LeadEditScreen extends Screen
         return [
             'lead' => $this->lead,
             'lead_status' => $this->lead->status->value,
+            'lead.tag_ids' => $this->lead->exists ? $this->lead->tags->pluck('id')->all() : [],
             'lead.next_follow_up_at' => $this->lead->next_follow_up_at?->format('Y-m-d\TH:i'),
+            'lead.last_contacted_at' => $this->lead->last_contacted_at?->format('Y-m-d\TH:i'),
             'lead_budget_eur' => $this->lead->budget_cents !== null
                 ? number_format($this->lead->budget_cents / 100, 2, '.', '')
                 : null,

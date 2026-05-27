@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e6801eb651d54f02873de9666c2468b9",
+    "content-hash": "958b2d97861b2d42541367f0e824e42b",
     "packages": [
         {
             "name": "brick/math",
@@ -1130,6 +1130,71 @@
                 }
             ],
             "time": "2026-05-23T22:00:21+00:00"
+        },
+        {
+            "name": "itpathsolutions/dbstan",
+            "version": "1.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dhanikk/dbstan.git",
+                "reference": "ae3f426a04aea3746d7bdbf1628471ea56010621"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dhanikk/dbstan/zipball/ae3f426a04aea3746d7bdbf1628471ea56010621",
+                "reference": "ae3f426a04aea3746d7bdbf1628471ea56010621",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^9.0|^10.0|^11.0|^12.0|^13.0",
+                "illuminate/database": "^9.0|^10.0|^11.0|^12.0|^13.0",
+                "illuminate/support": "^9.0|^10.0|^11.0|^12.0|^13.0",
+                "php": "^8.1|^8.2|^8.3|^8.4|^8.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Itpathsolutions\\DBStan\\DBStanServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Itpathsolutions\\DBStan\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dhanik Keraliya",
+                    "email": "dhanikk@itpathsolutions.com"
+                },
+                {
+                    "name": "Archana Soni",
+                    "email": "archanau@itpathsolutions.com",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Database Standardization and Analysis Tool for Laravel",
+            "keywords": [
+                "analysis",
+                "database",
+                "dbstan",
+                "itpathsolutions",
+                "laravel",
+                "performance",
+                "php",
+                "schema"
+            ],
+            "support": {
+                "issues": "https://github.com/dhanikk/dbstan/issues",
+                "source": "https://github.com/dhanikk/dbstan/tree/v1.0.8"
+            },
+            "time": "2026-04-06T10:30:31+00:00"
         },
         {
             "name": "laravel/framework",
