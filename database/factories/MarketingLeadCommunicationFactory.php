@@ -21,11 +21,16 @@ class MarketingLeadCommunicationFactory extends Factory
         return [
             'marketing_lead_id' => MarketingLead::factory(),
             'user_id' => null,
-            'channel' => $this->faker->randomElement(['phone', 'email', 'whatsapp', 'telegram']),
+            'marketing_message_template_id' => null,
+            'channel' => $this->faker->randomElement(['phone', 'sms', 'email', 'whatsapp', 'telegram', 'viber']),
             'direction' => $this->faker->randomElement(['inbound', 'outbound']),
             'subject' => $this->faker->optional()->sentence(4),
             'body' => $this->faker->sentence(16),
             'communicated_at' => now()->subHours($this->faker->numberBetween(1, 72)),
+            'client_replied_at' => null,
+            'callback_required_at' => null,
+            'call_recording_url' => null,
+            'call_recording_reference' => null,
             'metadata' => null,
         ];
     }

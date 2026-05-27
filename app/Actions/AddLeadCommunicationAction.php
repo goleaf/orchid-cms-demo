@@ -2,9 +2,12 @@
 
 namespace App\Actions;
 
+use App\Enums\LeadTaskPriority;
 use App\Models\MarketingLead;
 use App\Models\MarketingLeadCommunication;
+use App\Models\MarketingMessageTemplate;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 
 class AddLeadCommunicationAction
 {
@@ -19,15 +22,87 @@ class AddLeadCommunicationAction
         ?string $subject,
         ?string $body,
         ?array $metadata = null,
+        ?MarketingMessageTemplate $template = null,
+        bool $clientReplied = false,
+        bool $callbackRequired = false,
+        ?Carbon $callbackRequiredAt = null,
+        ?string $callRecordingUrl = null,
+        ?string $callRecordingReference = null,
     ): MarketingLeadCommunication {
-        return $lead->communications()->create([
+        $callbackAt = $callbackRequired
+            ? ($callbackRequiredAt ?? now()->addDay())
+            : null;
+        $clientRepliedAt = $clientReplied ? now() : null;
+
+        $communication = $lead->communications()->create([
             'user_id' => $user?->id,
+            'marketing_message_template_id' => $template?->id,
             'channel' => $channel,
             'direction' => $direction,
-            'subject' => $subject,
-            'body' => $body,
+            'subject' => filled($subject) ? $subject : $template?->subject,
+            'body' => filled($body) ? $body : $template?->body,
             'communicated_at' => now(),
-            'metadata' => $metadata,
+            'client_replied_at' => $clientRepliedAt,
+            'callback_required_at' => $callbackAt,
+            'call_recording_url' => $callRecordingUrl,
+            'call_recording_reference' => $callRecordingReference,
+            'metadata' => $this->metadata($metadata, $template),
         ]);
+
+        $this->applyLeadFollowUpState($lead, $user, $clientRepliedAt, $callbackAt);
+
+        return $communication;
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $metadata
+     * @return array<string, mixed>|null
+     */
+    private function metadata(?array $metadata, ?MarketingMessageTemplate $template): ?array
+    {
+        if ($template === null) {
+            return $metadata;
+        }
+
+        return [
+            ...($metadata ?? []),
+            'message_template' => [
+                'id' => $template->id,
+                'name' => $template->name,
+                'channel' => $template->channel,
+            ],
+        ];
+    }
+
+    private function applyLeadFollowUpState(
+        MarketingLead $lead,
+        ?User $user,
+        ?Carbon $clientRepliedAt,
+        ?Carbon $callbackAt,
+    ): void {
+        $updates = [];
+
+        if ($clientRepliedAt !== null && $lead->contacted_at === null) {
+            $updates['contacted_at'] = $clientRepliedAt;
+        }
+
+        if ($callbackAt !== null) {
+            $updates['next_follow_up_at'] = $callbackAt;
+        }
+
+        if ($updates !== []) {
+            $lead->fill($updates)->save();
+        }
+
+        if ($callbackAt !== null) {
+            app(CreateLeadTaskAction::class)->handle(
+                $lead->refresh(),
+                $user,
+                'Call back: '.$lead->fullName(),
+                $callbackAt,
+                $lead->is_hot ? LeadTaskPriority::High : LeadTaskPriority::Normal,
+                'Automatic callback reminder from lead communication.',
+            );
+        }
     }
 }

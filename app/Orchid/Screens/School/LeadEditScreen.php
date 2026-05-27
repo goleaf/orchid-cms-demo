@@ -17,14 +17,17 @@ use App\Models\MarketingLeadCommunication;
 use App\Models\MarketingLeadDocument;
 use App\Models\MarketingLeadStatusHistory;
 use App\Models\MarketingLeadTask;
+use App\Models\MarketingMessageTemplate;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Fields\TextArea;
@@ -63,6 +66,11 @@ class LeadEditScreen extends Screen
     private array $instructors = [];
 
     /**
+     * @var array<int, string>
+     */
+    private array $messageTemplates = [];
+
+    /**
      * @return array<string, mixed>
      */
     public function query(MarketingLead $lead): iterable
@@ -84,10 +92,24 @@ class LeadEditScreen extends Screen
                     ->latest()
                     ->limit(10),
                 'communications' => fn ($query) => $query
-                    ->select(['id', 'marketing_lead_id', 'user_id', 'channel', 'direction', 'subject', 'body', 'communicated_at'])
-                    ->with('user:id,name')
+                    ->select([
+                        'id',
+                        'marketing_lead_id',
+                        'user_id',
+                        'marketing_message_template_id',
+                        'channel',
+                        'direction',
+                        'subject',
+                        'body',
+                        'communicated_at',
+                        'client_replied_at',
+                        'callback_required_at',
+                        'call_recording_url',
+                        'call_recording_reference',
+                    ])
+                    ->with(['user:id,name', 'messageTemplate:id,name'])
                     ->latest('communicated_at')
-                    ->limit(10),
+                    ->limit(20),
                 'statusHistories' => fn ($query) => $query
                     ->select(['id', 'marketing_lead_id', 'user_id', 'from_status', 'to_status', 'reason', 'changed_at'])
                     ->with('user:id,name')
@@ -128,6 +150,17 @@ class LeadEditScreen extends Screen
             ->orderBy('name')
             ->pluck('name', 'id')
             ->all();
+        $this->messageTemplates = MarketingMessageTemplate::query()
+            ->active()
+            ->select(['id', 'name', 'channel', 'sort_order'])
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->limit(100)
+            ->get()
+            ->mapWithKeys(fn (MarketingMessageTemplate $template): array => [
+                $template->id => $template->displayName(),
+            ])
+            ->all();
 
         return [
             'lead' => $this->lead,
@@ -146,7 +179,7 @@ class LeadEditScreen extends Screen
 
     public function description(): ?string
     {
-        return 'Sales card with contact data, UTM, manager, comments, communication history, and documents.';
+        return 'Sales card with calls, SMS, email, messengers, templates, reminders, comments, history, and documents.';
     }
 
     public function permission(): iterable
@@ -282,27 +315,37 @@ class LeadEditScreen extends Screen
                 Layout::rows([
                     Select::make('communication.channel')
                         ->title('Channel')
-                        ->options([
-                            'phone' => 'Phone',
-                            'email' => 'Email',
-                            'whatsapp' => 'WhatsApp',
-                            'telegram' => 'Telegram',
-                            'viber' => 'Viber',
-                            'web_form' => 'Web form',
-                        ])
+                        ->options($this->communicationChannels())
                         ->empty('Select channel'),
+                    Select::make('communication.template_id')
+                        ->title('Message template')
+                        ->options($this->messageTemplates)
+                        ->empty('No template'),
                     Select::make('communication.direction')
                         ->title('Direction')
-                        ->options([
-                            'inbound' => 'Inbound',
-                            'outbound' => 'Outbound',
-                        ])
+                        ->options($this->communicationDirections())
                         ->empty('Select direction'),
                     Input::make('communication.subject')
                         ->title('Subject'),
                     TextArea::make('communication.body')
                         ->title('Communication note')
                         ->rows(3),
+                    CheckBox::make('communication.client_replied')
+                        ->sendTrueOrFalse()
+                        ->title('Client replied')
+                        ->placeholder('Client replied'),
+                    CheckBox::make('communication.callback_required')
+                        ->sendTrueOrFalse()
+                        ->title('Need callback')
+                        ->placeholder('Need callback'),
+                    Input::make('communication.callback_required_at')
+                        ->title('Callback time')
+                        ->type('datetime-local'),
+                    Input::make('communication.call_recording_url')
+                        ->title('Call recording URL')
+                        ->type('url'),
+                    Input::make('communication.call_recording_reference')
+                        ->title('Telephony recording ID'),
                     Button::make('Add communication')
                         ->icon('bs.telephone')
                         ->method('addCommunication'),
@@ -325,11 +368,17 @@ class LeadEditScreen extends Screen
                     ->render(fn (MarketingLeadCommunication $communication): string => str($communication->channel)->replace('_', ' ')->title()->toString()),
                 TD::make('direction', 'Direction')
                     ->render(fn (MarketingLeadCommunication $communication): string => str($communication->direction)->title()->toString()),
+                TD::make('messageTemplate', 'Template')
+                    ->render(fn (MarketingLeadCommunication $communication): string => $communication->messageTemplate?->name ?? '-'),
                 TD::make('subject', 'Subject')
                     ->render(fn (MarketingLeadCommunication $communication): string => $communication->subject ?? '-'),
                 TD::make('body', 'Body')
                     ->render(fn (MarketingLeadCommunication $communication): string => $communication->body ?? '-'),
-            ])->title('Latest communications'),
+                TD::make('flags', 'Flags')
+                    ->render(fn (MarketingLeadCommunication $communication): string => $this->communicationFlags($communication)),
+                TD::make('recording', 'Recording')
+                    ->render(fn (MarketingLeadCommunication $communication): string => $communication->call_recording_url ?? $communication->call_recording_reference ?? '-'),
+            ])->title('All recent communications'),
 
             Layout::table('lead.tasks', [
                 TD::make('due_at', 'Due')
@@ -435,19 +484,40 @@ class LeadEditScreen extends Screen
     public function addCommunication(MarketingLead $lead, Request $request, AddLeadCommunicationAction $addCommunication): RedirectResponse
     {
         $data = $request->validate([
-            'communication.channel' => ['required', 'string', 'max:60'],
-            'communication.direction' => ['required', Rule::in(['inbound', 'outbound'])],
+            'communication.channel' => ['required', 'string', 'max:60', Rule::in(array_keys($this->communicationChannels()))],
+            'communication.template_id' => ['nullable', 'integer', 'exists:marketing_message_templates,id'],
+            'communication.direction' => ['required', Rule::in(array_keys($this->communicationDirections()))],
             'communication.subject' => ['nullable', 'string', 'max:190'],
-            'communication.body' => ['nullable', 'string', 'max:2000'],
+            'communication.body' => ['nullable', 'required_without_all:communication.template_id,communication.subject,communication.call_recording_url,communication.call_recording_reference', 'string', 'max:2000'],
+            'communication.client_replied' => ['nullable', 'boolean'],
+            'communication.callback_required' => ['nullable', 'boolean'],
+            'communication.callback_required_at' => ['nullable', 'date'],
+            'communication.call_recording_url' => ['nullable', 'url', 'max:500'],
+            'communication.call_recording_reference' => ['nullable', 'string', 'max:190'],
         ]);
+        $payload = $data['communication'];
+        $template = filled($payload['template_id'] ?? null)
+            ? MarketingMessageTemplate::query()
+                ->active()
+                ->forChannel($payload['channel'])
+                ->whereKey($payload['template_id'])
+                ->firstOrFail()
+            : null;
 
         $addCommunication->handle(
             $lead,
             $request->user(),
-            $data['communication']['channel'],
-            $data['communication']['direction'],
-            $data['communication']['subject'] ?? null,
-            $data['communication']['body'] ?? null,
+            $payload['channel'],
+            $payload['direction'],
+            $payload['subject'] ?? null,
+            $payload['body'] ?? null,
+            null,
+            $template,
+            (bool) ($payload['client_replied'] ?? false),
+            (bool) ($payload['callback_required'] ?? false),
+            filled($payload['callback_required_at'] ?? null) ? Carbon::parse($payload['callback_required_at']) : null,
+            $payload['call_recording_url'] ?? null,
+            $payload['call_recording_reference'] ?? null,
         );
 
         Toast::info('Communication added.');
@@ -465,5 +535,40 @@ class LeadEditScreen extends Screen
                 $status->value => $status->label(),
             ])
             ->all();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function communicationChannels(): array
+    {
+        return [
+            'phone' => 'Phone call',
+            'sms' => 'SMS',
+            'email' => 'Email',
+            'whatsapp' => 'WhatsApp',
+            'telegram' => 'Telegram',
+            'viber' => 'Viber',
+            'web_form' => 'Web form',
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function communicationDirections(): array
+    {
+        return [
+            'inbound' => 'Inbound',
+            'outbound' => 'Outbound',
+        ];
+    }
+
+    private function communicationFlags(MarketingLeadCommunication $communication): string
+    {
+        return collect([
+            $communication->hasClientReply() ? 'Client replied' : null,
+            $communication->needsCallback() ? 'Callback '.$communication->callback_required_at?->format('Y-m-d H:i') : null,
+        ])->filter()->join(' / ') ?: '-';
     }
 }

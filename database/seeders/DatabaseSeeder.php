@@ -27,6 +27,7 @@ use App\Models\KnowledgeArticle;
 use App\Models\LandingPage;
 use App\Models\MarketingCampaign;
 use App\Models\MarketingLead;
+use App\Models\MarketingMessageTemplate;
 use App\Models\Payment;
 use App\Models\StudentDocument;
 use App\Models\StudentProfile;
@@ -686,6 +687,37 @@ class DatabaseSeeder extends Seeder
             ],
         ));
 
+        $callTemplate = MarketingMessageTemplate::query()->updateOrCreate(
+            ['name' => 'Call after consultation'],
+            [
+                'channel' => 'phone',
+                'subject' => 'Consultation follow-up',
+                'body' => 'Thank you for the consultation. We can reserve your place after documents and payment.',
+                'is_active' => true,
+                'sort_order' => 10,
+            ],
+        );
+        $smsTemplate = MarketingMessageTemplate::query()->updateOrCreate(
+            ['name' => 'SMS callback reminder'],
+            [
+                'channel' => 'sms',
+                'subject' => null,
+                'body' => 'DrivePro Academy: we tried to reach you. Please reply or choose a convenient callback time.',
+                'is_active' => true,
+                'sort_order' => 20,
+            ],
+        );
+        $messengerTemplate = MarketingMessageTemplate::query()->updateOrCreate(
+            ['name' => 'Messenger missing documents'],
+            [
+                'channel' => null,
+                'subject' => 'Missing documents',
+                'body' => 'Please send your ID copy and medical certificate so we can confirm your group place.',
+                'is_active' => true,
+                'sort_order' => 30,
+            ],
+        );
+
         $permissions = [
             'platform.index' => true,
             'platform.content.home' => true,
@@ -716,7 +748,7 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
-        collect([$convertedLead, $qualifiedLead, $rejectedLead])->each(function (MarketingLead $lead) use ($admin): void {
+        collect([$convertedLead, $qualifiedLead, $rejectedLead])->each(function (MarketingLead $lead) use ($admin, $callTemplate, $smsTemplate, $messengerTemplate, $qualifiedLead): void {
             $lead->update(['responsible_manager_id' => $admin->id]);
 
             $lead->comments()->updateOrCreate(
@@ -735,8 +767,13 @@ class DatabaseSeeder extends Seeder
                 ],
                 [
                     'user_id' => $admin->id,
+                    'marketing_message_template_id' => $messengerTemplate->id,
                     'body' => $lead->message,
                     'communicated_at' => $lead->created_at,
+                    'client_replied_at' => null,
+                    'callback_required_at' => null,
+                    'call_recording_url' => null,
+                    'call_recording_reference' => null,
                     'metadata' => [
                         'source' => $lead->source,
                         'utm_source' => $lead->utm_source,
@@ -745,6 +782,29 @@ class DatabaseSeeder extends Seeder
                     ],
                 ],
             );
+
+            if ($lead->is($qualifiedLead)) {
+                $lead->communications()->updateOrCreate(
+                    [
+                        'channel' => 'phone',
+                        'direction' => 'outbound',
+                        'subject' => 'Consultation call',
+                    ],
+                    [
+                        'user_id' => $admin->id,
+                        'marketing_message_template_id' => $callTemplate->id,
+                        'body' => 'Client answered, asked for documents and weekend practice slots.',
+                        'communicated_at' => now()->subHours(20),
+                        'client_replied_at' => now()->subHours(20),
+                        'callback_required_at' => $lead->next_follow_up_at,
+                        'call_recording_url' => 'https://telephony.drivepro.test/recordings/lead-'.$lead->id,
+                        'call_recording_reference' => 'REC-LEAD-'.$lead->id,
+                        'metadata' => [
+                            'sms_fallback_template_id' => $smsTemplate->id,
+                        ],
+                    ],
+                );
+            }
 
             $lead->statusHistories()->updateOrCreate(
                 [

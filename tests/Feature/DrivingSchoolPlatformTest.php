@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\LeadStatus;
 use App\Models\Branch;
 use App\Models\MarketingLead;
+use App\Models\MarketingMessageTemplate;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
 use App\Models\User;
@@ -210,10 +211,61 @@ class DrivingSchoolPlatformTest extends TestCase
             ->assertSee('CRM lead: Tomas Jankauskas')
             ->assertSee('Responsible manager')
             ->assertSee('Communication history')
+            ->assertSee('Message template')
+            ->assertSee('Call recording URL')
+            ->assertSee('Call after consultation')
+            ->assertSee('Client replied')
+            ->assertSee('telephony.drivepro.test')
             ->assertSee('Manager tasks')
             ->assertSee('Status history')
             ->assertSee('Attached documents')
             ->assertSee('application-document.pdf');
+    }
+
+    public function test_admin_can_log_multichannel_lead_communication_with_callback(): void
+    {
+        $this->seed();
+
+        $admin = User::query()
+            ->where('email', 'admin@example.com')
+            ->firstOrFail();
+        $lead = MarketingLead::query()
+            ->where('email', 'lead@drivepro.test')
+            ->firstOrFail();
+        $template = MarketingMessageTemplate::query()
+            ->where('name', 'SMS callback reminder')
+            ->firstOrFail();
+
+        $this->actingAs($admin)
+            ->post(route('platform.marketing.leads.edit', ['lead' => $lead, 'method' => 'addCommunication']), [
+                'communication' => [
+                    'channel' => 'sms',
+                    'template_id' => $template->id,
+                    'direction' => 'outbound',
+                    'client_replied' => '1',
+                    'callback_required' => '1',
+                    'callback_required_at' => now()->addHours(4)->format('Y-m-d\TH:i'),
+                    'call_recording_reference' => 'SMS-GATEWAY-42',
+                ],
+            ])
+            ->assertRedirect(route('platform.marketing.leads.edit', $lead));
+
+        $communication = $lead->communications()
+            ->where('channel', 'sms')
+            ->where('call_recording_reference', 'SMS-GATEWAY-42')
+            ->firstOrFail();
+
+        $this->assertSame($template->id, $communication->marketing_message_template_id);
+        $this->assertSame($template->body, $communication->body);
+        $this->assertNotNull($communication->client_replied_at);
+        $this->assertNotNull($communication->callback_required_at);
+        $this->assertDatabaseHas('marketing_lead_tasks', [
+            'marketing_lead_id' => $lead->id,
+            'assigned_to_user_id' => $admin->id,
+            'title' => 'Call back: Tomas Jankauskas',
+            'status' => 'open',
+            'priority' => 'high',
+        ]);
     }
 
     public function test_admin_can_move_lead_through_sales_pipeline(): void
