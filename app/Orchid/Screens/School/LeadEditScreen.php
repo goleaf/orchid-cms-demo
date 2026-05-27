@@ -254,6 +254,11 @@ class LeadEditScreen extends Screen
             Button::make(tkey('crm.leads.actions.save_crm_card'))
                 ->icon('bs.check2-circle')
                 ->method('save'),
+
+            Button::make(tkey('crm.leads.actions.prepare_enrollment'))
+                ->icon('bs.person-check')
+                ->method('prepareEnrollment')
+                ->canSee($this->lead?->exists ?? false),
         ];
     }
 
@@ -262,6 +267,8 @@ class LeadEditScreen extends Screen
         return [
             Layout::columns([
                 Layout::rows([
+                    Input::make('lead.id')
+                        ->type('hidden'),
                     Input::make('lead.first_name')
                         ->title(tkey('crm.leads.fields.first_name'))
                         ->required(),
@@ -269,6 +276,10 @@ class LeadEditScreen extends Screen
                         ->title(tkey('crm.leads.fields.last_name')),
                     Input::make('lead.phone')
                         ->title(tkey('crm.leads.fields.phone')),
+                    Input::make('lead.normalized_phone')
+                        ->title(tkey('crm.leads.fields.normalized_phone'))
+                        ->disabled()
+                        ->canSee($this->lead?->exists ?? false),
                     Input::make('lead.email')
                         ->title(tkey('crm.leads.fields.email'))
                         ->type('email'),
@@ -287,6 +298,10 @@ class LeadEditScreen extends Screen
                         ->title(tkey('crm.leads.fields.manager'))
                         ->options($this->managers)
                         ->empty(tkey('crm.leads.empty.no_manager')),
+                    Select::make('lead.tag_ids')
+                        ->title(tkey('crm.leads.fields.tags'))
+                        ->options($this->tags)
+                        ->multiple(),
                     Select::make('lead.branch_id')
                         ->title(tkey('crm.leads.fields.branch'))
                         ->options($this->branches)
@@ -326,6 +341,18 @@ class LeadEditScreen extends Screen
                             0 => tkey('common.status.no'),
                             1 => tkey('common.status.yes'),
                         ]),
+                    Select::make('lead.priority')
+                        ->title(tkey('crm.leads.fields.priority'))
+                        ->options($this->leadPriorityOptions())
+                        ->required(),
+                    Input::make('lead.lead_score')
+                        ->title(tkey('crm.leads.fields.lead_score'))
+                        ->type('number')
+                        ->min(0)
+                        ->max(100),
+                    Input::make('lead.last_contacted_at')
+                        ->title(tkey('crm.leads.fields.last_contacted_at'))
+                        ->type('datetime-local'),
                     Input::make('lead.next_follow_up_at')
                         ->title(tkey('crm.leads.fields.next_follow_up_at'))
                         ->type('datetime-local'),
@@ -354,6 +381,25 @@ class LeadEditScreen extends Screen
                     Input::make('lead.referrer_url')
                         ->title(tkey('crm.leads.fields.referrer'))
                         ->disabled(),
+                    Input::make('lead.landing_page')
+                        ->title(tkey('crm.leads.fields.landing_page'))
+                        ->disabled(),
+                    Input::make('lead.form_page')
+                        ->title(tkey('crm.leads.fields.form_page'))
+                        ->disabled(),
+                    Input::make('lead.form_name')
+                        ->title(tkey('crm.leads.fields.form_name'))
+                        ->disabled(),
+                    Input::make('lead.locale')
+                        ->title(tkey('crm.leads.fields.locale'))
+                        ->disabled(),
+                    Input::make('lead.ip_address')
+                        ->title(tkey('crm.leads.fields.ip_address'))
+                        ->disabled(),
+                    TextArea::make('lead.user_agent')
+                        ->title(tkey('crm.leads.fields.user_agent'))
+                        ->rows(3)
+                        ->disabled(),
                 ])->title(tkey('crm.leads.sections.marketing_data')),
             ]),
 
@@ -361,13 +407,41 @@ class LeadEditScreen extends Screen
                 TextArea::make('lead.message')
                     ->title(tkey('crm.leads.fields.comment'))
                     ->rows(4),
+                TextArea::make('lead.internal_comment')
+                    ->title(tkey('crm.leads.fields.internal_comment'))
+                    ->rows(3),
                 Select::make('lead.lost_reason_code')
                     ->title(tkey('crm.leads.fields.lost_reason'))
                     ->options($this->lostReasons)
                     ->empty(tkey('crm.leads.empty.no_lost_reason')),
                 TextArea::make('lead.rejection_reason')
-                    ->title(tkey('crm.leads.fields.internal_comment'))
+                    ->title(tkey('crm.leads.fields.lost_comment'))
                     ->rows(3),
+                Input::make('lead.duplicate_of_id')
+                    ->title(tkey('crm.leads.fields.duplicate_of'))
+                    ->type('number')
+                    ->min(1),
+                CheckBox::make('lead.consent_accepted')
+                    ->sendTrueOrFalse()
+                    ->title(tkey('crm.leads.fields.consent_accepted'))
+                    ->placeholder(tkey('crm.leads.fields.consent_accepted')),
+                Input::make('lead.consent_accepted_at')
+                    ->title(tkey('crm.leads.fields.consent_accepted_at'))
+                    ->disabled(),
+                Input::make('lead.consent_text_version')
+                    ->title(tkey('crm.leads.fields.consent_text_version')),
+                Input::make('lead.uuid')
+                    ->title(tkey('crm.leads.fields.uuid'))
+                    ->disabled()
+                    ->canSee($this->lead?->exists ?? false),
+                Input::make('lead.closed_at')
+                    ->title(tkey('crm.leads.fields.closed_at'))
+                    ->disabled()
+                    ->canSee($this->lead?->exists ?? false),
+                Input::make('lead.converted_at')
+                    ->title(tkey('crm.leads.fields.converted_at'))
+                    ->disabled()
+                    ->canSee($this->lead?->exists ?? false),
             ])->title(tkey('crm.leads.sections.system_data')),
 
             Layout::columns([
@@ -414,11 +488,41 @@ class LeadEditScreen extends Screen
                         ->type('url'),
                     Input::make('communication.call_recording_reference')
                         ->title(tkey('crm.communications.fields.call_recording_reference')),
+                    Select::make('communication.call_result')
+                        ->title(tkey('crm.communications.fields.call_result'))
+                        ->options($this->callResults())
+                        ->empty(tkey('crm.communications.empty.no_call_result')),
+                    Input::make('communication.duration_minutes')
+                        ->title(tkey('crm.communications.fields.duration_minutes'))
+                        ->type('number')
+                        ->min(0),
                     Button::make(tkey('crm.leads.actions.log_call'))
                         ->icon('bs.telephone')
                         ->method('addCommunication'),
                 ])->title(tkey('crm.communications.title')),
             ]),
+
+            Layout::rows([
+                Input::make('task.title')
+                    ->title(tkey('crm.tasks.fields.title')),
+                TextArea::make('task.notes')
+                    ->title(tkey('crm.tasks.fields.description'))
+                    ->rows(3),
+                Select::make('task.assigned_to_user_id')
+                    ->title(tkey('crm.tasks.fields.assigned_to'))
+                    ->options($this->managers)
+                    ->empty(tkey('crm.leads.empty.no_manager')),
+                Select::make('task.priority')
+                    ->title(tkey('crm.tasks.fields.priority'))
+                    ->options($this->taskPriorityOptions()),
+                Input::make('task.due_at')
+                    ->title(tkey('crm.tasks.fields.due_at'))
+                    ->type('datetime-local'),
+                Button::make(tkey('crm.leads.actions.create_task'))
+                    ->icon('bs.check2-square')
+                    ->method('createTask')
+                    ->canSee($this->lead?->exists ?? false),
+            ])->title(tkey('crm.leads.sections.tasks')),
 
             Layout::table('lead.comments', [
                 TD::make('created_at', tkey('crm.leads.columns.created_at'))
@@ -459,7 +563,71 @@ class LeadEditScreen extends Screen
                     ->render(fn (MarketingLeadTask $task): string => $task->priority->label()),
                 TD::make('status', tkey('crm.tasks.fields.status'))
                     ->render(fn (MarketingLeadTask $task): string => $task->status->label()),
+                TD::make('actions', tkey('crm.leads.columns.actions'))
+                    ->alignRight()
+                    ->render(fn (MarketingLeadTask $task): string => (string) Button::make(tkey('crm.tasks.actions.complete'))
+                        ->icon('bs.check2')
+                        ->method('completeTask')
+                        ->parameters(['task' => $task->id])
+                        ->canSee($task->completed_at === null)),
             ])->title(tkey('crm.leads.sections.tasks')),
+
+            Layout::table('lead.activities', [
+                TD::make('created_at', tkey('crm.leads.columns.created_at'))
+                    ->render(fn (MarketingLeadActivity $activity): string => $activity->created_at->format('Y-m-d H:i')),
+                TD::make('type', tkey('crm.activities.fields.type'))
+                    ->render(fn (MarketingLeadActivity $activity): string => $activity->typeLabel()),
+                TD::make('user', tkey('crm.leads.columns.user'))
+                    ->render(fn (MarketingLeadActivity $activity): string => $activity->user?->name ?? tkey('common.system')),
+                TD::make('body', tkey('crm.activities.fields.body'))
+                    ->render(fn (MarketingLeadActivity $activity): string => $activity->body ?? $activity->title ?? '-'),
+                TD::make('change', tkey('crm.activities.fields.change'))
+                    ->render(fn (MarketingLeadActivity $activity): string => collect([$activity->old_value, $activity->new_value])->filter()->join(' -> ') ?: '-'),
+            ])->title(tkey('crm.leads.sections.activity_timeline')),
+
+            Layout::table('lead.duplicates', [
+                TD::make('id', tkey('crm.leads.columns.id'))
+                    ->render(fn (MarketingLead $duplicate): string => (string) $duplicate->id),
+                TD::make('name', tkey('crm.leads.columns.full_name'))
+                    ->render(fn (MarketingLead $duplicate): string => (string) Link::make($duplicate->fullName())
+                        ->route('platform.marketing.leads.edit', $duplicate)),
+                TD::make('phone', tkey('crm.leads.columns.phone'))
+                    ->render(fn (MarketingLead $duplicate): string => $duplicate->phone ?? '-'),
+                TD::make('status', tkey('crm.leads.columns.status'))
+                    ->render(fn (MarketingLead $duplicate): string => $duplicate->status->label()),
+            ])->title(tkey('crm.leads.sections.duplicates')),
+
+            Layout::rows([
+                Select::make('lost.reason')
+                    ->title(tkey('crm.leads.fields.lost_reason'))
+                    ->options($this->lostReasons)
+                    ->empty(tkey('crm.leads.empty.no_lost_reason')),
+                TextArea::make('lost.comment')
+                    ->title(tkey('crm.leads.fields.lost_comment'))
+                    ->rows(3),
+                Button::make(tkey('crm.leads.actions.mark_lost'))
+                    ->icon('bs.x-octagon')
+                    ->method('markLost')
+                    ->canSee($this->lead?->exists ?? false),
+            ])->title(tkey('crm.leads.sections.lost')),
+
+            Layout::rows([
+                Input::make('duplicate.original_id')
+                    ->title(tkey('crm.leads.fields.duplicate_of'))
+                    ->type('number')
+                    ->min(1),
+                TextArea::make('duplicate.comment')
+                    ->title(tkey('crm.leads.fields.comment'))
+                    ->rows(3),
+                Button::make(tkey('crm.leads.actions.mark_duplicate'))
+                    ->icon('bs.files')
+                    ->method('markDuplicate')
+                    ->canSee($this->lead?->exists ?? false),
+                Button::make(tkey('crm.leads.actions.mark_spam'))
+                    ->icon('bs.exclamation-octagon')
+                    ->method('markSpam')
+                    ->canSee($this->lead?->exists ?? false),
+            ])->title(tkey('crm.leads.sections.duplicates')),
 
             Layout::table('lead.statusHistories', [
                 TD::make('changed_at', tkey('crm.status_history.fields.changed_at'))

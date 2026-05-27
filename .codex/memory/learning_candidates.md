@@ -912,3 +912,23 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T18:16:11+00:00
+
+```json
+{
+  "ts": "2026-05-27T18:16:11+00:00",
+  "event": "Stop",
+  "session_id": "019e6a96-6279-73a2-bd62-e85432689ea8",
+  "turn_id": "019e6aa5-af6d-7d30-8e05-987dd0f2c4c5",
+  "branch": "main",
+  "changed_file_count": 1,
+  "changed_file_groups": {
+    "orchid": 1
+  },
+  "changed_files_sample": [
+    "pp/Orchid/Screens/School/LeadEditScreen.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
