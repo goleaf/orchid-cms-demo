@@ -119,28 +119,28 @@ class PlatformProvider extends OrchidServiceProvider
             Menu::make(tkey('menu.crm.leads'))
                 ->icon('bs.funnel')
                 ->route('platform.marketing.leads')
-                ->permission('platform.marketing.leads')
+                ->permission('crm.leads.view')
                 ->title(tkey('menu.crm')),
 
             Menu::make(tkey('menu.crm.new_leads'))
                 ->icon('bs.inbox')
                 ->route('platform.marketing.leads', ['status' => 'new'])
-                ->permission('platform.marketing.leads'),
+                ->permission('crm.leads.view'),
 
             Menu::make(tkey('menu.crm.my_leads'))
                 ->icon('bs.person-check')
                 ->route('platform.marketing.leads', ['segment' => 'my'])
-                ->permission('platform.marketing.leads'),
+                ->permission('crm.leads.view'),
 
             Menu::make(tkey('menu.crm.overdue_tasks'))
                 ->icon('bs.exclamation-triangle')
                 ->route('platform.marketing.leads', ['overdue' => '1'])
-                ->permission('platform.marketing.leads'),
+                ->permission('crm.leads.view'),
 
             Menu::make(tkey('menu.crm.pipeline'))
                 ->icon('bs.kanban')
                 ->route('platform.marketing.pipeline')
-                ->permission('platform.marketing.pipeline'),
+                ->permission('crm.leads.view'),
 
             Menu::make(tkey('menu.crm.tasks'))
                 ->icon('bs.check2-square')

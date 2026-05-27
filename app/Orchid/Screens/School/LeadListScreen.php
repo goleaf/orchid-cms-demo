@@ -130,7 +130,7 @@ class LeadListScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['platform.marketing.leads', 'website.view_leads'];
+        return ['crm.leads.view', 'platform.marketing.leads', 'website.view_leads'];
     }
 
     public function commandBar(): iterable

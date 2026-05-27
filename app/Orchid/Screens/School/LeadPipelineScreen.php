@@ -44,7 +44,7 @@ class LeadPipelineScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['platform.marketing.pipeline'];
+        return ['crm.leads.view', 'platform.marketing.pipeline'];
     }
 
     public function commandBar(): iterable
