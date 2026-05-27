@@ -143,12 +143,12 @@ class TrainingProgram extends Model
 
     public function groups(): HasMany
     {
-        return $this->hasMany(TrainingGroup::class);
+        return $this->hasMany(TrainingGroup::class, 'training_program_id');
     }
 
     public function reviews(): HasMany
     {
-        return $this->hasMany(StudentReview::class);
+        return $this->hasMany(StudentReview::class, 'training_program_id');
     }
 
     public function pricingPackages(): HasMany
@@ -158,7 +158,7 @@ class TrainingProgram extends Model
 
     public function trainingGroups(): HasMany
     {
-        return $this->hasMany(TrainingGroup::class);
+        return $this->hasMany(TrainingGroup::class, 'training_program_id');
     }
 
     public function faqs(): MorphMany

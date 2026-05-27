@@ -128,6 +128,18 @@ class PublicWebsiteDatabaseFoundationTest extends TestCase
             'course_id' => $course->id,
             'course_category_id' => $category->id,
         ]);
+        $faq = Faq::factory()->create([
+            'faqable_type' => $course->getMorphClass(),
+            'faqable_id' => $course->id,
+        ]);
+        $branchFaq = Faq::factory()->create([
+            'faqable_type' => $branch->getMorphClass(),
+            'faqable_id' => $branch->id,
+        ]);
+        $testimonial = Testimonial::factory()->create([
+            'training_program_id' => $course->id,
+            'branch_id' => $branch->id,
+        ]);
         $lead = Lead::factory()->create([
             'branch_id' => $branch->id,
             'training_program_id' => $course->id,
@@ -136,8 +148,14 @@ class PublicWebsiteDatabaseFoundationTest extends TestCase
         ]);
 
         $this->assertTrue($category->courses()->whereKey($course->id)->exists());
+        $this->assertTrue($course->category->is($category));
         $this->assertTrue($course->pricingPackages()->whereKey($package->id)->exists());
+        $this->assertTrue($course->trainingGroups()->whereKey($group->id)->exists());
+        $this->assertTrue($course->faqs()->whereKey($faq->id)->exists());
+        $this->assertTrue($course->testimonials()->whereKey($testimonial->id)->exists());
         $this->assertTrue($branch->trainingGroups()->whereKey($group->id)->exists());
+        $this->assertTrue($branch->faqs()->whereKey($branchFaq->id)->exists());
+        $this->assertTrue($branch->testimonials()->whereKey($testimonial->id)->exists());
         $this->assertTrue($group->leads()->whereKey($lead->id)->exists());
         $this->assertTrue($lead->course->is($course));
         $this->assertTrue($lead->courseCategory->is($category));
