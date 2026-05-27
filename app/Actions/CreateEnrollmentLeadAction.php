@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Enums\LeadStatus;
+use App\Enums\LeadTaskPriority;
 use App\Models\MarketingLead;
 use App\Models\TrainingProgram;
 use App\Models\User;
@@ -52,6 +53,9 @@ class CreateEnrollmentLeadAction
             'budget_cents' => filled($data['budget_eur'] ?? null)
                 ? (int) round(((float) $data['budget_eur']) * 100)
                 : null,
+            'is_hot' => filled($data['budget_eur'] ?? null) && (float) $data['budget_eur'] >= 1200,
+            'next_follow_up_at' => now()->addHour(),
+            'last_status_changed_at' => now(),
             'privacy_accepted_at' => now(),
             'message' => $data['message'] ?? null,
             'rejection_reason' => null,
@@ -95,6 +99,23 @@ class CreateEnrollmentLeadAction
             $lead,
             $manager,
             'Lead created automatically from public enrollment form.',
+        );
+
+        $lead->statusHistories()->create([
+            'user_id' => $manager?->id,
+            'from_status' => null,
+            'to_status' => LeadStatus::New,
+            'reason' => 'Public application received.',
+            'changed_at' => now(),
+        ]);
+
+        app(CreateLeadTaskAction::class)->handle(
+            $lead->refresh(),
+            $manager,
+            'Call new application',
+            $lead->next_follow_up_at,
+            $lead->is_hot ? LeadTaskPriority::High : LeadTaskPriority::Normal,
+            'Automatic reminder for a new public website lead.',
         );
 
         $managers = User::query()

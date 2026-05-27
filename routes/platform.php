@@ -15,6 +15,7 @@ use App\Orchid\Screens\School\GroupListScreen;
 use App\Orchid\Screens\School\InstructorListScreen;
 use App\Orchid\Screens\School\LeadEditScreen;
 use App\Orchid\Screens\School\LeadListScreen;
+use App\Orchid\Screens\School\LeadPipelineScreen;
 use App\Orchid\Screens\School\PaymentListScreen;
 use App\Orchid\Screens\School\ProgramListScreen;
 use App\Orchid\Screens\School\ScheduleListScreen;
@@ -123,6 +124,13 @@ Route::screen('marketing/campaigns', CampaignListScreen::class)
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
         ->push('Campaigns', route('platform.marketing.campaigns')));
+
+// Marketing > Sales Pipeline
+Route::screen('marketing/pipeline', LeadPipelineScreen::class)
+    ->name('platform.marketing.pipeline')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push('Sales Pipeline', route('platform.marketing.pipeline')));
 
 // Marketing > Leads
 Route::screen('marketing/leads', LeadListScreen::class)

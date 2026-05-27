@@ -96,6 +96,11 @@ class PlatformProvider extends OrchidServiceProvider
                 ->permission('platform.marketing.campaigns')
                 ->title('Marketing'),
 
+            Menu::make('Pipeline')
+                ->icon('bs.kanban')
+                ->route('platform.marketing.pipeline')
+                ->permission('platform.marketing.pipeline'),
+
             Menu::make('Leads')
                 ->icon('bs.funnel')
                 ->route('platform.marketing.leads')
@@ -152,6 +157,7 @@ class PlatformProvider extends OrchidServiceProvider
 
             ItemPermission::group('Marketing')
                 ->addPermission('platform.marketing.campaigns', 'Campaigns')
+                ->addPermission('platform.marketing.pipeline', 'Sales pipeline')
                 ->addPermission('platform.marketing.leads', 'Leads'),
 
             ItemPermission::group(__('System'))

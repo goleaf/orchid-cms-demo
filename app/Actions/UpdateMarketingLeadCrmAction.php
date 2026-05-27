@@ -32,6 +32,8 @@ class UpdateMarketingLeadCrmAction
             'budget_cents' => filled($data['budget_eur'] ?? null)
                 ? (int) round(((float) $data['budget_eur']) * 100)
                 : null,
+            'is_hot' => (bool) ($data['is_hot'] ?? $lead->is_hot),
+            'next_follow_up_at' => $data['next_follow_up_at'] ?? $lead->next_follow_up_at,
             'rejection_reason' => $data['rejection_reason'] ?? null,
             'message' => $data['message'] ?? null,
         ])->save();

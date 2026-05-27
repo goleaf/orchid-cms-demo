@@ -10,6 +10,8 @@ use App\Enums\ExamStatus;
 use App\Enums\GroupStatus;
 use App\Enums\InstructorStatus;
 use App\Enums\LeadStatus;
+use App\Enums\LeadTaskPriority;
+use App\Enums\LeadTaskStatus;
 use App\Enums\LessonStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\ReviewStatus;
@@ -434,6 +436,9 @@ class DatabaseSeeder extends Seeder
                 'preferred_language' => 'Lithuanian',
                 'preferred_time' => 'Evenings',
                 'budget_cents' => 129000,
+                'is_hot' => true,
+                'next_follow_up_at' => null,
+                'last_status_changed_at' => now()->subDays(14),
                 'privacy_accepted_at' => now()->subDays(18),
                 'contacted_at' => now()->subDays(18),
                 'converted_at' => now()->subDays(14),
@@ -468,6 +473,9 @@ class DatabaseSeeder extends Seeder
                 'preferred_language' => 'English',
                 'preferred_time' => 'Weekends',
                 'budget_cents' => 150000,
+                'is_hot' => true,
+                'next_follow_up_at' => now()->subHours(3),
+                'last_status_changed_at' => now()->subDay(),
                 'privacy_accepted_at' => now()->subDays(2),
                 'contacted_at' => now()->subDays(1),
                 'converted_at' => null,
@@ -476,6 +484,43 @@ class DatabaseSeeder extends Seeder
                 'crm_snapshot' => ['form' => 'public_enrollment', 'captured_at' => now()->subDays(2)->toIso8601String()],
                 'utm_source' => 'google',
                 'utm_medium' => 'cpc',
+                'utm_campaign' => 'spring-category-b',
+            ],
+        );
+
+        $rejectedLead = MarketingLead::query()->updateOrCreate(
+            ['email' => 'lost@drivepro.test'],
+            [
+                'marketing_campaign_id' => $campaign->id,
+                'responsible_manager_id' => null,
+                'branch_id' => $branch->id,
+                'training_program_id' => $program->id,
+                'training_group_id' => null,
+                'instructor_id' => null,
+                'converted_student_profile_id' => null,
+                'first_name' => 'Rasa',
+                'last_name' => 'Paulauskaite',
+                'phone' => '+370 600 55555',
+                'messenger' => 'Viber',
+                'city' => 'Vilnius',
+                'source' => 'facebook',
+                'status' => LeadStatus::Rejected,
+                'license_category' => 'B',
+                'preferred_format' => 'offline',
+                'preferred_language' => 'Lithuanian',
+                'preferred_time' => 'Mornings',
+                'budget_cents' => 80000,
+                'is_hot' => false,
+                'next_follow_up_at' => null,
+                'last_status_changed_at' => now()->subDays(4),
+                'privacy_accepted_at' => now()->subDays(7),
+                'contacted_at' => now()->subDays(6),
+                'converted_at' => null,
+                'message' => 'Asked for a lower budget option.',
+                'rejection_reason' => 'Budget too low',
+                'crm_snapshot' => ['form' => 'public_enrollment', 'captured_at' => now()->subDays(7)->toIso8601String()],
+                'utm_source' => 'facebook',
+                'utm_medium' => 'paid_social',
                 'utm_campaign' => 'spring-category-b',
             ],
         );
@@ -655,6 +700,7 @@ class DatabaseSeeder extends Seeder
             'platform.finance.payments' => true,
             'platform.documents' => true,
             'platform.marketing.campaigns' => true,
+            'platform.marketing.pipeline' => true,
             'platform.marketing.leads' => true,
             'platform.systems.roles' => true,
             'platform.systems.users' => true,
@@ -670,7 +716,7 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
-        collect([$convertedLead, $qualifiedLead])->each(function (MarketingLead $lead) use ($admin): void {
+        collect([$convertedLead, $qualifiedLead, $rejectedLead])->each(function (MarketingLead $lead) use ($admin): void {
             $lead->update(['responsible_manager_id' => $admin->id]);
 
             $lead->comments()->updateOrCreate(
@@ -700,6 +746,18 @@ class DatabaseSeeder extends Seeder
                 ],
             );
 
+            $lead->statusHistories()->updateOrCreate(
+                [
+                    'to_status' => $lead->status->value,
+                    'reason' => 'Seeded CRM pipeline state.',
+                ],
+                [
+                    'user_id' => $admin->id,
+                    'from_status' => LeadStatus::New->value,
+                    'changed_at' => $lead->last_status_changed_at ?? now(),
+                ],
+            );
+
             $lead->documents()->updateOrCreate(
                 ['original_name' => 'application-document.pdf'],
                 [
@@ -708,6 +766,21 @@ class DatabaseSeeder extends Seeder
                     'size' => 128000,
                 ],
             );
+
+            if ($lead->next_follow_up_at !== null) {
+                $lead->tasks()->updateOrCreate(
+                    ['title' => 'Follow up: '.$lead->status->label()],
+                    [
+                        'assigned_to_user_id' => $admin->id,
+                        'created_by_user_id' => $admin->id,
+                        'status' => LeadTaskStatus::Open->value,
+                        'priority' => ($lead->is_hot ? LeadTaskPriority::High : LeadTaskPriority::Normal)->value,
+                        'due_at' => $lead->next_follow_up_at,
+                        'completed_at' => null,
+                        'notes' => 'Seeded reminder for CRM funnel demo.',
+                    ],
+                );
+            }
         });
 
         Cache::forget('driving-school.dashboard.metrics');

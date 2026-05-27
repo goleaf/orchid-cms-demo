@@ -14,6 +14,8 @@ use App\Models\MarketingLead;
 use App\Models\MarketingLeadComment;
 use App\Models\MarketingLeadCommunication;
 use App\Models\MarketingLeadDocument;
+use App\Models\MarketingLeadStatusHistory;
+use App\Models\MarketingLeadTask;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
 use App\Models\User;
@@ -85,6 +87,16 @@ class LeadEditScreen extends Screen
                     ->with('user:id,name')
                     ->latest('communicated_at')
                     ->limit(10),
+                'statusHistories' => fn ($query) => $query
+                    ->select(['id', 'marketing_lead_id', 'user_id', 'from_status', 'to_status', 'reason', 'changed_at'])
+                    ->with('user:id,name')
+                    ->latest('changed_at')
+                    ->limit(10),
+                'tasks' => fn ($query) => $query
+                    ->select(['id', 'marketing_lead_id', 'assigned_to_user_id', 'title', 'status', 'priority', 'due_at', 'completed_at'])
+                    ->with('assignedTo:id,name')
+                    ->latest('due_at')
+                    ->limit(10),
             ])
             ->whereKey($lead->id)
             ->firstOrFail();
@@ -119,6 +131,7 @@ class LeadEditScreen extends Screen
         return [
             'lead' => $this->lead,
             'lead_status' => $this->lead->status->value,
+            'lead.next_follow_up_at' => $this->lead->next_follow_up_at?->format('Y-m-d\TH:i'),
             'lead_budget_eur' => $this->lead->budget_cents !== null
                 ? number_format($this->lead->budget_cents / 100, 2, '.', '')
                 : null,
@@ -216,6 +229,15 @@ class LeadEditScreen extends Screen
                         ->title('Budget EUR')
                         ->type('number')
                         ->step('0.01'),
+                    Select::make('lead.is_hot')
+                        ->title('Hot lead')
+                        ->options([
+                            0 => 'No',
+                            1 => 'Yes',
+                        ]),
+                    Input::make('lead.next_follow_up_at')
+                        ->title('Next follow-up')
+                        ->type('datetime-local'),
                 ])->title('Training intent'),
 
                 Layout::rows([
@@ -308,6 +330,32 @@ class LeadEditScreen extends Screen
                     ->render(fn (MarketingLeadCommunication $communication): string => $communication->body ?? '-'),
             ])->title('Latest communications'),
 
+            Layout::table('lead.tasks', [
+                TD::make('due_at', 'Due')
+                    ->render(fn (MarketingLeadTask $task): string => $task->due_at?->format('Y-m-d H:i') ?? '-'),
+                TD::make('title', 'Task')
+                    ->render(fn (MarketingLeadTask $task): string => $task->title),
+                TD::make('assignedTo', 'Manager')
+                    ->render(fn (MarketingLeadTask $task): string => $task->assignedTo?->name ?? '-'),
+                TD::make('priority', 'Priority')
+                    ->render(fn (MarketingLeadTask $task): string => str($task->priority->value)->title()->toString()),
+                TD::make('status', 'Status')
+                    ->render(fn (MarketingLeadTask $task): string => str($task->status->value)->title()->toString()),
+            ])->title('Manager tasks'),
+
+            Layout::table('lead.statusHistories', [
+                TD::make('changed_at', 'Changed')
+                    ->render(fn (MarketingLeadStatusHistory $history): string => $history->changed_at->format('Y-m-d H:i')),
+                TD::make('from_status', 'From')
+                    ->render(fn (MarketingLeadStatusHistory $history): string => $history->from_status?->label() ?? '-'),
+                TD::make('to_status', 'To')
+                    ->render(fn (MarketingLeadStatusHistory $history): string => $history->to_status->label()),
+                TD::make('user', 'User')
+                    ->render(fn (MarketingLeadStatusHistory $history): string => $history->user?->name ?? 'System'),
+                TD::make('reason', 'Reason')
+                    ->render(fn (MarketingLeadStatusHistory $history): string => $history->reason ?? '-'),
+            ])->title('Status history'),
+
             Layout::table('lead.documents', [
                 TD::make('original_name', 'Document')
                     ->render(fn (MarketingLeadDocument $document): string => $document->original_name),
@@ -341,6 +389,8 @@ class LeadEditScreen extends Screen
             'lead.preferred_format' => ['nullable', 'string', 'max:60'],
             'lead.preferred_language' => ['nullable', 'string', 'max:60'],
             'lead.preferred_time' => ['nullable', 'string', 'max:120'],
+            'lead.is_hot' => ['nullable', 'boolean'],
+            'lead.next_follow_up_at' => ['nullable', 'date'],
             'lead.message' => ['nullable', 'string', 'max:2000'],
             'lead.rejection_reason' => ['nullable', 'string', 'max:2000'],
             'lead_budget_eur' => ['nullable', 'numeric', 'min:0', 'max:100000'],
