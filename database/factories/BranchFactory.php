@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
  */
 class BranchFactory extends Factory
 {
+    protected $model = Branch::class;
+
     /**
      * Define the model's default state.
      *
@@ -18,17 +20,27 @@ class BranchFactory extends Factory
      */
     public function definition(): array
     {
+        $name = $this->faker->company().' Driving School';
+        $city = $this->faker->city();
+        $address = $this->faker->streetAddress();
+        $description = $this->faker->paragraph();
+
         return [
             'uuid' => (string) Str::uuid(),
             'code' => strtoupper($this->faker->unique()->bothify('BR-####')),
-            'name' => $this->faker->company().' Driving School',
+            'name' => $name,
+            'name_translations' => $this->translations($name),
             'slug' => $this->faker->unique()->slug(2),
-            'city' => $this->faker->city(),
-            'address' => $this->faker->streetAddress(),
+            'city' => $city,
+            'city_translations' => $this->translations($city),
+            'address' => $address,
+            'address_translations' => $this->translations($address),
             'phone' => $this->faker->phoneNumber(),
             'email' => $this->faker->companyEmail(),
-            'description' => $this->faker->paragraph(),
+            'description' => $description,
+            'description_translations' => $this->translations($description),
             'working_hours' => 'Mon-Fri 09:00-18:00',
+            'working_hours_translations' => $this->translations('Пн-Пт 09:00-18:00', 'Mon-Fri 09:00-18:00', 'Pr-Pn 09:00-18:00', 'Pn-Pt 09:00-18:00'),
             'latitude' => null,
             'longitude' => null,
             'map_url' => null,
@@ -43,6 +55,55 @@ class BranchFactory extends Factory
             'created_by_id' => null,
             'updated_by_id' => null,
         ];
+    }
+
+    public function active(): static
+    {
+        return $this->state(fn (): array => ['is_active' => true]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn (): array => ['is_active' => false]);
+    }
+
+    public function visibleOnSite(): static
+    {
+        return $this->state(fn (): array => ['is_visible_on_site' => true]);
+    }
+
+    public function hiddenFromSite(): static
+    {
+        return $this->state(fn (): array => ['is_visible_on_site' => false]);
+    }
+
+    public function translated(): static
+    {
+        return $this->state(fn (): array => [
+            'name' => 'DrivePro Academy Vilnius',
+            'name_translations' => $this->translations('DrivePro Academy Вильнюс', 'DrivePro Academy Vilnius', 'DrivePro Academy Vilnius', 'DrivePro Academy Wilno'),
+            'city' => 'Vilnius',
+            'city_translations' => $this->translations('Вильнюс', 'Vilnius', 'Vilnius', 'Wilno'),
+            'address_translations' => $this->translations('Gedimino pr. 1', 'Gedimino Ave. 1', 'Gedimino pr. 1', 'Gedimino pr. 1'),
+            'description_translations' => $this->translations('Филиал автошколы для консультаций и занятий.', 'Driving school branch for consultations and lessons.', 'Vairavimo mokyklos filialas konsultacijoms ir pamokoms.', 'Oddzial szkoly jazdy do konsultacji i zajec.'),
+        ]);
+    }
+
+    public function withCoordinates(float $latitude = 54.6872, float $longitude = 25.2797): static
+    {
+        return $this->state(fn (): array => [
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'map_url' => 'https://maps.google.com/?q='.$latitude.','.$longitude,
+        ]);
+    }
+
+    public function withContacts(string $phone = '+370 600 00000', string $email = 'info@drivepro.test'): static
+    {
+        return $this->state(fn (): array => [
+            'phone' => $phone,
+            'email' => $email,
+        ]);
     }
 
     /**
@@ -87,5 +148,18 @@ class BranchFactory extends Factory
                 'en' => $translations['seo_description_en'] ?? $translations['description_en'] ?? $translations['description'],
             ],
         ]);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function translations(string $ru, ?string $en = null, ?string $lt = null, ?string $pl = null): array
+    {
+        return [
+            'ru' => $ru,
+            'en' => $en ?? $ru,
+            'lt' => $lt ?? $en ?? $ru,
+            'pl' => $pl ?? $en ?? $ru,
+        ];
     }
 }

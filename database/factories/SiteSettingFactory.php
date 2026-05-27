@@ -22,12 +22,52 @@ class SiteSettingFactory extends Factory
         return [
             'key' => $this->faker->unique()->slug(2, '_'),
             'group' => 'website',
-            'value' => [
-                'ru' => $this->faker->sentence(4),
-                'en' => $this->faker->sentence(4),
-            ],
+            'value' => $this->translations($this->faker->sentence(4)),
             'description' => $this->faker->sentence(10),
             'is_public' => false,
+        ];
+    }
+
+    public function public(): static
+    {
+        return $this->state(fn (): array => ['is_public' => true]);
+    }
+
+    public function private(): static
+    {
+        return $this->state(fn (): array => ['is_public' => false]);
+    }
+
+    public function groupWebsite(): static
+    {
+        return $this->state(fn (): array => ['group' => 'website']);
+    }
+
+    public function groupContacts(): static
+    {
+        return $this->state(fn (): array => ['group' => 'contacts']);
+    }
+
+    public function groupSeo(): static
+    {
+        return $this->state(fn (): array => ['group' => 'seo']);
+    }
+
+    public function groupAnalytics(): static
+    {
+        return $this->state(fn (): array => ['group' => 'analytics']);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function translations(string $ru, ?string $en = null, ?string $lt = null, ?string $pl = null): array
+    {
+        return [
+            'ru' => $ru,
+            'en' => $en ?? $ru,
+            'lt' => $lt ?? $en ?? $ru,
+            'pl' => $pl ?? $en ?? $ru,
         ];
     }
 }

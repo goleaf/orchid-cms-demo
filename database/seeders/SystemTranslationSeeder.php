@@ -14,7 +14,21 @@ class SystemTranslationSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach ($this->keys() as $definition) {
+        $this->seedEntries($this->keys());
+    }
+
+    /**
+     * @param  array<int, array{
+     *     group: string,
+     *     key: string,
+     *     description?: string|null,
+     *     is_system?: bool,
+     *     values: array<string, string>
+     * }>  $entries
+     */
+    protected function seedEntries(array $entries): void
+    {
+        foreach ($entries as $definition) {
             $translationString = TranslationString::query()->updateOrCreate(
                 ['key' => $definition['key']],
                 [
@@ -273,7 +287,7 @@ class SystemTranslationSeeder extends Seeder
      * @param  array<string, string>  $values
      * @return array{group: string, key: string, values: array<string, string>, description: null, is_system: bool}
      */
-    private function entry(string $group, string $key, array $values): array
+    protected function entry(string $group, string $key, array $values): array
     {
         return [
             'group' => $group,
@@ -808,7 +822,7 @@ class SystemTranslationSeeder extends Seeder
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function websiteEntries(): array
+    protected function websiteEntries(): array
     {
         return [
             $this->entry('website', 'website.navigation.main', ['ru' => 'Основная навигация', 'en' => 'Main navigation', 'lt' => 'Pagrindine navigacija', 'pl' => 'Glowna nawigacja']),
