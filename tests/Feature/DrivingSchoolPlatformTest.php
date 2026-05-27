@@ -154,8 +154,8 @@ class DrivingSchoolPlatformTest extends TestCase
             'platform.finance.payments' => 'Payments',
             'platform.documents' => 'Documents',
             'platform.marketing.campaigns' => 'Marketing campaigns',
-            'platform.marketing.pipeline' => 'Sales pipeline',
-            'platform.marketing.leads' => 'Marketing leads',
+            'platform.marketing.pipeline' => 'Воронка продаж',
+            'platform.marketing.leads' => 'Лиды',
             'platform.marketing.templates' => 'Шаблоны сообщений',
         ])->each(function (string $label, string $routeName) use ($admin): void {
             $this->actingAs($admin)
@@ -196,11 +196,11 @@ class DrivingSchoolPlatformTest extends TestCase
         $this->actingAs($admin)
             ->get(route('platform.marketing.pipeline'))
             ->assertOk()
-            ->assertSee('Sales pipeline')
+            ->assertSee('Воронка продаж')
             ->assertSee('Консультация проведена')
-            ->assertSee('Hot')
-            ->assertSee('Status conversion report')
-            ->assertSee('Budget too low');
+            ->assertSee('Горячий')
+            ->assertSee('Отчёт по статусам')
+            ->assertSee('Бюджет слишком низкий');
 
         $lead = MarketingLead::query()
             ->where('email', 'lead@drivepro.test')
@@ -209,17 +209,17 @@ class DrivingSchoolPlatformTest extends TestCase
         $this->actingAs($admin)
             ->get(route('platform.marketing.leads.edit', $lead))
             ->assertOk()
-            ->assertSee('CRM lead: Tomas Jankauskas')
-            ->assertSee('Responsible manager')
-            ->assertSee('Communication history')
-            ->assertSee('Message template')
-            ->assertSee('Call recording URL')
-            ->assertSee('Call after consultation')
-            ->assertSee('Client replied')
+            ->assertSee('CRM лид: Tomas Jankauskas')
+            ->assertSee('Менеджер')
+            ->assertSee('История коммуникаций')
+            ->assertSee('Шаблон сообщения')
+            ->assertSee('URL записи звонка')
+            ->assertSee('Consultation call')
+            ->assertSee('Клиент ответил')
             ->assertSee('telephony.drivepro.test')
-            ->assertSee('Manager tasks')
-            ->assertSee('Status history')
-            ->assertSee('Attached documents')
+            ->assertSee('Задачи')
+            ->assertSee('История статусов')
+            ->assertSee('Прикрепленные документы')
             ->assertSee('application-document.pdf');
     }
 
@@ -335,7 +335,7 @@ class DrivingSchoolPlatformTest extends TestCase
         $this->assertDatabaseHas('marketing_lead_tasks', [
             'marketing_lead_id' => $lead->id,
             'assigned_to_user_id' => $admin->id,
-            'title' => 'Call back: Tomas Jankauskas',
+            'title' => 'Перезвонить: Tomas Jankauskas',
             'status' => 'open',
             'priority' => 'high',
         ]);

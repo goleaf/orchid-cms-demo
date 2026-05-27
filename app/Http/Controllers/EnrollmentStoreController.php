@@ -17,6 +17,6 @@ class EnrollmentStoreController extends Controller
 
         return redirect()
             ->route('site.apply')
-            ->with('status', 'Application received. A manager will contact you soon.');
+            ->with('status', tkey('website.messages.application_received'));
     }
 }

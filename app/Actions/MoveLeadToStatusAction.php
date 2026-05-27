@@ -42,10 +42,10 @@ class MoveLeadToStatusAction
             app(CreateLeadTaskAction::class)->handle(
                 $lead->refresh(),
                 $user,
-                'Follow up: '.$status->label(),
+                tkey('crm.tasks.system_titles.follow_up', ['status' => $status->label()]),
                 $lead->next_follow_up_at,
                 $lead->is_hot ? LeadTaskPriority::High : LeadTaskPriority::Normal,
-                'Automatic reminder after status move.',
+                tkey('crm.tasks.system_notes.status_move_reminder'),
             );
         }
 

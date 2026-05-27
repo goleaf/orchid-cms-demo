@@ -7,6 +7,7 @@ use App\Models\Language;
 use App\Models\TranslationString;
 use App\Models\TranslationValue;
 use App\Models\User;
+use App\Services\LocaleManager;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\SystemTranslationSeeder;
 use Illuminate\Database\Eloquent\Model;
@@ -100,6 +101,111 @@ class SystemLocalizationTest extends TestCase
         );
 
         $this->assertSame('Store', tkey('common.actions.save', locale: 'en'));
+    }
+
+    public function test_guest_can_switch_public_language(): void
+    {
+        $this->seed([LanguageSeeder::class, SystemTranslationSeeder::class]);
+
+        $this
+            ->from('/')
+            ->post(route('locale.switch'), ['locale' => 'en'])
+            ->assertRedirect('/')
+            ->assertSessionHas(LocaleManager::SESSION_KEY, 'en');
+
+        $this
+            ->withSession([LocaleManager::SESSION_KEY => 'en'])
+            ->get('/')
+            ->assertOk()
+            ->assertSee('<html lang="en">', false)
+            ->assertSee('Knowledge base');
+    }
+
+    public function test_authenticated_user_can_save_preferred_language(): void
+    {
+        $this->seed([LanguageSeeder::class, SystemTranslationSeeder::class]);
+
+        $user = User::factory()->create();
+
+        $this
+            ->actingAs($user)
+            ->from(route('platform.profile'))
+            ->post(route('locale.switch'), ['locale' => 'lt'])
+            ->assertRedirect(route('platform.profile'))
+            ->assertSessionHas(LocaleManager::SESSION_KEY, 'lt');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'preferred_locale' => 'lt',
+        ]);
+    }
+
+    public function test_selected_locale_affects_tkey_and_falls_back_to_default_language(): void
+    {
+        $this->seed(LanguageSeeder::class);
+
+        $localizedString = TranslationString::query()->create([
+            'group' => 'tests',
+            'key' => 'tests.locale_label',
+            'is_system' => true,
+        ]);
+        $fallbackString = TranslationString::query()->create([
+            'group' => 'tests',
+            'key' => 'tests.fallback_label',
+            'is_system' => true,
+        ]);
+
+        TranslationValue::query()->create([
+            'translation_string_id' => $localizedString->id,
+            'language_code' => 'ru',
+            'value' => 'Русская метка',
+            'is_approved' => true,
+        ]);
+        TranslationValue::query()->create([
+            'translation_string_id' => $localizedString->id,
+            'language_code' => 'en',
+            'value' => 'English label',
+            'is_approved' => true,
+        ]);
+        TranslationValue::query()->create([
+            'translation_string_id' => $fallbackString->id,
+            'language_code' => 'ru',
+            'value' => 'Запасная метка',
+            'is_approved' => true,
+        ]);
+
+        $this
+            ->post(route('locale.switch'), ['locale' => 'en'])
+            ->assertRedirect()
+            ->assertSessionHas(LocaleManager::SESSION_KEY, 'en');
+
+        $this->assertSame('English label', tkey('tests.locale_label'));
+        $this->assertSame('Запасная метка', tkey('tests.fallback_label'));
+    }
+
+    public function test_inactive_language_cannot_be_selected(): void
+    {
+        $this->seed([LanguageSeeder::class, SystemTranslationSeeder::class]);
+
+        Language::query()
+            ->where('code', 'en')
+            ->firstOrFail()
+            ->update(['is_active' => false]);
+
+        $user = User::factory()->create();
+
+        $this
+            ->actingAs($user)
+            ->withSession([LocaleManager::SESSION_KEY => 'ru'])
+            ->from('/')
+            ->post(route('locale.switch'), ['locale' => 'en'])
+            ->assertRedirectBackWithErrors(['locale'])
+            ->assertSessionHas(LocaleManager::SESSION_KEY, 'ru');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'preferred_locale' => null,
+        ]);
     }
 
     public function test_has_translations_trait_reads_and_writes_json_translation_fields(): void

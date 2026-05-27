@@ -31,6 +31,7 @@ use App\Orchid\Screens\System\TranslationListScreen;
 use App\Orchid\Screens\User\UserEditScreen;
 use App\Orchid\Screens\User\UserListScreen;
 use App\Orchid\Screens\User\UserProfileScreen;
+use App\Support\Crm\LeadDictionaryRegistry;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
 
@@ -171,7 +172,7 @@ Route::screen('crm/dictionaries/{dictionary}', LeadDictionaryListScreen::class)
     ->name('platform.crm.dictionaries')
     ->breadcrumbs(fn (Trail $trail, string $dictionary) => $trail
         ->parent('platform.index')
-        ->push(tkey(\App\Support\Crm\LeadDictionaryRegistry::definition($dictionary)['title_key']), route('platform.crm.dictionaries', $dictionary)));
+        ->push(tkey(LeadDictionaryRegistry::definition($dictionary)['title_key']), route('platform.crm.dictionaries', $dictionary)));
 
 // Marketing > Message Templates
 Route::screen('marketing/message-templates/create', MessageTemplateEditScreen::class)

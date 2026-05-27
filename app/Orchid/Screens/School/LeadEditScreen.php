@@ -473,7 +473,7 @@ class LeadEditScreen extends Screen
             'lead.is_hot' => ['nullable', 'boolean'],
             'lead.next_follow_up_at' => ['nullable', 'date'],
             'lead.message' => ['nullable', 'string', 'max:2000'],
-            'lead.lost_reason_code' => ['nullable', 'string', Rule::in(array_keys($this->lostReasons))],
+            'lead.lost_reason_code' => ['nullable', 'string', Rule::in(array_keys(LeadLostReason::translatedLabels()))],
             'lead.rejection_reason' => ['nullable', 'string', 'max:2000'],
             'lead_budget_eur' => ['nullable', 'numeric', 'min:0', 'max:100000'],
         ]);

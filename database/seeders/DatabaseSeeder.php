@@ -744,7 +744,7 @@ class DatabaseSeeder extends Seeder
             $lead->update(['responsible_manager_id' => $admin->id]);
 
             $lead->comments()->updateOrCreate(
-                ['body' => 'Lead imported into sales CRM pipeline.'],
+                ['body' => tkey('crm.activities.messages.seeded_pipeline_import')],
                 [
                     'user_id' => $admin->id,
                     'is_internal' => true,
@@ -755,7 +755,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'channel' => 'web_form',
                     'direction' => 'inbound',
-                    'subject' => 'Online enrollment request',
+                    'subject' => tkey('crm.communications.system_subjects.online_enrollment_request'),
                 ],
                 [
                     'user_id' => $admin->id,
@@ -780,12 +780,12 @@ class DatabaseSeeder extends Seeder
                     [
                         'channel' => 'phone',
                         'direction' => 'outbound',
-                        'subject' => 'Consultation call',
+                        'subject' => tkey('crm.communications.system_subjects.consultation_call'),
                     ],
                     [
                         'user_id' => $admin->id,
                         'marketing_message_template_id' => $callTemplate->id,
-                        'body' => 'Client answered, asked for documents and weekend practice slots.',
+                        'body' => tkey('crm.communications.system_bodies.consultation_call'),
                         'communicated_at' => now()->subHours(20),
                         'client_replied_at' => now()->subHours(20),
                         'callback_required_at' => $lead->next_follow_up_at,
@@ -801,7 +801,7 @@ class DatabaseSeeder extends Seeder
             $lead->statusHistories()->updateOrCreate(
                 [
                     'to_status' => $lead->status->value,
-                    'reason' => 'Seeded CRM pipeline state.',
+                    'reason' => tkey('crm.activities.reasons.seeded_pipeline_state'),
                 ],
                 [
                     'user_id' => $admin->id,
@@ -821,7 +821,7 @@ class DatabaseSeeder extends Seeder
 
             if ($lead->next_follow_up_at !== null) {
                 $lead->tasks()->updateOrCreate(
-                    ['title' => 'Follow up: '.$lead->status->label()],
+                    ['title' => tkey('crm.tasks.system_titles.follow_up', ['status' => $lead->status->label()])],
                     [
                         'assigned_to_user_id' => $admin->id,
                         'created_by_user_id' => $admin->id,
@@ -829,7 +829,7 @@ class DatabaseSeeder extends Seeder
                         'priority' => ($lead->is_hot ? LeadTaskPriority::High : LeadTaskPriority::Normal)->value,
                         'due_at' => $lead->next_follow_up_at,
                         'completed_at' => null,
-                        'notes' => 'Seeded reminder for CRM funnel demo.',
+                        'notes' => tkey('crm.tasks.system_notes.seeded_pipeline_reminder'),
                     ],
                 );
             }

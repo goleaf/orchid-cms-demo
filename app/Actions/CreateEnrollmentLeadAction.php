@@ -86,7 +86,7 @@ class CreateEnrollmentLeadAction
             $manager,
             'web_form',
             'inbound',
-            'Online enrollment request',
+            tkey('crm.communications.system_subjects.online_enrollment_request'),
             $lead->message,
             [
                 'source' => $lead->source,
@@ -99,24 +99,24 @@ class CreateEnrollmentLeadAction
         app(AddLeadCommentAction::class)->handle(
             $lead,
             $manager,
-            'Lead created automatically from public enrollment form.',
+            tkey('crm.activities.messages.public_enrollment_created'),
         );
 
         $lead->statusHistories()->create([
             'user_id' => $manager?->id,
             'from_status' => null,
             'to_status' => LeadStatus::New,
-            'reason' => 'Public application received.',
+            'reason' => tkey('crm.activities.reasons.public_application_received'),
             'changed_at' => now(),
         ]);
 
         app(CreateLeadTaskAction::class)->handle(
             $lead->refresh(),
             $manager,
-            'Call new application',
+            tkey('crm.tasks.system_titles.call_new_application'),
             $lead->next_follow_up_at,
             $lead->is_hot ? LeadTaskPriority::High : LeadTaskPriority::Normal,
-            'Automatic reminder for a new public website lead.',
+            tkey('crm.tasks.system_notes.new_public_lead_reminder'),
         );
 
         $managers = User::query()

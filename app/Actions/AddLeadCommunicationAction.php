@@ -98,10 +98,10 @@ class AddLeadCommunicationAction
             app(CreateLeadTaskAction::class)->handle(
                 $lead->refresh(),
                 $user,
-                'Call back: '.$lead->fullName(),
+                tkey('crm.tasks.system_titles.call_back', ['name' => $lead->fullName()]),
                 $callbackAt,
                 $lead->is_hot ? LeadTaskPriority::High : LeadTaskPriority::Normal,
-                'Automatic callback reminder from lead communication.',
+                tkey('crm.tasks.system_notes.callback_reminder'),
             );
         }
     }

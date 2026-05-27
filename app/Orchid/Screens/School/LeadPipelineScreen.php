@@ -35,12 +35,12 @@ class LeadPipelineScreen extends Screen
 
     public function name(): ?string
     {
-        return 'Sales pipeline';
+        return tkey('crm.pipeline.title');
     }
 
     public function description(): ?string
     {
-        return 'Kanban funnel, filters, overdue and hot leads, reminders, tasks, status history, and conversion report.';
+        return tkey('crm.pipeline.description');
     }
 
     public function permission(): iterable
@@ -51,7 +51,7 @@ class LeadPipelineScreen extends Screen
     public function commandBar(): iterable
     {
         return [
-            Link::make('Lead list')
+            Link::make(tkey('crm.leads.title'))
                 ->icon('bs.list-ul')
                 ->route('platform.marketing.leads'),
         ];
@@ -79,7 +79,9 @@ class LeadPipelineScreen extends Screen
 
         $moveLead->handle($lead, LeadStatus::from($data['status']), $request->user(), $data['reason'] ?? null);
 
-        Toast::info('Lead moved to '.LeadStatus::from($data['status'])->label().'.');
+        Toast::info(tkey('crm.pipeline.messages.lead_moved', [
+            'status' => LeadStatus::from($data['status'])->label(),
+        ]));
 
         return redirect()->back();
     }

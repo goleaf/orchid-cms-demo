@@ -8,11 +8,16 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorIndexController;
 use App\Http\Controllers\KnowledgeArticleController;
 use App\Http\Controllers\KnowledgeBaseIndexController;
+use App\Http\Controllers\LocaleSwitchController;
 use App\Http\Controllers\ProgramCategoryController;
 use App\Http\Controllers\ReviewIndexController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
+
+Route::middleware(['web'])
+    ->post('/language', LocaleSwitchController::class)
+    ->name('locale.switch');
 
 Route::middleware(['web'])
     ->prefix('')

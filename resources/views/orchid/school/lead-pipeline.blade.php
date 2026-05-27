@@ -5,65 +5,65 @@
 <div class="bg-white rounded shadow-sm p-4 mb-4">
     <form method="GET" action="{{ route('platform.marketing.pipeline') }}" class="row g-3 align-items-end">
         <div class="col-md-2">
-            <label class="form-label">Manager</label>
+            <label class="form-label">{{ $labels['manager'] }}</label>
             <select class="form-select" name="manager_id">
-                <option value="">All managers</option>
+                <option value="">{{ $labels['all_managers'] }}</option>
                 @forelse ($filterOptions['managers'] as $id => $name)
                     <option value="{{ $id }}" @selected((string) $filters['manager_id'] === (string) $id)>{{ $name }}</option>
                 @empty
-                    <option value="" disabled>No managers found</option>
+                    <option value="" disabled>{{ $labels['no_managers_found'] }}</option>
                 @endforelse
             </select>
         </div>
         <div class="col-md-2">
-            <label class="form-label">Source</label>
+            <label class="form-label">{{ $labels['source'] }}</label>
             <select class="form-select" name="source">
-                <option value="">All sources</option>
+                <option value="">{{ $labels['all_sources'] }}</option>
                 @forelse ($filterOptions['sources'] as $value => $label)
                     <option value="{{ $value }}" @selected((string) $filters['source'] === (string) $value)>{{ $label }}</option>
                 @empty
-                    <option value="" disabled>No sources found</option>
+                    <option value="" disabled>{{ $labels['no_sources_found'] }}</option>
                 @endforelse
             </select>
         </div>
         <div class="col-md-2">
-            <label class="form-label">Category</label>
+            <label class="form-label">{{ $labels['category'] }}</label>
             <select class="form-select" name="license_category">
-                <option value="">All categories</option>
+                <option value="">{{ $labels['all_categories'] }}</option>
                 @forelse ($filterOptions['categories'] as $value => $label)
                     <option value="{{ $value }}" @selected((string) $filters['license_category'] === (string) $value)>{{ $label }}</option>
                 @empty
-                    <option value="" disabled>No categories found</option>
+                    <option value="" disabled>{{ $labels['no_categories_found'] }}</option>
                 @endforelse
             </select>
         </div>
         <div class="col-md-2">
-            <label class="form-label">Branch</label>
+            <label class="form-label">{{ $labels['branch'] }}</label>
             <select class="form-select" name="branch_id">
-                <option value="">All branches</option>
+                <option value="">{{ $labels['all_branches'] }}</option>
                 @forelse ($filterOptions['branches'] as $id => $name)
                     <option value="{{ $id }}" @selected((string) $filters['branch_id'] === (string) $id)>{{ $name }}</option>
                 @empty
-                    <option value="" disabled>No branches found</option>
+                    <option value="" disabled>{{ $labels['no_branches_found'] }}</option>
                 @endforelse
             </select>
         </div>
         <div class="col-md-2">
-            <label class="form-label">Flags</label>
+            <label class="form-label">{{ $labels['flags'] }}</label>
             <div class="d-flex gap-3">
                 <label class="form-check">
                     <input class="form-check-input" type="checkbox" name="hot" value="1" @checked($filters['hot'] === '1')>
-                    <span class="form-check-label">Hot</span>
+                    <span class="form-check-label">{{ $labels['hot'] }}</span>
                 </label>
                 <label class="form-check">
                     <input class="form-check-input" type="checkbox" name="overdue" value="1" @checked($filters['overdue'] === '1')>
-                    <span class="form-check-label">Overdue</span>
+                    <span class="form-check-label">{{ $labels['overdue'] }}</span>
                 </label>
             </div>
         </div>
         <div class="col-md-2 d-flex gap-2">
-            <button class="btn btn-primary w-100" type="submit">Filter</button>
-            <a class="btn btn-outline-secondary" href="{{ route('platform.marketing.pipeline') }}">Reset</a>
+            <button class="btn btn-primary w-100" type="submit">{{ $labels['filter'] }}</button>
+            <a class="btn btn-outline-secondary" href="{{ route('platform.marketing.pipeline') }}">{{ $labels['reset'] }}</a>
         </div>
     </form>
 </div>
@@ -71,25 +71,25 @@
 <div class="row g-3 mb-4">
     <div class="col-md-3">
         <div class="bg-white rounded shadow-sm p-3">
-            <div class="text-muted small">Leads in view</div>
+            <div class="text-muted small">{{ $labels['leads_in_view'] }}</div>
             <div class="h3 mb-0">{{ $report['total'] }}</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="bg-white rounded shadow-sm p-3">
-            <div class="text-muted small">Became students</div>
+            <div class="text-muted small">{{ $labels['became_students'] }}</div>
             <div class="h3 mb-0">{{ $report['became_students'] }}</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="bg-white rounded shadow-sm p-3">
-            <div class="text-muted small">Conversion</div>
+            <div class="text-muted small">{{ $labels['conversion'] }}</div>
             <div class="h3 mb-0">{{ $report['conversion_rate'] }}%</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="bg-white rounded shadow-sm p-3">
-            <div class="text-muted small">Loss rate</div>
+            <div class="text-muted small">{{ $labels['loss_rate'] }}</div>
             <div class="h3 mb-0">{{ $report['loss_rate'] }}%</div>
         </div>
     </div>
@@ -97,19 +97,19 @@
 
 <div class="bg-white rounded shadow-sm p-3 mb-4">
     <div class="d-flex flex-wrap gap-3 align-items-center">
-        <strong>Status conversion report</strong>
+        <strong>{{ $labels['status_report'] }}</strong>
         @forelse ($report['by_status'] as $item)
-            <span class="badge bg-light text-dark">{{ $item['status']->label() }}: {{ $item['count'] }}</span>
+            <span class="badge bg-light text-dark">{{ $statusLabels[$item['status']->value] ?? $item['status']->value }}: {{ $item['count'] }}</span>
         @empty
-            <span class="text-muted small">No statuses in current filter.</span>
+            <span class="text-muted small">{{ $labels['no_statuses_in_filter'] }}</span>
         @endforelse
     </div>
     <div class="d-flex flex-wrap gap-3 align-items-center mt-2">
-        <strong>Loss reasons</strong>
+        <strong>{{ $labels['loss_reasons'] }}</strong>
         @forelse ($report['loss_reasons'] as $reason => $count)
-            <span class="badge bg-warning text-dark">{{ $reason }}: {{ $count }}</span>
+            <span class="badge bg-warning text-dark">{{ $lostReasonLabels[$reason] ?? $reason }}: {{ $count }}</span>
         @empty
-            <span class="text-muted small">No rejected lead reasons in current filter.</span>
+            <span class="text-muted small">{{ $labels['no_loss_reasons'] }}</span>
         @endforelse
     </div>
 </div>
@@ -125,7 +125,7 @@
     @forelse ($statuses as $status)
         <section class="lead-pipeline-column" data-status="{{ $status->value }}">
             <header class="lead-pipeline-column-head">
-                <strong>{{ $status->label() }}</strong>
+                <strong>{{ $statusLabels[$status->value] ?? $status->value }}</strong>
                 <span>{{ $columns[$status->value]->count() }}</span>
             </header>
 
@@ -135,39 +135,43 @@
                         <div class="d-flex justify-content-between gap-2">
                             <a href="{{ route('platform.marketing.leads.edit', $lead) }}"><strong>{{ $lead->fullName() }}</strong></a>
                             @if ($lead->is_hot)
-                                <span class="badge bg-danger">Hot</span>
+                                <span class="badge bg-danger">{{ $labels['hot'] }}</span>
                             @endif
                         </div>
-                        <div class="text-muted small">{{ $lead->phone ?? $lead->email ?? 'No contact' }}</div>
-                        <div class="text-muted small">{{ $lead->trainingProgram?->title ?? 'No course' }} · {{ $lead->branch?->city ?? 'No branch' }}</div>
+                        <div class="text-muted small">{{ $lead->phone ?? $lead->email ?? $labels['no_contact'] }}</div>
+                        <div class="text-muted small">{{ $lead->trainingProgram?->title ?? $labels['no_course'] }} · {{ $lead->branch?->city ?? $labels['no_branch'] }}</div>
                         <div class="d-flex flex-wrap gap-1 mt-2">
-                            <span class="badge bg-light text-dark">{{ $lead->source }}</span>
+                            <span class="badge bg-light text-dark">{{ $sourceLabels[$lead->source] ?? $lead->source }}</span>
                             <span class="badge bg-light text-dark">{{ $lead->license_category ?? '-' }}</span>
-                            <span class="badge bg-light text-dark">{{ $lead->responsibleManager?->name ?? 'No manager' }}</span>
+                            <span class="badge bg-light text-dark">{{ $lead->responsibleManager?->name ?? $labels['no_manager'] }}</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-3 small">
                             <span>{{ $lead->budgetForHumans() }}</span>
                             <span @class(['text-danger fw-bold' => $lead->overdue_tasks_count > 0 || ($lead->next_follow_up_at && $lead->next_follow_up_at->isPast())])>
-                                {{ $lead->next_follow_up_at?->format('Y-m-d H:i') ?? 'No follow-up' }}
+                                {{ $lead->next_follow_up_at?->format('Y-m-d H:i') ?? $labels['no_follow_up'] }}
                             </span>
                         </div>
                         <div class="text-muted small mt-1">
-                            {{ $lead->open_tasks_count }} tasks · {{ $lead->communications_count }} comms · {{ $lead->comments_count }} notes
+                            {{ strtr($labels['task_summary'], [
+                                ':tasks' => $lead->open_tasks_count,
+                                ':communications' => $lead->communications_count,
+                                ':comments' => $lead->comments_count,
+                            ]) }}
                         </div>
                     </article>
                 @empty
-                    <div class="lead-pipeline-empty">No leads</div>
+                    <div class="lead-pipeline-empty">{{ $labels['no_leads'] }}</div>
                 @endforelse
             </div>
         </section>
     @empty
         <section class="lead-pipeline-column">
             <header class="lead-pipeline-column-head">
-                <strong>No statuses</strong>
+                <strong>{{ $labels['no_statuses'] }}</strong>
                 <span>0</span>
             </header>
             <div class="lead-pipeline-dropzone">
-                <div class="lead-pipeline-empty">No pipeline statuses configured</div>
+                <div class="lead-pipeline-empty">{{ $labels['no_pipeline_statuses'] }}</div>
             </div>
         </section>
     @endforelse

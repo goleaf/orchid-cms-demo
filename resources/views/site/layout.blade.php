@@ -3,16 +3,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="{{ $seoDescription ?? 'DrivePro Academy driving school platform.' }}">
+    <meta name="description" content="{{ $seoDescription ?? tkey('website.seo.default_description') }}">
     @isset($canonical)
         <link rel="canonical" href="{{ $canonical }}">
     @endisset
-    <meta property="og:title" content="{{ $seoTitle ?? 'DrivePro Academy' }}">
-    <meta property="og:description" content="{{ $seoDescription ?? 'Driving school, CRM, LMS, schedules, fleet, exams, and student applications.' }}">
+    <meta property="og:title" content="{{ $seoTitle ?? tkey('website.seo.default_title') }}">
+    <meta property="og:description" content="{{ $seoDescription ?? tkey('website.seo.default_description') }}">
     @isset($ogImage)
         <meta property="og:image" content="{{ $ogImage }}">
     @endisset
-    <title>{{ $seoTitle ?? 'DrivePro Academy' }}</title>
+    <title>{{ $seoTitle ?? tkey('website.seo.default_title') }}</title>
 
     @once
         <style>
@@ -84,6 +84,43 @@
 
             .nav-links a {
                 text-decoration: none;
+            }
+
+            .language-switcher {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                margin: 0;
+            }
+
+            .language-switcher label {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                color: var(--muted);
+                font-size: 0.88rem;
+                font-weight: 750;
+            }
+
+            .language-switcher select {
+                width: auto;
+                min-width: 96px;
+                min-height: 36px;
+                padding: 6px 10px;
+                font-size: 0.88rem;
+            }
+
+            .language-switcher button {
+                min-height: 36px;
+                padding: 0 10px;
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                background: #ffffff;
+                color: var(--ink);
+                font: inherit;
+                font-size: 0.86rem;
+                font-weight: 850;
+                cursor: pointer;
             }
 
             .nav-cta,
@@ -452,17 +489,35 @@
     @endonce
 </head>
 <body>
-    <nav class="site-nav" aria-label="Main navigation">
+    @php($locales = $availableLocales ?? collect())
+
+    <nav class="site-nav" aria-label="{{ tkey('website.navigation.main') }}">
         <div class="site-nav-inner">
             <a class="brand" href="{{ route('site.home') }}">DrivePro Academy</a>
             <div class="nav-links">
-                <a href="{{ route('site.apply') }}">Записаться</a>
-                <a href="{{ route('site.instructors') }}">Инструкторы</a>
-                <a href="{{ route('site.fleet') }}">Автопарк</a>
-                <a href="{{ route('site.reviews') }}">Отзывы</a>
-                <a href="{{ route('site.blog.index') }}">База знаний</a>
-                <a href="{{ route('site.contacts') }}">Контакты</a>
-                <a class="nav-cta" href="{{ url('/admin') }}">Admin</a>
+                <a href="{{ route('site.apply') }}">{{ tkey('website.actions.apply') }}</a>
+                <a href="{{ route('site.instructors') }}">{{ tkey('website.nav.instructors') }}</a>
+                <a href="{{ route('site.fleet') }}">{{ tkey('website.nav.fleet') }}</a>
+                <a href="{{ route('site.reviews') }}">{{ tkey('website.nav.reviews') }}</a>
+                <a href="{{ route('site.blog.index') }}">{{ tkey('website.nav.blog') }}</a>
+                <a href="{{ route('site.contacts') }}">{{ tkey('website.nav.contacts') }}</a>
+                @if($locales->isNotEmpty())
+                    <form class="language-switcher" method="POST" action="{{ route('locale.switch') }}">
+                        @csrf
+                        <label>
+                            <span>{{ tkey('locale.switcher.label') }}</span>
+                            <select name="locale" aria-label="{{ tkey('locale.switcher.label') }}" onchange="this.form.submit()">
+                                @foreach($locales as $language)
+                                    <option value="{{ $language->code }}" @selected(($currentLocale ?? app()->getLocale()) === $language->code)>
+                                        {{ $language->native_name ?: $language->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </label>
+                        <button type="submit">{{ tkey('locale.switcher.submit') }}</button>
+                    </form>
+                @endif
+                <a class="nav-cta" href="{{ url('/admin') }}">{{ tkey('website.nav.admin') }}</a>
             </div>
         </div>
     </nav>
@@ -472,13 +527,13 @@
     <footer class="footer">
         <div class="section-inner">
             <strong>DrivePro Academy</strong>
-            <p class="meta">Public website, online enrollment, branch map, CRM lead intake, and operational back office.</p>
+            <p class="meta">{{ tkey('website.footer.description') }}</p>
         </div>
     </footer>
 
-    <div class="float-actions" aria-label="Fast contact actions">
-        <a href="{{ route('site.apply') }}#application-form">Online chat</a>
-        <a href="{{ route('site.contacts') }}#callback">Callback</a>
+    <div class="float-actions" aria-label="{{ tkey('website.actions.fast_contact') }}">
+        <a href="{{ route('site.apply') }}#application-form">{{ tkey('website.actions.online_chat') }}</a>
+        <a href="{{ route('site.contacts') }}#callback">{{ tkey('website.actions.callback') }}</a>
     </div>
 </body>
 </html>
