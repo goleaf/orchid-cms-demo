@@ -10,7 +10,7 @@
                 <h1>{{ $page->displayText('hero_title') }}</h1>
                 <p class="lead">{{ $page->displayText('hero_summary') }}</p>
                 <div class="hero-actions">
-                    <a class="button" href="{{ route('site.apply') }}">{{ tkey('website.actions.apply') }}</a>
+                    <a class="button" href="#application-form">{{ tkey('website.actions.apply') }}</a>
                     <a class="button secondary" href="#programs">{{ tkey('website.home.hero.secondary_action') }}</a>
                 </div>
             </div>
@@ -92,8 +92,8 @@
                             </div>
                             <p class="price">{{ $program->priceForHumans() }}</p>
                             <div class="actions">
-                                <a class="button secondary" href="{{ route('site.courses.show', $program) }}">{{ tkey('website.actions.view_course') }}</a>
-                                <a class="button" href="{{ route('site.apply', ['program' => $program->id]) }}">{{ tkey('website.actions.apply') }}</a>
+                                <a class="button secondary" href="{{ route('website.courses.show', $program) }}">{{ tkey('website.actions.view_course') }}</a>
+                                <a class="button" href="#application-form">{{ tkey('website.actions.apply') }}</a>
                             </div>
                         </article>
                     @empty
@@ -139,7 +139,7 @@
                                     <td>{{ $group->instructor?->name ?? '-' }}</td>
                                     <td>{{ tkey('website.groups.seats_value', ['available' => $group->seatsAvailable(), 'capacity' => $group->capacity]) }}</td>
                                     <td>
-                                        <a class="button secondary" href="{{ route('site.apply', ['program' => $group->training_program_id, 'branch' => $group->branch_id, 'group' => $group->id]) }}">{{ tkey('website.actions.apply') }}</a>
+                                        <a class="button secondary" href="#application-form">{{ tkey('website.actions.apply') }}</a>
                                     </td>
                                 </tr>
                             @empty
@@ -189,8 +189,51 @@
                     <p class="lead">{{ tkey('website.prices.lead') }}</p>
                 </div>
 
+                <div class="grid four">
+                    @forelse ($pricingPackages as $package)
+                        <article class="card">
+                            <p class="kicker">{{ $package->course?->displayTitle() ?? $package->category?->displayName() ?? tkey('website.prices.packages.no_course') }}</p>
+                            <h3>{{ $package->displayName() }}</h3>
+                            <p class="price">{{ $package->priceForHumans() }}</p>
+                            @if ($package->displayDescription())
+                                <p class="meta">{{ $package->displayDescription() }}</p>
+                            @endif
+                        </article>
+                    @empty
+                        <article class="card">
+                            <h3>{{ tkey('website.pricing.empty.no_packages') }}</h3>
+                        </article>
+                    @endforelse
+                </div>
+
                 <div class="actions">
-                    <a class="button" href="{{ route('site.prices') }}">{{ tkey('website.nav.pricing') }}</a>
+                    <a class="button" href="{{ route('website.pricing') }}">{{ tkey('website.nav.pricing') }}</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">{{ tkey('website.nav.reviews') }}</p>
+                        <h2>{{ tkey('website.home.testimonials_title') }}</h2>
+                    </div>
+                    <p class="lead">{{ tkey('website.testimonials.title') }}</p>
+                </div>
+
+                <div class="grid three">
+                    @forelse ($testimonials as $testimonial)
+                        <article class="card">
+                            <p class="kicker">{{ tkey('website.testimonials.fields.rating') }}: {{ $testimonial->rating }}</p>
+                            <h3>{{ $testimonial->displayName() }}</h3>
+                            <p class="meta">{{ $testimonial->displayText() }}</p>
+                        </article>
+                    @empty
+                        <article class="card">
+                            <h3>{{ tkey('website.testimonials.empty.no_testimonials') }}</h3>
+                        </article>
+                    @endforelse
                 </div>
             </div>
         </section>
@@ -220,7 +263,7 @@
             </div>
         </section>
 
-        <section class="section">
+        <section class="section" id="application-form">
             <div class="section-inner">
                 <div class="section-head">
                     <div>
@@ -230,50 +273,12 @@
                     <p class="lead">{{ tkey('website.apply.lead') }}</p>
                 </div>
 
-                <form method="POST" action="{{ route('site.apply.store') }}" class="card">
-                    @csrf
-                    <input type="hidden" name="source" value="website">
-                    <input type="hidden" name="form_name" value="homepage_enrollment">
-                    <input type="hidden" name="preferred_format" value="mixed">
-                    <input type="hidden" name="preferred_language" value="{{ app()->getLocale() }}">
-
-                    <div class="inline-form">
-                        <label>
-                            {{ tkey('website.forms.fields.course') }}
-                            <select name="training_program_id" required>
-                                @foreach ($programs as $program)
-                                    <option value="{{ $program->id }}">{{ $program->displayTitle() }}</option>
-                                @endforeach
-                            </select>
-                        </label>
-                        <label>
-                            {{ tkey('website.forms.fields.branch') }}
-                            <select name="branch_id" required>
-                                @foreach ($branches as $branch)
-                                    <option value="{{ $branch->id }}">{{ $branch->displayName() }}</option>
-                                @endforeach
-                            </select>
-                        </label>
-                        <label>
-                            {{ tkey('website.forms.fields.full_name') }}
-                            <input name="first_name" required>
-                        </label>
-                        <label>
-                            {{ tkey('website.forms.fields.phone') }}
-                            <input name="phone" required>
-                        </label>
-                        <label class="full">
-                            <span class="check-row">
-                                <input type="checkbox" name="privacy_consent" value="1" required>
-                                {{ tkey('website.forms.fields.consent') }}
-                            </span>
-                        </label>
-                    </div>
-
-                    <div class="actions">
-                        <button class="button" type="submit">{{ tkey('website.actions.submit') }}</button>
-                    </div>
-                </form>
+                @include('site.partials.lead-form', [
+                    'programs' => $programs,
+                    'branches' => $branches,
+                    'groups' => $upcomingGroups,
+                    'formName' => 'homepage_application',
+                ])
             </div>
         </section>
 

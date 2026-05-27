@@ -91,7 +91,7 @@ class CreateWebsiteLeadAction
             'consent_accepted' => true,
             'consent_accepted_at' => now(),
             'consent_text_version' => $data['consent_text_version'] ?? 'public-application-v1',
-            'message' => $data['message'] ?? null,
+            'message' => $data['message'] ?? $data['comment'] ?? null,
             'internal_comment' => null,
             'rejection_reason' => null,
             'lost_reason_code' => null,

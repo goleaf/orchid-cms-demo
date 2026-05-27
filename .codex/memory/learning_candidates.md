@@ -1305,3 +1305,53 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T21:10:53+00:00
+
+```json
+{
+  "ts": "2026-05-27T21:10:53+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6b2e-6ce6-7900-9ea2-546b46e2d6ab",
+  "branch": "main",
+  "changed_file_count": 31,
+  "changed_file_groups": {
+    "code": 30,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "app/Actions/CreateWebsiteLeadAction.php",
+    "app/Actions/GetBranchIndexPageAction.php",
+    "app/Actions/GetBranchPageAction.php",
+    "app/Actions/GetContactPageAction.php",
+    "app/Actions/GetCourseIndexPageAction.php",
+    "app/Actions/GetEnrollmentFormAction.php",
+    "app/Actions/GetHomePageAction.php",
+    "app/Actions/GetPricingPageAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Controllers/BranchController.php",
+    "app/Http/Controllers/CourseController.php",
+    "app/Http/Controllers/LanguageController.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Providers/AppServiceProvider.php",
+    "docs/public-website-foundation.md",
+    "pp/Actions/CreateCallbackLeadAction.php",
+    "resources/views/site/branch.blade.php",
+    "resources/views/site/branches-index.blade.php",
+    "resources/views/site/category.blade.php",
+    "resources/views/site/contacts.blade.php",
+    "resources/views/site/courses-index.blade.php",
+    "resources/views/site/home.blade.php",
+    "resources/views/site/layout.blade.php",
+    "resources/views/site/partials/",
+    "resources/views/site/prices.blade.php",
+    "resources/views/site/thanks.blade.php",
+    "routes/web.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

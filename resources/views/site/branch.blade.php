@@ -77,7 +77,7 @@
                                     <td>{{ $group->meeting_time?->format('H:i') ?? '-' }}</td>
                                     <td>{{ tkey('website.groups.seats_value', ['available' => $group->seatsAvailable(), 'capacity' => $group->capacity]) }}</td>
                                     <td>
-                                        <a class="button secondary" href="{{ route('site.apply', ['program' => $group->training_program_id, 'branch' => $group->branch_id, 'group' => $group->id]) }}">{{ tkey('website.actions.apply') }}</a>
+                                        <a class="button secondary" href="#application-form">{{ tkey('website.actions.apply') }}</a>
                                     </td>
                                 </tr>
                             @empty
@@ -129,6 +129,26 @@
                         </article>
                     @endforelse
                 </div>
+            </div>
+        </section>
+
+        <section class="section soft" id="application-form">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">{{ tkey('website.apply.kicker') }}</p>
+                        <h2>{{ tkey('website.forms.apply.title') }}</h2>
+                    </div>
+                    <p class="lead">{{ tkey('website.forms.apply.subtitle') }}</p>
+                </div>
+
+                @include('site.partials.lead-form', [
+                    'programs' => $programs,
+                    'branches' => collect([$branch]),
+                    'groups' => $branch->groups,
+                    'selectedBranch' => $branch,
+                    'formName' => 'branch_detail_application',
+                ])
             </div>
         </section>
     </main>

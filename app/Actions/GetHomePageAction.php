@@ -6,7 +6,11 @@ use App\Enums\StudentStatus;
 use App\Models\Branch;
 use App\Models\Instructor;
 use App\Models\LandingPage;
+use App\Models\PricingPackage;
+use App\Models\SitePage;
+use App\Models\SiteSetting;
 use App\Models\StudentProfile;
+use App\Models\Testimonial;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
 use App\Models\Vehicle;
@@ -21,13 +25,22 @@ class GetHomePageAction
         $page = LandingPage::query()
             ->publicHome()
             ->firstOrFail();
+        $sitePage = SitePage::query()
+            ->active()
+            ->published()
+            ->where('type', 'home')
+            ->ordered()
+            ->first();
 
         return [
             'page' => $page,
+            'sitePage' => $sitePage,
             'offers' => $page->translatedOfferCards(),
             'programs' => TrainingProgram::query()
                 ->forAcademyList()
+                ->addSelect(['name_translations', 'is_visible_on_site', 'is_featured'])
                 ->active()
+                ->visibleOnSite()
                 ->withCount('groups')
                 ->orderBy('sort_order')
                 ->orderBy('license_category')
@@ -42,18 +55,46 @@ class GetHomePageAction
                     'instructor:id,name',
                 ])
                 ->withCount('enrollments')
-                ->visibleOnSite()
+                ->openForEnrollment()
                 ->orderBy('starts_on')
                 ->limit(6)
                 ->get(),
             'branches' => Branch::query()
                 ->forAdminList()
                 ->withCount(['instructors', 'vehicles', 'groups'])
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->orderBy('city')
+                ->active()
+                ->visibleOnSite()
+                ->ordered()
                 ->limit(6)
                 ->get(),
+            'pricingPackages' => PricingPackage::query()
+                ->forPublicList()
+                ->with([
+                    'course' => fn ($query) => $query->forAcademyList(),
+                    'category:id,name_translations,code,slug',
+                ])
+                ->active()
+                ->visibleOnSite()
+                ->featured()
+                ->ordered()
+                ->limit(4)
+                ->get(),
+            'testimonials' => Testimonial::query()
+                ->forPublicList()
+                ->with([
+                    'course:id,title,title_translations,name_translations,slug',
+                    'branch:id,name,name_translations,city,city_translations',
+                ])
+                ->published()
+                ->featured()
+                ->ordered()
+                ->limit(3)
+                ->get(),
+            'settings' => SiteSetting::query()
+                ->public()
+                ->get(['key', 'value'])
+                ->mapWithKeys(fn (SiteSetting $setting): array => [$setting->key => $setting->value])
+                ->all(),
             'stats' => [
                 'students' => StudentProfile::query()
                     ->whereIn('status', [StudentStatus::Lead->value, StudentStatus::Enrolled->value, StudentStatus::Graduated->value])
@@ -78,8 +119,11 @@ class GetHomePageAction
                 ['question' => tkey('website.home.faq.documents.question'), 'answer' => tkey('website.home.faq.documents.answer')],
                 ['question' => tkey('website.home.faq.intensive.question'), 'answer' => tkey('website.home.faq.intensive.answer')],
             ],
-            'seoTitle' => $page->displayTitle(),
-            'seoDescription' => $page->displayText('hero_summary'),
+            'seoTitle' => $sitePage?->displaySeoTitle() ?: $page->displayTitle(),
+            'seoDescription' => $sitePage?->displaySeoDescription() ?: $page->displayText('hero_summary'),
+            'canonical' => route('website.home'),
+            'ogImage' => $sitePage?->og_image,
+            'isIndexable' => $sitePage?->is_indexable ?? true,
         ];
     }
 }

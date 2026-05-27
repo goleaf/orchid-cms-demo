@@ -3,6 +3,8 @@
 namespace App\Actions;
 
 use App\Models\Branch;
+use App\Models\SiteSetting;
+use App\Models\TrainingProgram;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GetBranchPageAction
@@ -15,13 +17,14 @@ class GetBranchPageAction
         $publicBranch = Branch::query()
             ->forAdminList()
             ->whereKey($branch->id)
-            ->where('is_active', true)
+            ->active()
+            ->visibleOnSite()
             ->with([
                 'groups' => fn ($query) => $query
                     ->operationalList()
-                    ->visibleOnSite()
+                    ->openForEnrollment()
                     ->with([
-                        'trainingProgram:id,title,title_translations,slug,license_category,price_cents',
+                        'trainingProgram:id,title,title_translations,name_translations,slug,license_category,price_cents,is_active,is_visible_on_site',
                         'instructor:id,name',
                     ])
                     ->withCount('enrollments')
@@ -48,12 +51,24 @@ class GetBranchPageAction
 
         return [
             'branch' => $publicBranch,
+            'programs' => TrainingProgram::query()
+                ->forAcademyList()
+                ->addSelect(['name_translations', 'is_visible_on_site'])
+                ->active()
+                ->visibleOnSite()
+                ->ordered()
+                ->get(),
+            'settings' => SiteSetting::query()
+                ->public()
+                ->get(['key', 'value'])
+                ->mapWithKeys(fn (SiteSetting $setting): array => [$setting->key => $setting->value])
+                ->all(),
             'seoTitle' => $publicBranch->displaySeoTitle().' | '.tkey('website.brand.name'),
             'seoDescription' => $publicBranch->displaySeoDescription() ?: tkey('website.branches.seo.description', [
                 'branch' => $publicBranch->displayName(),
                 'city' => $publicBranch->displayCity(),
             ]),
-            'canonical' => $publicBranch->canonical_url,
+            'canonical' => $publicBranch->canonical_url ?: route('website.branches.show', ['branch' => $publicBranch->slug]),
             'ogImage' => $publicBranch->open_graph_image,
         ];
     }

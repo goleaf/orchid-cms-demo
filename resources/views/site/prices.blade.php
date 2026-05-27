@@ -44,8 +44,8 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a class="button secondary" href="{{ route('site.courses.show', $program) }}">{{ tkey('website.actions.view_course') }}</a>
-                                        <a class="button" href="{{ route('site.apply', ['program' => $program->id]) }}">{{ tkey('website.actions.apply') }}</a>
+                                        <a class="button secondary" href="{{ route('website.courses.show', $program) }}">{{ tkey('website.actions.view_course') }}</a>
+                                        <a class="button" href="#application-form">{{ tkey('website.actions.apply') }}</a>
                                     </td>
                                 </tr>
                             @empty
@@ -97,7 +97,7 @@
                                     </td>
                                     <td>
                                         @if ($package->course)
-                                            <a href="{{ route('site.courses.show', $package->course) }}">{{ $package->course->displayTitle() }}</a>
+                                            <a href="{{ route('website.courses.show', $package->course) }}">{{ $package->course->displayTitle() }}</a>
                                         @else
                                             {{ $package->category?->displayName() ?? tkey('website.prices.packages.no_course') }}
                                         @endif
@@ -110,7 +110,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a class="button" href="{{ route('site.apply', array_filter(['program' => $package->course_id])) }}">{{ tkey('website.actions.apply') }}</a>
+                                        <a class="button" href="#application-form">{{ tkey('website.actions.apply') }}</a>
                                     </td>
                                 </tr>
                             @empty
@@ -148,6 +148,25 @@
                         <p class="meta">{{ tkey('website.prices.payment.extra.body') }}</p>
                     </article>
                 </div>
+            </div>
+        </section>
+
+        <section class="section" id="application-form">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">{{ tkey('website.apply.kicker') }}</p>
+                        <h2>{{ tkey('website.forms.apply.title') }}</h2>
+                    </div>
+                    <p class="lead">{{ tkey('website.forms.apply.subtitle') }}</p>
+                </div>
+
+                @include('site.partials.lead-form', [
+                    'programs' => $programs,
+                    'branches' => $branches,
+                    'groups' => $groups,
+                    'formName' => 'pricing_application',
+                ])
             </div>
         </section>
     </main>

@@ -38,7 +38,8 @@ class StoreContactLeadRequest extends FormRequest
             'training_program_id' => ['nullable', 'integer', new ValidPublicCourseRule],
             'message' => ['nullable', 'string', 'max:2000'],
             'comment' => ['nullable', 'string', 'max:2000'],
-            'privacy_consent' => ['required', new ConsentAcceptedRule],
+            'privacy_consent' => ['nullable', 'required_without:consent_accepted', new ConsentAcceptedRule],
+            'consent_accepted' => ['nullable', 'required_without:privacy_consent', new ConsentAcceptedRule],
             'source' => ['nullable', 'string', 'max:120'],
             'form_name' => ['nullable', 'string', 'max:120'],
             'locale' => ['nullable', 'string', 'max:12', new ValidLocaleRule],
@@ -64,7 +65,8 @@ class StoreContactLeadRequest extends FormRequest
             'first_name.required_without' => tkey('website.validation.first_name_required'),
             'email.required_without' => tkey('website.validation.contact_required'),
             'phone.required_without' => tkey('website.validation.contact_required'),
-            'privacy_consent.required' => tkey('website.validation.privacy_consent'),
+            'privacy_consent.required_without' => tkey('website.validation.privacy_consent'),
+            'consent_accepted.required_without' => tkey('website.validation.consent_required'),
         ];
     }
 }

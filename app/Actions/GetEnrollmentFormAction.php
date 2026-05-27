@@ -20,16 +20,18 @@ class GetEnrollmentFormAction
         return [
             'programs' => TrainingProgram::query()
                 ->forAcademyList()
+                ->addSelect(['name_translations', 'is_visible_on_site'])
                 ->active()
+                ->visibleOnSite()
                 ->orderBy('sort_order')
                 ->orderBy('license_category')
                 ->orderBy('title')
                 ->get(),
             'branches' => Branch::query()
                 ->forAdminList()
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->orderBy('city')
+                ->active()
+                ->visibleOnSite()
+                ->ordered()
                 ->get(),
             'groups' => TrainingGroup::query()
                 ->operationalList()
@@ -37,7 +39,7 @@ class GetEnrollmentFormAction
                     'branch:id,name,name_translations,city,city_translations',
                     'trainingProgram:id,title,title_translations,license_category',
                 ])
-                ->visibleOnSite()
+                ->openForEnrollment()
                 ->orderBy('starts_on')
                 ->limit(20)
                 ->get(),

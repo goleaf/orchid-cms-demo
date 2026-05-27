@@ -4,6 +4,16 @@ This block adds the public website layer for one local driving school. It is not
 
 ## Public Routes
 
+- `website.home`: homepage with editable public content, featured courses, open groups, pricing preview, testimonials, contacts, and lead form.
+- `website.courses.index` / `website.courses.show`: public course index and course detail pages by course slug.
+- `website.pricing`: public pricing page with course prices, pricing packages, and application form.
+- `website.branches.index` / `website.branches.show`: public branch index and branch detail pages by branch slug.
+- `website.contacts`: contact page with public settings, branch cards, callback form, and contact form.
+- `website.thank_you`: shared thank-you page after public lead submission.
+- `website.leads.store`: public course application form endpoint.
+- `website.callback.store`: public callback form endpoint.
+- `website.contact.store`: public contact form endpoint.
+- `website.language.switch`: public locale switch endpoint.
 - `site.home`: homepage with editable landing content, courses, upcoming groups, branches, and lead form.
 - `site.courses.show` / `site.categories.show`: public course detail pages by course slug.
 - `site.prices`: public pricing table for active courses.
@@ -13,6 +23,8 @@ This block adds the public website layer for one local driving school. It is not
 - `site.callback.store`: callback form connected to CRM lead intake.
 - `site.thanks`: shared thank-you page after public lead submission.
 - `site.sitemap` / `site.robots`: discovery endpoints for public pages.
+
+The `site.*` names are kept as compatibility aliases where the new `website.*` route names own the same public URL.
 
 ## Admin Management
 
@@ -39,6 +51,8 @@ Public lead intake actions:
 - `StoreUtmInSessionAction`
 - `NormalizePhoneAction`
 - `ResolveWebsiteCourseContextAction`
+- `GetCourseIndexPageAction`
+- `GetBranchIndexPageAction`
 
 Public content management actions:
 
@@ -74,6 +88,8 @@ Public UI copy uses translation keys through `tkey()`. Public course, branch, gr
 
 Seeded translations are created by `SystemTranslationSeeder`; seeded website content is created by `PublicWebsiteSeeder` through model factories.
 
+Public Blade pages share translated form partials in `resources/views/site/partials`. Forms submit only to Action-backed controllers and preserve UTM/session tracking on validation errors.
+
 ## Database Foundation
 
 The public website foundation reuses the local driving-school operating tables instead of creating SaaS-style duplicates:
@@ -99,4 +115,4 @@ The public pricing page renders both course-level prices from `training_programs
 
 ## Tests
 
-The public website foundation is covered by `tests/Feature/PublicWebsiteFoundationTest.php`, `tests/Feature/PublicWebsiteDatabaseFoundationTest.php`, `tests/Feature/PublicWebsiteActionsRequestsRulesTest.php`, and updated platform coverage in `tests/Feature/DrivingSchoolPlatformTest.php`.
+The public website foundation is covered by `tests/Feature/PublicWebsiteFoundationTest.php`, `tests/Feature/PublicWebsiteFrontendTest.php`, `tests/Feature/PublicWebsiteDatabaseFoundationTest.php`, `tests/Feature/PublicWebsiteActionsRequestsRulesTest.php`, and updated platform coverage in `tests/Feature/DrivingSchoolPlatformTest.php`.

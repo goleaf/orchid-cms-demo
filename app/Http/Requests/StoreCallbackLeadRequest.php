@@ -30,7 +30,8 @@ class StoreCallbackLeadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'max:120'],
+            'full_name' => ['nullable', 'required_without:first_name', 'string', 'max:190'],
+            'first_name' => ['nullable', 'required_without:full_name', 'string', 'max:120'],
             'last_name' => ['nullable', 'string', 'max:120'],
             'phone' => ['required', 'string', 'max:60'],
             'email' => ['nullable', 'email:rfc', 'max:190'],
@@ -43,9 +44,12 @@ class StoreCallbackLeadRequest extends FormRequest
             'course_category_id' => ['nullable', 'integer', 'exists:course_categories,id'],
             'preferred_language' => ['nullable', 'string', 'max:60'],
             'preferred_time' => ['nullable', 'string', 'max:120'],
+            'callback_time' => ['nullable', 'string', 'max:120'],
             'source' => ['nullable', 'string', 'max:120'],
             'message' => ['nullable', 'string', 'max:2000'],
-            'privacy_consent' => ['required', new ConsentAcceptedRule],
+            'comment' => ['nullable', 'string', 'max:2000'],
+            'privacy_consent' => ['nullable', 'required_without:consent_accepted', new ConsentAcceptedRule],
+            'consent_accepted' => ['nullable', 'required_without:privacy_consent', new ConsentAcceptedRule],
             'consent_text_version' => ['nullable', 'string', 'max:120'],
             'utm_source' => ['nullable', 'string', 'max:120'],
             'utm_medium' => ['nullable', 'string', 'max:120'],
@@ -67,9 +71,11 @@ class StoreCallbackLeadRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'first_name.required' => tkey('website.validation.first_name_required'),
+            'full_name.required_without' => tkey('website.validation.first_name_required'),
+            'first_name.required_without' => tkey('website.validation.first_name_required'),
             'phone.required' => tkey('website.validation.phone_required'),
-            'privacy_consent.required' => tkey('website.validation.privacy_consent'),
+            'privacy_consent.required_without' => tkey('website.validation.privacy_consent'),
+            'consent_accepted.required_without' => tkey('website.validation.consent_required'),
         ];
     }
 }

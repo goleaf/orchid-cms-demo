@@ -14,7 +14,7 @@
                 <span class="fact">{{ $program->priceForHumans() }}</span>
             </div>
             <div class="actions">
-                <a class="button" href="{{ route('site.apply', ['program' => $program->id]) }}">{{ tkey('website.actions.apply') }}</a>
+                <a class="button" href="#application-form">{{ tkey('website.actions.apply') }}</a>
             </div>
         </div>
     </header>
@@ -145,7 +145,7 @@
                                     <td>{{ $group->instructor?->name ?? '-' }}</td>
                                     <td>{{ tkey('website.groups.seats_value', ['available' => $group->seatsAvailable(), 'capacity' => $group->capacity]) }}</td>
                                     <td>
-                                        <a class="button secondary" href="{{ route('site.apply', ['program' => $program->id, 'branch' => $group->branch_id, 'group' => $group->id]) }}">{{ tkey('website.actions.apply') }}</a>
+                                        <a class="button secondary" href="#application-form">{{ tkey('website.actions.apply') }}</a>
                                     </td>
                                 </tr>
                             @empty
@@ -210,6 +210,104 @@
                         </article>
                     @endforeach
                 </div>
+            </div>
+        </section>
+
+        <section class="section soft">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">{{ tkey('website.prices.packages.kicker') }}</p>
+                        <h2>{{ tkey('website.prices.packages.title') }}</h2>
+                    </div>
+                    <p class="lead">{{ tkey('website.pricing.subtitle') }}</p>
+                </div>
+
+                <div class="grid three">
+                    @forelse ($pricingPackages as $package)
+                        <article class="card">
+                            <p class="kicker">{{ $package->is_featured ? tkey('website.prices.packages.featured') : tkey('website.pricing.fields.package') }}</p>
+                            <h3>{{ $package->displayName() }}</h3>
+                            <p class="price">{{ $package->priceForHumans() }}</p>
+                            @foreach ($package->displayFeatures() as $feature)
+                                <p class="meta">{{ $feature }}</p>
+                            @endforeach
+                        </article>
+                    @empty
+                        <article class="card">
+                            <h3>{{ tkey('website.pricing.empty.no_packages') }}</h3>
+                        </article>
+                    @endforelse
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">{{ tkey('website.faq.title') }}</p>
+                        <h2>{{ tkey('website.courses.sections.faq') }}</h2>
+                    </div>
+                </div>
+
+                <div class="grid two">
+                    @forelse ($faqs as $faq)
+                        <article class="card">
+                            <h3>{{ $faq->displayQuestion() }}</h3>
+                            <p class="meta">{{ $faq->displayAnswer() }}</p>
+                        </article>
+                    @empty
+                        <article class="card">
+                            <h3>{{ tkey('website.faq.empty.no_faq') }}</h3>
+                        </article>
+                    @endforelse
+                </div>
+            </div>
+        </section>
+
+        <section class="section soft">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">{{ tkey('website.testimonials.title') }}</p>
+                        <h2>{{ tkey('website.home.testimonials_title') }}</h2>
+                    </div>
+                </div>
+
+                <div class="grid three">
+                    @forelse ($testimonials as $testimonial)
+                        <article class="card">
+                            <p class="kicker">{{ tkey('website.testimonials.fields.rating') }}: {{ $testimonial->rating }}</p>
+                            <h3>{{ $testimonial->displayName() }}</h3>
+                            <p class="meta">{{ $testimonial->displayText() }}</p>
+                        </article>
+                    @empty
+                        <article class="card">
+                            <h3>{{ tkey('website.testimonials.empty.no_testimonials') }}</h3>
+                        </article>
+                    @endforelse
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="application-form">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">{{ tkey('website.apply.kicker') }}</p>
+                        <h2>{{ tkey('website.forms.apply.title') }}</h2>
+                    </div>
+                    <p class="lead">{{ tkey('website.forms.apply.subtitle') }}</p>
+                </div>
+
+                @include('site.partials.lead-form', [
+                    'programs' => collect([$program]),
+                    'branches' => $branches,
+                    'groups' => $program->groups,
+                    'selectedProgram' => $program,
+                    'formName' => 'course_detail_application',
+                ])
             </div>
         </section>
     </main>

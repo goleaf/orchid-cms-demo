@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{ $seoDescription ?? tkey('website.seo.default_description') }}">
+    @if (($isIndexable ?? true) === false)
+        <meta name="robots" content="noindex,nofollow">
+    @endif
     @isset($canonical)
         <link rel="canonical" href="{{ $canonical }}">
     @endisset
@@ -555,18 +558,20 @@
 
     <nav class="site-nav" aria-label="{{ tkey('website.navigation.main') }}">
         <div class="site-nav-inner">
-            <a class="brand" href="{{ route('site.home') }}">{{ tkey('website.brand.name') }}</a>
+            <a class="brand" href="{{ route('website.home') }}">{{ tkey('website.brand.name') }}</a>
             <div class="nav-links">
-                <a href="{{ route('site.home') }}#programs">{{ tkey('website.nav.courses') }}</a>
-                <a href="{{ route('site.prices') }}">{{ tkey('website.nav.pricing') }}</a>
-                <a href="{{ route('site.apply') }}">{{ tkey('website.nav.apply') }}</a>
+                <a href="{{ route('website.home') }}">{{ tkey('website.nav.home') }}</a>
+                <a href="{{ route('website.courses.index') }}">{{ tkey('website.nav.courses') }}</a>
+                <a href="{{ route('website.pricing') }}">{{ tkey('website.nav.pricing') }}</a>
+                <a href="{{ route('website.branches.index') }}">{{ tkey('website.nav.branches') }}</a>
+                <a href="{{ route('website.home') }}#application-form">{{ tkey('website.nav.apply') }}</a>
                 <a href="{{ route('site.instructors') }}">{{ tkey('website.nav.instructors') }}</a>
                 <a href="{{ route('site.fleet') }}">{{ tkey('website.nav.fleet') }}</a>
                 <a href="{{ route('site.reviews') }}">{{ tkey('website.nav.reviews') }}</a>
                 <a href="{{ route('site.blog.index') }}">{{ tkey('website.nav.blog') }}</a>
-                <a href="{{ route('site.contacts') }}">{{ tkey('website.nav.contacts') }}</a>
+                <a href="{{ route('website.contacts') }}">{{ tkey('website.nav.contacts') }}</a>
                 @if($locales->isNotEmpty())
-                    <form class="language-switcher" method="POST" action="{{ route('locale.switch') }}">
+                    <form class="language-switcher" method="POST" action="{{ route('website.language.switch') }}">
                         @csrf
                         <label>
                             <span>{{ tkey('locale.switcher.label') }}</span>
@@ -596,8 +601,8 @@
     </footer>
 
     <div class="float-actions" aria-label="{{ tkey('website.actions.fast_contact') }}">
-        <a href="{{ route('site.apply') }}#application-form">{{ tkey('website.actions.online_chat') }}</a>
-        <a href="{{ route('site.contacts') }}#callback">{{ tkey('website.actions.callback') }}</a>
+        <a href="{{ route('website.home') }}#application-form">{{ tkey('website.actions.online_chat') }}</a>
+        <a href="{{ route('website.contacts') }}#callback">{{ tkey('website.actions.callback') }}</a>
     </div>
 </body>
 </html>

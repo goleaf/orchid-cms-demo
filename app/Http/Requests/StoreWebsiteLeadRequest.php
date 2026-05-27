@@ -50,8 +50,8 @@ class StoreWebsiteLeadRequest extends FormRequest
             'source' => ['nullable', 'string', 'max:120'],
             'message' => ['nullable', 'string', 'max:2000'],
             'comment' => ['nullable', 'string', 'max:2000'],
-            'privacy_consent' => ['required', new ConsentAcceptedRule],
-            'consent_accepted' => ['nullable', new ConsentAcceptedRule],
+            'privacy_consent' => ['nullable', 'required_without:consent_accepted', new ConsentAcceptedRule],
+            'consent_accepted' => ['nullable', 'required_without:privacy_consent', new ConsentAcceptedRule],
             'consent_text_version' => ['nullable', 'string', 'max:120'],
             'documents' => ['nullable', 'array', 'max:5'],
             'documents.*' => [
@@ -87,7 +87,8 @@ class StoreWebsiteLeadRequest extends FormRequest
             'phone.required_without' => tkey('website.validation.contact_required'),
             'preferred_format.required' => tkey('website.validation.format_required'),
             'preferred_language.required' => tkey('website.validation.language_required'),
-            'privacy_consent.required' => tkey('website.validation.privacy_consent'),
+            'privacy_consent.required_without' => tkey('website.validation.privacy_consent'),
+            'consent_accepted.required_without' => tkey('website.validation.consent_required'),
             'documents.max' => tkey('website.validation.documents_limit'),
             'documents.*.max' => tkey('website.validation.document_size'),
         ];

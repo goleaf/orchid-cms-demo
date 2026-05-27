@@ -6,7 +6,7 @@ use App\Models\Branch;
 use App\Models\SiteSetting;
 use App\Models\TrainingProgram;
 
-class GetContactPageAction
+class GetBranchIndexPageAction
 {
     /**
      * @return array<string, mixed>
@@ -16,6 +16,18 @@ class GetContactPageAction
         return [
             'branches' => Branch::query()
                 ->forAdminList()
+                ->with([
+                    'groups' => fn ($query) => $query
+                        ->operationalList()
+                        ->with([
+                            'trainingProgram:id,title,title_translations,name_translations,slug,license_category,price_cents,is_active,is_visible_on_site',
+                            'instructor:id,name',
+                        ])
+                        ->withCount('enrollments')
+                        ->openForEnrollment()
+                        ->ordered()
+                        ->limit(8),
+                ])
                 ->withCount(['instructors', 'vehicles', 'groups'])
                 ->active()
                 ->visibleOnSite()
@@ -33,9 +45,9 @@ class GetContactPageAction
                 ->get(['key', 'value'])
                 ->mapWithKeys(fn (SiteSetting $setting): array => [$setting->key => $setting->value])
                 ->all(),
-            'seoTitle' => tkey('website.contacts.seo.title'),
+            'seoTitle' => tkey('website.branches.title').' | '.tkey('website.brand.name'),
             'seoDescription' => tkey('website.contacts.seo.description'),
-            'canonical' => route('website.contacts'),
+            'canonical' => route('website.branches.index'),
         ];
     }
 }
