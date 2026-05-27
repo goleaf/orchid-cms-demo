@@ -737,3 +737,56 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T18:04:01+00:00
+
+```json
+{
+  "ts": "2026-05-27T18:04:01+00:00",
+  "event": "Stop",
+  "session_id": "019e6a96-6279-73a2-bd62-e85432689ea8",
+  "turn_id": "019e6a96-689b-7d81-a14a-09314ab5799b",
+  "branch": "main",
+  "changed_file_count": 218,
+  "changed_file_groups": {
+    "code": 194,
+    "models": 5,
+    "orchid": 10,
+    "database": 5,
+    "tests": 4
+  },
+  "changed_files_sample": [
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/learning_candidates.md",
+    "README.md",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateEnrollmentLeadAction.php",
+    "app/Actions/GetBranchPageAction.php",
+    "app/Actions/GetContactPageAction.php",
+    "app/Actions/GetEnrollmentFormAction.php",
+    "app/Actions/GetFleetDirectoryAction.php",
+    "app/Actions/GetHomePageAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GetKnowledgeArticleAction.php",
+    "app/Actions/GetKnowledgeBaseAction.php",
+    "app/Actions/GetPricingPageAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GetPublicReviewsAction.php",
+    "app/Actions/GetSitemapAction.php",
+    "app/Actions/SaveBranchAction.php",
+    "app/Actions/SaveTrainingGroupAction.php",
+    "app/Actions/SaveTrainingProgramAction.php",
+    "app/Enums/GroupStatus.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Controllers/PricingController.php",
+    "app/Http/Controllers/ThankYouController.php",
+    "app/Http/Middleware/CaptureSiteTracking.php",
+    "app/Http/Requests/BranchRequest.php",
+    "app/Http/Requests/LandingPageRequest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
