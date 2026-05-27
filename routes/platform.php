@@ -37,6 +37,23 @@ use App\Orchid\Screens\System\TranslationListScreen;
 use App\Orchid\Screens\User\UserEditScreen;
 use App\Orchid\Screens\User\UserListScreen;
 use App\Orchid\Screens\User\UserProfileScreen;
+use App\Orchid\Screens\Website\BranchEditScreen as WebsiteBranchEditScreen;
+use App\Orchid\Screens\Website\BranchListScreen as WebsiteBranchListScreen;
+use App\Orchid\Screens\Website\CourseCategoryEditScreen;
+use App\Orchid\Screens\Website\CourseCategoryListScreen;
+use App\Orchid\Screens\Website\CourseEditScreen;
+use App\Orchid\Screens\Website\CourseListScreen;
+use App\Orchid\Screens\Website\FaqEditScreen;
+use App\Orchid\Screens\Website\FaqListScreen;
+use App\Orchid\Screens\Website\PricingPackageEditScreen as WebsitePricingPackageEditScreen;
+use App\Orchid\Screens\Website\PricingPackageListScreen as WebsitePricingPackageListScreen;
+use App\Orchid\Screens\Website\SitePageEditScreen;
+use App\Orchid\Screens\Website\SitePageListScreen;
+use App\Orchid\Screens\Website\SiteSettingsScreen;
+use App\Orchid\Screens\Website\TestimonialEditScreen;
+use App\Orchid\Screens\Website\TestimonialListScreen;
+use App\Orchid\Screens\Website\WebsiteGroupListScreen;
+use App\Orchid\Screens\Website\WebsiteLeadListScreen;
 use App\Support\Crm\LeadDictionaryRegistry;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
@@ -63,65 +80,96 @@ Route::screen('content/home', LandingPageEditScreen::class)
         ->parent('platform.index')
         ->push(tkey('menu.content.home'), route('platform.content.home')));
 
-// Website > Settings
-Route::screen('website/settings', LandingPageEditScreen::class)
-    ->name('platform.website.settings')
+// Website > Pages
+Route::screen('website/pages/create', SitePageEditScreen::class)
+    ->name('platform.website.pages.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.website.pages')
+        ->push(tkey('website.admin.pages.create_title'), route('platform.website.pages.create')));
+
+Route::screen('website/pages/{page}/edit', SitePageEditScreen::class)
+    ->name('platform.website.pages.edit')
+    ->breadcrumbs(fn (Trail $trail, $page) => $trail
+        ->parent('platform.website.pages')
+        ->push(tkey('website.admin.pages.edit_title'), route('platform.website.pages.edit', $page)));
+
+Route::screen('website/pages', SitePageListScreen::class)
+    ->name('platform.website.pages')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push(tkey('menu.website.settings'), route('platform.website.settings')));
+        ->push(tkey('menu.website.pages'), route('platform.website.pages')));
+
+// Website > Course Categories
+Route::screen('website/course-categories/create', CourseCategoryEditScreen::class)
+    ->name('platform.website.course-categories.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.website.course-categories')
+        ->push(tkey('website.admin.course_categories.create_title'), route('platform.website.course-categories.create')));
+
+Route::screen('website/course-categories/{category}/edit', CourseCategoryEditScreen::class)
+    ->name('platform.website.course-categories.edit')
+    ->breadcrumbs(fn (Trail $trail, $category) => $trail
+        ->parent('platform.website.course-categories')
+        ->push(tkey('website.admin.course_categories.edit_title'), route('platform.website.course-categories.edit', $category)));
+
+Route::screen('website/course-categories', CourseCategoryListScreen::class)
+    ->name('platform.website.course-categories')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.website.course_categories'), route('platform.website.course-categories')));
 
 // Website > Courses
-Route::screen('website/courses/create', ProgramEditScreen::class)
+Route::screen('website/courses/create', CourseEditScreen::class)
     ->name('platform.website.courses.create')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.website.courses')
         ->push(tkey('website.admin.courses.create_title'), route('platform.website.courses.create')));
 
-Route::screen('website/courses/{program}/edit', ProgramEditScreen::class)
+Route::screen('website/courses/{program}/edit', CourseEditScreen::class)
     ->name('platform.website.courses.edit')
     ->breadcrumbs(fn (Trail $trail, $program) => $trail
         ->parent('platform.website.courses')
         ->push(tkey('website.admin.courses.edit_title'), route('platform.website.courses.edit', $program)));
 
-Route::screen('website/courses', ProgramListScreen::class)
+Route::screen('website/courses', CourseListScreen::class)
     ->name('platform.website.courses')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
         ->push(tkey('menu.website.courses'), route('platform.website.courses')));
 
 // Website > Pricing
-Route::screen('website/pricing/create', PricingPackageEditScreen::class)
+Route::screen('website/pricing/create', WebsitePricingPackageEditScreen::class)
     ->name('platform.website.pricing.create')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.website.pricing')
         ->push(tkey('website.admin.pricing.create_title'), route('platform.website.pricing.create')));
 
-Route::screen('website/pricing/{pricingPackage}/edit', PricingPackageEditScreen::class)
+Route::screen('website/pricing/{pricingPackage}/edit', WebsitePricingPackageEditScreen::class)
     ->name('platform.website.pricing.edit')
     ->breadcrumbs(fn (Trail $trail, $pricingPackage) => $trail
         ->parent('platform.website.pricing')
         ->push(tkey('website.admin.pricing.edit_title'), route('platform.website.pricing.edit', $pricingPackage)));
 
-Route::screen('website/pricing', PricingPackageListScreen::class)
+Route::screen('website/pricing', WebsitePricingPackageListScreen::class)
     ->name('platform.website.pricing')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
         ->push(tkey('menu.website.pricing'), route('platform.website.pricing')));
 
 // Website > Branches
-Route::screen('website/branches/create', BranchEditScreen::class)
+Route::screen('website/branches/create', WebsiteBranchEditScreen::class)
     ->name('platform.website.branches.create')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.website.branches')
         ->push(tkey('website.admin.branches.create_title'), route('platform.website.branches.create')));
 
-Route::screen('website/branches/{branch}/edit', BranchEditScreen::class)
+Route::screen('website/branches/{branch}/edit', WebsiteBranchEditScreen::class)
     ->name('platform.website.branches.edit')
     ->breadcrumbs(fn (Trail $trail, $branch) => $trail
         ->parent('platform.website.branches')
         ->push(tkey('website.admin.branches.edit_title'), route('platform.website.branches.edit', $branch)));
 
-Route::screen('website/branches', BranchListScreen::class)
+Route::screen('website/branches', WebsiteBranchListScreen::class)
     ->name('platform.website.branches')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
@@ -140,18 +188,63 @@ Route::screen('website/groups/{group}/edit', GroupEditScreen::class)
         ->parent('platform.website.groups')
         ->push(tkey('website.admin.groups.edit_title'), route('platform.website.groups.edit', $group)));
 
-Route::screen('website/groups', GroupListScreen::class)
+Route::screen('website/groups', WebsiteGroupListScreen::class)
     ->name('platform.website.groups')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
         ->push(tkey('menu.website.groups'), route('platform.website.groups')));
 
+// Website > FAQ
+Route::screen('website/faq/create', FaqEditScreen::class)
+    ->name('platform.website.faq.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.website.faq')
+        ->push(tkey('website.admin.faq.create_title'), route('platform.website.faq.create')));
+
+Route::screen('website/faq/{faq}/edit', FaqEditScreen::class)
+    ->name('platform.website.faq.edit')
+    ->breadcrumbs(fn (Trail $trail, $faq) => $trail
+        ->parent('platform.website.faq')
+        ->push(tkey('website.admin.faq.edit_title'), route('platform.website.faq.edit', $faq)));
+
+Route::screen('website/faq', FaqListScreen::class)
+    ->name('platform.website.faq')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.website.faq'), route('platform.website.faq')));
+
+// Website > Testimonials
+Route::screen('website/testimonials/create', TestimonialEditScreen::class)
+    ->name('platform.website.testimonials.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.website.testimonials')
+        ->push(tkey('website.admin.testimonials.create_title'), route('platform.website.testimonials.create')));
+
+Route::screen('website/testimonials/{testimonial}/edit', TestimonialEditScreen::class)
+    ->name('platform.website.testimonials.edit')
+    ->breadcrumbs(fn (Trail $trail, $testimonial) => $trail
+        ->parent('platform.website.testimonials')
+        ->push(tkey('website.admin.testimonials.edit_title'), route('platform.website.testimonials.edit', $testimonial)));
+
+Route::screen('website/testimonials', TestimonialListScreen::class)
+    ->name('platform.website.testimonials')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.website.testimonials'), route('platform.website.testimonials')));
+
 // Website > Leads
-Route::screen('website/leads', LeadListScreen::class)
+Route::screen('website/leads', WebsiteLeadListScreen::class)
     ->name('platform.website.leads')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
         ->push(tkey('menu.website.leads'), route('platform.website.leads')));
+
+// Website > Settings
+Route::screen('website/settings', SiteSettingsScreen::class)
+    ->name('platform.website.settings')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.website.settings'), route('platform.website.settings')));
 
 // Operations > Branches
 Route::screen('operations/branches', BranchListScreen::class)

@@ -39,11 +39,21 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.content.home')
                 ->permission('platform.content.home'),
 
+            Menu::make(tkey('menu.website.pages'))
+                ->icon('bs.file-earmark-richtext')
+                ->route('platform.website.pages')
+                ->permission('website.manage_pages')
+                ->title(tkey('menu.website')),
+
             Menu::make(tkey('menu.website.courses'))
                 ->icon('bs.book')
                 ->route('platform.website.courses')
-                ->permission('website.manage_courses')
-                ->title(tkey('menu.website')),
+                ->permission('website.manage_courses'),
+
+            Menu::make(tkey('menu.website.course_categories'))
+                ->icon('bs.collection')
+                ->route('platform.website.course-categories')
+                ->permission('website.manage_course_categories'),
 
             Menu::make(tkey('menu.website.pricing'))
                 ->icon('bs.cash-coin')
@@ -59,6 +69,16 @@ class PlatformProvider extends OrchidServiceProvider
                 ->icon('bs.calendar-event')
                 ->route('platform.website.groups')
                 ->permission('website.manage_groups'),
+
+            Menu::make(tkey('menu.website.faq'))
+                ->icon('bs.question-circle')
+                ->route('platform.website.faq')
+                ->permission('website.manage_faq'),
+
+            Menu::make(tkey('menu.website.testimonials'))
+                ->icon('bs.star')
+                ->route('platform.website.testimonials')
+                ->permission('website.manage_testimonials'),
 
             Menu::make(tkey('menu.website.leads'))
                 ->icon('bs.inbox')

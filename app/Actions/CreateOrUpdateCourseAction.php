@@ -65,6 +65,12 @@ class CreateOrUpdateCourseAction
         $attributes['extra_costs'] ??= $this->fallbackScalar($attributes, 'excludes')
             ?? $this->fallbackScalar($attributes, 'extra_costs');
         $attributes['currency'] ??= 'EUR';
+        $attributes['license_category'] = filled($attributes['license_category'] ?? null) ? $attributes['license_category'] : 'B';
+        $attributes['transmission'] = filled($attributes['transmission'] ?? null) ? $attributes['transmission'] : 'manual';
+        $attributes['theory_hours'] = filled($attributes['theory_hours'] ?? null) ? $attributes['theory_hours'] : 0;
+        $attributes['practice_hours'] = filled($attributes['practice_hours'] ?? null) ? $attributes['practice_hours'] : 0;
+        $attributes['duration_weeks'] = filled($attributes['duration_weeks'] ?? null) ? $attributes['duration_weeks'] : 8;
+        $attributes['price_cents'] = filled($attributes['price_cents'] ?? null) ? $attributes['price_cents'] : 0;
 
         return $attributes;
     }

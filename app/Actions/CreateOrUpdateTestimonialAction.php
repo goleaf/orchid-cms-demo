@@ -19,6 +19,11 @@ class CreateOrUpdateTestimonialAction
             $attributes['training_program_id'] = $attributes['course_id'];
         }
 
+        if (array_key_exists('student_id', $attributes) && ! array_key_exists('student_profile_id', $attributes)) {
+            $attributes['student_profile_id'] = $attributes['student_id'];
+            unset($attributes['student_id']);
+        }
+
         $attributes['author_name'] ??= $this->fallbackScalar($attributes, 'name');
         $attributes['body'] ??= $this->fallbackScalar($attributes, 'text', '');
         $attributes['title'] ??= $attributes['author_name'] ?? null;
