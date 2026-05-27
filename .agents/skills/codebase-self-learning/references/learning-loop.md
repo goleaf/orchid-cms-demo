@@ -25,7 +25,29 @@ The self-learning loop has four parts:
 - `recurring_mistakes.md`: repeated mistakes to avoid.
 - `tool_notes.md`: useful commands and test shortcuts.
 - `learning_candidates.md`: unreviewed possible memories.
+- `skill_inventory.json`: compact repository-local Codex skill inventory.
 - `events.jsonl`: low-level hook event log, safe and sanitized.
+
+## Repository skill discovery
+
+Repository skill discovery scans only known local skill roots:
+
+- `.agents/skills/`
+- `skills/`
+- `.codex/skills/`
+- plugin skill roots when a plugin manifest already exists
+
+A skill is a directory containing `SKILL.md`. The discovery script parses simple frontmatter (`name` and `description`), records optional `scripts/`, `references/`, and `assets/` folders, and stores warnings for incomplete or malformed skills.
+
+Manual command:
+
+```bash
+python3 .agents/skills/codebase-self-learning/scripts/discover_skills.py --json
+```
+
+Use `--no-write` for read-only verification, `--root PATH` to scan a specific repository, and `--verbose` to print scanned roots and warnings.
+
+Session-start context can include a short skill inventory. User-prompt context includes it only for prompts about skills, hooks, self-learning, memory, or discovery. Hooks must continue if discovery fails.
 
 ## Promotion policy
 

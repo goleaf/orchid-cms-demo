@@ -37,9 +37,55 @@ PII_PATTERNS = [
     re.compile(r"[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}"),
 ]
 
+SKILL_ROOTS = [
+    ".agents/skills",
+    "skills",
+    ".codex/skills",
+]
+
+PLUGIN_CONTAINERS = [
+    "plugins",
+    ".codex/plugins",
+]
+
+PLUGIN_MANIFESTS = [
+    "plugin.json",
+    ".codex-plugin/plugin.json",
+]
+
+SKILL_IGNORED_DIRS = {
+    ".git",
+    "__pycache__",
+    ".pytest_cache",
+    ".phpunit.cache",
+    "build",
+    "cache",
+    "dist",
+    "node_modules",
+    "storage",
+    "target",
+    "vendor",
+}
+
+SKILL_PROMPT_TERMS = [
+    "skill",
+    "skills",
+    "skill.md",
+    "repository skill",
+    "repo skill",
+    "hook",
+    "self-learning",
+    "memory",
+    "discovery",
+]
+
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def now_iso_z() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
 def read_stdin_json() -> dict[str, Any]:
@@ -143,6 +189,28 @@ def safe_append(path: Path, text: str) -> None:
         fh.write(sanitize(text, max_len=8000))
 
 
+def safe_write_text(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(sanitize(text, max_len=max(len(text) + 100, 8000)), encoding="utf-8")
+
+
+def safe_read_text(path: Path, max_bytes: int = 256_000) -> tuple[str, list[str]]:
+    warnings: list[str] = []
+    try:
+        size = path.stat().st_size
+    except OSError:
+        return "", ["could not stat file"]
+
+    if size > max_bytes:
+        warnings.append(f"file larger than {max_bytes} bytes; read truncated")
+
+    try:
+        with path.open("r", encoding="utf-8", errors="ignore") as fh:
+            return fh.read(max_bytes), warnings
+    except OSError:
+        return "", [*warnings, "could not read file"]
+
+
 def git_changed_files(root: Path) -> list[str]:
     output = run(["git", "status", "--porcelain"], cwd=root)
     files: list[str] = []
@@ -176,6 +244,406 @@ def read_memory_file(root: Path, filename: str, limit: int = 4000) -> str:
     except Exception:
         return ""
     return text[:limit]
+
+
+def path_relative_to(root: Path, path: Path) -> str:
+    try:
+        return path.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return path.resolve().as_posix()
+
+
+def is_kebab_case(value: str) -> bool:
+    return re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", value) is not None
+
+
+def file_mtime(path: Path) -> str | None:
+    try:
+        return datetime.fromtimestamp(path.stat().st_mtime, timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    except OSError:
+        return None
+
+
+def directory_has_files(path: Path) -> bool:
+    if not path.is_dir():
+        return False
+    try:
+        for item in path.rglob("*"):
+            if any(part in SKILL_IGNORED_DIRS for part in item.parts):
+                continue
+            if item.is_file():
+                return True
+    except OSError:
+        return False
+    return False
+
+
+def strip_metadata_value(value: str) -> str:
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+        return value[1:-1].strip()
+    return value
+
+
+def first_useful_skill_line(body: str) -> str:
+    for line in body.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped in {"---", "```"}:
+            continue
+        if stripped.startswith("```"):
+            continue
+        stripped = stripped.lstrip("#").strip()
+        stripped = stripped.lstrip("-*").strip()
+        if stripped:
+            return sanitize(stripped, max_len=240)
+    return ""
+
+
+def parse_skill_metadata(skill_md_path: Path) -> dict[str, Any]:
+    text, warnings = safe_read_text(skill_md_path, max_bytes=128_000)
+    metadata: dict[str, str] = {}
+    body = text
+    has_frontmatter = False
+
+    if not text.strip():
+        return {
+            "metadata": metadata,
+            "body_description": "",
+            "warnings": [*warnings, "empty SKILL.md"],
+        }
+
+    lines = text.splitlines()
+    if lines and lines[0].strip() == "---":
+        has_frontmatter = True
+        closing_index: int | None = None
+        for index, line in enumerate(lines[1:], start=1):
+            if line.strip() == "---":
+                closing_index = index
+                break
+
+        if closing_index is None:
+            warnings.append("invalid metadata format: frontmatter is not closed")
+        else:
+            for line in lines[1:closing_index]:
+                stripped = line.strip()
+                if not stripped or stripped.startswith("#"):
+                    continue
+                if ":" not in stripped:
+                    warnings.append("invalid metadata format: expected key: value")
+                    continue
+                key, value = stripped.split(":", 1)
+                key = key.strip().lower()
+                if key in {"name", "description"}:
+                    metadata[key] = strip_metadata_value(value)
+            body = "\n".join(lines[closing_index + 1:])
+
+    if has_frontmatter and not metadata:
+        warnings.append("invalid metadata format: no supported metadata fields")
+
+    return {
+        "metadata": metadata,
+        "body_description": first_useful_skill_line(body),
+        "warnings": warnings,
+    }
+
+
+def has_plugin_manifest(path: Path) -> bool:
+    return any((path / manifest).is_file() for manifest in PLUGIN_MANIFESTS)
+
+
+def repository_skill_roots(root: Path) -> list[Path]:
+    roots = [root / rel for rel in SKILL_ROOTS]
+
+    if has_plugin_manifest(root):
+        roots.extend([
+            root / ".codex-plugin" / "skills",
+            root / ".agents" / "plugins" / "skills",
+        ])
+
+    for container_rel in PLUGIN_CONTAINERS:
+        container = root / container_rel
+        if not container.is_dir():
+            continue
+        try:
+            children = [child for child in container.iterdir() if child.is_dir()]
+        except OSError:
+            continue
+        for child in children:
+            if not has_plugin_manifest(child):
+                continue
+            roots.extend([
+                child / "skills",
+                child / ".agents" / "skills",
+                child / ".codex" / "skills",
+                child / ".codex-plugin" / "skills",
+            ])
+
+    unique: list[Path] = []
+    seen: set[str] = set()
+    for skill_root in roots:
+        resolved = str(skill_root.resolve())
+        if resolved not in seen:
+            unique.append(skill_root)
+            seen.add(resolved)
+    return unique
+
+
+def iter_skill_dirs(skill_root: Path, max_depth: int = 5) -> Iterable[Path]:
+    if not skill_root.is_dir():
+        return
+
+    base_depth = len(skill_root.resolve().parts)
+    for dirpath, dirnames, filenames in os.walk(skill_root):
+        current = Path(dirpath)
+        dirnames[:] = [
+            dirname for dirname in dirnames
+            if dirname not in SKILL_IGNORED_DIRS and not dirname.startswith(".cache")
+        ]
+        if len(current.resolve().parts) - base_depth >= max_depth:
+            dirnames[:] = []
+        if "SKILL.md" in filenames:
+            yield current
+
+
+def validate_skill_record(root: Path, expected_roots: list[Path], skill_dir: Path) -> dict[str, Any]:
+    skill_md = skill_dir / "SKILL.md"
+    parsed = parse_skill_metadata(skill_md)
+    metadata = parsed["metadata"]
+    warnings = list(parsed["warnings"])
+
+    name = metadata.get("name") or skill_dir.name
+    description = metadata.get("description") or parsed["body_description"]
+
+    if "name" not in metadata:
+        warnings.append("missing name metadata; inferred from directory name")
+    if not name:
+        warnings.append("missing name")
+    elif not is_kebab_case(name):
+        warnings.append("non-kebab-case skill name")
+
+    if "description" not in metadata:
+        warnings.append("missing description metadata")
+    if not description:
+        warnings.append("missing description")
+
+    try:
+        size = skill_md.stat().st_size
+    except OSError:
+        size = 0
+    if size > 64_000:
+        warnings.append("suspiciously large SKILL.md")
+
+    scripts_dir = skill_dir / "scripts"
+    references_dir = skill_dir / "references"
+    assets_dir = skill_dir / "assets"
+
+    if scripts_dir.is_dir() and not directory_has_files(scripts_dir):
+        warnings.append("scripts directory exists but contains no scripts")
+    if references_dir.is_dir() and not directory_has_files(references_dir):
+        warnings.append("references directory exists but contains no references")
+
+    inside_expected_root = False
+    for expected_root in expected_roots:
+        try:
+            skill_dir.resolve().relative_to(expected_root.resolve())
+            inside_expected_root = True
+            break
+        except ValueError:
+            continue
+    if not inside_expected_root:
+        warnings.append("skill outside expected repository-local roots")
+
+    valid = skill_md.is_file() and bool(name) and bool(description) and "empty SKILL.md" not in warnings
+
+    return {
+        "name": name,
+        "description": description,
+        "absolute_path": skill_dir.resolve().as_posix(),
+        "path": path_relative_to(root, skill_dir),
+        "absolute_skill_md": skill_md.resolve().as_posix(),
+        "skill_md": path_relative_to(root, skill_md),
+        "scripts_path": path_relative_to(root, scripts_dir) if scripts_dir.is_dir() else None,
+        "references_path": path_relative_to(root, references_dir) if references_dir.is_dir() else None,
+        "assets_path": path_relative_to(root, assets_dir) if assets_dir.is_dir() else None,
+        "has_scripts": scripts_dir.is_dir(),
+        "has_references": references_dir.is_dir(),
+        "has_assets": assets_dir.is_dir(),
+        "valid": valid,
+        "warnings": sorted(set(warnings)),
+        "mtime": file_mtime(skill_md),
+    }
+
+
+def discover_repository_skills(repo_root: str | Path | None = None) -> dict[str, Any]:
+    root = Path(repo_root).resolve() if repo_root is not None else find_repo_root()
+    skill_roots = repository_skill_roots(root)
+    skills: list[dict[str, Any]] = []
+    inventory_warnings: list[str] = []
+    seen_dirs: set[str] = set()
+
+    for skill_root in skill_roots:
+        if not skill_root.exists():
+            continue
+        if not skill_root.is_dir():
+            inventory_warnings.append(f"skill root is not a directory: {path_relative_to(root, skill_root)}")
+            continue
+        for skill_dir in iter_skill_dirs(skill_root):
+            resolved = skill_dir.resolve().as_posix()
+            if resolved in seen_dirs:
+                continue
+            seen_dirs.add(resolved)
+            skills.append(validate_skill_record(root, skill_roots, skill_dir))
+
+    names: dict[str, list[dict[str, Any]]] = {}
+    for skill in skills:
+        names.setdefault(str(skill.get("name") or ""), []).append(skill)
+
+    for name, matching_skills in names.items():
+        if not name or len(matching_skills) < 2:
+            continue
+        paths = [str(skill["path"]) for skill in matching_skills]
+        warning = f"duplicate skill name: {name}"
+        inventory_warnings.append(f"{warning} at {', '.join(paths)}")
+        for skill in matching_skills:
+            skill["warnings"] = sorted(set([*skill.get("warnings", []), warning]))
+
+    skills.sort(key=lambda item: (str(item.get("name") or ""), str(item.get("path") or "")))
+
+    return {
+        "generated_at": now_iso_z(),
+        "repository_root": root.as_posix(),
+        "skill_roots_scanned": [path_relative_to(root, skill_root) for skill_root in skill_roots],
+        "skills": skills,
+        "warnings": sorted(set(inventory_warnings)),
+    }
+
+
+def skill_inventory_event(inventory: dict[str, Any], inventory_path: Path) -> dict[str, Any]:
+    skills = inventory.get("skills") if isinstance(inventory.get("skills"), list) else []
+    warning_count = len(inventory.get("warnings") or []) + sum(len(skill.get("warnings") or []) for skill in skills)
+    return {
+        "ts": now_iso_z(),
+        "event": "repository_skill_discovery",
+        "skills_found": len(skills),
+        "valid_skills": sum(1 for skill in skills if skill.get("valid")),
+        "warning_count": warning_count,
+        "skill_names": [skill.get("name") for skill in skills if skill.get("name")],
+        "inventory_path": str(inventory_path),
+    }
+
+
+def update_tool_notes_skill_summary(root: Path, inventory: dict[str, Any]) -> None:
+    ensure_memory_files(root)
+    path = memory_dir(root) / "tool_notes.md"
+    existing = path.read_text(encoding="utf-8", errors="ignore") if path.exists() else "# Tool Notes\n\n"
+    skills = inventory.get("skills") if isinstance(inventory.get("skills"), list) else []
+    invalid = [skill for skill in skills if not skill.get("valid") or skill.get("warnings")]
+
+    lines = [
+        "## Repository skill discovery",
+        "",
+        f"- Last scan: {inventory.get('generated_at', '')}",
+        f"- Skills found: {len(skills)}; valid: {sum(1 for skill in skills if skill.get('valid'))}.",
+    ]
+    if skills:
+        lines.append("- Discovered skills: " + ", ".join(
+            f"`{skill.get('name')}` ({skill.get('path')})" for skill in skills[:10]
+        ) + ("." if len(skills) <= 10 else f", plus {len(skills) - 10} more."))
+    else:
+        lines.append("- Discovered skills: none.")
+
+    if invalid:
+        lines.append("- Recommended fixes: " + "; ".join(
+            f"{skill.get('path')}: {', '.join((skill.get('warnings') or [])[:3])}" for skill in invalid[:6]
+        ) + ("." if len(invalid) <= 6 else f"; plus {len(invalid) - 6} more."))
+    elif inventory.get("warnings"):
+        lines.append("- Recommended fixes: " + "; ".join(str(w) for w in inventory.get("warnings", [])[:6]) + ".")
+    else:
+        lines.append("- Recommended fixes: none.")
+
+    lines.extend([
+        "- Manual command: `python3 .agents/skills/codebase-self-learning/scripts/discover_skills.py --json`.",
+        "",
+    ])
+    section = "\n".join(lines)
+    pattern = re.compile(r"\n?## Repository skill discovery\n.*?(?=\n## |\Z)", re.DOTALL)
+    if pattern.search(existing):
+        updated = pattern.sub("\n" + section.rstrip() + "\n", existing).rstrip() + "\n"
+    else:
+        updated = existing.rstrip() + "\n\n" + section
+    safe_write_text(path, updated)
+
+
+def write_skill_inventory(root: Path, inventory: dict[str, Any], update_notes: bool = True, append_event: bool = True) -> Path:
+    mdir = memory_dir(root)
+    mdir.mkdir(parents=True, exist_ok=True)
+    inventory_path = mdir / "skill_inventory.json"
+    inventory_path.write_text(
+        json.dumps(inventory, ensure_ascii=False, separators=(",", ":"), default=str) + "\n",
+        encoding="utf-8",
+    )
+    if append_event:
+        try:
+            append_jsonl(mdir / "events.jsonl", skill_inventory_event(inventory, inventory_path))
+        except Exception:
+            pass
+    if update_notes:
+        try:
+            update_tool_notes_skill_summary(root, inventory)
+        except Exception:
+            pass
+    return inventory_path
+
+
+def load_skill_inventory(root: Path) -> dict[str, Any] | None:
+    path = memory_dir(root) / "skill_inventory.json"
+    if not path.exists():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        return payload if isinstance(payload, dict) else None
+    except Exception:
+        return None
+
+
+def format_skill_inventory_for_context(inventory: dict[str, Any] | None, max_items: int = 10) -> str:
+    if not inventory:
+        return ""
+    skills = inventory.get("skills") if isinstance(inventory.get("skills"), list) else []
+    if not skills:
+        return ""
+
+    lines = ["Repository skill inventory:"]
+    for skill in skills[:max_items]:
+        description = str(skill.get("description") or "").strip()
+        if len(description) > 180:
+            description = description[:180] + "..."
+        line = f"- {skill.get('name')}: {description} ({skill.get('path')})"
+        warnings = [str(w) for w in (skill.get("warnings") or [])[:2]]
+        if warnings:
+            line += " [warnings: " + "; ".join(warnings) + "]"
+        lines.append(line)
+    if len(skills) > max_items:
+        lines.append(f"- ... {len(skills) - max_items} more skills omitted")
+    inventory_warnings = [str(w) for w in (inventory.get("warnings") or [])[:3]]
+    if inventory_warnings:
+        lines.append("Inventory warnings: " + "; ".join(inventory_warnings))
+    return "\n".join(lines)
+
+
+def skill_inventory_prompt_relevant(prompt: str) -> bool:
+    prompt_l = prompt.lower()
+    return any(term in prompt_l for term in SKILL_PROMPT_TERMS)
+
+
+def skill_inventory_context(root: Path, refresh_if_missing: bool = True) -> str:
+    inventory = load_skill_inventory(root)
+    if inventory is None and refresh_if_missing:
+        try:
+            inventory = discover_repository_skills(root)
+        except Exception as exc:
+            return f"Repository skill inventory could not be loaded: {sanitize(str(exc), max_len=180)}"
+    return format_skill_inventory_for_context(inventory)
 
 
 def build_memory_context(root: Path, max_chars: int = 9000) -> str:

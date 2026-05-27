@@ -51,6 +51,35 @@ When implementing a feature:
 3. Run the smallest relevant checks first.
 4. Record discovered project-specific patterns only when they are stable and useful.
 
+## Repository skill discovery
+
+This package can discover repository-local Codex skills without scanning the whole project. It checks bounded roots such as `.agents/skills/`, `skills/`, `.codex/skills/`, and plugin-style skill roots only when plugin manifests are present.
+
+Run discovery manually with:
+
+```bash
+python3 .agents/skills/codebase-self-learning/scripts/discover_skills.py --json
+```
+
+Discovery writes:
+
+- `.codex/memory/skill_inventory.json`: compact inventory with skill names, descriptions, paths, optional folders, validity, warnings, and mtimes.
+- `.codex/memory/events.jsonl`: compact `repository_skill_discovery` event with counts and skill names only.
+- `.codex/memory/tool_notes.md`: a human-readable summary that is replaced on each scan.
+
+Session-start context may include a concise inventory: name, description, relative path, and key warnings. User-prompt context includes the inventory only when the prompt mentions skills, hooks, self-learning, memory, or discovery. Full `SKILL.md` contents, scripts, references, and assets are never injected automatically.
+
+Fix invalid skills by adding a `SKILL.md` with frontmatter:
+
+```markdown
+---
+name: example-skill
+description: Short stable description.
+---
+```
+
+The parser is intentionally standard-library only and supports simple `key: value` frontmatter. Malformed metadata produces warnings instead of failing discovery.
+
 ## What to learn
 
 Good memory entries are short, durable, and useful. Examples:

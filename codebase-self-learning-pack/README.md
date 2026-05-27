@@ -8,6 +8,7 @@ It does **not** retrain the model. It creates a repository memory layer that Cod
 
 ```text
 .agents/skills/codebase-self-learning/SKILL.md
+.agents/skills/codebase-self-learning/scripts/discover_skills.py
 .agents/skills/codebase-self-learning/scripts/update_memory.py
 .agents/skills/codebase-self-learning/references/learning-loop.md
 .codex/hooks.json
@@ -17,6 +18,7 @@ It does **not** retrain the model. It creates a repository memory layer that Cod
 .codex/hooks/post_tool_learning.py
 .codex/hooks/stop_learning.py
 .codex/memory/*.md
+.codex/memory/skill_inventory.json
 ```
 
 ## How it works
@@ -26,6 +28,7 @@ It does **not** retrain the model. It creates a repository memory layer that Cod
 3. `PostToolUse` records sanitized evidence from shell commands and code-edit tools.
 4. `Stop` writes a learning candidate summary when files changed.
 5. The `codebase-self-learning` skill tells Codex how to promote useful candidates into stable memory.
+6. Repository skill discovery keeps a compact inventory of local Codex skills available to context hooks.
 
 ## Install
 
@@ -50,6 +53,59 @@ Use the codebase-self-learning skill. Implement the next CRM block and update pr
 ```
 
 Or let Codex activate it implicitly when doing code work.
+
+## Repository skill discovery
+
+Repository skill discovery scans bounded local roots only:
+
+- `.agents/skills/`
+- `skills/`
+- `.codex/skills/`
+- plugin skill roots when this repository already contains a plugin manifest or plugin directory
+
+A skill is a directory with `SKILL.md`. Simple frontmatter is supported:
+
+```markdown
+---
+name: codebase-self-learning
+description: Learn stable project rules from code evidence.
+---
+```
+
+Run discovery manually:
+
+```bash
+python3 .agents/skills/codebase-self-learning/scripts/discover_skills.py --json
+```
+
+Useful options:
+
+```bash
+python3 .agents/skills/codebase-self-learning/scripts/discover_skills.py --no-write --json
+python3 .agents/skills/codebase-self-learning/scripts/discover_skills.py --root /path/to/repo --verbose
+```
+
+Discovery writes:
+
+- `.codex/memory/skill_inventory.json`
+- `.codex/memory/events.jsonl`
+- `.codex/memory/tool_notes.md`
+
+Session-start context may include skill name, description, relative path, and key warnings. User-prompt context includes skills only when the prompt is about skills, hooks, self-learning, memory, or discovery. Full `SKILL.md` contents, references, scripts, and assets are not injected.
+
+Recommended fixes for invalid skills:
+
+- Add missing `name` and `description` frontmatter.
+- Keep skill names kebab-case.
+- Remove duplicate skill names.
+- Remove empty optional folders or add the intended files.
+- Keep `SKILL.md` concise; move large material into `references/`.
+
+Limitations:
+
+- Metadata parsing is intentionally minimal and standard-library only.
+- Discovery does not modify skills.
+- Missing or malformed metadata becomes warnings, not hard failures.
 
 ## Add a stable memory manually
 

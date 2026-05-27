@@ -165,3 +165,47 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T16:32:06+00:00
+
+```json
+{
+  "ts": "2026-05-27T16:32:06+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a46-86bd-7282-b43f-6ac04ea836f8",
+  "branch": "main",
+  "changed_file_count": 3,
+  "changed_file_groups": {
+    "code": 3
+  },
+  "changed_files_sample": [
+    ".codex/memory/events.jsonl",
+    ".codex/memory/prompt_index.jsonl",
+    ".gitignore"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T16:32:06+00:00
+
+```json
+{
+  "ts": "2026-05-27T16:32:06+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a46-86bd-7282-b43f-6ac04ea836f8",
+  "branch": "main",
+  "changed_file_count": 3,
+  "changed_file_groups": {
+    "code": 3
+  },
+  "changed_files_sample": [
+    ".codex/memory/events.jsonl",
+    ".codex/memory/prompt_index.jsonl",
+    ".gitignore"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

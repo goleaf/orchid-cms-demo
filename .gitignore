@@ -5,6 +5,8 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+/.codex/memory/events.jsonl
+/.codex/memory/prompt_index.jsonl
 /.fleet
 /.idea
 /.nova
