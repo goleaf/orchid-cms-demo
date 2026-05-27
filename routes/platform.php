@@ -20,6 +20,10 @@ use App\Orchid\Screens\School\PaymentListScreen;
 use App\Orchid\Screens\School\ProgramListScreen;
 use App\Orchid\Screens\School\ScheduleListScreen;
 use App\Orchid\Screens\School\StudentListScreen;
+use App\Orchid\Screens\System\LanguageEditScreen;
+use App\Orchid\Screens\System\LanguageListScreen;
+use App\Orchid\Screens\System\TranslationEditScreen;
+use App\Orchid\Screens\System\TranslationListScreen;
 use App\Orchid\Screens\User\UserEditScreen;
 use App\Orchid\Screens\User\UserListScreen;
 use App\Orchid\Screens\User\UserProfileScreen;
@@ -145,6 +149,44 @@ Route::screen('marketing/leads/{lead}/edit', LeadEditScreen::class)
     ->breadcrumbs(fn (Trail $trail, $lead) => $trail
         ->parent('platform.marketing.leads')
         ->push($lead->fullName(), route('platform.marketing.leads.edit', $lead)));
+
+// System > Languages
+Route::screen('system/languages/create', LanguageEditScreen::class)
+    ->name('platform.system.languages.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.system.languages')
+        ->push(tkey('languages.create_title'), route('platform.system.languages.create')));
+
+Route::screen('system/languages/{language}/edit', LanguageEditScreen::class)
+    ->name('platform.system.languages.edit')
+    ->breadcrumbs(fn (Trail $trail, $language) => $trail
+        ->parent('platform.system.languages')
+        ->push($language->name, route('platform.system.languages.edit', $language)));
+
+Route::screen('system/languages', LanguageListScreen::class)
+    ->name('platform.system.languages')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.settings.languages'), route('platform.system.languages')));
+
+// System > Translations
+Route::screen('system/translations/create', TranslationEditScreen::class)
+    ->name('platform.system.translations.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.system.translations')
+        ->push(tkey('translations.create_title'), route('platform.system.translations.create')));
+
+Route::screen('system/translations/{translationString}/edit', TranslationEditScreen::class)
+    ->name('platform.system.translations.edit')
+    ->breadcrumbs(fn (Trail $trail, $translationString) => $trail
+        ->parent('platform.system.translations')
+        ->push($translationString->key, route('platform.system.translations.edit', $translationString)));
+
+Route::screen('system/translations', TranslationListScreen::class)
+    ->name('platform.system.translations')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.settings.translations'), route('platform.system.translations')));
 
 // Platform > Profile
 Route::screen('profile', UserProfileScreen::class)

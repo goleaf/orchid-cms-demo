@@ -40,6 +40,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Orchid\Platform\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -50,6 +51,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            LanguageSeeder::class,
+            SystemTranslationSeeder::class,
+        ]);
+
         LandingPage::query()->updateOrCreate(
             ['slug' => 'home'],
             LandingPage::factory()
@@ -737,7 +743,23 @@ class DatabaseSeeder extends Seeder
             'platform.systems.roles' => true,
             'platform.systems.users' => true,
             'platform.systems.attachment' => true,
+            'system.languages.view' => true,
+            'system.languages.create' => true,
+            'system.languages.update' => true,
+            'system.languages.delete' => true,
+            'system.translations.view' => true,
+            'system.translations.update' => true,
+            'system.translations.export' => true,
+            'system.translations.import' => true,
         ];
+
+        $superadminRole = Role::query()->updateOrCreate(
+            ['slug' => 'superadmin'],
+            [
+                'name' => 'Superadmin',
+                'permissions' => $permissions,
+            ],
+        );
 
         $admin = User::query()->updateOrCreate(
             ['email' => 'admin@example.com'],
@@ -747,6 +769,7 @@ class DatabaseSeeder extends Seeder
                 'permissions' => $permissions,
             ],
         );
+        $admin->replaceRoles([$superadminRole->id]);
 
         collect([$convertedLead, $qualifiedLead, $rejectedLead])->each(function (MarketingLead $lead) use ($admin, $callTemplate, $smsTemplate, $messengerTemplate, $qualifiedLead): void {
             $lead->update(['responsible_manager_id' => $admin->id]);
