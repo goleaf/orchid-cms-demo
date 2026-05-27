@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Models\Branch;
 use App\Models\PricingPackage;
+use App\Models\SitePage;
 use App\Models\SiteSetting;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
@@ -15,6 +16,12 @@ class GetPricingPageAction
      */
     public function handle(): array
     {
+        $sitePage = SitePage::query()
+            ->active()
+            ->published()
+            ->where('type', 'pricing')
+            ->ordered()
+            ->first();
         $programs = TrainingProgram::query()
             ->forAcademyList()
             ->addSelect(['name_translations', 'is_visible_on_site'])
@@ -60,9 +67,13 @@ class GetPricingPageAction
                 ->get(['key', 'value'])
                 ->mapWithKeys(fn (SiteSetting $setting): array => [$setting->key => $setting->value])
                 ->all(),
-            'seoTitle' => tkey('website.prices.seo.title'),
-            'seoDescription' => tkey('website.prices.seo.description'),
-            'canonical' => route('website.pricing'),
+            'seoTitle' => $sitePage?->displaySeoTitle() ?: tkey('website.prices.seo.title'),
+            'seoDescription' => $sitePage?->displaySeoDescription() ?: tkey('website.prices.seo.description'),
+            'ogTitle' => $sitePage?->displayOgTitle(),
+            'ogDescription' => $sitePage?->displayOgDescription(),
+            'ogImage' => $sitePage?->og_image,
+            'canonical' => $sitePage?->canonical_url ?: route('website.pricing'),
+            'isIndexable' => $sitePage?->is_indexable ?? true,
         ];
     }
 }

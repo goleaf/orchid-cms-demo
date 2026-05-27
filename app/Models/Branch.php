@@ -52,6 +52,7 @@ class Branch extends Model
         'og_description_translations',
         'is_active',
         'is_visible_on_site',
+        'is_indexable',
         'sort_order',
         'created_by_id',
         'updated_by_id',
@@ -71,6 +72,7 @@ class Branch extends Model
         'longitude' => 'decimal:7',
         'is_active' => 'boolean',
         'is_visible_on_site' => 'boolean',
+        'is_indexable' => 'boolean',
         'sort_order' => 'integer',
         'deleted_at' => 'datetime',
     ];
@@ -167,6 +169,7 @@ class Branch extends Model
             'og_description_translations',
             'is_active',
             'is_visible_on_site',
+            'is_indexable',
             'sort_order',
         ]);
     }
@@ -187,6 +190,11 @@ class Branch extends Model
     public function scopeVisibleOnSite(Builder $query): Builder
     {
         return $query->where('is_visible_on_site', true);
+    }
+
+    public function scopeIndexable(Builder $query): Builder
+    {
+        return $query->where('is_indexable', true);
     }
 
     public function scopeOrdered(Builder $query): Builder
@@ -244,6 +252,20 @@ class Branch extends Model
         return $this->getTranslation('seo_description', $locale)
             ?: ($this->attributes['seo_description'] ?? null)
             ?: $this->displayDescription($locale);
+    }
+
+    public function displayOgTitle(?string $locale = null): string
+    {
+        return $this->getTranslation('og_title', $locale)
+            ?: ($this->attributes['og_title'] ?? null)
+            ?: $this->displaySeoTitle($locale);
+    }
+
+    public function displayOgDescription(?string $locale = null): ?string
+    {
+        return $this->getTranslation('og_description', $locale)
+            ?: ($this->attributes['og_description'] ?? null)
+            ?: $this->displaySeoDescription($locale);
     }
 
     public function getDisplayNameAttribute(): string

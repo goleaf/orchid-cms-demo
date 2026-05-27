@@ -4,8 +4,11 @@ namespace App\Http\Requests;
 
 use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\Branch;
-use App\Rules\SeoMetadataRule;
+use App\Rules\PublicPageIndexableRule;
+use App\Rules\SeoDescriptionLengthRule;
+use App\Rules\SeoTitleLengthRule;
 use App\Rules\TranslatedFieldRequiredRule;
+use App\Rules\ValidCanonicalUrlRule;
 use App\Rules\ValidSlugRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Model;
@@ -40,10 +43,15 @@ class StoreBranchRequest extends FormRequest
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
             'map_url' => ['nullable', 'string', 'max:2000'],
             'image' => ['nullable', 'string', 'max:255'],
-            'seo_title_translations' => ['nullable', 'array', new SeoMetadataRule(70)],
-            'seo_description_translations' => ['nullable', 'array', new SeoMetadataRule(180)],
+            'seo_title_translations' => ['nullable', 'array', new SeoTitleLengthRule],
+            'seo_description_translations' => ['nullable', 'array', new SeoDescriptionLengthRule],
+            'og_title_translations' => ['nullable', 'array'],
+            'og_description_translations' => ['nullable', 'array'],
+            'canonical_url' => ['nullable', 'string', 'max:255', new ValidCanonicalUrlRule],
+            'open_graph_image' => ['nullable', 'string', 'max:255'],
             'is_active' => ['nullable', 'boolean'],
             'is_visible_on_site' => ['nullable', 'boolean'],
+            'is_indexable' => ['nullable', 'boolean', new PublicPageIndexableRule],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:100000'],
         ];
     }

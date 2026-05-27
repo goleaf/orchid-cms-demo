@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\GenerateRobotsTxtAction;
 use Illuminate\Http\Response;
 
 class RobotsController extends Controller
 {
-    public function __invoke(): Response
+    public function __invoke(GenerateRobotsTxtAction $robots): Response
     {
-        return response("User-agent: *\nAllow: /\nSitemap: ".route('site.sitemap')."\n", 200, [
+        return response($robots->handle(), 200, [
             'Content-Type' => 'text/plain; charset=UTF-8',
         ]);
     }

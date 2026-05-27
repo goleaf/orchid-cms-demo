@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\GetSitemapAction;
+use App\Actions\GenerateSitemapAction;
 use Illuminate\Http\Response;
 
 class SitemapController extends Controller
 {
-    public function __invoke(GetSitemapAction $sitemap): Response
+    public function __invoke(GenerateSitemapAction $sitemap): Response
     {
         return response()
             ->view('site.seo.sitemap', ['urls' => $sitemap->handle()], 200)

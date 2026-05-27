@@ -3,19 +3,29 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="{{ $seoDescription ?? tkey('website.seo.default_description') }}">
+    @php
+        $pageTitle = $seoTitle ?? tkey('website.seo.default_title');
+        $pageDescription = $seoDescription ?? tkey('website.seo.default_description');
+        $openGraphTitle = $ogTitle ?? $pageTitle;
+        $openGraphDescription = $ogDescription ?? $pageDescription;
+        $openGraphUrl = $canonical ?? url()->current();
+        $openGraphType = $ogType ?? 'website';
+    @endphp
+    <meta name="description" content="{{ $pageDescription }}">
     @if (($isIndexable ?? true) === false)
         <meta name="robots" content="noindex,nofollow">
     @endif
     @isset($canonical)
         <link rel="canonical" href="{{ $canonical }}">
     @endisset
-    <meta property="og:title" content="{{ $seoTitle ?? tkey('website.seo.default_title') }}">
-    <meta property="og:description" content="{{ $seoDescription ?? tkey('website.seo.default_description') }}">
+    <meta property="og:title" content="{{ $openGraphTitle }}">
+    <meta property="og:description" content="{{ $openGraphDescription }}">
+    <meta property="og:url" content="{{ $openGraphUrl }}">
+    <meta property="og:type" content="{{ $openGraphType }}">
     @isset($ogImage)
         <meta property="og:image" content="{{ $ogImage }}">
     @endisset
-    <title>{{ $seoTitle ?? tkey('website.seo.default_title') }}</title>
+    <title>{{ $pageTitle }}</title>
 
     @once
         <style>

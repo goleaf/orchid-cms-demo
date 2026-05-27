@@ -1471,6 +1471,7 @@ class SystemTranslationSeeder extends Seeder
             $this->entry('website', 'website.admin.settings.fields.default_currency', ['ru' => 'Валюта по умолчанию', 'en' => 'Default currency', 'lt' => 'Numatytoji valiuta', 'pl' => 'Domyslna waluta']),
             $this->entry('website', 'website.admin.settings.fields.social_links', ['ru' => 'Социальные ссылки', 'en' => 'Social links', 'lt' => 'Socialines nuorodos', 'pl' => 'Linki spolecznosciowe']),
             $this->entry('website', 'website.admin.settings.fields.hero_image', ['ru' => 'Изображение главного экрана', 'en' => 'Hero image', 'lt' => 'Hero paveikslelis', 'pl' => 'Obraz hero']),
+            $this->entry('website', 'website.admin.settings.fields.robots_txt', ['ru' => 'Robots.txt', 'en' => 'Robots.txt', 'lt' => 'Robots.txt', 'pl' => 'Robots.txt']),
             $this->entry('website', 'website.admin.settings.fields.default_branch_id', ['ru' => 'Филиал по умолчанию', 'en' => 'Default branch', 'lt' => 'Numatytasis filialas', 'pl' => 'Domyslny oddzial']),
             $this->entry('website', 'website.admin.settings.fields.cookie_notice_enabled', ['ru' => 'Показывать cookie-уведомление', 'en' => 'Cookie notice enabled', 'lt' => 'Rodyti cookie pranesima', 'pl' => 'Pokaz komunikat cookie']),
             $this->entry('website', 'website.admin.settings.fields.analytics_enabled', ['ru' => 'Аналитика включена', 'en' => 'Analytics enabled', 'lt' => 'Analitika ijungta', 'pl' => 'Analityka wlaczona']),
@@ -1521,6 +1522,8 @@ class SystemTranslationSeeder extends Seeder
             $this->entry('website', 'website.admin.actions.open_public_page', ['ru' => 'Открыть публичную страницу', 'en' => 'Open public page', 'lt' => 'Atidaryti viesaji puslapi', 'pl' => 'Otworz strone publiczna']),
 
             $this->entry('website', 'website.validation.slug_already_exists', ['ru' => 'Этот slug уже используется.', 'en' => 'This slug is already in use.', 'lt' => 'Sis slug jau naudojamas.', 'pl' => 'Ten slug jest juz uzywany.']),
+            $this->entry('website', 'website.validation.invalid_canonical_url', ['ru' => 'Canonical URL должен быть корректным http или https адресом.', 'en' => 'The canonical URL must be a valid http or https URL.', 'lt' => 'Canonical URL turi buti teisingas http arba https adresas.', 'pl' => 'Canonical URL musi byc poprawnym adresem http lub https.']),
+            $this->entry('website', 'website.validation.public_page_not_indexable', ['ru' => 'Скрытую или неактивную страницу нельзя индексировать.', 'en' => 'Hidden or inactive public pages cannot be indexable.', 'lt' => 'Paslepti arba neaktyvus viesi puslapiai negali buti indeksuojami.', 'pl' => 'Ukryte lub nieaktywne strony publiczne nie moga byc indeksowane.']),
             $this->entry('website', 'website.validation.seo_title_too_long', ['ru' => 'SEO заголовок слишком длинный.', 'en' => 'The SEO title is too long.', 'lt' => 'SEO pavadinimas per ilgas.', 'pl' => 'Tytul SEO jest za dlugi.']),
             $this->entry('website', 'website.validation.seo_description_too_long', ['ru' => 'SEO описание слишком длинное.', 'en' => 'The SEO description is too long.', 'lt' => 'SEO aprasymas per ilgas.', 'pl' => 'Opis SEO jest za dlugi.']),
 

@@ -121,7 +121,9 @@ class GetHomePageAction
             ],
             'seoTitle' => $sitePage?->displaySeoTitle() ?: $page->displayTitle(),
             'seoDescription' => $sitePage?->displaySeoDescription() ?: $page->displayText('hero_summary'),
-            'canonical' => route('website.home'),
+            'ogTitle' => $sitePage?->displayOgTitle(),
+            'ogDescription' => $sitePage?->displayOgDescription(),
+            'canonical' => $sitePage?->canonical_url ?: route('website.home'),
             'ogImage' => $sitePage?->og_image,
             'isIndexable' => $sitePage?->is_indexable ?? true,
         ];

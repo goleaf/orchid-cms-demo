@@ -67,6 +67,7 @@ class CourseFactory extends Factory
             'practice_program_translations' => $this->translations($this->faker->sentence(12)),
             'is_active' => true,
             'is_visible_on_site' => true,
+            'is_indexable' => true,
             'is_featured' => false,
             'seo_title' => null,
             'seo_title_translations' => null,

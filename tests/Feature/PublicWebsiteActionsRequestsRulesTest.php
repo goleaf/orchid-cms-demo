@@ -23,12 +23,14 @@ use App\Notifications\EnrollmentLeadAutoReplyNotification;
 use App\Notifications\EnrollmentLeadSubmittedNotification;
 use App\Rules\ConsentAcceptedRule;
 use App\Rules\PhoneOrEmailRequiredRule;
+use App\Rules\PublicPageIndexableRule;
 use App\Rules\PublicBranchCanBePublishedRule;
 use App\Rules\PublicCourseCanBePublishedRule;
 use App\Rules\PublishedPageRequirementRule;
 use App\Rules\SeoMetadataRule;
 use App\Rules\TranslatedFieldRequiredRule;
 use App\Rules\ValidLocaleRule;
+use App\Rules\ValidCanonicalUrlRule;
 use App\Rules\ValidPriceRule;
 use App\Rules\ValidPublicBranchRule;
 use App\Rules\ValidPublicCourseRule;
@@ -293,6 +295,8 @@ class PublicWebsiteActionsRequestsRulesTest extends TestCase
             ['contact', ['contact' => null], ['contact' => [new PhoneOrEmailRequiredRule]], 'website.validation.phone_or_email_required'],
             ['branch_id', ['branch_id' => $hiddenBranch->id], ['branch_id' => [new ValidPublicBranchRule]], 'website.validation.invalid_public_branch'],
             ['slug', ['slug' => 'Invalid Slug'], ['slug' => [new ValidSlugRule]], 'website.validation.invalid_slug'],
+            ['canonical_url', ['canonical_url' => 'ftp://example.test/page'], ['canonical_url' => [new ValidCanonicalUrlRule]], 'website.validation.invalid_canonical_url'],
+            ['is_indexable', ['is_indexable' => '1', 'is_active' => '0'], ['is_indexable' => [new PublicPageIndexableRule]], 'website.validation.public_page_not_indexable'],
             ['price', ['price' => '-1'], ['price' => [new ValidPriceRule]], 'website.validation.invalid_price'],
             ['locale', ['locale' => 'zz'], ['locale' => [new ValidLocaleRule]], 'website.validation.invalid_locale'],
             ['seo_title', ['seo_title' => str_repeat('A', 71)], ['seo_title' => [new SeoMetadataRule(70)]], 'website.validation.seo_title_too_long'],

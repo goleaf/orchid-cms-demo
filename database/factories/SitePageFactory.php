@@ -37,6 +37,7 @@ class SitePageFactory extends Factory
             'og_title_translations' => null,
             'og_description_translations' => null,
             'og_image' => null,
+            'canonical_url' => null,
             'template' => 'default',
             'is_active' => true,
             'is_indexable' => true,

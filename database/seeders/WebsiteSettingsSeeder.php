@@ -15,6 +15,7 @@ class WebsiteSettingsSeeder extends Seeder
             'default_currency' => ['group' => 'website', 'state' => 'groupWebsite', 'value' => 'EUR', 'is_public' => true],
             'social_links' => ['group' => 'website', 'state' => 'groupWebsite', 'value' => ['facebook' => null, 'instagram' => null], 'is_public' => true],
             'hero_image' => ['group' => 'seo', 'state' => 'groupSeo', 'value' => 'images/driving-school-hero.png', 'is_public' => true],
+            'robots_txt' => ['group' => 'seo', 'state' => 'groupSeo', 'value' => null, 'is_public' => false],
             'default_branch_id' => ['group' => 'contacts', 'state' => 'groupContacts', 'value' => null, 'is_public' => false],
             'analytics_enabled' => ['group' => 'analytics', 'state' => 'groupAnalytics', 'value' => false, 'is_public' => false],
             'cookie_notice_enabled' => ['group' => 'analytics', 'state' => 'groupAnalytics', 'value' => true, 'is_public' => true],

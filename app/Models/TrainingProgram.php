@@ -62,6 +62,7 @@ class TrainingProgram extends Model
         'practice_program_translations',
         'is_active',
         'is_visible_on_site',
+        'is_indexable',
         'is_featured',
         'seo_title',
         'seo_title_translations',
@@ -112,6 +113,7 @@ class TrainingProgram extends Model
         'og_description_translations' => 'array',
         'is_active' => 'boolean',
         'is_visible_on_site' => 'boolean',
+        'is_indexable' => 'boolean',
         'is_featured' => 'boolean',
         'sort_order' => 'integer',
         'deleted_at' => 'datetime',
@@ -253,6 +255,20 @@ class TrainingProgram extends Model
             ?: $this->displayShortDescription($locale);
     }
 
+    public function displayOgTitle(?string $locale = null): string
+    {
+        return $this->getTranslation('og_title', $locale)
+            ?: ($this->attributes['og_title'] ?? null)
+            ?: $this->displaySeoTitle($locale);
+    }
+
+    public function displayOgDescription(?string $locale = null): ?string
+    {
+        return $this->getTranslation('og_description', $locale)
+            ?: ($this->attributes['og_description'] ?? null)
+            ?: $this->displaySeoDescription($locale);
+    }
+
     public function getDisplayNameAttribute(): string
     {
         return $this->displayTitle();
@@ -286,6 +302,11 @@ class TrainingProgram extends Model
     public function scopeVisibleOnSite(Builder $query): Builder
     {
         return $query->where('is_visible_on_site', true);
+    }
+
+    public function scopeIndexable(Builder $query): Builder
+    {
+        return $query->where('is_indexable', true);
     }
 
     public function scopeFeatured(Builder $query): Builder
@@ -334,12 +355,15 @@ class TrainingProgram extends Model
             'practice_program',
             'practice_program_translations',
             'is_active',
+            'is_visible_on_site',
+            'is_indexable',
             'seo_title',
             'seo_title_translations',
             'meta_description',
             'seo_description_translations',
             'canonical_url',
             'open_graph_image',
+            'og_image',
             'image_path',
             'og_title',
             'og_title_translations',

@@ -44,6 +44,7 @@ class SiteSettingsScreen extends Screen
             'default_currency' => $this->settingValue($settings, 'default_currency', 'EUR'),
             'social_links' => $this->encodedSettingValue($settings, 'social_links', ['facebook' => null, 'instagram' => null]),
             'hero_image' => $this->settingValue($settings, 'hero_image'),
+            'robots_txt' => $this->settingValue($settings, 'robots_txt'),
             'default_branch_id' => $this->settingValue($settings, 'default_branch_id'),
             'cookie_notice_enabled' => (int) (bool) $this->settingValue($settings, 'cookie_notice_enabled', true),
             'analytics_enabled' => (int) (bool) $this->settingValue($settings, 'analytics_enabled', false),
@@ -98,6 +99,9 @@ class SiteSettingsScreen extends Screen
                     ->title(tkey('website.admin.settings.fields.social_links')),
                 Input::make('hero_image')
                     ->title(tkey('website.admin.settings.fields.hero_image')),
+                TextArea::make('robots_txt')
+                    ->rows(7)
+                    ->title(tkey('website.admin.settings.fields.robots_txt')),
             ])->title(tkey('website.admin.sections.content')),
 
             Layout::rows([
@@ -137,6 +141,7 @@ class SiteSettingsScreen extends Screen
             'default_currency',
             'social_links',
             'hero_image',
+            'robots_txt',
             'default_branch_id',
             'cookie_notice_enabled',
             'analytics_enabled',

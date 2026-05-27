@@ -68,8 +68,11 @@ class GetBranchPageAction
                 'branch' => $publicBranch->displayName(),
                 'city' => $publicBranch->displayCity(),
             ]),
+            'ogTitle' => $publicBranch->displayOgTitle().' | '.tkey('website.brand.name'),
+            'ogDescription' => $publicBranch->displayOgDescription(),
             'canonical' => $publicBranch->canonical_url ?: route('website.branches.show', ['branch' => $publicBranch->slug]),
             'ogImage' => $publicBranch->open_graph_image,
+            'isIndexable' => $publicBranch->is_indexable,
         ];
     }
 }

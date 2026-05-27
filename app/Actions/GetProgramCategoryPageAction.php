@@ -22,7 +22,7 @@ class GetProgramCategoryPageAction
     {
         $publicProgram = TrainingProgram::query()
             ->forAcademyList()
-            ->addSelect(['course_category_id', 'duration_translations', 'price', 'old_price', 'currency', 'is_visible_on_site', 'is_featured'])
+            ->addSelect(['course_category_id', 'duration_translations', 'price', 'old_price', 'currency', 'is_visible_on_site', 'is_indexable', 'is_featured'])
             ->active()
             ->visibleOnSite()
             ->with([
@@ -112,8 +112,11 @@ class GetProgramCategoryPageAction
                 ->get(),
             'seoTitle' => $publicProgram->displaySeoTitle().' | '.tkey('website.brand.name'),
             'seoDescription' => $publicProgram->displaySeoDescription(),
+            'ogTitle' => $publicProgram->displayOgTitle().' | '.tkey('website.brand.name'),
+            'ogDescription' => $publicProgram->displayOgDescription(),
             'canonical' => $publicProgram->canonical_url ?: route('website.courses.show', $publicProgram),
             'ogImage' => $publicProgram->open_graph_image ?: $publicProgram->og_image,
+            'isIndexable' => $publicProgram->is_indexable,
         ];
     }
 }

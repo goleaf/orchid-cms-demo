@@ -58,6 +58,7 @@ class TrainingProgramFactory extends Factory
             'practice_program' => $this->faker->sentence(12),
             'is_active' => true,
             'is_visible_on_site' => true,
+            'is_indexable' => true,
             'is_featured' => false,
             'seo_title' => null,
             'meta_description' => null,

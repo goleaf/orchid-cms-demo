@@ -51,6 +51,7 @@ class BranchFactory extends Factory
             'open_graph_image' => null,
             'is_active' => true,
             'is_visible_on_site' => true,
+            'is_indexable' => true,
             'sort_order' => 0,
             'created_by_id' => null,
             'updated_by_id' => null,

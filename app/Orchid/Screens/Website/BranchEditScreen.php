@@ -32,6 +32,7 @@ class BranchEditScreen extends Screen
                 'slug' => '',
                 'is_active' => true,
                 'is_visible_on_site' => true,
+                'is_indexable' => true,
                 'sort_order' => 0,
             ]);
 
@@ -48,8 +49,11 @@ class BranchEditScreen extends Screen
             'longitude' => $branchModel->longitude,
             'map_url' => $branchModel->map_url,
             'image' => $branchModel->image,
+            'canonical_url' => $branchModel->canonical_url,
+            'open_graph_image' => $branchModel->open_graph_image,
             'is_active' => $branchModel->is_active,
             'is_visible_on_site' => $branchModel->is_visible_on_site,
+            'is_indexable' => $branchModel->is_indexable,
             'sort_order' => $branchModel->sort_order,
             'name_translations' => $this->translations($branchModel, 'name', $branchModel->name),
             'city_translations' => $this->translations($branchModel, 'city', $branchModel->city),
@@ -58,6 +62,8 @@ class BranchEditScreen extends Screen
             'working_hours_translations' => $this->translations($branchModel, 'working_hours', $branchModel->working_hours),
             'seo_title_translations' => $this->translations($branchModel, 'seo_title', $branchModel->seo_title),
             'seo_description_translations' => $this->translations($branchModel, 'seo_description', $branchModel->seo_description),
+            'og_title_translations' => $this->translations($branchModel, 'og_title', $branchModel->og_title),
+            'og_description_translations' => $this->translations($branchModel, 'og_description', $branchModel->og_description),
         ];
     }
 
@@ -86,7 +92,7 @@ class BranchEditScreen extends Screen
                 ->route('platform.website.branches'),
             Link::make(tkey('website.admin.actions.preview'))
                 ->icon('bs.box-arrow-up-right')
-                ->href($this->branch?->exists ? route('site.branches.show', ['branch' => $this->branch->slug]) : '#')
+                ->href($this->branch?->exists ? route('website.branches.show', ['branch' => $this->branch->slug]) : '#')
                 ->target('_blank')
                 ->canSee((bool) $this->branch?->exists),
             Button::make(tkey('website.admin.actions.save'))
@@ -130,11 +136,18 @@ class BranchEditScreen extends Screen
                     ->title(tkey('website.branches.fields.map')),
                 Input::make('image')
                     ->title(tkey('website.admin.fields.image_path')),
+                Input::make('canonical_url')
+                    ->title(tkey('website.seo.fields.canonical_url')),
+                Input::make('open_graph_image')
+                    ->title(tkey('website.seo.fields.og_image')),
                 Select::make('is_active')
                     ->title(tkey('website.admin.fields.is_active'))
                     ->options($this->booleanOptions()),
                 Select::make('is_visible_on_site')
                     ->title(tkey('website.admin.fields.is_visible_on_site'))
+                    ->options($this->booleanOptions()),
+                Select::make('is_indexable')
+                    ->title(tkey('website.seo.fields.is_indexable'))
                     ->options($this->booleanOptions()),
                 Input::make('sort_order')
                     ->type('number')
@@ -181,6 +194,8 @@ class BranchEditScreen extends Screen
             'working_hours',
             'seo_title',
             'seo_description',
+            'og_title',
+            'og_description',
         ]));
 
         Toast::info(tkey('website.admin.branches.messages.saved'));

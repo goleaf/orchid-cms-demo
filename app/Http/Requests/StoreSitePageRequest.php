@@ -5,8 +5,12 @@ namespace App\Http\Requests;
 use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\SitePage;
 use App\Rules\PublishedPageRequirementRule;
+use App\Rules\PublicPageIndexableRule;
+use App\Rules\SeoDescriptionLengthRule;
 use App\Rules\SeoMetadataRule;
+use App\Rules\SeoTitleLengthRule;
 use App\Rules\TranslatedFieldRequiredRule;
+use App\Rules\ValidCanonicalUrlRule;
 use App\Rules\ValidSlugRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Model;
@@ -36,14 +40,15 @@ class StoreSitePageRequest extends FormRequest
             'subtitle_translations' => ['nullable', 'array'],
             'content_translations' => ['nullable', 'array'],
             'excerpt_translations' => ['nullable', 'array'],
-            'seo_title_translations' => ['nullable', 'array', new SeoMetadataRule(70)],
-            'seo_description_translations' => ['nullable', 'array', new SeoMetadataRule(180)],
+            'seo_title_translations' => ['nullable', 'array', new SeoTitleLengthRule],
+            'seo_description_translations' => ['nullable', 'array', new SeoDescriptionLengthRule],
             'og_title_translations' => ['nullable', 'array', new SeoMetadataRule(90)],
             'og_description_translations' => ['nullable', 'array', new SeoMetadataRule(200)],
             'og_image' => ['nullable', 'string', 'max:255'],
+            'canonical_url' => ['nullable', 'string', 'max:255', new ValidCanonicalUrlRule],
             'template' => ['nullable', 'string', 'max:120'],
             'is_active' => ['nullable', 'boolean', new PublishedPageRequirementRule],
-            'is_indexable' => ['nullable', 'boolean'],
+            'is_indexable' => ['nullable', 'boolean', new PublicPageIndexableRule],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:100000'],
             'published_at' => ['nullable', 'date'],
         ];

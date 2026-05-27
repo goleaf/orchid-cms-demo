@@ -25,3 +25,7 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - Public website lead forms create CRM records in marketing_leads through CreateWebsiteLeadAction or CreateCallbackLeadAction; contact forms prefer the lead_sources code contact_form when available, and website lead marketing fields can be shown with either website.view_marketing or crm.leads.view_marketing.
   Evidence: Implemented ResolveLeadSourceAction, ResolveLeadNotificationRecipientsAction, CRM task title crm.tasks.defaults.contact_new_website_lead, WebsiteLeadListScreen permission handling; full php artisan test passed with 95 tests and 2523 assertions.
   Added: 2026-05-27T21:22:58+00:00
+
+- Public SEO uses GenerateSitemapAction and GenerateRobotsTxtAction; sitemap entries use website.* public routes and exclude inactive, hidden, or is_indexable=false site_pages, training_programs, and branches.
+  Evidence: Implemented SEO/sitemap/robots/public visibility rules and full php artisan test passed with 100 tests and 2562 assertions.
+  Added: 2026-05-27T21:40:30+00:00

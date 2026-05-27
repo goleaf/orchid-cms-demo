@@ -99,20 +99,20 @@ trait BuildsWebsiteScreenPayloads
     {
         if ($model instanceof SitePage) {
             return match ($model->type) {
-                'home' => route('site.home'),
-                'pricing' => route('site.prices'),
-                'contacts' => route('site.contacts'),
-                'thank_you' => route('site.thanks'),
-                default => null,
+                'home' => route('website.home'),
+                'pricing' => route('website.pricing'),
+                'contacts' => route('website.contacts'),
+                'thank_you' => route('website.thank_you'),
+                default => filled($model->slug) ? route('website.pages.show', $model) : null,
             };
         }
 
         if ($model instanceof Course && filled($model->slug)) {
-            return route('site.courses.show', $model);
+            return route('website.courses.show', $model);
         }
 
         if ($model instanceof Branch && filled($model->slug)) {
-            return route('site.branches.show', ['branch' => $model->slug]);
+            return route('website.branches.show', ['branch' => $model->slug]);
         }
 
         return null;

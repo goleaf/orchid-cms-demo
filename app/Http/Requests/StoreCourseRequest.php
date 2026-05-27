@@ -5,8 +5,12 @@ namespace App\Http\Requests;
 use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\Course;
 use App\Models\CourseCategory;
+use App\Rules\PublicPageIndexableRule;
+use App\Rules\SeoDescriptionLengthRule;
 use App\Rules\SeoMetadataRule;
+use App\Rules\SeoTitleLengthRule;
 use App\Rules\TranslatedFieldRequiredRule;
+use App\Rules\ValidCanonicalUrlRule;
 use App\Rules\ValidPriceRule;
 use App\Rules\ValidSlugRule;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -54,13 +58,15 @@ class StoreCourseRequest extends FormRequest
             'format' => ['nullable', Rule::in(['offline', 'online', 'hybrid', 'individual', 'group', 'mixed'])],
             'image' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:255'],
-            'seo_title_translations' => ['nullable', 'array', new SeoMetadataRule(70)],
-            'seo_description_translations' => ['nullable', 'array', new SeoMetadataRule(180)],
+            'seo_title_translations' => ['nullable', 'array', new SeoTitleLengthRule],
+            'seo_description_translations' => ['nullable', 'array', new SeoDescriptionLengthRule],
             'og_title_translations' => ['nullable', 'array', new SeoMetadataRule(90)],
             'og_description_translations' => ['nullable', 'array', new SeoMetadataRule(200)],
             'og_image' => ['nullable', 'string', 'max:255'],
+            'canonical_url' => ['nullable', 'string', 'max:255', new ValidCanonicalUrlRule],
             'is_active' => ['nullable', 'boolean'],
             'is_visible_on_site' => ['nullable', 'boolean'],
+            'is_indexable' => ['nullable', 'boolean', new PublicPageIndexableRule],
             'is_featured' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:100000'],
         ];

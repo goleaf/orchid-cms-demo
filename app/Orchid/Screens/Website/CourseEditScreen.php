@@ -46,6 +46,7 @@ class CourseEditScreen extends Screen
                 'currency' => 'EUR',
                 'is_active' => true,
                 'is_visible_on_site' => true,
+                'is_indexable' => true,
                 'is_featured' => false,
                 'sort_order' => 0,
             ]);
@@ -78,8 +79,10 @@ class CourseEditScreen extends Screen
             'image' => $courseModel->image_path,
             'icon' => $courseModel->icon,
             'og_image' => $courseModel->og_image,
+            'canonical_url' => $courseModel->canonical_url,
             'is_active' => $courseModel->is_active,
             'is_visible_on_site' => $courseModel->is_visible_on_site,
+            'is_indexable' => $courseModel->is_indexable,
             'is_featured' => $courseModel->is_featured,
             'sort_order' => $courseModel->sort_order,
             'name_translations' => $this->translations($courseModel, 'name', $courseModel->title) ?: $this->translations($courseModel, 'title', $courseModel->title),
@@ -122,7 +125,7 @@ class CourseEditScreen extends Screen
                 ->route('platform.website.courses'),
             Link::make(tkey('website.admin.actions.preview'))
                 ->icon('bs.box-arrow-up-right')
-                ->href($this->course?->exists ? route('site.courses.show', $this->course) : '#')
+                ->href($this->course?->exists ? route('website.courses.show', $this->course) : '#')
                 ->target('_blank')
                 ->canSee((bool) $this->course?->exists),
             Button::make(tkey('website.admin.actions.save'))
@@ -237,11 +240,16 @@ class CourseEditScreen extends Screen
                     ->title(tkey('website.admin.fields.icon')),
                 Input::make('og_image')
                     ->title(tkey('website.seo.fields.og_image')),
+                Input::make('canonical_url')
+                    ->title(tkey('website.seo.fields.canonical_url')),
                 Select::make('is_active')
                     ->title(tkey('website.admin.fields.is_active'))
                     ->options($this->booleanOptions()),
                 Select::make('is_visible_on_site')
                     ->title(tkey('website.admin.fields.is_visible_on_site'))
+                    ->options($this->booleanOptions()),
+                Select::make('is_indexable')
+                    ->title(tkey('website.seo.fields.is_indexable'))
                     ->options($this->booleanOptions()),
                 Select::make('is_featured')
                     ->title(tkey('website.admin.fields.is_featured'))

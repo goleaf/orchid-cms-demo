@@ -19,6 +19,7 @@ use App\Http\Controllers\ProgramCategoryController;
 use App\Http\Controllers\ReviewIndexController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SitePageController;
 use App\Http\Controllers\ThankYouController;
 use App\Http\Controllers\WebsiteLeadController;
 use App\Http\Middleware\CaptureSiteTracking;
@@ -70,6 +71,7 @@ Route::middleware(['web', CaptureSiteTracking::class])
         Route::get('/branches/{branch:slug}', [BranchController::class, 'show'])->name('branches.show');
         Route::get('/contacts', ContactController::class)->name('contacts');
         Route::get('/thank-you', ThankYouController::class)->name('thank_you');
+        Route::get('/pages/{sitePage:slug}', [SitePageController::class, 'show'])->name('pages.show');
         Route::post('/website/leads', [WebsiteLeadController::class, 'store'])->name('leads.store');
         Route::post('/website/callback', [WebsiteLeadController::class, 'callback'])->name('callback.store');
         Route::post('/website/contact', [WebsiteLeadController::class, 'contact'])->name('contact.store');

@@ -31,6 +31,7 @@ class SitePage extends Model
         'og_title_translations',
         'og_description_translations',
         'og_image',
+        'canonical_url',
         'template',
         'is_active',
         'is_indexable',
@@ -94,6 +95,18 @@ class SitePage extends Model
             ?: $this->getTranslation('excerpt', $locale);
     }
 
+    public function displayOgTitle(?string $locale = null): string
+    {
+        return $this->getTranslation('og_title', $locale)
+            ?: $this->displaySeoTitle($locale);
+    }
+
+    public function displayOgDescription(?string $locale = null): ?string
+    {
+        return $this->getTranslation('og_description', $locale)
+            ?: $this->displaySeoDescription($locale);
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
@@ -109,6 +122,11 @@ class SitePage extends Model
     public function scopeBySlug(Builder $query, string $slug): Builder
     {
         return $query->where('slug', $slug);
+    }
+
+    public function scopeIndexable(Builder $query): Builder
+    {
+        return $query->where('is_indexable', true);
     }
 
     public function scopeOrdered(Builder $query): Builder

@@ -45,6 +45,7 @@ class SitePageEditScreen extends Screen
             'slug' => $pageModel->slug,
             'template' => $pageModel->template,
             'og_image' => $pageModel->og_image,
+            'canonical_url' => $pageModel->canonical_url,
             'is_active' => $pageModel->is_active,
             'is_indexable' => $pageModel->is_indexable,
             'sort_order' => $pageModel->sort_order,
@@ -147,6 +148,8 @@ class SitePageEditScreen extends Screen
             Layout::rows([
                 Input::make('og_image')
                     ->title(tkey('website.seo.fields.og_image')),
+                Input::make('canonical_url')
+                    ->title(tkey('website.seo.fields.canonical_url')),
                 Select::make('is_active')
                     ->title(tkey('website.admin.fields.is_active'))
                     ->options($this->booleanOptions()),
