@@ -11,6 +11,8 @@ use App\Actions\PublishCourseOnSiteAction;
 use App\Actions\ResolveWebsiteCourseContextAction;
 use App\Actions\StoreUtmInSessionAction;
 use App\Enums\GroupStatus;
+use App\Enums\LeadTaskPriority;
+use App\Enums\LeadTaskStatus;
 use App\Models\Branch;
 use App\Models\Course;
 use App\Models\CourseCategory;
@@ -89,6 +91,10 @@ class PublicWebsiteActionsRequestsRulesTest extends TestCase
         $this->assertSame('+37060011111', $lead->normalized_phone);
         $this->assertSame('actions', $lead->utm_campaign);
         $this->assertSame(1, $lead->tasks()->count());
+        $task = $lead->tasks()->firstOrFail();
+        $this->assertSame(tkey('crm.tasks.defaults.contact_new_website_lead'), $task->title);
+        $this->assertSame(LeadTaskPriority::High, $task->priority);
+        $this->assertSame(LeadTaskStatus::Open, $task->status);
         Notification::assertSentOnDemand(EnrollmentLeadAutoReplyNotification::class);
     }
 
@@ -125,6 +131,7 @@ class PublicWebsiteActionsRequestsRulesTest extends TestCase
         $this->assertSame(1, $lead->comments()->count());
         $this->assertSame(1, $lead->communications()->count());
         $this->assertSame(1, $lead->tasks()->count());
+        $this->assertSame(LeadTaskPriority::High, $lead->tasks()->firstOrFail()->priority);
         Notification::assertSentTo($admin, EnrollmentLeadSubmittedNotification::class);
     }
 

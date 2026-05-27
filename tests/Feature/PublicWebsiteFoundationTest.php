@@ -137,7 +137,7 @@ class PublicWebsiteFoundationTest extends TestCase
             ->assertSessionHasNoErrors();
 
         $lead = MarketingLead::query()
-            ->where('phone', '+370 600 77777')
+            ->where('phone', '+37060077777')
             ->firstOrFail();
 
         $this->assertSame('callback', $lead->source);

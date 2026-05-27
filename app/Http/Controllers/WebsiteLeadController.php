@@ -51,7 +51,7 @@ class WebsiteLeadController extends Controller
         $createLead->handle(
             [
                 ...$request->validated(),
-                'source' => $request->input('source', 'website'),
+                'source' => $request->input('source', 'contact_form'),
                 'form_name' => $request->input('form_name', 'contact'),
                 'form_page' => $request->input('form_page', url()->previous() ?: route('website.contacts')),
             ],

@@ -9,6 +9,7 @@ use App\Models\TrainingGroup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
@@ -44,7 +45,9 @@ class WebsiteLeadListScreen extends Screen
     public function query(Request $request): iterable
     {
         $this->filters = $this->filtersFromRequest($request);
-        $this->canViewMarketing = $request->user()?->hasAccess('website.view_marketing') ?? false;
+        $user = $request->user();
+        $this->canViewMarketing = ($user?->hasAccess('website.view_marketing') ?? false)
+            || ($user?->hasAccess('crm.leads.view_marketing') ?? false);
 
         $this->courses = Course::query()
             ->select(['id', 'title', 'title_translations', 'name_translations', 'slug', 'sort_order'])
@@ -192,8 +195,14 @@ class WebsiteLeadListScreen extends Screen
         ];
 
         if ($this->canViewMarketing) {
+            $columns[] = TD::make('form_page', tkey('crm.leads.fields.form_page'))
+                ->render(fn (MarketingLead $lead): string => $this->short($lead->form_page));
+            $columns[] = TD::make('landing_page', tkey('crm.leads.fields.landing_page'))
+                ->render(fn (MarketingLead $lead): string => $this->short($lead->landing_page));
             $columns[] = TD::make('utm_source', tkey('crm.leads.fields.utm_source'))
                 ->render(fn (MarketingLead $lead): string => $lead->utm_source ?? '-');
+            $columns[] = TD::make('utm_medium', tkey('crm.leads.fields.utm_medium'))
+                ->render(fn (MarketingLead $lead): string => $lead->utm_medium ?? '-');
             $columns[] = TD::make('utm_campaign', tkey('crm.leads.fields.utm_campaign'))
                 ->render(fn (MarketingLead $lead): string => $lead->utm_campaign ?? '-');
         }
@@ -219,7 +228,7 @@ class WebsiteLeadListScreen extends Screen
                 'course:id,title,title_translations,name_translations,slug',
                 'trainingGroup:id,name,name_translations,code',
             ])
-            ->whereIn('source', ['website', 'callback'])
+            ->whereIn('source', ['website', 'callback', 'contact_form', 'contact'])
             ->when($this->filters['search'] !== '', fn (Builder $query): Builder => $query->matchingSearch($this->filters['search']))
             ->when($this->filters['course_id'] !== '', fn (Builder $query): Builder => $query->where('training_program_id', $this->filters['course_id']))
             ->when($this->filters['branch_id'] !== '', fn (Builder $query): Builder => $query->where('branch_id', $this->filters['branch_id']))
@@ -245,5 +254,10 @@ class WebsiteLeadListScreen extends Screen
             'created_from' => trim((string) $request->query('created_from')),
             'created_to' => trim((string) $request->query('created_to')),
         ];
+    }
+
+    private function short(?string $value): string
+    {
+        return filled($value) ? Str::limit($value, 64, '...') : '-';
     }
 }

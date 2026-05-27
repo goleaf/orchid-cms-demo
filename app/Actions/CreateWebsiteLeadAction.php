@@ -31,6 +31,9 @@ class CreateWebsiteLeadAction
         $data = array_merge($tracking, $data);
         $context = app(ResolveWebsiteCourseContextAction::class)->handle($data);
         $data['phone'] = app(NormalizePhoneAction::class)->handle($data['phone'] ?? null);
+        $formName = (string) ($data['form_name'] ?? 'enrollment');
+        $source = app(ResolveLeadSourceAction::class)->handle($data['source'] ?? null, 'website', $formName);
+        $followUpAt = now()->addMinutes(max(1, (int) config('crm.leads.website_follow_up_minutes', 30)));
         $fullName = trim((string) ($data['full_name'] ?? trim((string) ($data['first_name'] ?? '').' '.(string) ($data['last_name'] ?? ''))));
         $firstName = filled($data['first_name'] ?? null)
             ? (string) $data['first_name']
@@ -75,7 +78,7 @@ class CreateWebsiteLeadAction
             'phone' => $data['phone'] ?? null,
             'messenger' => $data['messenger'] ?? $data['preferred_messenger'] ?? null,
             'city' => $data['city'] ?? null,
-            'source' => 'website',
+            'source' => $source,
             'status' => LeadStatus::New,
             'license_category' => $data['license_category'] ?? $course?->license_category,
             'preferred_format' => $data['preferred_format'] ?? null,
@@ -85,7 +88,7 @@ class CreateWebsiteLeadAction
             'is_hot' => $isHot,
             'priority' => $isHot ? 'high' : 'normal',
             'lead_score' => $isHot ? 80 : 50,
-            'next_follow_up_at' => now()->addMinutes(30),
+            'next_follow_up_at' => $followUpAt,
             'last_status_changed_at' => now(),
             'privacy_accepted_at' => now(),
             'consent_accepted' => true,
@@ -96,7 +99,7 @@ class CreateWebsiteLeadAction
             'rejection_reason' => null,
             'lost_reason_code' => null,
             'crm_snapshot' => [
-                'form' => 'public_website',
+                'form' => $formName,
                 'captured_at' => now()->toIso8601String(),
             ],
             'utm_source' => $data['utm_source'] ?? null,
@@ -107,7 +110,7 @@ class CreateWebsiteLeadAction
             'referrer_url' => $data['referrer_url'] ?? $data['referrer'] ?? null,
             'landing_page' => $data['landing_page'] ?? null,
             'form_page' => $data['form_page'] ?? null,
-            'form_name' => $data['form_name'] ?? 'enrollment',
+            'form_name' => $formName,
             'locale' => $data['locale'] ?? app()->getLocale(),
             'ip_address' => $data['ip_address'] ?? null,
             'user_agent' => $data['user_agent'] ?? null,
@@ -174,17 +177,13 @@ class CreateWebsiteLeadAction
         app(CreateLeadTaskAction::class)->handle(
             $lead->refresh(),
             $manager,
-            tkey('crm.tasks.system_titles.call_new_application'),
+            tkey('crm.tasks.defaults.contact_new_website_lead'),
             $lead->next_follow_up_at,
-            $lead->is_hot ? LeadTaskPriority::High : LeadTaskPriority::Normal,
+            LeadTaskPriority::High,
             tkey('crm.tasks.system_notes.new_public_lead_reminder'),
         );
 
-        $managers = User::query()
-            ->select(['id', 'name', 'email'])
-            ->when($manager !== null, fn ($query) => $query->whereKey($manager->id))
-            ->limit(5)
-            ->get();
+        $managers = app(ResolveLeadNotificationRecipientsAction::class)->handle($manager);
 
         Notification::send($managers, new EnrollmentLeadSubmittedNotification($lead));
 

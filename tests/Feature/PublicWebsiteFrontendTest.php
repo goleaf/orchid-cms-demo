@@ -83,6 +83,7 @@ class PublicWebsiteFrontendTest extends TestCase
             ->firstOrFail();
 
         $this->assertSame('website', $lead->source);
+        $this->assertSame('new', $lead->status->value);
         $this->assertSame('frontend_test_application', $lead->form_name);
         $this->assertSame('frontend', $lead->utm_campaign);
         $this->assertSame($program->id, $lead->training_program_id);
@@ -90,6 +91,49 @@ class PublicWebsiteFrontendTest extends TestCase
         $this->assertSame($group->id, $lead->training_group_id);
         $this->assertSame('Interested in this group.', $lead->message);
         $this->assertStringContainsString('utm_source=google', (string) $lead->landing_page);
+    }
+
+    public function test_application_form_marks_possible_duplicate_without_blocking_creation(): void
+    {
+        Notification::fake();
+        $this->seed();
+
+        $program = TrainingProgram::query()
+            ->where('slug', 'category-b-manual')
+            ->firstOrFail();
+        $branch = Branch::query()
+            ->where('slug', 'vilnius-main')
+            ->firstOrFail();
+        $original = MarketingLead::factory()->create([
+            'first_name' => 'Original',
+            'last_name' => 'Application',
+            'phone' => '+999 111 222333',
+            'email' => 'original.application@example.com',
+        ]);
+
+        $this->post(route('website.leads.store'), [
+            'course_id' => $program->id,
+            'branch_id' => $branch->id,
+            'full_name' => 'Duplicate Application',
+            'phone' => '999111222333',
+            'email' => 'duplicate.application@example.com',
+            'preferred_format' => 'mixed',
+            'preferred_language' => 'en',
+            'consent_accepted' => '1',
+        ])
+            ->assertRedirect(route('website.thank_you'))
+            ->assertSessionHasNoErrors();
+
+        $duplicate = MarketingLead::query()
+            ->where('email', 'duplicate.application@example.com')
+            ->firstOrFail();
+
+        $this->assertSame($original->id, $duplicate->duplicate_of_id);
+        $this->assertDatabaseHas('marketing_lead_activities', [
+            'marketing_lead_id' => $duplicate->id,
+            'type' => 'marked_duplicate',
+            'new_value' => (string) $original->id,
+        ]);
     }
 
     public function test_callback_and_contact_forms_create_leads(): void
@@ -126,7 +170,7 @@ class PublicWebsiteFrontendTest extends TestCase
         ]);
         $this->assertDatabaseHas('marketing_leads', [
             'full_name' => 'Contact Lead',
-            'source' => 'website',
+            'source' => 'contact_form',
             'form_name' => 'contact',
             'message' => 'I have a question.',
         ]);

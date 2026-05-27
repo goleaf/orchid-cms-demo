@@ -21,3 +21,7 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - CRM Lead compatibility model maps to marketing_leads; lead-owned hasMany and tag pivot relations must pin marketing_lead_id explicitly so Lead does not make Eloquent guess lead_id.
   Evidence: CrmLeadDatabaseFoundationTest and DrivingSchoolPlatformTest failed with guessed lead_id until MarketingLead relations specified marketing_lead_id; full php artisan test then passed.
   Added: 2026-05-27T18:59:21+00:00
+
+- Public website lead forms create CRM records in marketing_leads through CreateWebsiteLeadAction or CreateCallbackLeadAction; contact forms prefer the lead_sources code contact_form when available, and website lead marketing fields can be shown with either website.view_marketing or crm.leads.view_marketing.
+  Evidence: Implemented ResolveLeadSourceAction, ResolveLeadNotificationRecipientsAction, CRM task title crm.tasks.defaults.contact_new_website_lead, WebsiteLeadListScreen permission handling; full php artisan test passed with 95 tests and 2523 assertions.
+  Added: 2026-05-27T21:22:58+00:00

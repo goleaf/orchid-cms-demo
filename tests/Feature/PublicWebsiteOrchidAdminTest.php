@@ -226,5 +226,20 @@ class PublicWebsiteOrchidAdminTest extends TestCase
             ->assertSee(tkey('crm.leads.fields.utm_source', [], 'ru'))
             ->assertSee('google-hidden')
             ->assertSee('website-hidden-campaign');
+
+        $crmMarketingUser = User::factory()->create();
+        $crmMarketingUser->forceFill(['permissions' => [
+            'platform.index' => true,
+            'website.view_leads' => true,
+            'crm.leads.view_marketing' => true,
+        ]])->save();
+
+        $this->actingAs($crmMarketingUser)
+            ->get(route('platform.website.leads'))
+            ->assertOk()
+            ->assertSee(tkey('crm.leads.fields.utm_source', [], 'ru'))
+            ->assertSee(tkey('crm.leads.fields.form_page', [], 'ru'))
+            ->assertSee('google-hidden')
+            ->assertSee('website-hidden-campaign');
     }
 }

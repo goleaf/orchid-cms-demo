@@ -162,7 +162,7 @@ class DrivingSchoolPlatformTest extends TestCase
 
         $this->assertDatabaseHas('marketing_leads', [
             'first_name' => 'Laura',
-            'phone' => '+370 600 77777',
+            'phone' => '+37060077777',
             'source' => 'callback',
             'status' => 'new',
             'form_name' => 'callback',
@@ -171,7 +171,7 @@ class DrivingSchoolPlatformTest extends TestCase
         ]);
 
         $lead = MarketingLead::query()
-            ->where('phone', '+370 600 77777')
+            ->where('phone', '+37060077777')
             ->firstOrFail();
 
         $this->assertNotNull($lead->uuid);
