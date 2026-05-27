@@ -127,6 +127,11 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.marketing.leads', ['status' => 'new'])
                 ->permission('platform.marketing.leads'),
 
+            Menu::make(tkey('menu.crm.my_leads'))
+                ->icon('bs.person-check')
+                ->route('platform.marketing.leads', ['segment' => 'my'])
+                ->permission('platform.marketing.leads'),
+
             Menu::make(tkey('menu.crm.overdue_tasks'))
                 ->icon('bs.exclamation-triangle')
                 ->route('platform.marketing.leads', ['overdue' => '1'])
@@ -136,6 +141,11 @@ class PlatformProvider extends OrchidServiceProvider
                 ->icon('bs.kanban')
                 ->route('platform.marketing.pipeline')
                 ->permission('platform.marketing.pipeline'),
+
+            Menu::make(tkey('menu.crm.tasks'))
+                ->icon('bs.check2-square')
+                ->route('platform.crm.tasks')
+                ->permission('crm.leads.manage_tasks'),
 
             Menu::make(tkey('menu.crm.statuses'))
                 ->icon('bs.ui-checks-grid')
@@ -256,6 +266,7 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('crm.leads.delete', tkey('permissions.crm.leads.delete'))
                 ->addPermission('crm.leads.assign', tkey('permissions.crm.leads.assign'))
                 ->addPermission('crm.leads.change_status', tkey('permissions.crm.leads.change_status'))
+                ->addPermission('crm.leads.manage_tasks', tkey('permissions.crm.leads.manage_tasks'))
                 ->addPermission('crm.leads.manage_dictionaries', tkey('permissions.crm.leads.manage_dictionaries'))
                 ->addPermission('crm.leads.view_marketing', tkey('permissions.crm.leads.view_marketing'))
                 ->addPermission('crm.leads.convert', tkey('permissions.crm.leads.convert'))

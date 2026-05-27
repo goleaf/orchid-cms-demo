@@ -13,3 +13,7 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - CRM dictionary labels use name_translations through HasTranslatedDictionaryName; display names fall back to name and then code or slug.
   Evidence: App\Models\LeadStatus, LeadSource, LeadLostReason, LeadTag use HasTranslatedDictionaryName; CrmLocalizationTest verifies translated source/status labels render in CRM screens.
   Added: 2026-05-27T17:23:12+00:00
+
+- CRM Block 2 admin write operations use dedicated Actions plus Form Requests with tkey validation messages; verify with DrivingSchoolPlatformTest, CrmLocalizationTest, and SuperadminRoleTest before the full suite.
+  Evidence: Implemented CRM lead create/edit, task, communication, duplicate/lost/status, export requests/actions; php artisan test passed with 55 tests and 479 assertions.
+  Added: 2026-05-27T18:38:55+00:00

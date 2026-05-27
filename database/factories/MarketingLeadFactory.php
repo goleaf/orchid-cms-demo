@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\LeadStatus;
 use App\Models\Branch;
+use App\Models\CourseCategory;
 use App\Models\MarketingCampaign;
 use App\Models\MarketingLead;
 use App\Models\TrainingProgram;
@@ -22,22 +23,27 @@ class MarketingLeadFactory extends Factory
      */
     public function definition(): array
     {
+        $firstName = $this->faker->firstName();
+        $lastName = $this->faker->optional()->lastName();
+
         return [
             'uuid' => (string) Str::uuid(),
+            'full_name' => trim($firstName.' '.($lastName ?? '')),
             'marketing_campaign_id' => MarketingCampaign::factory(),
             'responsible_manager_id' => null,
             'assigned_by_user_id' => null,
             'assigned_at' => null,
             'branch_id' => Branch::factory(),
             'training_program_id' => TrainingProgram::factory(),
+            'course_category_id' => CourseCategory::factory(),
             'training_group_id' => null,
             'instructor_id' => null,
             'converted_student_profile_id' => null,
             'created_by_user_id' => null,
             'updated_by_user_id' => null,
             'duplicate_of_id' => null,
-            'first_name' => $this->faker->firstName(),
-            'last_name' => $this->faker->optional()->lastName(),
+            'first_name' => $firstName,
+            'last_name' => $lastName,
             'email' => $this->faker->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
             'messenger' => $this->faker->randomElement(['WhatsApp', 'Telegram', 'Viber']),

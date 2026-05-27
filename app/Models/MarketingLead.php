@@ -18,6 +18,7 @@ class MarketingLead extends Model
 {
     /** @use HasFactory<MarketingLeadFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $fillable = [
@@ -28,11 +29,13 @@ class MarketingLead extends Model
         'assigned_at',
         'branch_id',
         'training_program_id',
+        'course_category_id',
         'training_group_id',
         'instructor_id',
         'converted_student_profile_id',
         'created_by_user_id',
         'updated_by_user_id',
+        'full_name',
         'first_name',
         'last_name',
         'email',
@@ -134,6 +137,16 @@ class MarketingLead extends Model
         return $this->belongsTo(TrainingProgram::class);
     }
 
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class, 'training_program_id');
+    }
+
+    public function courseCategory(): BelongsTo
+    {
+        return $this->belongsTo(CourseCategory::class);
+    }
+
     public function trainingGroup(): BelongsTo
     {
         return $this->belongsTo(TrainingGroup::class);
@@ -209,8 +222,44 @@ class MarketingLead extends Model
 
     public function fullName(): string
     {
-        return trim($this->first_name.' '.($this->last_name ?? ''))
+        $name = trim($this->first_name.' '.($this->last_name ?? ''));
+
+        if (filled($name)) {
+            return $name;
+        }
+
+        return ($this->attributes['full_name'] ?? null)
             ?: tkey('crm.leads.fallback.lead');
+    }
+
+    public function getPreferredMessengerAttribute(): ?string
+    {
+        return $this->messenger;
+    }
+
+    public function setPreferredMessengerAttribute(?string $value): void
+    {
+        $this->attributes['messenger'] = $value;
+    }
+
+    public function getCommentAttribute(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setCommentAttribute(?string $value): void
+    {
+        $this->attributes['message'] = $value;
+    }
+
+    public function getReferrerAttribute(): ?string
+    {
+        return $this->referrer_url;
+    }
+
+    public function setReferrerAttribute(?string $value): void
+    {
+        $this->attributes['referrer_url'] = $value;
     }
 
     public function setPhoneAttribute(?string $value): void
@@ -239,11 +288,13 @@ class MarketingLead extends Model
             'assigned_at',
             'branch_id',
             'training_program_id',
+            'course_category_id',
             'training_group_id',
             'instructor_id',
             'converted_student_profile_id',
             'created_by_user_id',
             'updated_by_user_id',
+            'full_name',
             'first_name',
             'last_name',
             'email',
@@ -290,11 +341,13 @@ class MarketingLead extends Model
             'assigned_at',
             'branch_id',
             'training_program_id',
+            'course_category_id',
             'training_group_id',
             'instructor_id',
             'converted_student_profile_id',
             'created_by_user_id',
             'updated_by_user_id',
+            'full_name',
             'first_name',
             'last_name',
             'email',

@@ -44,6 +44,25 @@ Public UI copy uses translation keys through `tkey()`. Public course, branch, gr
 
 Seeded translations are created by `SystemTranslationSeeder`; seeded website content is created by `PublicWebsiteSeeder` through model factories.
 
+## Database Foundation
+
+The public website foundation reuses the local driving-school operating tables instead of creating SaaS-style duplicates:
+
+- Public courses use `training_programs`, exposed through `App\Models\Course`.
+- CRM website intake uses `marketing_leads`, exposed through `App\Models\Lead`.
+- Testimonials use `student_reviews`, exposed through `App\Models\Testimonial`.
+- Existing branches and training groups remain `branches` and `training_groups`.
+
+New website-only tables:
+
+- `site_pages` for managed public pages and SEO metadata.
+- `course_categories` for grouping public course offers.
+- `pricing_packages` for pricing-page tariffs.
+- `faqs` for global, page, branch, or course FAQ content.
+- `site_settings` for public website settings.
+
+Existing school tables are extended with UUIDs, multilingual website fields, site visibility flags, SEO/media references where practical, audit fields, and soft deletes where the public website needs lifecycle management.
+
 ## Tests
 
-The public website foundation is covered by `tests/Feature/PublicWebsiteFoundationTest.php` and updated platform coverage in `tests/Feature/DrivingSchoolPlatformTest.php`.
+The public website foundation is covered by `tests/Feature/PublicWebsiteFoundationTest.php`, `tests/Feature/PublicWebsiteDatabaseFoundationTest.php`, and updated platform coverage in `tests/Feature/DrivingSchoolPlatformTest.php`.

@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasTranslatedDictionaryName;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class LeadSource extends Model
 {
+    use HasFactory;
     use HasTranslatedDictionaryName;
 
     public const DICTIONARY_KEY_COLUMN = 'code';

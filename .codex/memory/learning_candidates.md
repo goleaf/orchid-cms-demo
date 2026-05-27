@@ -932,3 +932,162 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T18:35:59+00:00
+
+```json
+{
+  "ts": "2026-05-27T18:35:59+00:00",
+  "event": "Stop",
+  "session_id": "019e6a84-a0e3-77c1-a15b-cd1916af78e2",
+  "turn_id": "019e6aa1-2ad0-7e91-9151-df75cb9b3fbe",
+  "branch": "main",
+  "changed_file_count": 68,
+  "changed_file_groups": {
+    "code": 42,
+    "models": 18,
+    "orchid": 5,
+    "database": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkLeadDuplicateAction.php",
+    "app/Actions/MarkLeadLostAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/SaveMarketingLeadCrmAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/Course.php",
+    "app/Models/CourseCategory.php",
+    "app/Models/Faq.php",
+    "app/Models/Lead.php",
+    "app/Models/LeadLostReason.php",
+    "app/Models/LeadSource.php",
+    "app/Models/LeadStatus.php",
+    "app/Models/LeadTag.php",
+    "app/Models/MarketingLead.php",
+    "app/Models/MarketingLeadCommunication.php",
+    "app/Models/PricingPackage.php",
+    "app/Models/SitePage.php",
+    "app/Models/SiteSetting.php",
+    "app/Models/StudentReview.php",
+    "app/Models/Testimonial.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T18:35:59+00:00
+
+```json
+{
+  "ts": "2026-05-27T18:35:59+00:00",
+  "event": "Stop",
+  "session_id": "019e6a84-a0e3-77c1-a15b-cd1916af78e2",
+  "turn_id": "019e6aa1-2ad0-7e91-9151-df75cb9b3fbe",
+  "branch": "main",
+  "changed_file_count": 68,
+  "changed_file_groups": {
+    "code": 42,
+    "models": 18,
+    "orchid": 5,
+    "database": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkLeadDuplicateAction.php",
+    "app/Actions/MarkLeadLostAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/SaveMarketingLeadCrmAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/Course.php",
+    "app/Models/CourseCategory.php",
+    "app/Models/Faq.php",
+    "app/Models/Lead.php",
+    "app/Models/LeadLostReason.php",
+    "app/Models/LeadSource.php",
+    "app/Models/LeadStatus.php",
+    "app/Models/LeadTag.php",
+    "app/Models/MarketingLead.php",
+    "app/Models/MarketingLeadCommunication.php",
+    "app/Models/PricingPackage.php",
+    "app/Models/SitePage.php",
+    "app/Models/SiteSetting.php",
+    "app/Models/StudentReview.php",
+    "app/Models/Testimonial.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T18:40:18+00:00
+
+```json
+{
+  "ts": "2026-05-27T18:40:18+00:00",
+  "event": "Stop",
+  "session_id": "019e6a96-6279-73a2-bd62-e85432689ea8",
+  "turn_id": "019e6aa6-cbc7-7022-af5f-f6f2c1eb937d",
+  "branch": "main",
+  "changed_file_count": 84,
+  "changed_file_groups": {
+    "code": 58,
+    "models": 18,
+    "orchid": 5,
+    "database": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    ".codex/memory/decisions.md",
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/learning_candidates.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkLeadDuplicateAction.php",
+    "app/Actions/MarkLeadLostAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/SaveMarketingLeadCrmAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/Course.php",
+    "app/Models/CourseCategory.php",
+    "app/Models/Faq.php",
+    "app/Models/Lead.php",
+    "app/Models/LeadLostReason.php",
+    "app/Models/LeadSource.php",
+    "app/Models/LeadStatus.php",
+    "app/Models/LeadTag.php",
+    "app/Models/MarketingLead.php",
+    "app/Models/MarketingLeadCommunication.php",
+    "app/Models/PricingPackage.php",
+    "app/Models/SitePage.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

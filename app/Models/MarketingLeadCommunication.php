@@ -12,6 +12,16 @@ class MarketingLeadCommunication extends Model
     /** @use HasFactory<MarketingLeadCommunicationFactory> */
     use HasFactory;
 
+    private const CALL_RESULTS = [
+        'answered',
+        'no_answer',
+        'wrong_number',
+        'callback_requested',
+        'thinking',
+        'ready_to_pay',
+        'lost',
+    ];
+
     protected $fillable = [
         'marketing_lead_id',
         'user_id',
@@ -61,5 +71,25 @@ class MarketingLeadCommunication extends Model
     public function hasClientReply(): bool
     {
         return $this->client_replied_at !== null;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function callResultValues(): array
+    {
+        return self::CALL_RESULTS;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function callResultOptions(): array
+    {
+        return collect(self::CALL_RESULTS)
+            ->mapWithKeys(fn (string $result): array => [
+                $result => tkey('crm.communications.call_results.'.$result),
+            ])
+            ->all();
     }
 }

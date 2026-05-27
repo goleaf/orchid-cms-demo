@@ -1,0 +1,105 @@
+<?php
+
+namespace App\Actions;
+
+use App\Models\LeadSource;
+use App\Models\MarketingLead;
+use Illuminate\Database\Eloquent\Builder;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+
+class ExportMarketingLeadsCsvAction
+{
+    public function handle(Builder $query): StreamedResponse
+    {
+        $filename = 'crm-leads-'.now()->format('Y-m-d-His').'.csv';
+
+        return response()->streamDownload(function () use ($query): void {
+            $output = fopen('php://output', 'w');
+
+            if ($output === false) {
+                return;
+            }
+
+            fputcsv($output, $this->headings());
+
+            $sourceLabels = LeadSource::translatedLabels();
+            $exportQuery = clone $query;
+
+            $exportQuery
+                ->reorder('id')
+                ->chunkById(200, function ($leads) use ($output, $sourceLabels): void {
+                    foreach ($leads as $lead) {
+                        $this->writeRow($output, $lead, $sourceLabels);
+                    }
+                });
+
+            fclose($output);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function headings(): array
+    {
+        return [
+            tkey('crm.leads.columns.id'),
+            tkey('crm.leads.fields.uuid'),
+            tkey('crm.leads.columns.full_name'),
+            tkey('crm.leads.columns.phone'),
+            tkey('crm.leads.columns.email'),
+            tkey('crm.leads.columns.status'),
+            tkey('crm.leads.columns.source'),
+            tkey('crm.leads.columns.manager'),
+            tkey('crm.leads.columns.course'),
+            tkey('crm.leads.columns.branch'),
+            tkey('crm.leads.columns.training_group'),
+            tkey('crm.leads.columns.created_at'),
+            tkey('crm.leads.fields.last_contacted_at'),
+            tkey('crm.leads.fields.next_follow_up_at'),
+            tkey('crm.leads.fields.utm_source'),
+            tkey('crm.leads.fields.utm_medium'),
+            tkey('crm.leads.fields.utm_campaign'),
+            tkey('crm.leads.fields.utm_content'),
+            tkey('crm.leads.fields.utm_term'),
+            tkey('crm.leads.fields.referrer'),
+            tkey('crm.leads.fields.landing_page'),
+            tkey('crm.leads.fields.form_page'),
+            tkey('crm.leads.fields.comment'),
+            tkey('crm.leads.fields.internal_comment'),
+        ];
+    }
+
+    /**
+     * @param  array<string, string>  $sourceLabels
+     */
+    private function writeRow(mixed $output, MarketingLead $lead, array $sourceLabels): void
+    {
+        fputcsv($output, [
+            $lead->id,
+            $lead->uuid,
+            $lead->fullName(),
+            $lead->phone,
+            $lead->email,
+            $lead->status->label(),
+            $sourceLabels[$lead->source] ?? LeadSource::translatedLabel($lead->source),
+            $lead->responsibleManager?->name,
+            $lead->trainingProgram?->displayTitle(),
+            $lead->branch?->displayName(),
+            $lead->trainingGroup?->displayName(),
+            $lead->created_at?->format('Y-m-d H:i:s'),
+            $lead->last_contacted_at?->format('Y-m-d H:i:s'),
+            $lead->next_follow_up_at?->format('Y-m-d H:i:s'),
+            $lead->utm_source,
+            $lead->utm_medium,
+            $lead->utm_campaign,
+            $lead->utm_content,
+            $lead->utm_term,
+            $lead->referrer_url,
+            $lead->landing_page,
+            $lead->form_page,
+            $lead->message,
+            $lead->internal_comment,
+        ]);
+    }
+}

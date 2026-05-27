@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Branch;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Branch>
@@ -18,6 +19,8 @@ class BranchFactory extends Factory
     public function definition(): array
     {
         return [
+            'uuid' => (string) Str::uuid(),
+            'code' => strtoupper($this->faker->unique()->bothify('BR-####')),
             'name' => $this->faker->company().' Driving School',
             'slug' => $this->faker->unique()->slug(2),
             'city' => $this->faker->city(),
@@ -28,12 +31,17 @@ class BranchFactory extends Factory
             'working_hours' => 'Mon-Fri 09:00-18:00',
             'latitude' => null,
             'longitude' => null,
+            'map_url' => null,
+            'image' => null,
             'seo_title' => null,
             'seo_description' => null,
             'canonical_url' => null,
             'open_graph_image' => null,
             'is_active' => true,
+            'is_visible_on_site' => true,
             'sort_order' => 0,
+            'created_by_id' => null,
+            'updated_by_id' => null,
         ];
     }
 

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Branch extends Model
 {
@@ -15,8 +18,11 @@ class Branch extends Model
     use HasFactory;
 
     use HasTranslations;
+    use SoftDeletes;
 
     protected $fillable = [
+        'uuid',
+        'code',
         'name',
         'name_translations',
         'slug',
@@ -32,6 +38,8 @@ class Branch extends Model
         'working_hours_translations',
         'latitude',
         'longitude',
+        'map_url',
+        'image',
         'seo_title',
         'seo_title_translations',
         'seo_description',
@@ -43,7 +51,10 @@ class Branch extends Model
         'og_description',
         'og_description_translations',
         'is_active',
+        'is_visible_on_site',
         'sort_order',
+        'created_by_id',
+        'updated_by_id',
     ];
 
     protected $casts = [
@@ -59,8 +70,19 @@ class Branch extends Model
         'latitude' => 'decimal:7',
         'longitude' => 'decimal:7',
         'is_active' => 'boolean',
+        'is_visible_on_site' => 'boolean',
         'sort_order' => 'integer',
+        'deleted_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $branch): void {
+            if (blank($branch->uuid)) {
+                $branch->uuid = (string) Str::uuid();
+            }
+        });
+    }
 
     public function instructors(): HasMany
     {
@@ -87,6 +109,11 @@ class Branch extends Model
         return $this->hasMany(TrainingGroup::class);
     }
 
+    public function trainingGroups(): HasMany
+    {
+        return $this->groups();
+    }
+
     public function campaigns(): HasMany
     {
         return $this->hasMany(MarketingCampaign::class);
@@ -95,6 +122,16 @@ class Branch extends Model
     public function leads(): HasMany
     {
         return $this->hasMany(MarketingLead::class);
+    }
+
+    public function faqs(): MorphMany
+    {
+        return $this->morphMany(Faq::class, 'faqable');
+    }
+
+    public function testimonials(): HasMany
+    {
+        return $this->hasMany(Testimonial::class);
     }
 
     public function scopeForAdminList(Builder $query): Builder
@@ -116,6 +153,8 @@ class Branch extends Model
             'working_hours_translations',
             'latitude',
             'longitude',
+            'map_url',
+            'image',
             'seo_title',
             'seo_title_translations',
             'seo_description',
@@ -127,6 +166,7 @@ class Branch extends Model
             'og_description',
             'og_description_translations',
             'is_active',
+            'is_visible_on_site',
             'sort_order',
         ]);
     }
@@ -135,7 +175,28 @@ class Branch extends Model
     {
         return $query
             ->forAdminList()
-            ->where('is_active', true);
+            ->active()
+            ->visibleOnSite();
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeVisibleOnSite(Builder $query): Builder
+    {
+        return $query->where('is_visible_on_site', true);
+    }
+
+    public function scopeOrdered(Builder $query): Builder
+    {
+        return $query->orderBy('sort_order')->orderBy('name');
+    }
+
+    public function scopeBySlug(Builder $query, string $slug): Builder
+    {
+        return $query->where('slug', $slug);
     }
 
     public function displayName(?string $locale = null): string
@@ -174,14 +235,34 @@ class Branch extends Model
     public function displaySeoTitle(?string $locale = null): string
     {
         return $this->getTranslation('seo_title', $locale)
-            ?: $this->seo_title
+            ?: ($this->attributes['seo_title'] ?? null)
             ?: $this->displayName($locale);
     }
 
     public function displaySeoDescription(?string $locale = null): ?string
     {
         return $this->getTranslation('seo_description', $locale)
-            ?: $this->seo_description
+            ?: ($this->attributes['seo_description'] ?? null)
             ?: $this->displayDescription($locale);
+    }
+
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->displayName();
+    }
+
+    public function getDisplayTitleAttribute(): string
+    {
+        return $this->displayName();
+    }
+
+    public function getSeoTitleAttribute(): string
+    {
+        return $this->displaySeoTitle();
+    }
+
+    public function getSeoDescriptionAttribute(): ?string
+    {
+        return $this->displaySeoDescription();
     }
 }

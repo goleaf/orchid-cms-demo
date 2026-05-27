@@ -27,30 +27,55 @@ class CrmDictionarySeeder extends Seeder
     private function seedDictionary(string $modelClass, string $keyColumn, array $records): void
     {
         foreach ($records as $sortOrder => $record) {
-            $attributes = [
-                'name' => $record['values']['ru'] ?? $record['values']['en'],
-                'name_translations' => $record['values'],
-                'color' => $record['color'] ?? null,
-                'is_system' => true,
-                'is_active' => true,
-                'sort_order' => ($sortOrder + 1) * 10,
-            ];
-
-            if ($modelClass === LeadStatus::class) {
-                $attributes = [
-                    ...$attributes,
-                    'is_default' => $record['is_default'] ?? false,
-                    'is_final' => $record['is_final'] ?? false,
-                    'is_success' => $record['is_success'] ?? false,
-                    'is_lost' => $record['is_lost'] ?? false,
-                ];
-            }
-
             $modelClass::query()->updateOrCreate(
                 [$keyColumn => $record[$keyColumn]],
-                $attributes,
+                $this->factoryAttributes($modelClass, $keyColumn, $record, $sortOrder),
             );
         }
+    }
+
+    /**
+     * @param  class-string<Model>  $modelClass
+     * @param  array<string, mixed>  $record
+     * @return array<string, mixed>
+     */
+    private function factoryAttributes(string $modelClass, string $keyColumn, array $record, int $sortOrder): array
+    {
+        /** @var Model $dictionary */
+        $dictionary = $modelClass::factory()->make([
+            $keyColumn => $record[$keyColumn],
+            'name' => $record['values']['ru'] ?? $record['values']['en'],
+            'name_translations' => $record['values'],
+            'color' => $record['color'] ?? null,
+            'is_system' => true,
+            'is_active' => true,
+            'sort_order' => ($sortOrder + 1) * 10,
+            ...$this->statusFlags($modelClass, $record),
+        ]);
+
+        $attributes = $dictionary->only($dictionary->getFillable());
+        unset($attributes[$keyColumn]);
+
+        return $attributes;
+    }
+
+    /**
+     * @param  class-string<Model>  $modelClass
+     * @param  array<string, mixed>  $record
+     * @return array<string, bool>
+     */
+    private function statusFlags(string $modelClass, array $record): array
+    {
+        if ($modelClass !== LeadStatus::class) {
+            return [];
+        }
+
+        return [
+            'is_default' => $record['is_default'] ?? false,
+            'is_final' => $record['is_final'] ?? false,
+            'is_success' => $record['is_success'] ?? false,
+            'is_lost' => $record['is_lost'] ?? false,
+        ];
     }
 
     /**

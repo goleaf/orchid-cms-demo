@@ -20,6 +20,7 @@ use App\Orchid\Screens\School\LeadDictionaryListScreen;
 use App\Orchid\Screens\School\LeadEditScreen;
 use App\Orchid\Screens\School\LeadListScreen;
 use App\Orchid\Screens\School\LeadPipelineScreen;
+use App\Orchid\Screens\School\LeadTaskListScreen;
 use App\Orchid\Screens\School\MessageTemplateEditScreen;
 use App\Orchid\Screens\School\MessageTemplateListScreen;
 use App\Orchid\Screens\School\PaymentListScreen;
@@ -143,7 +144,7 @@ Route::screen('operations/instructors', InstructorListScreen::class)
     ->name('platform.operations.instructors')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Instructors', route('platform.operations.instructors')));
+        ->push(tkey('menu.operations.instructors'), route('platform.operations.instructors')));
 
 // Operations > Groups
 Route::screen('operations/groups', GroupListScreen::class)
@@ -157,7 +158,7 @@ Route::screen('crm/students', StudentListScreen::class)
     ->name('platform.crm.students')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Student CRM', route('platform.crm.students')));
+        ->push(tkey('menu.crm.students'), route('platform.crm.students')));
 
 // Learning > Programs
 Route::screen('lms/programs', ProgramListScreen::class)
@@ -171,42 +172,42 @@ Route::screen('schedule/lessons', ScheduleListScreen::class)
     ->name('platform.schedule.lessons')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Schedule', route('platform.schedule.lessons')));
+        ->push(tkey('menu.schedule.lessons'), route('platform.schedule.lessons')));
 
 // Operations > Fleet
 Route::screen('fleet/vehicles', FleetListScreen::class)
     ->name('platform.fleet.vehicles')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Fleet', route('platform.fleet.vehicles')));
+        ->push(tkey('menu.fleet.vehicles'), route('platform.fleet.vehicles')));
 
 // Operations > Exams
 Route::screen('exams', ExamListScreen::class)
     ->name('platform.exams')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Exams', route('platform.exams')));
+        ->push(tkey('menu.exams'), route('platform.exams')));
 
 // Finance > Payments
 Route::screen('finance/payments', PaymentListScreen::class)
     ->name('platform.finance.payments')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Payments', route('platform.finance.payments')));
+        ->push(tkey('menu.finance.payments'), route('platform.finance.payments')));
 
 // Operations > Documents
 Route::screen('documents', DocumentListScreen::class)
     ->name('platform.documents')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Documents', route('platform.documents')));
+        ->push(tkey('menu.documents'), route('platform.documents')));
 
 // Marketing > Campaigns
 Route::screen('marketing/campaigns', CampaignListScreen::class)
     ->name('platform.marketing.campaigns')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Campaigns', route('platform.marketing.campaigns')));
+        ->push(tkey('menu.marketing.campaigns'), route('platform.marketing.campaigns')));
 
 // Marketing > Sales Pipeline
 Route::screen('marketing/pipeline', LeadPipelineScreen::class)
@@ -216,6 +217,12 @@ Route::screen('marketing/pipeline', LeadPipelineScreen::class)
         ->push(tkey('menu.crm.pipeline'), route('platform.marketing.pipeline')));
 
 // Marketing > Leads
+Route::screen('marketing/leads/create', LeadEditScreen::class)
+    ->name('platform.marketing.leads.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.marketing.leads')
+        ->push(tkey('crm.leads.create_title'), route('platform.marketing.leads.create')));
+
 Route::screen('marketing/leads', LeadListScreen::class)
     ->name('platform.marketing.leads')
     ->breadcrumbs(fn (Trail $trail) => $trail
@@ -228,6 +235,13 @@ Route::screen('marketing/leads/{lead}/edit', LeadEditScreen::class)
     ->breadcrumbs(fn (Trail $trail, $lead) => $trail
         ->parent('platform.marketing.leads')
         ->push($lead->fullName(), route('platform.marketing.leads.edit', $lead)));
+
+// CRM > Tasks
+Route::screen('crm/tasks', LeadTaskListScreen::class)
+    ->name('platform.crm.tasks')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.crm.tasks'), route('platform.crm.tasks')));
 
 // CRM > Dictionaries
 Route::screen('crm/dictionaries/{dictionary}/create', LeadDictionaryEditScreen::class)

@@ -6,11 +6,10 @@ namespace App\Orchid\Screens\School;
 
 use App\Actions\GetLeadPipelineAction;
 use App\Actions\MoveLeadToStatusAction;
-use App\Enums\LeadStatus;
+use App\Http\Requests\Marketing\LeadPipelineMoveRequest;
 use App\Models\MarketingLead;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
@@ -64,23 +63,17 @@ class LeadPipelineScreen extends Screen
         ];
     }
 
-    public function moveLead(Request $request, MoveLeadToStatusAction $moveLead): RedirectResponse
+    public function moveLead(LeadPipelineMoveRequest $request, MoveLeadToStatusAction $moveLead): RedirectResponse
     {
-        $data = $request->validate([
-            'lead_id' => ['required', 'integer', 'exists:marketing_leads,id'],
-            'status' => ['required', Rule::enum(LeadStatus::class)],
-            'reason' => ['nullable', 'string', 'max:1000'],
-        ]);
-
         $lead = MarketingLead::query()
             ->forCrmDetail()
-            ->whereKey($data['lead_id'])
+            ->whereKey($request->leadId())
             ->firstOrFail();
 
-        $moveLead->handle($lead, LeadStatus::from($data['status']), $request->user(), $data['reason'] ?? null);
+        $moveLead->handle($lead, $request->status(), $request->user(), $request->reason());
 
         Toast::info(tkey('crm.pipeline.messages.lead_moved', [
-            'status' => LeadStatus::from($data['status'])->label(),
+            'status' => $request->status()->label(),
         ]));
 
         return redirect()->back();

@@ -6,6 +6,7 @@ namespace App\Orchid\Screens\School;
 
 use App\Actions\CompleteLeadTaskAction;
 use App\Enums\LeadTaskStatus;
+use App\Http\Requests\Marketing\LeadTaskCompletionRequest;
 use App\Models\MarketingLeadTask;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -84,7 +85,7 @@ class LeadTaskListScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['crm.leads.view'];
+        return ['crm.leads.manage_tasks'];
     }
 
     public function commandBar(): iterable
@@ -158,9 +159,9 @@ class LeadTaskListScreen extends Screen
         ], fn (mixed $value): bool => filled($value)));
     }
 
-    public function complete(Request $request, CompleteLeadTaskAction $completeTask): RedirectResponse
+    public function complete(LeadTaskCompletionRequest $request, CompleteLeadTaskAction $completeTask): RedirectResponse
     {
-        $task = MarketingLeadTask::query()->findOrFail($request->integer('task'));
+        $task = MarketingLeadTask::query()->findOrFail($request->taskId());
 
         $completeTask->handle($task, $request->user());
 

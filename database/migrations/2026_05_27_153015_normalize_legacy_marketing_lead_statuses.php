@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        MarketingLead::query()
+        MarketingLead::withoutGlobalScopes()
             ->where('status', 'qualified')
             ->update(['status' => LeadStatus::ConsultationDone->value]);
 
-        MarketingLead::query()
+        MarketingLead::withoutGlobalScopes()
             ->where('status', 'converted')
             ->update(['status' => LeadStatus::BecameStudent->value]);
 
-        MarketingLead::query()
+        MarketingLead::withoutGlobalScopes()
             ->where('status', 'lost')
             ->update(['status' => LeadStatus::Rejected->value]);
     }
@@ -29,15 +29,15 @@ return new class extends Migration
      */
     public function down(): void
     {
-        MarketingLead::query()
+        MarketingLead::withoutGlobalScopes()
             ->where('status', LeadStatus::ConsultationDone->value)
             ->update(['status' => 'qualified']);
 
-        MarketingLead::query()
+        MarketingLead::withoutGlobalScopes()
             ->where('status', LeadStatus::BecameStudent->value)
             ->update(['status' => 'converted']);
 
-        MarketingLead::query()
+        MarketingLead::withoutGlobalScopes()
             ->where('status', LeadStatus::Rejected->value)
             ->update(['status' => 'lost']);
     }

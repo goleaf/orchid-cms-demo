@@ -4,6 +4,11 @@ namespace Database\Seeders;
 
 use App\Enums\GroupStatus;
 use App\Models\Branch;
+use App\Models\CourseCategory;
+use App\Models\Faq;
+use App\Models\PricingPackage;
+use App\Models\SitePage;
+use App\Models\SiteSetting;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
 use Illuminate\Database\Seeder;
@@ -12,9 +17,110 @@ class PublicWebsiteSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->seedPages();
+        $this->seedCourseCategories();
         $this->seedBranches();
         $this->seedPrograms();
+        $this->seedPricingPackages();
         $this->seedGroups();
+        $this->seedFaqs();
+        $this->seedSiteSettings();
+    }
+
+    private function seedPages(): void
+    {
+        $pages = [
+            'home' => ['type' => 'home', 'title' => 'Главная', 'title_en' => 'Home'],
+            'prices' => ['type' => 'pricing', 'title' => 'Цены', 'title_en' => 'Prices'],
+            'contacts' => ['type' => 'contacts', 'title' => 'Контакты', 'title_en' => 'Contacts'],
+            'thanks' => ['type' => 'thank_you', 'title' => 'Спасибо', 'title_en' => 'Thank you'],
+            'privacy-policy' => ['type' => 'privacy_policy', 'title' => 'Политика конфиденциальности', 'title_en' => 'Privacy policy'],
+            'terms' => ['type' => 'terms', 'title' => 'Условия обучения', 'title_en' => 'Training terms'],
+        ];
+
+        foreach ($pages as $slug => $content) {
+            $payload = SitePage::factory()
+                ->make([
+                    'type' => $content['type'],
+                    'slug' => $slug,
+                    'title_translations' => [
+                        'ru' => $content['title'],
+                        'en' => $content['title_en'],
+                    ],
+                    'excerpt_translations' => [
+                        'ru' => 'Публичная страница автошколы.',
+                        'en' => 'Public driving school page.',
+                    ],
+                    'seo_title_translations' => [
+                        'ru' => $content['title'],
+                        'en' => $content['title_en'],
+                    ],
+                    'is_active' => true,
+                    'is_indexable' => ! in_array($content['type'], ['thank_you'], true),
+                    'published_at' => now(),
+                ])
+                ->only((new SitePage)->getFillable());
+
+            SitePage::query()->updateOrCreate(['slug' => $slug], $payload);
+        }
+    }
+
+    private function seedCourseCategories(): void
+    {
+        $categories = [
+            'category-b' => [
+                'code' => 'category_b',
+                'name' => 'Категория B',
+                'name_en' => 'Category B',
+                'sort_order' => 10,
+            ],
+            'category-a' => [
+                'code' => 'category_a',
+                'name' => 'Категория A',
+                'name_en' => 'Category A',
+                'sort_order' => 20,
+            ],
+            'individual-lessons' => [
+                'code' => 'individual_lessons',
+                'name' => 'Индивидуальные уроки',
+                'name_en' => 'Individual lessons',
+                'sort_order' => 30,
+            ],
+            'exam-preparation' => [
+                'code' => 'exam_preparation',
+                'name' => 'Подготовка к экзамену',
+                'name_en' => 'Exam preparation',
+                'sort_order' => 40,
+            ],
+            'skill-recovery' => [
+                'code' => 'skill_recovery',
+                'name' => 'Восстановление навыков',
+                'name_en' => 'Skill recovery',
+                'sort_order' => 50,
+            ],
+        ];
+
+        foreach ($categories as $slug => $content) {
+            $payload = CourseCategory::factory()
+                ->make([
+                    'code' => $content['code'],
+                    'slug' => $slug,
+                    'name_translations' => [
+                        'ru' => $content['name'],
+                        'en' => $content['name_en'],
+                    ],
+                    'short_description_translations' => [
+                        'ru' => 'Курсы и услуги автошколы.',
+                        'en' => 'Driving school courses and services.',
+                    ],
+                    'is_active' => true,
+                    'is_visible_on_site' => true,
+                    'sort_order' => $content['sort_order'],
+                ])
+                ->only((new CourseCategory)->getFillable());
+
+            CourseCategory::query()->updateOrCreate(['slug' => $slug], $payload);
+        }
     }
 
     private function seedBranches(): void
@@ -78,6 +184,7 @@ class PublicWebsiteSeeder extends Seeder
     {
         $programs = [
             'category-b-manual' => [
+                'category_slug' => 'category-b',
                 'sort_order' => 10,
                 'old_price_cents' => 139000,
                 'short_description' => 'Полный курс категории B с теорией, практикой, документами и подготовкой к экзамену.',
@@ -94,6 +201,7 @@ class PublicWebsiteSeeder extends Seeder
                 'practice_program_en' => 'Training yard, city routes, parking, junctions, independence, and exam preparation.',
             ],
             'category-a-motorcycle' => [
+                'category_slug' => 'category-a',
                 'sort_order' => 20,
                 'old_price_cents' => null,
                 'short_description' => 'Мотоциклетный курс с маневрами, дорожной безопасностью и экзаменационными маршрутами.',
@@ -118,6 +226,10 @@ class PublicWebsiteSeeder extends Seeder
                 continue;
             }
 
+            $category = CourseCategory::query()
+                ->where('slug', $content['category_slug'])
+                ->first();
+
             $payload = TrainingProgram::factory()
                 ->publicCatalog([
                     ...$content,
@@ -125,6 +237,12 @@ class PublicWebsiteSeeder extends Seeder
                     'title_en' => $program->title,
                 ])
                 ->make([
+                    'course_category_id' => $category?->id,
+                    'code' => strtoupper(str_replace('-', '_', $program->slug)),
+                    'name_translations' => [
+                        'ru' => $program->title,
+                        'en' => $program->title,
+                    ],
                     'slug' => $program->slug,
                     'license_category' => $program->license_category,
                     'transmission' => $program->transmission,
@@ -137,14 +255,80 @@ class PublicWebsiteSeeder extends Seeder
                     'admission_requirements' => $program->admission_requirements,
                     'price_cents' => $program->price_cents,
                     'old_price_cents' => $content['old_price_cents'],
+                    'price' => $program->price_cents / 100,
+                    'old_price' => $content['old_price_cents'] === null ? null : $content['old_price_cents'] / 100,
+                    'currency' => 'EUR',
+                    'duration_translations' => [
+                        'ru' => $program->duration_weeks.' недель',
+                        'en' => $program->duration_weeks.' weeks',
+                    ],
+                    'program_summary_translations' => [
+                        'ru' => $content['short_description'],
+                        'en' => $content['short_description_en'],
+                    ],
+                    'includes_translations' => [
+                        'ru' => $content['included_items'],
+                        'en' => $content['included_items_en'],
+                    ],
+                    'excludes_translations' => [
+                        'ru' => $content['extra_costs'],
+                        'en' => $content['extra_costs_en'],
+                    ],
+                    'requirements_translations' => [
+                        'ru' => $program->admission_requirements,
+                        'en' => $program->admission_requirements,
+                    ],
                     'is_active' => true,
+                    'is_visible_on_site' => true,
+                    'is_featured' => $slug === 'category-b-manual',
                     'open_graph_image' => $program->open_graph_image,
+                    'og_image' => $program->open_graph_image,
                     'structured_data' => $program->structured_data,
                     'sort_order' => $content['sort_order'],
                 ])
                 ->only((new TrainingProgram)->getFillable());
 
             $program->fill($payload)->save();
+        }
+    }
+
+    private function seedPricingPackages(): void
+    {
+        $program = TrainingProgram::query()->where('slug', 'category-b-manual')->first();
+        $category = CourseCategory::query()->where('slug', 'category-b')->first();
+
+        if ($program === null || $category === null) {
+            return;
+        }
+
+        $packages = [
+            'category-b-standard' => ['code' => 'standard', 'name' => 'Standard', 'price' => 1290.00, 'sort_order' => 10],
+            'category-b-premium' => ['code' => 'premium', 'name' => 'Premium', 'price' => 1490.00, 'sort_order' => 20],
+            'category-b-intensive' => ['code' => 'intensive', 'name' => 'Intensive', 'price' => 1590.00, 'sort_order' => 30],
+            'extra-lessons' => ['code' => 'extra_lessons', 'name' => 'Extra Lessons', 'price' => 45.00, 'sort_order' => 40],
+        ];
+
+        foreach ($packages as $slug => $content) {
+            $payload = PricingPackage::factory()
+                ->make([
+                    'course_id' => $program->id,
+                    'course_category_id' => $category->id,
+                    'code' => $content['code'],
+                    'slug' => $slug,
+                    'name_translations' => [
+                        'ru' => $content['name'],
+                        'en' => $content['name'],
+                    ],
+                    'price' => $content['price'],
+                    'currency' => 'EUR',
+                    'is_active' => true,
+                    'is_visible_on_site' => true,
+                    'is_featured' => $content['code'] === 'premium',
+                    'sort_order' => $content['sort_order'],
+                ])
+                ->only((new PricingPackage)->getFillable());
+
+            PricingPackage::query()->updateOrCreate(['slug' => $slug], $payload);
         }
     }
 
@@ -168,7 +352,10 @@ class PublicWebsiteSeeder extends Seeder
         ];
 
         foreach ($groups as $code => $content) {
-            $group = TrainingGroup::query()->where('code', $code)->first();
+            $group = TrainingGroup::query()
+                ->with('trainingProgram')
+                ->where('code', $code)
+                ->first();
 
             if ($group === null) {
                 continue;
@@ -177,8 +364,10 @@ class PublicWebsiteSeeder extends Seeder
             $payload = TrainingGroup::factory()
                 ->publicVisible()
                 ->make([
+                    'group_number' => $group->code,
                     'branch_id' => $group->branch_id,
                     'training_program_id' => $group->training_program_id,
+                    'course_category_id' => $group->trainingProgram?->course_category_id,
                     'instructor_id' => $group->instructor_id,
                     'name' => $content['name_translations']['ru'],
                     'code' => $group->code,
@@ -189,13 +378,94 @@ class PublicWebsiteSeeder extends Seeder
                     'ends_on' => $group->ends_on,
                     'meeting_days' => $group->meeting_days,
                     'meeting_time' => $group->meeting_time,
+                    'end_time' => '20:00',
                     'classroom' => $group->classroom,
                     'is_visible_on_site' => true,
+                    'is_featured' => $code === 'B-VNO-001',
+                    'sort_order' => $code === 'B-VNO-001' ? 10 : 20,
                     'name_translations' => $content['name_translations'],
+                    'schedule_summary_translations' => [
+                        'ru' => 'Занятия вечером два раза в неделю.',
+                        'en' => 'Evening classes twice per week.',
+                    ],
                 ])
                 ->only((new TrainingGroup)->getFillable());
 
             $group->fill($payload)->save();
+        }
+    }
+
+    private function seedFaqs(): void
+    {
+        $program = TrainingProgram::query()->where('slug', 'category-b-manual')->first();
+
+        $items = [
+            [
+                'faqable' => $program,
+                'sort_order' => 10,
+                'question' => 'Можно ли выбрать группу?',
+                'question_en' => 'Can I choose a group?',
+                'answer' => 'Да, менеджер поможет подобрать подходящую группу и филиал.',
+                'answer_en' => 'Yes, a manager will help you choose a suitable group and branch.',
+            ],
+            [
+                'faqable' => null,
+                'sort_order' => 20,
+                'question' => 'Как оставить заявку?',
+                'question_en' => 'How do I send an application?',
+                'answer' => 'Заполните форму на сайте, и заявка сразу появится в CRM.',
+                'answer_en' => 'Submit the website form and the lead will appear in CRM immediately.',
+            ],
+        ];
+
+        foreach ($items as $item) {
+            $payload = Faq::factory()
+                ->make([
+                    'faqable_type' => $item['faqable']?->getMorphClass(),
+                    'faqable_id' => $item['faqable']?->getKey(),
+                    'question_translations' => [
+                        'ru' => $item['question'],
+                        'en' => $item['question_en'],
+                    ],
+                    'answer_translations' => [
+                        'ru' => $item['answer'],
+                        'en' => $item['answer_en'],
+                    ],
+                    'is_active' => true,
+                    'sort_order' => $item['sort_order'],
+                ])
+                ->only((new Faq)->getFillable());
+
+            Faq::query()->updateOrCreate([
+                'faqable_type' => $payload['faqable_type'],
+                'faqable_id' => $payload['faqable_id'],
+                'sort_order' => $payload['sort_order'],
+            ], $payload);
+        }
+    }
+
+    private function seedSiteSettings(): void
+    {
+        $settings = [
+            'default_phone' => ['group' => 'contacts', 'value' => '+370 600 00000', 'is_public' => true],
+            'default_email' => ['group' => 'contacts', 'value' => 'info@drivepro.test', 'is_public' => true],
+            'default_currency' => ['group' => 'pricing', 'value' => 'EUR', 'is_public' => true],
+            'analytics_enabled' => ['group' => 'tracking', 'value' => false, 'is_public' => false],
+            'cookie_notice_enabled' => ['group' => 'tracking', 'value' => true, 'is_public' => true],
+        ];
+
+        foreach ($settings as $key => $content) {
+            $payload = SiteSetting::factory()
+                ->make([
+                    'key' => $key,
+                    'group' => $content['group'],
+                    'value' => $content['value'],
+                    'description' => 'Public website setting.',
+                    'is_public' => $content['is_public'],
+                ])
+                ->only((new SiteSetting)->getFillable());
+
+            SiteSetting::query()->updateOrCreate(['key' => $key], $payload);
         }
     }
 }

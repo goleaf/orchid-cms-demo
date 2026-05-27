@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Enums\LeadStatus;
+use App\Enums\LeadTaskStatus;
 use App\Models\Branch;
+use App\Models\LeadLostReason;
+use App\Models\LeadTag;
 use App\Models\MarketingLead;
 use App\Models\MarketingMessageTemplate;
 use App\Models\TrainingGroup;
@@ -175,6 +178,44 @@ class DrivingSchoolPlatformTest extends TestCase
         $this->assertSame(1, $lead->tasks()->count());
     }
 
+    public function test_public_callback_marks_possible_duplicate_by_normalized_phone(): void
+    {
+        Notification::fake();
+        $this->seed();
+
+        $original = MarketingLead::factory()->create([
+            'first_name' => 'Original',
+            'last_name' => 'Client',
+            'phone' => '+371 299 88776',
+            'email' => 'original@example.com',
+            'status' => LeadStatus::New,
+        ]);
+
+        $this->from(route('site.contacts'))
+            ->post(route('site.callback.store'), [
+                'first_name' => 'Duplicate',
+                'phone' => '37129988776',
+                'preferred_time' => 'Today',
+                'privacy_consent' => '1',
+                'source' => 'callback',
+                'form_name' => 'callback',
+            ])
+            ->assertRedirect(route('site.thanks'))
+            ->assertSessionHasNoErrors();
+
+        $duplicate = MarketingLead::query()
+            ->where('first_name', 'Duplicate')
+            ->firstOrFail();
+
+        $this->assertSame($original->id, $duplicate->duplicate_of_id);
+        $this->assertSame('+37129988776', $duplicate->normalized_phone);
+        $this->assertDatabaseHas('marketing_lead_activities', [
+            'marketing_lead_id' => $duplicate->id,
+            'type' => 'marked_duplicate',
+            'new_value' => (string) $original->id,
+        ]);
+    }
+
     public function test_admin_can_open_core_auto_school_sections(): void
     {
         $this->seed();
@@ -207,6 +248,7 @@ class DrivingSchoolPlatformTest extends TestCase
             'platform.marketing.campaigns' => 'Marketing campaigns',
             'platform.marketing.pipeline' => 'Воронка продаж',
             'platform.marketing.leads' => 'Лиды',
+            'platform.crm.tasks' => 'Задачи',
             'platform.marketing.templates' => 'Шаблоны сообщений',
         ])->each(function (string $label, string $routeName) use ($admin): void {
             $this->actingAs($admin)
@@ -240,6 +282,7 @@ class DrivingSchoolPlatformTest extends TestCase
             route('platform.website.branches.edit', $branch) => tkey('website.admin.branches.edit_title', [], 'ru'),
             route('platform.website.groups.create') => tkey('website.admin.groups.create_title', [], 'ru'),
             route('platform.website.groups.edit', $group) => tkey('website.admin.groups.edit_title', [], 'ru'),
+            route('platform.marketing.leads.create') => tkey('crm.leads.create_title', [], 'ru'),
         ])->each(function (string $title, string $url) use ($admin): void {
             $this->actingAs($admin)
                 ->get($url)
@@ -422,6 +465,193 @@ class DrivingSchoolPlatformTest extends TestCase
             'status' => 'open',
             'priority' => 'high',
         ]);
+    }
+
+    public function test_admin_can_create_manual_lead_from_crm_card(): void
+    {
+        $this->seed();
+
+        $admin = User::query()
+            ->where('email', 'admin@example.com')
+            ->firstOrFail();
+        $tag = LeadTag::query()
+            ->where('slug', 'hot_lead')
+            ->firstOrFail();
+
+        $this->actingAs($admin)
+            ->post(route('platform.marketing.leads.create', ['method' => 'save']), [
+                'lead' => [
+                    'first_name' => 'Manual',
+                    'last_name' => 'Lead',
+                    'email' => 'manual-lead@example.com',
+                    'source' => 'phone',
+                    'responsible_manager_id' => $admin->id,
+                    'priority' => 'urgent',
+                    'lead_score' => 85,
+                    'message' => 'Client called the office.',
+                    'internal_comment' => 'Prepare documents checklist.',
+                    'consent_accepted' => '1',
+                    'consent_text_version' => 'manual-v1',
+                    'tag_ids' => [$tag->id],
+                ],
+                'lead_status' => LeadStatus::New->value,
+                'lead_budget_eur' => '950',
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $lead = MarketingLead::query()
+            ->where('email', 'manual-lead@example.com')
+            ->firstOrFail();
+
+        $this->assertSame(LeadStatus::New, $lead->status);
+        $this->assertSame($admin->id, $lead->responsible_manager_id);
+        $this->assertSame('urgent', $lead->priority);
+        $this->assertSame(85, $lead->lead_score);
+        $this->assertSame(95000, $lead->budget_cents);
+        $this->assertTrue($lead->consent_accepted);
+        $this->assertTrue($lead->tags()->whereKey($tag->id)->exists());
+        $this->assertSame(1, $lead->statusHistories()->count());
+        $this->assertDatabaseHas('marketing_lead_activities', [
+            'marketing_lead_id' => $lead->id,
+            'type' => 'created',
+        ]);
+
+        $export = $this->actingAs($admin)
+            ->post(route('platform.marketing.leads', [
+                'method' => 'export',
+                'search' => 'manual-lead@example.com',
+            ]))
+            ->assertOk();
+
+        $this->assertStringContainsString('Manual Lead', $export->streamedContent());
+    }
+
+    public function test_admin_can_create_and_complete_lead_task_from_crm(): void
+    {
+        $this->seed();
+
+        $admin = User::query()
+            ->where('email', 'admin@example.com')
+            ->firstOrFail();
+        $lead = MarketingLead::factory()->create([
+            'first_name' => 'Task',
+            'last_name' => 'Client',
+            'responsible_manager_id' => $admin->id,
+            'status' => LeadStatus::Contacted,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('platform.marketing.leads.edit', ['lead' => $lead, 'method' => 'createTask']), [
+                'task' => [
+                    'title' => 'Call about documents',
+                    'notes' => 'Ask for medical certificate.',
+                    'assigned_to_user_id' => $admin->id,
+                    'priority' => 'high',
+                    'due_at' => now()->subHour()->format('Y-m-d\TH:i'),
+                ],
+            ])
+            ->assertRedirect(route('platform.marketing.leads.edit', $lead))
+            ->assertSessionHasNoErrors();
+
+        $task = $lead->tasks()
+            ->where('title', 'Call about documents')
+            ->firstOrFail();
+
+        $this->actingAs($admin)
+            ->get(route('platform.crm.tasks', ['segment' => 'overdue']))
+            ->assertOk()
+            ->assertSee('Call about documents')
+            ->assertSee(tkey('crm.tasks.segments.overdue'));
+
+        $this->actingAs($admin)
+            ->post(route('platform.crm.tasks', ['method' => 'complete']), [
+                'task' => $task->id,
+            ])
+            ->assertRedirect(route('platform.crm.tasks'));
+
+        $task->refresh();
+        $this->assertSame(LeadTaskStatus::Done, $task->status);
+        $this->assertNotNull($task->completed_at);
+        $this->assertDatabaseHas('marketing_lead_activities', [
+            'marketing_lead_id' => $lead->id,
+            'type' => 'task_completed',
+        ]);
+    }
+
+    public function test_admin_can_mark_leads_lost_duplicate_spam_and_prepare_enrollment(): void
+    {
+        $this->seed();
+
+        $admin = User::query()
+            ->where('email', 'admin@example.com')
+            ->firstOrFail();
+
+        $lostReason = LeadLostReason::query()
+            ->where('code', 'price')
+            ->firstOrFail();
+        $lost = MarketingLead::factory()->create(['status' => LeadStatus::New]);
+
+        $this->actingAs($admin)
+            ->post(route('platform.marketing.leads.edit', ['lead' => $lost, 'method' => 'markLost']), [
+                'lost' => [
+                    'reason' => $lostReason->code,
+                    'comment' => 'Client found a cheaper course.',
+                ],
+            ])
+            ->assertRedirect(route('platform.marketing.leads.edit', $lost))
+            ->assertSessionHasNoErrors();
+
+        $lost->refresh();
+        $this->assertSame(LeadStatus::Lost, $lost->status);
+        $this->assertSame($lostReason->code, $lost->lost_reason_code);
+        $this->assertNotNull($lost->closed_at);
+
+        $original = MarketingLead::factory()->create(['status' => LeadStatus::Contacted]);
+        $duplicate = MarketingLead::factory()->create(['status' => LeadStatus::New]);
+
+        $this->actingAs($admin)
+            ->post(route('platform.marketing.leads.edit', ['lead' => $duplicate, 'method' => 'markDuplicate']), [
+                'duplicate' => [
+                    'original_id' => $duplicate->id,
+                ],
+            ])
+            ->assertSessionHasErrors('duplicate.original_id');
+
+        $this->actingAs($admin)
+            ->post(route('platform.marketing.leads.edit', ['lead' => $duplicate, 'method' => 'markDuplicate']), [
+                'duplicate' => [
+                    'original_id' => $original->id,
+                    'comment' => 'Same phone from another form.',
+                ],
+            ])
+            ->assertRedirect(route('platform.marketing.leads.edit', $duplicate))
+            ->assertSessionHasNoErrors();
+
+        $duplicate->refresh();
+        $this->assertSame(LeadStatus::Duplicate, $duplicate->status);
+        $this->assertSame($original->id, $duplicate->duplicate_of_id);
+        $this->assertNotNull($duplicate->closed_at);
+
+        $spam = MarketingLead::factory()->create(['status' => LeadStatus::New]);
+
+        $this->actingAs($admin)
+            ->post(route('platform.marketing.leads.edit', ['lead' => $spam, 'method' => 'markSpam']))
+            ->assertRedirect(route('platform.marketing.leads.edit', $spam));
+
+        $spam->refresh();
+        $this->assertSame(LeadStatus::Spam, $spam->status);
+        $this->assertNotNull($spam->closed_at);
+
+        $ready = MarketingLead::factory()->create(['status' => LeadStatus::WaitingPayment]);
+
+        $this->actingAs($admin)
+            ->post(route('platform.marketing.leads.edit', ['lead' => $ready, 'method' => 'prepareEnrollment']))
+            ->assertRedirect(route('platform.marketing.leads.edit', $ready));
+
+        $ready->refresh();
+        $this->assertSame(LeadStatus::ReadyToEnroll, $ready->status);
+        $this->assertNull($ready->closed_at);
     }
 
     public function test_admin_can_move_lead_through_sales_pipeline(): void
