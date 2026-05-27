@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\TrainingProgram;
 use App\Services\TranslatableContentManager;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -10,6 +11,8 @@ use Illuminate\Validation\Rule;
 
 class TrainingProgramRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     public function authorize(): bool
     {
         return $this->user()?->hasAnyAccess(['platform.lms.programs', 'website.manage_courses']) ?? false;
@@ -102,7 +105,7 @@ class TrainingProgramRequest extends FormRequest
             'sort_order' => (int) ($program['sort_order'] ?? 0),
             'is_active' => (bool) ($program['is_active'] ?? false),
             ...$translations,
-            'title' => $this->fallbackScalar($translations, 'title', 'Untitled course'),
+            'title' => $this->fallbackScalar($translations, 'title', tkey('website.courses.fields.name')),
             'short_description' => $this->fallbackScalar($translations, 'short_description'),
             'description' => $this->fallbackScalar($translations, 'description'),
             'included_items' => $this->fallbackScalar($translations, 'included_items'),

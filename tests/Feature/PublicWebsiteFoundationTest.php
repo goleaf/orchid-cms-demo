@@ -49,7 +49,7 @@ class PublicWebsiteFoundationTest extends TestCase
         $this->get(route('site.prices'))
             ->assertOk()
             ->assertSee(tkey('website.prices.packages.title', [], 'ru'))
-            ->assertSee('Premium');
+            ->assertSee(PricingPackage::query()->where('slug', 'category-b-premium')->firstOrFail()->displayName());
     }
 
     public function test_enrollment_form_creates_crm_lead_with_site_tracking(): void

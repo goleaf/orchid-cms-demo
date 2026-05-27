@@ -57,7 +57,7 @@ class CreateOrUpdateCourseAction
 
         $attributes['title'] ??= $this->fallbackScalar($attributes, 'name')
             ?? $this->fallbackScalar($attributes, 'title')
-            ?? 'Untitled course';
+            ?? tkey('website.courses.fields.name');
         $attributes['description'] ??= $this->fallbackScalar($attributes, 'description');
         $attributes['short_description'] ??= $this->fallbackScalar($attributes, 'short_description');
         $attributes['included_items'] ??= $this->fallbackScalar($attributes, 'includes')

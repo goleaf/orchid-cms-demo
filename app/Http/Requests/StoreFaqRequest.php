@@ -2,15 +2,18 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Rules\TranslatedFieldRequiredRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreFaqRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     public function authorize(): bool
     {
-        return $this->user()?->hasAnyAccess(['website.manage_pages', 'website.manage_courses', 'website.manage_branches']) ?? false;
+        return $this->user()?->hasAnyAccess(['website.manage_faq', 'website.manage_pages', 'website.manage_courses', 'website.manage_branches']) ?? false;
     }
 
     /**

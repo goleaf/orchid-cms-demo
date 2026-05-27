@@ -19,10 +19,23 @@ class SeoMetadataRule implements ValidationRule
             }
 
             if (! is_scalar($item) || mb_strlen((string) $item) > $this->max) {
-                $fail(tkey('website.validation.invalid_seo_metadata'));
+                $fail(tkey($this->messageKey($attribute)));
 
                 return;
             }
         }
+    }
+
+    private function messageKey(string $attribute): string
+    {
+        if (str_contains($attribute, 'seo_title')) {
+            return 'website.validation.seo_title_too_long';
+        }
+
+        if (str_contains($attribute, 'seo_description')) {
+            return 'website.validation.seo_description_too_long';
+        }
+
+        return 'website.validation.invalid_seo_metadata';
     }
 }

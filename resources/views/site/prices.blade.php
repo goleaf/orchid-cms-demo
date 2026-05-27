@@ -36,7 +36,7 @@
                                     <td>{{ $program->license_category }}</td>
                                     <td>{{ tkey('website.course.duration_weeks', ['weeks' => $program->duration_weeks]) }}</td>
                                     <td>{{ tkey('website.prices.hours_value', ['theory' => $program->theory_hours, 'practice' => $program->practice_hours]) }}</td>
-                                    <td>{{ tkey('website.formats.'.$program->format) }}</td>
+                                    <td>{{ tkey('website.courses.formats.'.$program->format) }}</td>
                                     <td>
                                         <strong>{{ $program->priceForHumans() }}</strong>
                                         @if ($program->oldPriceForHumans())
@@ -44,7 +44,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a class="button secondary" href="{{ route('site.courses.show', $program) }}">{{ tkey('website.actions.details') }}</a>
+                                        <a class="button secondary" href="{{ route('site.courses.show', $program) }}">{{ tkey('website.actions.view_course') }}</a>
                                         <a class="button" href="{{ route('site.apply', ['program' => $program->id]) }}">{{ tkey('website.actions.apply') }}</a>
                                     </td>
                                 </tr>

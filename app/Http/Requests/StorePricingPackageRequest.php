@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\Course;
 use App\Models\CourseCategory;
 use App\Models\PricingPackage;
@@ -15,9 +16,11 @@ use Illuminate\Validation\Rule;
 
 class StorePricingPackageRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     public function authorize(): bool
     {
-        return $this->user()?->hasAnyAccess(['website.manage_courses', 'platform.lms.programs']) ?? false;
+        return $this->user()?->hasAnyAccess(['website.manage_pricing', 'website.manage_courses', 'platform.lms.programs']) ?? false;
     }
 
     /**

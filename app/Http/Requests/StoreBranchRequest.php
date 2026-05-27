@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\Branch;
 use App\Rules\SeoMetadataRule;
 use App\Rules\TranslatedFieldRequiredRule;
@@ -12,6 +13,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBranchRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     public function authorize(): bool
     {
         return $this->user()?->hasAnyAccess(['website.manage_branches', 'platform.operations.branches']) ?? false;

@@ -6,6 +6,10 @@ class WebsiteTranslationSeeder extends SystemTranslationSeeder
 {
     public function run(): void
     {
-        $this->seedEntries($this->websiteEntries());
+        $this->seedEntries([
+            ...$this->websiteEntries(),
+            ...$this->publicWebsiteModuleEntries(),
+            ...$this->websiteValidationAttributeEntries(),
+        ]);
     }
 }

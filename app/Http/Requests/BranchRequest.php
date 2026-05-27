@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\Branch;
 use App\Services\TranslatableContentManager;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -10,6 +11,8 @@ use Illuminate\Validation\Rule;
 
 class BranchRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     public function authorize(): bool
     {
         return $this->user()?->hasAnyAccess(['platform.operations.branches', 'website.manage_branches']) ?? false;
@@ -82,7 +85,7 @@ class BranchRequest extends FormRequest
             'sort_order' => (int) ($branch['sort_order'] ?? 0),
             'is_active' => (bool) ($branch['is_active'] ?? false),
             ...$translations,
-            'name' => $this->fallbackScalar($translations, 'name', 'Branch'),
+            'name' => $this->fallbackScalar($translations, 'name', tkey('website.branches.fields.name')),
             'city' => $this->fallbackScalar($translations, 'city', ''),
             'address' => $this->fallbackScalar($translations, 'address', ''),
             'description' => $this->fallbackScalar($translations, 'description'),

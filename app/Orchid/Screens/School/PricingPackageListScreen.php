@@ -38,7 +38,7 @@ class PricingPackageListScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['website.manage_courses', 'platform.lms.programs'];
+        return ['website.manage_pricing', 'website.manage_courses', 'platform.lms.programs'];
     }
 
     public function commandBar(): iterable

@@ -23,6 +23,6 @@ class EnrollmentStoreController extends Controller
 
         return redirect()
             ->route('site.thanks')
-            ->with('status', tkey('website.messages.application_received'));
+            ->with('status', tkey('website.forms.messages.success'));
     }
 }

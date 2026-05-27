@@ -114,9 +114,9 @@ class ProgramEditScreen extends Screen
                 Select::make('program.format')
                     ->title(tkey('crm.leads.fields.preferred_format'))
                     ->options([
-                        'offline' => tkey('website.formats.offline'),
-                        'online' => tkey('website.formats.online'),
-                        'mixed' => tkey('website.formats.mixed'),
+                        'offline' => tkey('website.courses.formats.offline'),
+                        'online' => tkey('website.courses.formats.online'),
+                        'mixed' => tkey('website.courses.formats.mixed'),
                     ])
                     ->required(),
                 Input::make('program.duration_weeks')

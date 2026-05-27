@@ -88,11 +88,11 @@
                                 <span class="fact">{{ tkey('website.course.duration_weeks', ['weeks' => $program->duration_weeks]) }}</span>
                                 <span class="fact">{{ tkey('website.course.theory_hours_short', ['hours' => $program->theory_hours]) }}</span>
                                 <span class="fact">{{ tkey('website.course.practice_hours_short', ['hours' => $program->practice_hours]) }}</span>
-                                <span class="fact">{{ tkey('website.formats.'.$program->format) }}</span>
+                                <span class="fact">{{ tkey('website.courses.formats.'.$program->format) }}</span>
                             </div>
                             <p class="price">{{ $program->priceForHumans() }}</p>
                             <div class="actions">
-                                <a class="button secondary" href="{{ route('site.courses.show', $program) }}">{{ tkey('website.actions.details') }}</a>
+                                <a class="button secondary" href="{{ route('site.courses.show', $program) }}">{{ tkey('website.actions.view_course') }}</a>
                                 <a class="button" href="{{ route('site.apply', ['program' => $program->id]) }}">{{ tkey('website.actions.apply') }}</a>
                             </div>
                         </article>
@@ -190,7 +190,7 @@
                 </div>
 
                 <div class="actions">
-                    <a class="button" href="{{ route('site.prices') }}">{{ tkey('website.nav.prices') }}</a>
+                    <a class="button" href="{{ route('site.prices') }}">{{ tkey('website.nav.pricing') }}</a>
                 </div>
             </div>
         </section>
@@ -239,7 +239,7 @@
 
                     <div class="inline-form">
                         <label>
-                            {{ tkey('crm.leads.fields.course') }}
+                            {{ tkey('website.forms.fields.course') }}
                             <select name="training_program_id" required>
                                 @foreach ($programs as $program)
                                     <option value="{{ $program->id }}">{{ $program->displayTitle() }}</option>
@@ -247,7 +247,7 @@
                             </select>
                         </label>
                         <label>
-                            {{ tkey('crm.leads.fields.branch') }}
+                            {{ tkey('website.forms.fields.branch') }}
                             <select name="branch_id" required>
                                 @foreach ($branches as $branch)
                                     <option value="{{ $branch->id }}">{{ $branch->displayName() }}</option>
@@ -255,23 +255,23 @@
                             </select>
                         </label>
                         <label>
-                            {{ tkey('crm.leads.fields.first_name') }}
+                            {{ tkey('website.forms.fields.full_name') }}
                             <input name="first_name" required>
                         </label>
                         <label>
-                            {{ tkey('crm.leads.fields.phone') }}
+                            {{ tkey('website.forms.fields.phone') }}
                             <input name="phone" required>
                         </label>
                         <label class="full">
                             <span class="check-row">
                                 <input type="checkbox" name="privacy_consent" value="1" required>
-                                {{ tkey('website.forms.privacy_consent') }}
+                                {{ tkey('website.forms.fields.consent') }}
                             </span>
                         </label>
                     </div>
 
                     <div class="actions">
-                        <button class="button" type="submit">{{ tkey('website.actions.submit_application') }}</button>
+                        <button class="button" type="submit">{{ tkey('website.actions.submit') }}</button>
                     </div>
                 </form>
             </div>

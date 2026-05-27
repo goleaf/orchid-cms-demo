@@ -48,9 +48,9 @@ class GetEnrollmentFormAction
                 ->orderBy('name')
                 ->get(),
             'formats' => [
-                'offline' => tkey('website.formats.offline'),
-                'online' => tkey('website.formats.online'),
-                'mixed' => tkey('website.formats.mixed'),
+                'offline' => tkey('website.courses.formats.offline'),
+                'online' => tkey('website.courses.formats.online'),
+                'mixed' => tkey('website.courses.formats.hybrid'),
             ],
             'languages' => $languageOptions,
             'tracking' => [

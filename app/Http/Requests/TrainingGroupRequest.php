@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Enums\GroupStatus;
 use App\Models\Branch;
 use App\Models\Instructor;
@@ -14,6 +15,8 @@ use Illuminate\Validation\Rule;
 
 class TrainingGroupRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     public function authorize(): bool
     {
         return $this->user()?->hasAnyAccess(['platform.operations.groups', 'website.manage_groups']) ?? false;
@@ -74,7 +77,7 @@ class TrainingGroupRequest extends FormRequest
             'classroom' => $group['classroom'] ?? null,
             'is_visible_on_site' => (bool) ($group['is_visible_on_site'] ?? false),
             ...$translations,
-            'name' => $this->fallbackScalar($translations, 'name', 'Training group'),
+            'name' => $this->fallbackScalar($translations, 'name', tkey('website.groups.fields.name')),
         ];
     }
 

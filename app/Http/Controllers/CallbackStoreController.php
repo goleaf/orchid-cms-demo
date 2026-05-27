@@ -22,6 +22,6 @@ class CallbackStoreController extends Controller
 
         return redirect()
             ->route('site.thanks')
-            ->with('status', tkey('website.messages.callback_received'));
+            ->with('status', tkey('website.forms.messages.callback_success'));
     }
 }

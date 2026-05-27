@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Rules\ConsentAcceptedRule;
 use App\Rules\ValidLocaleRule;
 use App\Rules\ValidPublicBranchRule;
@@ -11,6 +12,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCallbackLeadRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     /**
      * Determine if the user is authorized to make this request.
      */

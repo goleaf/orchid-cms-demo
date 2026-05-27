@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\Branch;
 use App\Models\Course;
 use App\Models\Instructor;
@@ -13,9 +14,11 @@ use Illuminate\Validation\Rule;
 
 class StoreTestimonialRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     public function authorize(): bool
     {
-        return $this->user()?->hasAnyAccess(['website.manage_pages', 'website.manage_courses', 'website.manage_branches']) ?? false;
+        return $this->user()?->hasAnyAccess(['website.manage_testimonials', 'website.manage_pages', 'website.manage_courses', 'website.manage_branches']) ?? false;
     }
 
     /**

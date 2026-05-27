@@ -18,7 +18,7 @@ class CreateOrUpdateBranchAction
             ['name'],
             ['description', 'address', 'city'],
         );
-        $attributes['name'] ??= $this->fallbackScalar($attributes, 'name', 'Branch');
+        $attributes['name'] ??= $this->fallbackScalar($attributes, 'name', tkey('website.branches.fields.name'));
         $attributes['city'] ??= $this->fallbackScalar($attributes, 'city', '');
         $attributes['address'] ??= $this->fallbackScalar($attributes, 'address', '');
         $attributes['description'] ??= $this->fallbackScalar($attributes, 'description');

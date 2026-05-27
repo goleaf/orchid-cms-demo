@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\LandingPage;
 use App\Services\TranslatableContentManager;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -10,6 +11,8 @@ use Illuminate\Validation\Rule;
 
 class LandingPageRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -75,9 +78,9 @@ class LandingPageRequest extends FormRequest
         return [
             ...$validated['page'],
             ...$translations,
-            'title' => $this->fallbackScalar($translations, 'title', 'Home'),
+            'title' => $this->fallbackScalar($translations, 'title', tkey('website.nav.home')),
             'eyebrow' => $this->fallbackScalar($translations, 'eyebrow'),
-            'hero_title' => $this->fallbackScalar($translations, 'hero_title', 'Home'),
+            'hero_title' => $this->fallbackScalar($translations, 'hero_title', tkey('website.nav.home')),
             'hero_summary' => $this->fallbackScalar($translations, 'hero_summary', ''),
             'about_heading' => $this->fallbackScalar($translations, 'about_heading', ''),
             'about_body' => $this->fallbackScalar($translations, 'about_body', ''),

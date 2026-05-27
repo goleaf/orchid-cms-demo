@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\CourseCategory;
 use App\Rules\SeoMetadataRule;
 use App\Rules\TranslatedFieldRequiredRule;
@@ -12,9 +13,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCourseCategoryRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     public function authorize(): bool
     {
-        return $this->user()?->hasAnyAccess(['website.manage_courses', 'platform.lms.programs']) ?? false;
+        return $this->user()?->hasAnyAccess(['website.manage_course_categories', 'website.manage_courses', 'platform.lms.programs']) ?? false;
     }
 
     /**

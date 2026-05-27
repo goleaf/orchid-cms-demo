@@ -44,8 +44,8 @@ class DrivingSchoolPlatformTest extends TestCase
             ->firstOrFail();
 
         collect([
-            route('site.courses.show', $program) => 'Category B Manual',
-            route('site.categories.show', $program) => 'Category B Manual',
+            route('site.courses.show', $program) => $program->displayTitle(),
+            route('site.categories.show', $program) => $program->displayTitle(),
             route('site.apply') => tkey('website.apply.title', [], 'ru'),
             route('site.prices') => tkey('website.prices.title', [], 'ru'),
             route('site.instructors') => 'Инструкторы автошколы',

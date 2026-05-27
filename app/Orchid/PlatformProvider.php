@@ -48,7 +48,7 @@ class PlatformProvider extends OrchidServiceProvider
             Menu::make(tkey('menu.website.pricing'))
                 ->icon('bs.cash-coin')
                 ->route('platform.website.pricing')
-                ->permission('website.manage_courses'),
+                ->permission('website.manage_pricing'),
 
             Menu::make(tkey('menu.website.branches'))
                 ->icon('bs.building')
@@ -241,12 +241,17 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('website.view', tkey('permissions.website.view'))
                 ->addPermission('website.manage_pages', tkey('permissions.website.manage_pages'))
                 ->addPermission('website.manage_courses', tkey('permissions.website.manage_courses'))
+                ->addPermission('website.manage_course_categories', tkey('permissions.website.manage_course_categories'))
+                ->addPermission('website.manage_pricing', tkey('permissions.website.manage_pricing'))
                 ->addPermission('website.manage_branches', tkey('permissions.website.manage_branches'))
                 ->addPermission('website.manage_groups', tkey('permissions.website.manage_groups'))
+                ->addPermission('website.manage_faq', tkey('permissions.website.manage_faq'))
+                ->addPermission('website.manage_testimonials', tkey('permissions.website.manage_testimonials'))
                 ->addPermission('website.manage_settings', tkey('permissions.website.manage_settings'))
                 ->addPermission('website.view_leads', tkey('permissions.website.view_leads'))
                 ->addPermission('website.update_leads', tkey('permissions.website.update_leads'))
-                ->addPermission('website.view_marketing', tkey('permissions.website.view_marketing')),
+                ->addPermission('website.view_marketing', tkey('permissions.website.view_marketing'))
+                ->addPermission('website.preview', tkey('permissions.website.preview')),
 
             ItemPermission::group(tkey('permissions.groups.operations'))
                 ->addPermission('platform.operations.branches', tkey('permissions.operations.branches'))

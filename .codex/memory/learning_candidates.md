@@ -1220,3 +1220,54 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T20:10:33+00:00
+
+```json
+{
+  "ts": "2026-05-27T20:10:33+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6afb-a520-7e62-b569-ba9d577cb041",
+  "branch": "main",
+  "changed_file_count": 42,
+  "changed_file_groups": {
+    "code": 34,
+    "orchid": 4,
+    "tests": 4
+  },
+  "changed_files_sample": [
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "app/Actions/GetEnrollmentFormAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/BranchRequest.php",
+    "app/Http/Requests/Concerns/",
+    "app/Http/Requests/LandingPageRequest.php",
+    "app/Http/Requests/PricingPackageRequest.php",
+    "app/Http/Requests/StoreBranchRequest.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/StoreCourseRequest.php",
+    "app/Http/Requests/StoreFaqRequest.php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/StoreSitePageRequest.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/TrainingGroupRequest.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Orchid/PlatformProvider.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Rules/SeoMetadataRule.php",
+    "app/Rules/ValidSlugRule.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

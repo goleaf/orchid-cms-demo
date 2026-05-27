@@ -35,7 +35,7 @@ class ValidSlugRule implements ValidationRule
             ->exists();
 
         if ($exists) {
-            $fail(tkey('website.validation.invalid_slug'));
+            $fail(tkey('website.validation.slug_already_exists'));
         }
     }
 }

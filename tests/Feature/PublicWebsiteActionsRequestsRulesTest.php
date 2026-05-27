@@ -288,7 +288,7 @@ class PublicWebsiteActionsRequestsRulesTest extends TestCase
             ['slug', ['slug' => 'Invalid Slug'], ['slug' => [new ValidSlugRule]], 'website.validation.invalid_slug'],
             ['price', ['price' => '-1'], ['price' => [new ValidPriceRule]], 'website.validation.invalid_price'],
             ['locale', ['locale' => 'zz'], ['locale' => [new ValidLocaleRule]], 'website.validation.invalid_locale'],
-            ['seo_title', ['seo_title' => str_repeat('A', 71)], ['seo_title' => [new SeoMetadataRule(70)]], 'website.validation.invalid_seo_metadata'],
+            ['seo_title', ['seo_title' => str_repeat('A', 71)], ['seo_title' => [new SeoMetadataRule(70)]], 'website.validation.seo_title_too_long'],
             [
                 'publish',
                 ['publish' => true, 'slug' => '', 'title_translations' => [], 'content_translations' => []],

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Rules\ConsentAcceptedRule;
 use App\Rules\PhoneOrEmailRequiredRule;
 use App\Rules\ValidLocaleRule;
@@ -15,6 +16,8 @@ use Illuminate\Validation\Rules\File;
 
 class StoreWebsiteLeadRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     public function authorize(): bool
     {
         return true;

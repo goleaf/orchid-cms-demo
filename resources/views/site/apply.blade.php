@@ -5,8 +5,8 @@
         <section class="section dark">
             <div class="section-inner">
                 <p class="kicker">{{ tkey('website.apply.kicker') }}</p>
-                <h1>{{ tkey('website.apply.title') }}</h1>
-                <p class="lead">{{ tkey('website.apply.lead') }}</p>
+                <h1>{{ tkey('website.forms.apply.title') }}</h1>
+                <p class="lead">{{ tkey('website.forms.apply.subtitle') }}</p>
             </div>
         </section>
 
@@ -32,7 +32,7 @@
 
                     <div class="form-grid">
                         <label>
-                            {{ tkey('crm.leads.fields.course') }}
+                            {{ tkey('website.forms.fields.course') }}
                             <select name="training_program_id" required>
                                 @foreach ($programs as $program)
                                     <option value="{{ $program->id }}" @selected((string) old('training_program_id', $tracking['program']) === (string) $program->id)>
@@ -44,7 +44,7 @@
                         </label>
 
                         <label>
-                            {{ tkey('crm.leads.fields.branch') }}
+                            {{ tkey('website.forms.fields.branch') }}
                             <select name="branch_id" required>
                                 @foreach ($branches as $branch)
                                     <option value="{{ $branch->id }}" @selected((string) old('branch_id', $tracking['branch']) === (string) $branch->id)>
@@ -56,7 +56,7 @@
                         </label>
 
                         <label>
-                            {{ tkey('crm.leads.fields.training_group') }}
+                            {{ tkey('website.forms.fields.training_group') }}
                             <select name="training_group_id">
                                 <option value="">{{ tkey('website.forms.manager_select_group') }}</option>
                                 @foreach ($groups as $group)
@@ -114,19 +114,19 @@
                         </label>
 
                         <label>
-                            {{ tkey('crm.leads.fields.email') }}
+                            {{ tkey('website.forms.fields.email') }}
                             <input type="email" name="email" value="{{ old('email') }}">
                             @error('email') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label>
-                            {{ tkey('crm.leads.fields.phone') }}
+                            {{ tkey('website.forms.fields.phone') }}
                             <input name="phone" value="{{ old('phone') }}">
                             @error('phone') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label>
-                            {{ tkey('crm.leads.fields.preferred_messenger') }}
+                            {{ tkey('website.forms.fields.preferred_messenger') }}
                             <input name="messenger" value="{{ old('messenger') }}" placeholder="{{ tkey('website.forms.messenger_placeholder') }}">
                             @error('messenger') <span class="error">{{ $message }}</span> @enderror
                         </label>
@@ -138,7 +138,7 @@
                         </label>
 
                         <label>
-                            {{ tkey('crm.leads.fields.preferred_time') }}
+                            {{ tkey('website.forms.fields.preferred_time') }}
                             <input name="preferred_time" value="{{ old('preferred_time') }}" placeholder="{{ tkey('website.forms.preferred_time_placeholder') }}">
                             @error('preferred_time') <span class="error">{{ $message }}</span> @enderror
                         </label>
@@ -157,7 +157,7 @@
                         </label>
 
                         <label class="full">
-                            {{ tkey('crm.leads.fields.comment') }}
+                            {{ tkey('website.forms.fields.comment') }}
                             <textarea name="message">{{ old('message') }}</textarea>
                             @error('message') <span class="error">{{ $message }}</span> @enderror
                         </label>
@@ -165,14 +165,14 @@
                         <label class="full">
                             <span class="check-row">
                                 <input type="checkbox" name="privacy_consent" value="1" @checked(old('privacy_consent')) required>
-                                {{ tkey('website.forms.privacy_consent') }}
+                                {{ tkey('website.forms.fields.consent') }}
                             </span>
                             @error('privacy_consent') <span class="error">{{ $message }}</span> @enderror
                         </label>
                     </div>
 
                     <div class="actions">
-                        <button class="button" type="submit">{{ tkey('website.actions.submit_application') }}</button>
+                        <button class="button" type="submit">{{ tkey('website.actions.submit') }}</button>
                     </div>
                 </form>
             </div>

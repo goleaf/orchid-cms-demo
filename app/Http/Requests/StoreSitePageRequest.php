@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\SitePage;
 use App\Rules\PublishedPageRequirementRule;
 use App\Rules\SeoMetadataRule;
@@ -14,6 +15,8 @@ use Illuminate\Validation\Rule;
 
 class StoreSitePageRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     public function authorize(): bool
     {
         return $this->user()?->hasAnyAccess(['website.manage_pages', 'website.manage_settings']) ?? false;

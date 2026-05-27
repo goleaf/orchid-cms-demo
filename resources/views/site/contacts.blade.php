@@ -29,7 +29,7 @@
                                     <span class="fact">{{ tkey('website.branches.vehicles_count', ['count' => $branch->vehicles_count]) }}</span>
                                 </div>
                                 <div class="actions">
-                                    <a class="button secondary" href="{{ route('site.branches.show', ['branch' => $branch->slug]) }}">{{ tkey('website.actions.details') }}</a>
+                                    <a class="button secondary" href="{{ route('site.branches.show', ['branch' => $branch->slug]) }}">{{ tkey('website.actions.open') }}</a>
                                 </div>
                             </article>
                         @empty
@@ -45,8 +45,8 @@
                             <strong>{{ tkey('website.contacts.map_placeholder') }}</strong>
                         </div>
                         <div id="callback" class="card mt-18">
-                            <h3>{{ tkey('website.callback.title') }}</h3>
-                            <p class="meta">{{ tkey('website.callback.lead') }}</p>
+                            <h3>{{ tkey('website.forms.callback.title') }}</h3>
+                            <p class="meta">{{ tkey('website.forms.callback.subtitle') }}</p>
                             <form method="POST" action="{{ route('site.callback.store') }}" class="form-grid">
                                 @csrf
                                 <input type="hidden" name="source" value="callback">
@@ -59,30 +59,30 @@
                                     @error('first_name') <span class="error">{{ $message }}</span> @enderror
                                 </label>
                                 <label>
-                                    {{ tkey('crm.leads.fields.phone') }}
+                                    {{ tkey('website.forms.fields.phone') }}
                                     <input name="phone" value="{{ old('phone') }}" required>
                                     @error('phone') <span class="error">{{ $message }}</span> @enderror
                                 </label>
                                 <label class="full">
-                                    {{ tkey('crm.leads.fields.preferred_time') }}
+                                    {{ tkey('website.forms.fields.callback_time') }}
                                     <input name="preferred_time" value="{{ old('preferred_time') }}" placeholder="{{ tkey('website.forms.preferred_time_placeholder') }}">
                                     @error('preferred_time') <span class="error">{{ $message }}</span> @enderror
                                 </label>
                                 <label class="full">
-                                    {{ tkey('crm.leads.fields.comment') }}
+                                    {{ tkey('website.forms.fields.comment') }}
                                     <textarea name="message">{{ old('message') }}</textarea>
                                     @error('message') <span class="error">{{ $message }}</span> @enderror
                                 </label>
                                 <label class="full">
                                     <span class="check-row">
                                         <input type="checkbox" name="privacy_consent" value="1" @checked(old('privacy_consent')) required>
-                                        {{ tkey('website.forms.privacy_consent') }}
+                                        {{ tkey('website.forms.fields.consent') }}
                                     </span>
                                     @error('privacy_consent') <span class="error">{{ $message }}</span> @enderror
                                 </label>
 
                                 <div class="actions full">
-                                    <button class="button" type="submit">{{ tkey('website.actions.request_callback') }}</button>
+                                    <button class="button" type="submit">{{ tkey('website.actions.callback') }}</button>
                                 </div>
                             </form>
                         </div>

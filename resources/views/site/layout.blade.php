@@ -557,9 +557,9 @@
         <div class="site-nav-inner">
             <a class="brand" href="{{ route('site.home') }}">{{ tkey('website.brand.name') }}</a>
             <div class="nav-links">
-                <a href="{{ route('site.home') }}#programs">{{ tkey('website.nav.programs') }}</a>
-                <a href="{{ route('site.prices') }}">{{ tkey('website.nav.prices') }}</a>
-                <a href="{{ route('site.apply') }}">{{ tkey('website.actions.apply') }}</a>
+                <a href="{{ route('site.home') }}#programs">{{ tkey('website.nav.courses') }}</a>
+                <a href="{{ route('site.prices') }}">{{ tkey('website.nav.pricing') }}</a>
+                <a href="{{ route('site.apply') }}">{{ tkey('website.nav.apply') }}</a>
                 <a href="{{ route('site.instructors') }}">{{ tkey('website.nav.instructors') }}</a>
                 <a href="{{ route('site.fleet') }}">{{ tkey('website.nav.fleet') }}</a>
                 <a href="{{ route('site.reviews') }}">{{ tkey('website.nav.reviews') }}</a>

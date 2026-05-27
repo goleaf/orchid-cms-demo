@@ -10,7 +10,7 @@
                 <span class="fact">{{ tkey('website.course.duration_weeks', ['weeks' => $program->duration_weeks]) }}</span>
                 <span class="fact">{{ tkey('website.course.theory_hours', ['hours' => $program->theory_hours]) }}</span>
                 <span class="fact">{{ tkey('website.course.practice_hours', ['hours' => $program->practice_hours]) }}</span>
-                <span class="fact">{{ tkey('website.formats.'.$program->format) }}</span>
+                <span class="fact">{{ tkey('website.courses.formats.'.$program->format) }}</span>
                 <span class="fact">{{ $program->priceForHumans() }}</span>
             </div>
             <div class="actions">

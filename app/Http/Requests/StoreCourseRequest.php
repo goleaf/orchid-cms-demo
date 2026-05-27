@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\Course;
 use App\Models\CourseCategory;
 use App\Rules\SeoMetadataRule;
@@ -15,6 +16,8 @@ use Illuminate\Validation\Rule;
 
 class StoreCourseRequest extends FormRequest
 {
+    use HasWebsiteValidationAttributes;
+
     public function authorize(): bool
     {
         return $this->user()?->hasAnyAccess(['website.manage_courses', 'platform.lms.programs']) ?? false;
