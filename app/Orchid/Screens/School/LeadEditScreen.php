@@ -229,8 +229,12 @@ class LeadEditScreen extends Screen
 
     public function name(): ?string
     {
+        if (! ($this->lead?->exists ?? false)) {
+            return tkey('crm.leads.create_title');
+        }
+
         return tkey('crm.leads.edit_title', [
-            'name' => $this->lead?->fullName() ?? tkey('crm.leads.fallback.lead'),
+            'name' => $this->lead->fullName(),
         ]);
     }
 
@@ -737,7 +741,9 @@ class LeadEditScreen extends Screen
                 'reason' => tkey('crm.activities.reasons.manual_lead_created'),
                 'changed_at' => now(),
             ]);
+        }
 
+        if ($isNew) {
             app(RecordLeadActivityAction::class)->handle(
                 $lead->refresh(),
                 $request->user(),
