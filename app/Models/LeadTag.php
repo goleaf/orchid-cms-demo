@@ -35,7 +35,12 @@ class LeadTag extends Model
 
     public function leads(): BelongsToMany
     {
-        return $this->belongsToMany(MarketingLead::class, 'lead_tag_marketing_lead')
+        return $this->belongsToMany(
+            MarketingLead::class,
+            'lead_tag_marketing_lead',
+            'lead_tag_id',
+            'marketing_lead_id',
+        )
             ->withTimestamps();
     }
 

@@ -55,6 +55,7 @@ class LeadDictionaryEditScreen extends Screen
             'dictionary' => $dictionary,
             'item' => $item,
             'name_translations' => $item->getTranslations('name'),
+            'description_translations' => $item->getTranslations('description'),
         ];
     }
 
@@ -116,6 +117,11 @@ class LeadDictionaryEditScreen extends Screen
                     ->title(tkey('crm.dictionaries.fields.is_active'))
                     ->sendTrueOrFalse(),
 
+                Switcher::make('item.is_public')
+                    ->title(tkey('crm.dictionaries.fields.is_public'))
+                    ->sendTrueOrFalse()
+                    ->canSee($this->dictionary === 'statuses'),
+
                 Switcher::make('item.is_default')
                     ->title(tkey('crm.dictionaries.fields.is_default'))
                     ->sendTrueOrFalse()
@@ -136,6 +142,16 @@ class LeadDictionaryEditScreen extends Screen
                     ->sendTrueOrFalse()
                     ->canSee($this->dictionary === 'statuses'),
 
+                Switcher::make('item.is_duplicate')
+                    ->title(tkey('crm.dictionaries.fields.is_duplicate'))
+                    ->sendTrueOrFalse()
+                    ->canSee($this->dictionary === 'statuses'),
+
+                Switcher::make('item.is_spam')
+                    ->title(tkey('crm.dictionaries.fields.is_spam'))
+                    ->sendTrueOrFalse()
+                    ->canSee($this->dictionary === 'statuses'),
+
                 Input::make('item.sort_order')
                     ->type('number')
                     ->title(tkey('crm.dictionaries.fields.sort_order'))
@@ -145,6 +161,11 @@ class LeadDictionaryEditScreen extends Screen
 
             TranslatableFields::input('name', 'crm.dictionaries.fields.name_translations', [
                 'maxlength' => 255,
+            ]),
+
+            TranslatableFields::textarea('description', 'crm.dictionaries.fields.description_translations', [
+                'rows' => 3,
+                'maxlength' => 1000,
             ]),
         ];
     }
@@ -178,12 +199,16 @@ class LeadDictionaryEditScreen extends Screen
             'item.name' => ['nullable', 'string', 'max:255'],
             'item.color' => ['nullable', 'string', 'max:32'],
             'item.is_active' => ['nullable', 'boolean'],
+            'item.is_public' => ['nullable', 'boolean'],
             'item.is_default' => ['nullable', 'boolean'],
             'item.is_final' => ['nullable', 'boolean'],
             'item.is_success' => ['nullable', 'boolean'],
             'item.is_lost' => ['nullable', 'boolean'],
+            'item.is_duplicate' => ['nullable', 'boolean'],
+            'item.is_spam' => ['nullable', 'boolean'],
             'item.sort_order' => ['required', 'integer', 'min:0'],
             ...$translations->validationRules(['name'], ['nullable', 'string', 'max:255']),
+            ...$translations->validationRules(['description'], ['nullable', 'string', 'max:1000']),
         ]);
 
         $item->fill([
@@ -191,6 +216,7 @@ class LeadDictionaryEditScreen extends Screen
             'name' => $data['item']['name'] ?? null,
             'color' => $data['item']['color'] ?? null,
             ...$translations->extract($request, ['name']),
+            ...$translations->extract($request, ['description']),
             'is_active' => (bool) ($data['item']['is_active'] ?? false),
             'sort_order' => (int) $data['item']['sort_order'],
         ]);
@@ -201,10 +227,19 @@ class LeadDictionaryEditScreen extends Screen
                 'is_final' => (bool) ($data['item']['is_final'] ?? false),
                 'is_success' => (bool) ($data['item']['is_success'] ?? false),
                 'is_lost' => (bool) ($data['item']['is_lost'] ?? false),
+                'is_public' => (bool) ($data['item']['is_public'] ?? false),
+                'is_duplicate' => (bool) ($data['item']['is_duplicate'] ?? false),
+                'is_spam' => (bool) ($data['item']['is_spam'] ?? false),
             ]);
         }
 
         $item->save();
+
+        if ($dictionary === 'statuses' && (bool) $item->getAttribute('is_default')) {
+            $modelClass::query()
+                ->whereKeyNot($item->getKey())
+                ->update(['is_default' => false]);
+        }
 
         Toast::info(tkey('crm.dictionaries.messages.saved'));
 

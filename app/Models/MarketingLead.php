@@ -220,28 +220,33 @@ class MarketingLead extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(LeadTag::class, 'lead_tag_marketing_lead')
+        return $this->belongsToMany(
+            LeadTag::class,
+            'lead_tag_marketing_lead',
+            'marketing_lead_id',
+            'lead_tag_id',
+        )
             ->withTimestamps();
     }
 
     public function activities(): HasMany
     {
-        return $this->hasMany(MarketingLeadActivity::class);
+        return $this->hasMany(MarketingLeadActivity::class, 'marketing_lead_id');
     }
 
     public function documents(): HasMany
     {
-        return $this->hasMany(MarketingLeadDocument::class);
+        return $this->hasMany(MarketingLeadDocument::class, 'marketing_lead_id');
     }
 
     public function comments(): HasMany
     {
-        return $this->hasMany(MarketingLeadComment::class);
+        return $this->hasMany(MarketingLeadComment::class, 'marketing_lead_id');
     }
 
     public function communications(): HasMany
     {
-        return $this->hasMany(MarketingLeadCommunication::class);
+        return $this->hasMany(MarketingLeadCommunication::class, 'marketing_lead_id');
     }
 
     public function callLogs(): HasMany
@@ -251,12 +256,12 @@ class MarketingLead extends Model
 
     public function statusHistories(): HasMany
     {
-        return $this->hasMany(MarketingLeadStatusHistory::class);
+        return $this->hasMany(MarketingLeadStatusHistory::class, 'marketing_lead_id');
     }
 
     public function tasks(): HasMany
     {
-        return $this->hasMany(MarketingLeadTask::class);
+        return $this->hasMany(MarketingLeadTask::class, 'marketing_lead_id');
     }
 
     public function openTasks(): HasMany

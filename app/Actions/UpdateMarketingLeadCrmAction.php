@@ -27,6 +27,7 @@ class UpdateMarketingLeadCrmAction
             'training_group_id' => $data['training_group_id'] ?? null,
             'instructor_id' => $data['instructor_id'] ?? null,
             'first_name' => $data['first_name'],
+            'middle_name' => $data['middle_name'] ?? null,
             'last_name' => $data['last_name'] ?? null,
             'email' => $data['email'] ?? null,
             'phone' => $data['phone'] ?? null,
@@ -38,6 +39,8 @@ class UpdateMarketingLeadCrmAction
             'preferred_format' => $data['preferred_format'] ?? null,
             'preferred_language' => $data['preferred_language'] ?? null,
             'preferred_time' => $data['preferred_time'] ?? null,
+            'desired_start_date' => $data['desired_start_date'] ?? null,
+            'preferred_gearbox' => $data['preferred_gearbox'] ?? null,
             'budget_cents' => filled($data['budget_eur'] ?? null)
                 ? (int) round(((float) $data['budget_eur']) * 100)
                 : null,

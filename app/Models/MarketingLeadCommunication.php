@@ -13,12 +13,15 @@ class MarketingLeadCommunication extends Model
     use HasFactory;
 
     private const CALL_RESULTS = [
+        'reached',
         'answered',
         'no_answer',
         'wrong_number',
+        'call_back_later',
         'callback_requested',
         'thinking',
         'ready_to_pay',
+        'refused',
         'lost',
     ];
 
@@ -51,6 +54,11 @@ class MarketingLeadCommunication extends Model
     public function marketingLead(): BelongsTo
     {
         return $this->belongsTo(MarketingLead::class);
+    }
+
+    public function lead(): BelongsTo
+    {
+        return $this->belongsTo(Lead::class, 'marketing_lead_id');
     }
 
     public function user(): BelongsTo

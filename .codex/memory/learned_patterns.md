@@ -17,3 +17,7 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - CRM Block 2 admin write operations use dedicated Actions plus Form Requests with tkey validation messages; verify with DrivingSchoolPlatformTest, CrmLocalizationTest, and SuperadminRoleTest before the full suite.
   Evidence: Implemented CRM lead create/edit, task, communication, duplicate/lost/status, export requests/actions; php artisan test passed with 55 tests and 479 assertions.
   Added: 2026-05-27T18:38:55+00:00
+
+- CRM Lead compatibility model maps to marketing_leads; lead-owned hasMany and tag pivot relations must pin marketing_lead_id explicitly so Lead does not make Eloquent guess lead_id.
+  Evidence: CrmLeadDatabaseFoundationTest and DrivingSchoolPlatformTest failed with guessed lead_id until MarketingLead relations specified marketing_lead_id; full php artisan test then passed.
+  Added: 2026-05-27T18:59:21+00:00

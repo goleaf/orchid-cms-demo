@@ -1091,3 +1091,55 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T19:00:31+00:00
+
+```json
+{
+  "ts": "2026-05-27T19:00:31+00:00",
+  "event": "Stop",
+  "session_id": "019e6a96-6279-73a2-bd62-e85432689ea8",
+  "turn_id": "019e6abd-7063-71c2-9233-7d582e897b02",
+  "branch": "main",
+  "changed_file_count": 35,
+  "changed_file_groups": {
+    "code": 28,
+    "models": 4,
+    "orchid": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/StoreBranchRequest.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/StoreCourseRequest.php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/StoreFaqRequest.php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/StoreSitePageRequest.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/UpdateBranchRequest.php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/UpdateCourseRequest.php",
+    "app/Http/Requests/UpdateFaqRequest.php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/UpdateSitePageRequest.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Lead.php",
+    "app/Models/LeadTag.php",
+    "app/Models/MarketingLead.php",
+    "app/Models/MarketingLeadCommunication.php",
+    "[REDACTED_SECRET].php",
+    "app/Rules/PublishedPageRequirementRule.php",
+    "codex/memory/learned_patterns.md",
+    "database/factories/LeadTaskFactory.php",
+    "database/seeders/CrmDictionarySeeder.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

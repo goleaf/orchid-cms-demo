@@ -1,0 +1,40 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Enums\LeadTaskPriority;
+use App\Enums\LeadTaskStatus;
+use App\Models\Lead;
+use App\Models\LeadTask;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<LeadTask>
+ */
+class LeadTaskFactory extends Factory
+{
+    protected $model = LeadTask::class;
+
+    public function definition(): array
+    {
+        $title = $this->faker->sentence(5);
+
+        return [
+            'marketing_lead_id' => Lead::factory(),
+            'assigned_to_user_id' => null,
+            'created_by_user_id' => null,
+            'title' => $title,
+            'title_translations' => [
+                'ru' => $title,
+                'en' => $title,
+            ],
+            'description_translations' => null,
+            'status' => LeadTaskStatus::Open,
+            'priority' => LeadTaskPriority::Normal,
+            'due_at' => now()->addHours($this->faker->numberBetween(1, 48)),
+            'completed_at' => null,
+            'cancelled_at' => null,
+            'notes' => $this->faker->optional()->sentence(),
+        ];
+    }
+}

@@ -26,6 +26,34 @@ Orchid exposes website management under `platform.website.*` routes:
 
 Access is controlled by `website.*` permissions and remains compatible with the existing local superadmin role.
 
+## Actions And Requests
+
+Public enrollment and callback submissions go through Form Requests and Actions. Controllers and Orchid screens should stay thin and call Actions for business operations.
+
+Public lead intake actions:
+
+- `CreateWebsiteLeadAction`
+- `CreateCallbackLeadAction`
+- `CaptureUtmDataAction`
+- `StoreUtmInSessionAction`
+- `NormalizePhoneAction`
+- `ResolveWebsiteCourseContextAction`
+
+Public content management actions:
+
+- `CreateOrUpdateSitePageAction`
+- `CreateOrUpdateCourseAction`
+- `CreateOrUpdateCourseCategoryAction`
+- `CreateOrUpdatePricingPackageAction`
+- `CreateOrUpdateBranchAction`
+- `CreateOrUpdateFaqAction`
+- `CreateOrUpdateTestimonialAction`
+- `UpdateSiteSettingsAction`
+- `GenerateSeoMetadataAction`
+- publish/hide Actions for pages, courses, and branches.
+
+Validation uses Form Requests plus custom Rules for public catalog visibility, consent, locale availability, required default translations, slug uniqueness, SEO metadata length, prices, and publish readiness.
+
 ## Lead Intake
 
 Public enrollment and callback submissions create `MarketingLead` records. The actions also create CRM activity records:
@@ -36,7 +64,7 @@ Public enrollment and callback submissions create `MarketingLead` records. The a
 - follow-up task,
 - manager notification.
 
-The intake stores UTM fields, landing page, form page, form name, locale, IP address, and user agent. Tracking is captured from public GET requests and merged into POST submissions through `App\Support\Site\SiteTracking`.
+The intake stores UTM fields, landing page, form page, form name, locale, IP address, and user agent. Tracking is captured from public GET requests by `StoreUtmInSessionAction` and merged into forms by `CaptureUtmDataAction`.
 
 ## Multilingual Content
 
@@ -65,4 +93,4 @@ Existing school tables are extended with UUIDs, multilingual website fields, sit
 
 ## Tests
 
-The public website foundation is covered by `tests/Feature/PublicWebsiteFoundationTest.php`, `tests/Feature/PublicWebsiteDatabaseFoundationTest.php`, and updated platform coverage in `tests/Feature/DrivingSchoolPlatformTest.php`.
+The public website foundation is covered by `tests/Feature/PublicWebsiteFoundationTest.php`, `tests/Feature/PublicWebsiteDatabaseFoundationTest.php`, `tests/Feature/PublicWebsiteActionsRequestsRulesTest.php`, and updated platform coverage in `tests/Feature/DrivingSchoolPlatformTest.php`.

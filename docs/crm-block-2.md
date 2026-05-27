@@ -36,6 +36,26 @@ CRM write operations use Actions and Form Requests. Custom validation Rules hand
 
 Seeded dictionaries are built through model factories while preserving update-or-create behavior for stable system records. Tests use factories for CRM records and seeded dictionaries for localized labels.
 
+## Database Foundation
+
+The canonical lead table is `marketing_leads`. The `Lead` model is a compatibility model that maps to this table so the public website and CRM do not create duplicate lead storage.
+
+CRM dictionaries use:
+
+- `lead_statuses`
+- `lead_sources`
+- `lead_lost_reasons`
+- `lead_tags`
+
+Lead timeline and work tables use:
+
+- `marketing_lead_activities`
+- `marketing_lead_tasks`
+- `marketing_lead_communications` for call logs and other communication records
+- `lead_tag_marketing_lead` for lead tags
+
+The requested CRM concepts are mapped onto existing local-driving-school columns where they already exist: `status` and `source` store dictionary codes, `responsible_manager_id` stores the manager, `lost_reason_code` stores the lost reason, `training_program_id` stores the course, `budget_cents` stores money safely, and `converted_student_profile_id` prepares future student conversion.
+
 ## Permissions
 
 CRM permissions include viewing, creating, updating, assigning, changing status, managing tasks, managing dictionaries, viewing marketing data, converting, and exporting leads. The superadmin role is seeded with all local CRM permissions.

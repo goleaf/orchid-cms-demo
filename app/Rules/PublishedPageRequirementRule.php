@@ -32,8 +32,9 @@ class PublishedPageRequirementRule implements DataAwareRule, ValidationRule
             return;
         }
 
-        $page = filled(data_get($this->data, 'page.id'))
-            ? SitePage::query()->find(data_get($this->data, 'page.id'))
+        $pageId = data_get($this->data, 'page.id') ?? data_get($this->data, 'id');
+        $page = filled($pageId)
+            ? SitePage::query()->find($pageId)
             : null;
         $titleTranslations = data_get($this->data, 'title_translations', $page?->title_translations ?? []);
         $contentTranslations = data_get($this->data, 'content_translations', $page?->content_translations ?? []);
@@ -41,7 +42,7 @@ class PublishedPageRequirementRule implements DataAwareRule, ValidationRule
         $content = app(TranslatableContentManager::class);
 
         if (
-            filled(data_get($this->data, 'page.slug', $page?->slug))
+            filled(data_get($this->data, 'page.slug') ?? data_get($this->data, 'slug') ?? $page?->slug)
             && ! $content->isMissingValue($titleTranslations[$defaultLocale] ?? null)
             && ! $content->isMissingValue($contentTranslations[$defaultLocale] ?? null)
         ) {
