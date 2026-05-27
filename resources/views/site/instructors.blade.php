@@ -4,9 +4,9 @@
     <main>
         <section class="section dark">
             <div class="section-inner">
-                <p class="kicker">Instructors</p>
-                <h1>Инструкторы автошколы</h1>
-                <p class="lead">Профили показывают фото, имя, стаж, категории, рейтинг, отзывы, машину, языки, график, филиал и стиль обучения.</p>
+                <p class="kicker">{{ tkey('website.instructors.kicker') }}</p>
+                <h1>{{ tkey('website.instructors.title') }}</h1>
+                <p class="lead">{{ tkey('website.instructors.lead') }}</p>
             </div>
         </section>
 
@@ -15,35 +15,38 @@
                 <div class="grid three">
                     @forelse ($instructors as $instructor)
                         <article class="card">
-                            <p class="kicker">{{ $instructor->branch->city }}</p>
+                            <p class="kicker">{{ $instructor->branch->displayCity() }}</p>
                             <h3>{{ $instructor->name }}</h3>
                             <p class="meta">{{ $instructor->bio }}</p>
                             <p>{{ $instructor->teaching_style }}</p>
                             <div class="badge-list">
-                                <span class="badge">{{ $instructor->experience_years }} years</span>
-                                <span class="badge">{{ $instructor->rating }} rating</span>
-                                <span class="badge">{{ $instructor->reviews_count }} reviews</span>
-                                @foreach (($instructor->categories ?? []) as $category)
+                                <span class="badge">{{ tkey('website.instructors.experience_years', ['years' => $instructor->experience_years]) }}</span>
+                                <span class="badge">{{ tkey('website.instructors.rating', ['rating' => $instructor->rating]) }}</span>
+                                <span class="badge">{{ tkey('website.instructors.reviews_count', ['count' => $instructor->reviews_count]) }}</span>
+                                @forelse (($instructor->categories ?? []) as $category)
                                     <span class="badge">{{ $category }}</span>
-                                @endforeach
-                                @foreach (($instructor->languages ?? []) as $language)
+                                @empty
+                                @endforelse
+                                @forelse (($instructor->languages ?? []) as $language)
                                     <span class="badge">{{ $language }}</span>
-                                @endforeach
+                                @empty
+                                @endforelse
                             </div>
                             <p class="meta">{{ $instructor->availability_summary }}</p>
                             <div class="facts">
-                                @foreach ($instructor->vehicles as $vehicle)
+                                @forelse ($instructor->vehicles as $vehicle)
                                     <span class="fact">{{ $vehicle->make }} {{ $vehicle->model }}</span>
-                                @endforeach
+                                @empty
+                                @endforelse
                             </div>
                             <div class="actions">
-                                <a class="button" href="{{ route('site.apply', ['instructor' => $instructor->id]) }}">Записаться к инструктору</a>
+                                <a class="button" href="{{ route('site.apply', ['instructor' => $instructor->id]) }}">{{ tkey('website.instructors.action_apply') }}</a>
                             </div>
                         </article>
                     @empty
                         <article class="card">
-                            <h3>Инструкторы готовятся к публикации</h3>
-                            <p class="meta">Публичные профили появятся после заполнения в CRM.</p>
+                            <h3>{{ tkey('website.instructors.empty.title') }}</h3>
+                            <p class="meta">{{ tkey('website.instructors.empty.body') }}</p>
                         </article>
                     @endforelse
                 </div>

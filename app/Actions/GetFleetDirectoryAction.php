@@ -15,15 +15,15 @@ class GetFleetDirectoryAction
             'vehicles' => Vehicle::query()
                 ->forFleetList()
                 ->with([
-                    'branch:id,name,city',
+                    'branch:id,name,name_translations,city,city_translations',
                     'instructor:id,name',
                 ])
                 ->orderBy('make')
                 ->orderBy('model')
                 ->simplePaginate(12)
                 ->withQueryString(),
-            'seoTitle' => 'Training fleet | DrivePro Academy',
-            'seoDescription' => 'Training cars with gearbox, category, branch, instructor, availability, service status, and public characteristics.',
+            'seoTitle' => tkey('website.vehicles.seo.title'),
+            'seoDescription' => tkey('website.vehicles.seo.description'),
         ];
     }
 }

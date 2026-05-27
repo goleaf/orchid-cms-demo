@@ -16,10 +16,11 @@ class GetContactPageAction
                 ->forAdminList()
                 ->withCount(['instructors', 'vehicles', 'groups'])
                 ->where('is_active', true)
+                ->orderBy('sort_order')
                 ->orderBy('city')
                 ->get(),
-            'seoTitle' => 'Contacts and branches | DrivePro Academy',
-            'seoDescription' => 'Branch contacts, phones, addresses, callback request, chat access, and public map for DrivePro Academy.',
+            'seoTitle' => tkey('website.contacts.seo.title'),
+            'seoDescription' => tkey('website.contacts.seo.description'),
         ];
     }
 }

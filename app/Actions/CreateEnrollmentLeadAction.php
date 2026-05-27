@@ -11,6 +11,7 @@ use App\Notifications\EnrollmentLeadAutoReplyNotification;
 use App\Notifications\EnrollmentLeadSubmittedNotification;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
 
 class CreateEnrollmentLeadAction
 {
@@ -31,6 +32,7 @@ class CreateEnrollmentLeadAction
             ->first();
 
         $lead = MarketingLead::query()->create([
+            'uuid' => (string) Str::uuid(),
             'marketing_campaign_id' => null,
             'responsible_manager_id' => $manager?->id,
             'branch_id' => $data['branch_id'],
@@ -70,6 +72,12 @@ class CreateEnrollmentLeadAction
             'utm_term' => $data['utm_term'] ?? null,
             'utm_content' => $data['utm_content'] ?? null,
             'referrer_url' => $data['referrer_url'] ?? null,
+            'landing_page' => $data['landing_page'] ?? null,
+            'form_page' => $data['form_page'] ?? null,
+            'form_name' => $data['form_name'] ?? 'enrollment',
+            'locale' => $data['locale'] ?? app()->getLocale(),
+            'ip_address' => $data['ip_address'] ?? null,
+            'user_agent' => $data['user_agent'] ?? null,
         ]);
 
         foreach ($documents as $document) {

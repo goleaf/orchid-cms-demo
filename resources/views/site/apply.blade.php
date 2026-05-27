@@ -4,9 +4,9 @@
     <main>
         <section class="section dark">
             <div class="section-inner">
-                <p class="kicker">Online enrollment</p>
-                <h1>Запись в автошколу</h1>
-                <p class="lead">Заявка создает лид в CRM, сохраняет UTM-метки, источник, документы и предпочтения ученика.</p>
+                <p class="kicker">{{ tkey('website.apply.kicker') }}</p>
+                <h1>{{ tkey('website.apply.title') }}</h1>
+                <p class="lead">{{ tkey('website.apply.lead') }}</p>
             </div>
         </section>
 
@@ -26,14 +26,17 @@
                     <input type="hidden" name="utm_term" value="{{ old('utm_term', $tracking['utm_term']) }}">
                     <input type="hidden" name="utm_content" value="{{ old('utm_content', $tracking['utm_content']) }}">
                     <input type="hidden" name="referrer_url" value="{{ old('referrer_url', $tracking['referrer_url']) }}">
+                    <input type="hidden" name="landing_page" value="{{ old('landing_page', $tracking['landing_page']) }}">
+                    <input type="hidden" name="form_page" value="{{ old('form_page', $tracking['form_page']) }}">
+                    <input type="hidden" name="form_name" value="{{ old('form_name', $tracking['form_name']) }}">
 
                     <div class="form-grid">
                         <label>
-                            Категория
+                            {{ tkey('crm.leads.fields.course') }}
                             <select name="training_program_id" required>
                                 @foreach ($programs as $program)
                                     <option value="{{ $program->id }}" @selected((string) old('training_program_id', $tracking['program']) === (string) $program->id)>
-                                        {{ $program->title }} · {{ $program->priceForHumans() }}
+                                        {{ $program->displayTitle() }} · {{ $program->priceForHumans() }}
                                     </option>
                                 @endforeach
                             </select>
@@ -41,11 +44,11 @@
                         </label>
 
                         <label>
-                            Филиал
+                            {{ tkey('crm.leads.fields.branch') }}
                             <select name="branch_id" required>
                                 @foreach ($branches as $branch)
-                                    <option value="{{ $branch->id }}" @selected((string) old('branch_id') === (string) $branch->id)>
-                                        {{ $branch->city }} · {{ $branch->name }}
+                                    <option value="{{ $branch->id }}" @selected((string) old('branch_id', $tracking['branch']) === (string) $branch->id)>
+                                        {{ $branch->displayCity() }} · {{ $branch->displayName() }}
                                     </option>
                                 @endforeach
                             </select>
@@ -53,12 +56,12 @@
                         </label>
 
                         <label>
-                            Группа
+                            {{ tkey('crm.leads.fields.training_group') }}
                             <select name="training_group_id">
-                                <option value="">Подобрать менеджером</option>
+                                <option value="">{{ tkey('website.forms.manager_select_group') }}</option>
                                 @foreach ($groups as $group)
-                                    <option value="{{ $group->id }}" @selected((string) old('training_group_id') === (string) $group->id)>
-                                        {{ $group->code }} · {{ $group->trainingProgram->title }} · {{ $group->branch->city }}
+                                    <option value="{{ $group->id }}" @selected((string) old('training_group_id', $tracking['group']) === (string) $group->id)>
+                                        {{ $group->code }} · {{ $group->trainingProgram->displayTitle() }} · {{ $group->branch->displayCity() }}
                                     </option>
                                 @endforeach
                             </select>
@@ -66,12 +69,12 @@
                         </label>
 
                         <label>
-                            Инструктор
+                            {{ tkey('crm.leads.fields.instructor') }}
                             <select name="instructor_id">
-                                <option value="">Без предпочтения</option>
+                                <option value="">{{ tkey('website.forms.no_instructor_preference') }}</option>
                                 @foreach ($instructors as $instructor)
                                     <option value="{{ $instructor->id }}" @selected((string) old('instructor_id', $tracking['instructor']) === (string) $instructor->id)>
-                                        {{ $instructor->name }} · {{ $instructor->branch->city }}
+                                        {{ $instructor->name }} · {{ $instructor->branch->displayCity() }}
                                     </option>
                                 @endforeach
                             </select>
@@ -79,7 +82,7 @@
                         </label>
 
                         <label>
-                            Формат
+                            {{ tkey('crm.leads.fields.preferred_format') }}
                             <select name="preferred_format" required>
                                 @foreach ($formats as $value => $label)
                                     <option value="{{ $value }}" @selected(old('preferred_format', 'mixed') === $value)>{{ $label }}</option>
@@ -89,87 +92,87 @@
                         </label>
 
                         <label>
-                            Язык обучения
+                            {{ tkey('crm.leads.fields.locale') }}
                             <select name="preferred_language" required>
-                                @foreach ($languages as $language)
-                                    <option value="{{ $language }}" @selected(old('preferred_language', 'Lithuanian') === $language)>{{ $language }}</option>
+                                @foreach ($languages as $code => $language)
+                                    <option value="{{ $code }}" @selected(old('preferred_language', app()->getLocale()) === $code)>{{ $language }}</option>
                                 @endforeach
                             </select>
                             @error('preferred_language') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label>
-                            Имя
+                            {{ tkey('crm.leads.fields.first_name') }}
                             <input name="first_name" value="{{ old('first_name') }}" required>
                             @error('first_name') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label>
-                            Фамилия
+                            {{ tkey('crm.leads.fields.last_name') }}
                             <input name="last_name" value="{{ old('last_name') }}">
                             @error('last_name') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label>
-                            Email
+                            {{ tkey('crm.leads.fields.email') }}
                             <input type="email" name="email" value="{{ old('email') }}">
                             @error('email') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label>
-                            Телефон
+                            {{ tkey('crm.leads.fields.phone') }}
                             <input name="phone" value="{{ old('phone') }}">
                             @error('phone') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label>
-                            Мессенджер
-                            <input name="messenger" value="{{ old('messenger') }}" placeholder="WhatsApp, Telegram, Viber">
+                            {{ tkey('crm.leads.fields.preferred_messenger') }}
+                            <input name="messenger" value="{{ old('messenger') }}" placeholder="{{ tkey('website.forms.messenger_placeholder') }}">
                             @error('messenger') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label>
-                            Город
-                            <input name="city" value="{{ old('city') }}" placeholder="Vilnius">
+                            {{ tkey('crm.leads.fields.city') }}
+                            <input name="city" value="{{ old('city') }}" placeholder="{{ tkey('website.forms.city_placeholder') }}">
                             @error('city') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label>
-                            Предпочтительное время
-                            <input name="preferred_time" value="{{ old('preferred_time') }}" placeholder="Evenings, weekends, mornings">
+                            {{ tkey('crm.leads.fields.preferred_time') }}
+                            <input name="preferred_time" value="{{ old('preferred_time') }}" placeholder="{{ tkey('website.forms.preferred_time_placeholder') }}">
                             @error('preferred_time') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label>
-                            Бюджет EUR
+                            {{ tkey('crm.leads.fields.budget') }}
                             <input type="number" min="0" step="10" name="budget_eur" value="{{ old('budget_eur') }}">
                             @error('budget_eur') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label>
-                            Документы
+                            {{ tkey('crm.documents.title') }}
                             <input type="file" name="documents[]" multiple>
                             @error('documents') <span class="error">{{ $message }}</span> @enderror
                             @error('documents.*') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label class="full">
-                            Комментарий
+                            {{ tkey('crm.leads.fields.comment') }}
                             <textarea name="message">{{ old('message') }}</textarea>
                             @error('message') <span class="error">{{ $message }}</span> @enderror
                         </label>
 
                         <label class="full">
-                            <span>
+                            <span class="check-row">
                                 <input type="checkbox" name="privacy_consent" value="1" @checked(old('privacy_consent')) required>
-                                Согласен на обработку данных
+                                {{ tkey('website.forms.privacy_consent') }}
                             </span>
                             @error('privacy_consent') <span class="error">{{ $message }}</span> @enderror
                         </label>
                     </div>
 
                     <div class="actions">
-                        <button class="button" type="submit">Отправить заявку</button>
+                        <button class="button" type="submit">{{ tkey('website.actions.submit_application') }}</button>
                     </div>
                 </form>
             </div>

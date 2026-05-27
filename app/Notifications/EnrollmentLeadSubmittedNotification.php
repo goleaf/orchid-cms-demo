@@ -24,8 +24,9 @@ class EnrollmentLeadSubmittedNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $locale = $this->localeFor($notifiable);
-        $contact = $this->lead->email ?: $this->lead->phone ?: tkey('crm.notifications.enrollment.submitted.empty.not_provided', locale: $locale);
-        $preferredTime = $this->lead->preferred_time ?: tkey('crm.notifications.enrollment.submitted.empty.not_provided', locale: $locale);
+        $notProvided = tkey('crm.notifications.enrollment.submitted.empty.not_provided', locale: $locale);
+        $contact = $this->lead->email ?: $this->lead->phone ?: $notProvided;
+        $preferredTime = $this->lead->preferred_time ?: $notProvided;
 
         return (new MailMessage)
             ->subject(tkey('crm.notifications.enrollment.submitted.subject', locale: $locale))
@@ -38,7 +39,10 @@ class EnrollmentLeadSubmittedNotification extends Notification
             ->line(tkey('crm.notifications.enrollment.submitted.lines.preferred_time', [
                 'time' => $preferredTime,
             ], $locale))
-            ->action(tkey('crm.notifications.enrollment.submitted.actions.open_leads', locale: $locale), route('platform.marketing.leads'));
+            ->action(
+                tkey('crm.notifications.enrollment.submitted.actions.open_leads', locale: $locale),
+                route('platform.marketing.leads'),
+            );
     }
 
     private function localeFor(object $notifiable): ?string

@@ -29,11 +29,21 @@ class TrainingGroupFactory extends Factory
             'code' => strtoupper($this->faker->unique()->bothify('GRP-####')),
             'status' => GroupStatus::Recruiting,
             'capacity' => $this->faker->numberBetween(8, 16),
+            'places_taken' => $this->faker->numberBetween(0, 4),
             'starts_on' => now()->addDays($this->faker->numberBetween(7, 30)),
             'ends_on' => now()->addMonths($this->faker->numberBetween(3, 6)),
             'meeting_days' => ['monday', 'wednesday'],
             'meeting_time' => '18:00',
             'classroom' => 'Room '.$this->faker->numberBetween(1, 6),
+            'is_visible_on_site' => true,
         ];
+    }
+
+    public function publicVisible(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => GroupStatus::Recruiting,
+            'is_visible_on_site' => true,
+        ]);
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Branch;
 use App\Models\Instructor;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
+use App\Services\LocaleManager;
 
 class GetEnrollmentFormAction
 {
@@ -14,36 +15,44 @@ class GetEnrollmentFormAction
      */
     public function handle(array $tracking = []): array
     {
+        $languageOptions = app(LocaleManager::class)->languageOptions();
+
         return [
             'programs' => TrainingProgram::query()
                 ->forAcademyList()
                 ->active()
+                ->orderBy('sort_order')
                 ->orderBy('license_category')
                 ->orderBy('title')
                 ->get(),
             'branches' => Branch::query()
                 ->forAdminList()
                 ->where('is_active', true)
+                ->orderBy('sort_order')
                 ->orderBy('city')
                 ->get(),
             'groups' => TrainingGroup::query()
                 ->operationalList()
                 ->with([
-                    'branch:id,name,city',
-                    'trainingProgram:id,title,license_category',
+                    'branch:id,name,name_translations,city,city_translations',
+                    'trainingProgram:id,title,title_translations,license_category',
                 ])
-                ->whereIn('status', ['planned', 'recruiting'])
+                ->visibleOnSite()
                 ->orderBy('starts_on')
                 ->limit(20)
                 ->get(),
             'instructors' => Instructor::query()
                 ->forPublicDirectory()
-                ->with('branch:id,name,city')
+                ->with('branch:id,name,name_translations,city,city_translations')
                 ->where('status', 'active')
                 ->orderBy('name')
                 ->get(),
-            'formats' => ['offline' => 'Offline', 'online' => 'Online', 'mixed' => 'Mixed'],
-            'languages' => ['Lithuanian', 'English', 'Russian', 'Polish'],
+            'formats' => [
+                'offline' => tkey('website.formats.offline'),
+                'online' => tkey('website.formats.online'),
+                'mixed' => tkey('website.formats.mixed'),
+            ],
+            'languages' => $languageOptions,
             'tracking' => [
                 'source' => $tracking['source'] ?? 'website',
                 'utm_source' => $tracking['utm_source'] ?? null,
@@ -52,11 +61,16 @@ class GetEnrollmentFormAction
                 'utm_term' => $tracking['utm_term'] ?? null,
                 'utm_content' => $tracking['utm_content'] ?? null,
                 'referrer_url' => $tracking['referrer_url'] ?? null,
+                'landing_page' => $tracking['landing_page'] ?? null,
+                'form_page' => $tracking['form_page'] ?? null,
+                'form_name' => $tracking['form_name'] ?? 'enrollment',
                 'program' => $tracking['program'] ?? null,
+                'branch' => $tracking['branch'] ?? null,
+                'group' => $tracking['group'] ?? null,
                 'instructor' => $tracking['instructor'] ?? null,
             ],
-            'seoTitle' => 'Online enrollment | DrivePro Academy',
-            'seoDescription' => 'Choose a category, branch, group, instructor, language, and preferred time to apply for driving lessons online.',
+            'seoTitle' => tkey('website.apply.seo.title'),
+            'seoDescription' => tkey('website.apply.seo.description'),
         ];
     }
 }

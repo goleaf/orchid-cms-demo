@@ -200,7 +200,7 @@ class LeadEditScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['platform.marketing.leads'];
+        return ['platform.marketing.leads', 'website.update_leads'];
     }
 
     public function commandBar(): iterable

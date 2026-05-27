@@ -25,10 +25,10 @@ class DrivingSchoolPlatformTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('Driving lessons, exams, and school operations')
-            ->assertSee('Student CRM and cabinet base')
-            ->assertSee('Программы, цены и часы обучения')
-            ->assertSee('Ближайшие группы');
+            ->assertSee('Категория B в Вильнюсе')
+            ->assertSee('Заявки сразу попадают в CRM')
+            ->assertSee(tkey('website.home.programs.title', [], 'ru'))
+            ->assertSee(tkey('website.home.groups.title', [], 'ru'));
     }
 
     public function test_public_auto_school_pages_render_seeded_catalog(): void
@@ -40,13 +40,16 @@ class DrivingSchoolPlatformTest extends TestCase
             ->firstOrFail();
 
         collect([
+            route('site.courses.show', $program) => 'Category B Manual',
             route('site.categories.show', $program) => 'Category B Manual',
-            route('site.apply') => 'Запись в автошколу',
+            route('site.apply') => tkey('website.apply.title', [], 'ru'),
+            route('site.prices') => tkey('website.prices.title', [], 'ru'),
             route('site.instructors') => 'Инструкторы автошколы',
             route('site.fleet') => 'Автопарк',
             route('site.reviews') => 'Отзывы учеников',
             route('site.blog.index') => 'Блог и база знаний',
-            route('site.contacts') => 'Филиалы и контакты',
+            route('site.contacts') => tkey('website.contacts.title', [], 'ru'),
+            route('site.thanks') => tkey('website.thanks.title', [], 'ru'),
             route('site.sitemap') => '<urlset',
             route('site.robots') => 'Sitemap:',
         ])->each(function (string $needle, string $url): void {
@@ -96,7 +99,7 @@ class DrivingSchoolPlatformTest extends TestCase
                 'utm_medium' => 'cpc',
                 'utm_campaign' => 'spring-category-b',
             ])
-            ->assertRedirect(route('site.apply'))
+            ->assertRedirect(route('site.thanks'))
             ->assertSessionHasNoErrors()
             ->assertSessionHas('status');
 
@@ -113,6 +116,8 @@ class DrivingSchoolPlatformTest extends TestCase
             'city' => 'Vilnius',
             'budget_cents' => 145000,
             'utm_campaign' => 'spring-category-b',
+            'form_name' => 'enrollment',
+            'locale' => 'ru',
         ]);
 
         $lead = MarketingLead::query()
@@ -122,10 +127,51 @@ class DrivingSchoolPlatformTest extends TestCase
         Notification::assertSentTo($admin, EnrollmentLeadSubmittedNotification::class);
         Notification::assertSentOnDemand(EnrollmentLeadAutoReplyNotification::class);
         $this->assertSame('B', $lead->license_category);
+        $this->assertNotNull($lead->uuid);
+        $this->assertNotNull($lead->landing_page);
+        $this->assertSame(route('site.apply'), $lead->form_page);
         $this->assertTrue($lead->is_hot);
         $this->assertSame(1, $lead->comments()->count());
         $this->assertSame(1, $lead->communications()->count());
         $this->assertSame(1, $lead->statusHistories()->count());
+        $this->assertSame(1, $lead->tasks()->count());
+    }
+
+    public function test_callback_form_creates_callback_lead(): void
+    {
+        Notification::fake();
+        $this->seed();
+
+        $this->from(route('site.contacts'))
+            ->post(route('site.callback.store'), [
+                'first_name' => 'Laura',
+                'phone' => '+370 600 77777',
+                'preferred_time' => 'Tomorrow morning',
+                'message' => 'Please call me about courses.',
+                'privacy_consent' => '1',
+                'source' => 'callback',
+                'form_name' => 'callback',
+                'utm_source' => 'google',
+            ])
+            ->assertRedirect(route('site.thanks'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('marketing_leads', [
+            'first_name' => 'Laura',
+            'phone' => '+370 600 77777',
+            'source' => 'callback',
+            'status' => 'new',
+            'form_name' => 'callback',
+            'utm_source' => 'google',
+            'locale' => 'ru',
+        ]);
+
+        $lead = MarketingLead::query()
+            ->where('phone', '+370 600 77777')
+            ->firstOrFail();
+
+        $this->assertNotNull($lead->uuid);
+        $this->assertSame(1, $lead->comments()->count());
         $this->assertSame(1, $lead->tasks()->count());
     }
 
@@ -143,11 +189,16 @@ class DrivingSchoolPlatformTest extends TestCase
             ->assertSee('Auto-school operations');
 
         collect([
-            'platform.operations.branches' => 'Branches',
+            'platform.website.courses' => tkey('website.admin.courses.title'),
+            'platform.website.branches' => tkey('website.admin.branches.title'),
+            'platform.website.groups' => tkey('website.admin.groups.title'),
+            'platform.website.leads' => tkey('crm.leads.title'),
+            'platform.website.settings' => tkey('website.admin.home.title'),
+            'platform.operations.branches' => tkey('website.admin.branches.title'),
             'platform.operations.instructors' => 'Instructors',
-            'platform.operations.groups' => 'Training groups',
+            'platform.operations.groups' => tkey('website.admin.groups.title'),
             'platform.crm.students' => 'Student CRM',
-            'platform.lms.programs' => 'LMS Programs',
+            'platform.lms.programs' => tkey('website.admin.courses.title'),
             'platform.schedule.lessons' => 'Schedule',
             'platform.fleet.vehicles' => 'Fleet',
             'platform.exams' => 'Exams',
@@ -165,6 +216,38 @@ class DrivingSchoolPlatformTest extends TestCase
         });
     }
 
+    public function test_admin_can_open_catalog_create_and_edit_screens(): void
+    {
+        $this->seed();
+
+        $admin = User::query()
+            ->where('email', 'admin@example.com')
+            ->firstOrFail();
+        $program = TrainingProgram::query()
+            ->where('slug', 'category-b-manual')
+            ->firstOrFail();
+        $branch = Branch::query()
+            ->where('slug', 'vilnius-main')
+            ->firstOrFail();
+        $group = TrainingGroup::query()
+            ->where('code', 'B-VNO-001')
+            ->firstOrFail();
+
+        collect([
+            route('platform.website.courses.create') => tkey('website.admin.courses.create_title', [], 'ru'),
+            route('platform.website.courses.edit', $program) => tkey('website.admin.courses.edit_title', [], 'ru'),
+            route('platform.website.branches.create') => tkey('website.admin.branches.create_title', [], 'ru'),
+            route('platform.website.branches.edit', $branch) => tkey('website.admin.branches.edit_title', [], 'ru'),
+            route('platform.website.groups.create') => tkey('website.admin.groups.create_title', [], 'ru'),
+            route('platform.website.groups.edit', $group) => tkey('website.admin.groups.edit_title', [], 'ru'),
+        ])->each(function (string $title, string $url) use ($admin): void {
+            $this->actingAs($admin)
+                ->get($url)
+                ->assertOk()
+                ->assertSee($title);
+        });
+    }
+
     public function test_seeded_operations_include_groups_and_marketing_pipeline(): void
     {
         $this->seed();
@@ -177,7 +260,7 @@ class DrivingSchoolPlatformTest extends TestCase
             ->get(route('platform.operations.groups'))
             ->assertOk()
             ->assertSee('B-VNO-001')
-            ->assertSee('Evening Category B Group');
+            ->assertSee('Вечерняя группа категории B');
 
         $this->actingAs($admin)
             ->get(route('platform.marketing.campaigns'))

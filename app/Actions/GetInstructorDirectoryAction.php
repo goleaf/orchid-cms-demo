@@ -15,7 +15,7 @@ class GetInstructorDirectoryAction
             'instructors' => Instructor::query()
                 ->forPublicDirectory()
                 ->with([
-                    'branch:id,name,city',
+                    'branch:id,name,name_translations,city,city_translations',
                     'vehicles:id,instructor_id,make,model,registration_number,transmission,license_category,status',
                 ])
                 ->withCount('reviews')
@@ -24,8 +24,8 @@ class GetInstructorDirectoryAction
                 ->orderBy('name')
                 ->simplePaginate(12)
                 ->withQueryString(),
-            'seoTitle' => 'Driving instructors | DrivePro Academy',
-            'seoDescription' => 'Instructor profiles with experience, ratings, categories, languages, vehicles, branches, and teaching availability.',
+            'seoTitle' => tkey('website.instructors.seo.title'),
+            'seoDescription' => tkey('website.instructors.seo.description'),
         ];
     }
 }

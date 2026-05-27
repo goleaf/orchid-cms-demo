@@ -24,7 +24,60 @@ class BranchFactory extends Factory
             'address' => $this->faker->streetAddress(),
             'phone' => $this->faker->phoneNumber(),
             'email' => $this->faker->companyEmail(),
+            'description' => $this->faker->paragraph(),
+            'working_hours' => 'Mon-Fri 09:00-18:00',
+            'latitude' => null,
+            'longitude' => null,
+            'seo_title' => null,
+            'seo_description' => null,
+            'canonical_url' => null,
+            'open_graph_image' => null,
             'is_active' => true,
+            'sort_order' => 0,
         ];
+    }
+
+    /**
+     * @param  array<string, string>  $translations
+     */
+    public function publicWebsite(array $translations): static
+    {
+        return $this->state(fn (): array => [
+            'name' => $translations['name'],
+            'name_translations' => [
+                'ru' => $translations['name'],
+                'en' => $translations['name_en'] ?? $translations['name'],
+            ],
+            'city' => $translations['city'],
+            'city_translations' => [
+                'ru' => $translations['city'],
+                'en' => $translations['city_en'] ?? $translations['city'],
+            ],
+            'address' => $translations['address'],
+            'address_translations' => [
+                'ru' => $translations['address'],
+                'en' => $translations['address_en'] ?? $translations['address'],
+            ],
+            'description' => $translations['description'],
+            'description_translations' => [
+                'ru' => $translations['description'],
+                'en' => $translations['description_en'] ?? $translations['description'],
+            ],
+            'working_hours' => $translations['working_hours'] ?? 'Пн-Пт 09:00-18:00',
+            'working_hours_translations' => [
+                'ru' => $translations['working_hours'] ?? 'Пн-Пт 09:00-18:00',
+                'en' => $translations['working_hours_en'] ?? 'Mon-Fri 09:00-18:00',
+            ],
+            'seo_title' => $translations['seo_title'] ?? $translations['name'],
+            'seo_title_translations' => [
+                'ru' => $translations['seo_title'] ?? $translations['name'],
+                'en' => $translations['seo_title_en'] ?? $translations['name_en'] ?? $translations['name'],
+            ],
+            'seo_description' => $translations['seo_description'] ?? $translations['description'],
+            'seo_description_translations' => [
+                'ru' => $translations['seo_description'] ?? $translations['description'],
+                'en' => $translations['seo_description_en'] ?? $translations['description_en'] ?? $translations['description'],
+            ],
+        ]);
     }
 }

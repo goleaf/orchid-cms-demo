@@ -7,6 +7,24 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Project Integrations
+
+### System Design Vibecoding Corpus
+
+The `nimin1/system-design-vibecoding` Markdown corpus is vendored under
+`resources/system-design-vibecoding` with its MIT license preserved.
+
+Run the importer with:
+
+```bash
+php artisan db:seed --class=SystemDesignVibecodingSeeder
+```
+
+The seeder imports every Markdown file from that source directory into
+`knowledge_articles` with `system-design-vibecoding-*` slugs, source metadata,
+rewritten internal links, translated category labels, and public rendering
+through the existing `/blog` knowledge-base routes.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

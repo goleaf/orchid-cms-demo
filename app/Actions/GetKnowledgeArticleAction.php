@@ -22,6 +22,8 @@ class GetKnowledgeArticleAction
             throw new NotFoundHttpException;
         }
 
+        $published->setAttribute('category_label', GetKnowledgeBaseAction::categoryLabel($published->category));
+
         return [
             'article' => $published,
             'seoTitle' => $published->seo_title ?: $published->title,

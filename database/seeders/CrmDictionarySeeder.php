@@ -81,6 +81,7 @@ class CrmDictionarySeeder extends Seeder
     {
         return [
             ['code' => 'website', 'values' => ['ru' => 'Сайт', 'en' => 'Website', 'lt' => 'Svetaine', 'pl' => 'Strona']],
+            ['code' => 'callback', 'values' => ['ru' => 'Обратный звонок', 'en' => 'Callback', 'lt' => 'Perskambinimas', 'pl' => 'Oddzwonienie']],
             ['code' => 'phone', 'values' => ['ru' => 'Телефон', 'en' => 'Phone', 'lt' => 'Telefonas', 'pl' => 'Telefon']],
             ['code' => 'telegram', 'values' => ['ru' => 'Telegram', 'en' => 'Telegram', 'lt' => 'Telegram', 'pl' => 'Telegram']],
             ['code' => 'whatsapp', 'values' => ['ru' => 'WhatsApp', 'en' => 'WhatsApp', 'lt' => 'WhatsApp', 'pl' => 'WhatsApp']],

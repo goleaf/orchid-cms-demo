@@ -17,6 +17,7 @@ class MarketingLead extends Model
     use HasFactory;
 
     protected $fillable = [
+        'uuid',
         'marketing_campaign_id',
         'responsible_manager_id',
         'branch_id',
@@ -53,6 +54,12 @@ class MarketingLead extends Model
         'utm_term',
         'utm_content',
         'referrer_url',
+        'landing_page',
+        'form_page',
+        'form_name',
+        'locale',
+        'ip_address',
+        'user_agent',
     ];
 
     protected $casts = [
@@ -157,6 +164,7 @@ class MarketingLead extends Model
     {
         return $query->select([
             'id',
+            'uuid',
             'marketing_campaign_id',
             'responsible_manager_id',
             'branch_id',
@@ -182,6 +190,8 @@ class MarketingLead extends Model
             'last_status_changed_at',
             'contacted_at',
             'converted_at',
+            'form_name',
+            'locale',
             'rejection_reason',
             'lost_reason_code',
             'created_at',
@@ -192,6 +202,7 @@ class MarketingLead extends Model
     {
         return $query->select([
             'id',
+            'uuid',
             'marketing_campaign_id',
             'responsible_manager_id',
             'branch_id',
@@ -228,6 +239,12 @@ class MarketingLead extends Model
             'utm_term',
             'utm_content',
             'referrer_url',
+            'landing_page',
+            'form_page',
+            'form_name',
+            'locale',
+            'ip_address',
+            'user_agent',
             'created_at',
             'updated_at',
         ]);

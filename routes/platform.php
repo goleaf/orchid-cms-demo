@@ -6,11 +6,13 @@ use App\Orchid\Screens\LandingPage\LandingPageEditScreen;
 use App\Orchid\Screens\PlatformScreen;
 use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
+use App\Orchid\Screens\School\BranchEditScreen;
 use App\Orchid\Screens\School\BranchListScreen;
 use App\Orchid\Screens\School\CampaignListScreen;
 use App\Orchid\Screens\School\DocumentListScreen;
 use App\Orchid\Screens\School\ExamListScreen;
 use App\Orchid\Screens\School\FleetListScreen;
+use App\Orchid\Screens\School\GroupEditScreen;
 use App\Orchid\Screens\School\GroupListScreen;
 use App\Orchid\Screens\School\InstructorListScreen;
 use App\Orchid\Screens\School\LeadDictionaryEditScreen;
@@ -21,6 +23,7 @@ use App\Orchid\Screens\School\LeadPipelineScreen;
 use App\Orchid\Screens\School\MessageTemplateEditScreen;
 use App\Orchid\Screens\School\MessageTemplateListScreen;
 use App\Orchid\Screens\School\PaymentListScreen;
+use App\Orchid\Screens\School\ProgramEditScreen;
 use App\Orchid\Screens\School\ProgramListScreen;
 use App\Orchid\Screens\School\ScheduleListScreen;
 use App\Orchid\Screens\School\StudentListScreen;
@@ -55,14 +58,85 @@ Route::screen('content/home', LandingPageEditScreen::class)
     ->name('platform.content.home')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Homepage', route('platform.content.home')));
+        ->push(tkey('menu.content.home'), route('platform.content.home')));
+
+// Website > Settings
+Route::screen('website/settings', LandingPageEditScreen::class)
+    ->name('platform.website.settings')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.website.settings'), route('platform.website.settings')));
+
+// Website > Courses
+Route::screen('website/courses/create', ProgramEditScreen::class)
+    ->name('platform.website.courses.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.website.courses')
+        ->push(tkey('website.admin.courses.create_title'), route('platform.website.courses.create')));
+
+Route::screen('website/courses/{program}/edit', ProgramEditScreen::class)
+    ->name('platform.website.courses.edit')
+    ->breadcrumbs(fn (Trail $trail, $program) => $trail
+        ->parent('platform.website.courses')
+        ->push(tkey('website.admin.courses.edit_title'), route('platform.website.courses.edit', $program)));
+
+Route::screen('website/courses', ProgramListScreen::class)
+    ->name('platform.website.courses')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.website.courses'), route('platform.website.courses')));
+
+// Website > Branches
+Route::screen('website/branches/create', BranchEditScreen::class)
+    ->name('platform.website.branches.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.website.branches')
+        ->push(tkey('website.admin.branches.create_title'), route('platform.website.branches.create')));
+
+Route::screen('website/branches/{branch}/edit', BranchEditScreen::class)
+    ->name('platform.website.branches.edit')
+    ->breadcrumbs(fn (Trail $trail, $branch) => $trail
+        ->parent('platform.website.branches')
+        ->push(tkey('website.admin.branches.edit_title'), route('platform.website.branches.edit', $branch)));
+
+Route::screen('website/branches', BranchListScreen::class)
+    ->name('platform.website.branches')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.website.branches'), route('platform.website.branches')));
+
+// Website > Groups
+Route::screen('website/groups/create', GroupEditScreen::class)
+    ->name('platform.website.groups.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.website.groups')
+        ->push(tkey('website.admin.groups.create_title'), route('platform.website.groups.create')));
+
+Route::screen('website/groups/{group}/edit', GroupEditScreen::class)
+    ->name('platform.website.groups.edit')
+    ->breadcrumbs(fn (Trail $trail, $group) => $trail
+        ->parent('platform.website.groups')
+        ->push(tkey('website.admin.groups.edit_title'), route('platform.website.groups.edit', $group)));
+
+Route::screen('website/groups', GroupListScreen::class)
+    ->name('platform.website.groups')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.website.groups'), route('platform.website.groups')));
+
+// Website > Leads
+Route::screen('website/leads', LeadListScreen::class)
+    ->name('platform.website.leads')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.website.leads'), route('platform.website.leads')));
 
 // Operations > Branches
 Route::screen('operations/branches', BranchListScreen::class)
     ->name('platform.operations.branches')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Branches', route('platform.operations.branches')));
+        ->push(tkey('menu.operations.branches'), route('platform.operations.branches')));
 
 // Operations > Instructors
 Route::screen('operations/instructors', InstructorListScreen::class)
@@ -76,7 +150,7 @@ Route::screen('operations/groups', GroupListScreen::class)
     ->name('platform.operations.groups')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Training groups', route('platform.operations.groups')));
+        ->push(tkey('menu.operations.groups'), route('platform.operations.groups')));
 
 // Operations > Student CRM
 Route::screen('crm/students', StudentListScreen::class)
@@ -90,7 +164,7 @@ Route::screen('lms/programs', ProgramListScreen::class)
     ->name('platform.lms.programs')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('LMS Programs', route('platform.lms.programs')));
+        ->push(tkey('menu.lms.programs'), route('platform.lms.programs')));
 
 // Operations > Schedule
 Route::screen('schedule/lessons', ScheduleListScreen::class)

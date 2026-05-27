@@ -2,10 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Enums\LeadStatus as LeadStatusEnum;
 use App\Models\LeadSource;
+use App\Models\LeadStatus as LeadStatusDictionary;
+use App\Models\MarketingLead;
 use App\Models\TranslationString;
 use App\Models\TranslationValue;
 use App\Models\User;
+use App\Notifications\EnrollmentLeadAutoReplyNotification;
+use App\Notifications\EnrollmentLeadSubmittedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -92,10 +97,64 @@ class CrmLocalizationTest extends TestCase
                 ],
             ]);
 
+        LeadStatusDictionary::query()
+            ->where('code', LeadStatusEnum::New->value)
+            ->firstOrFail()
+            ->update([
+                'name' => 'Новая заявка CRM',
+                'name_translations' => [
+                    'ru' => 'Новая заявка CRM',
+                    'en' => 'CRM new lead',
+                    'lt' => 'CRM nauja uzklausa',
+                    'pl' => 'Nowy lead CRM',
+                ],
+            ]);
+
+        MarketingLead::factory()->create([
+            'source' => 'google_ads',
+            'status' => LeadStatusEnum::New,
+            'first_name' => 'CRM',
+            'last_name' => 'Dictionary',
+        ]);
+
         $this->actingAs($this->seededAdmin())
             ->get(route('platform.marketing.leads'))
             ->assertOk()
-            ->assertSee('Реклама CRM');
+            ->assertSee('Реклама CRM')
+            ->assertSee('Новая заявка CRM');
+    }
+
+    public function test_enrollment_lead_notifications_use_translation_keys(): void
+    {
+        $this->seed();
+        app()->setLocale('ru');
+
+        $lead = MarketingLead::factory()->create([
+            'first_name' => 'Tomas',
+            'last_name' => 'Jankauskas',
+            'email' => null,
+            'phone' => null,
+            'preferred_time' => null,
+            'preferred_format' => null,
+        ]);
+
+        $admin = $this->seededAdmin();
+        $admin->forceFill(['preferred_locale' => 'ru'])->save();
+
+        $submittedMail = (new EnrollmentLeadSubmittedNotification($lead))->toMail($admin);
+
+        $this->assertSame('Новая заявка в автошколу', $submittedMail->subject);
+        $this->assertContains('Tomas Jankauskas отправил онлайн-заявку на обучение.', $submittedMail->introLines);
+        $this->assertContains('Контакт: не указано', $submittedMail->introLines);
+        $this->assertContains('Предпочитаемое время: не указано', $submittedMail->introLines);
+        $this->assertSame('Открыть лиды', $submittedMail->actionText);
+
+        $autoReplyMail = (new EnrollmentLeadAutoReplyNotification($lead))->toMail((object) []);
+
+        $this->assertSame('Заявка DrivePro Academy получена', $autoReplyMail->subject);
+        $this->assertSame('Здравствуйте, Tomas', $autoReplyMail->greeting);
+        $this->assertContains('Формат обучения: не выбран', $autoReplyMail->introLines);
+        $this->assertSame('Открыть сайт', $autoReplyMail->actionText);
     }
 
     public function test_superadmin_can_edit_crm_dictionary_translations(): void

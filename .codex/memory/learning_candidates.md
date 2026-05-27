@@ -333,3 +333,407 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T17:23:45+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:23:45+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a6d-0d4e-7e93-bb57-5c9e80a16580",
+  "branch": "main",
+  "changed_file_count": 3,
+  "changed_file_groups": {
+    "code": 2,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "codex/memory/learned_patterns.md",
+    "tests/Feature/CrmLocalizationTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T17:23:45+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:23:45+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a6d-0d4e-7e93-bb57-5c9e80a16580",
+  "branch": "main",
+  "changed_file_count": 3,
+  "changed_file_groups": {
+    "code": 2,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "codex/memory/learned_patterns.md",
+    "tests/Feature/CrmLocalizationTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T17:26:11+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:26:11+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a76-b760-7c80-bd26-141fc7e15d97",
+  "branch": "main",
+  "changed_file_count": 8,
+  "changed_file_groups": {
+    "code": 3,
+    "database": 4,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learning_candidates.md",
+    "[REDACTED_SECRET].php",
+    "codex/memory/learned_patterns.md",
+    "database/migrations/2026_05_27_170000_add_translatable_public_fields_to_training_programs_table.php",
+    "database/migrations/2026_05_27_170001_add_public_content_fields_to_branches_table.php",
+    "database/migrations/2026_05_27_170002_add_site_visibility_fields_to_training_groups_table.php",
+    "database/migrations/2026_05_27_170003_add_public_tracking_fields_to_marketing_leads_table.php",
+    "tests/Feature/CrmLocalizationTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T17:26:11+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:26:11+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a76-b760-7c80-bd26-141fc7e15d97",
+  "branch": "main",
+  "changed_file_count": 8,
+  "changed_file_groups": {
+    "code": 3,
+    "database": 4,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learning_candidates.md",
+    "[REDACTED_SECRET].php",
+    "codex/memory/learned_patterns.md",
+    "database/migrations/2026_05_27_170000_add_translatable_public_fields_to_training_programs_table.php",
+    "database/migrations/2026_05_27_170001_add_public_content_fields_to_branches_table.php",
+    "database/migrations/2026_05_27_170002_add_site_visibility_fields_to_training_groups_table.php",
+    "database/migrations/2026_05_27_170003_add_public_tracking_fields_to_marketing_leads_table.php",
+    "tests/Feature/CrmLocalizationTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T17:28:10+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:28:10+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a78-f0a2-7fb0-bc26-a102fce8ca80",
+  "branch": "main",
+  "changed_file_count": 26,
+  "changed_file_groups": {
+    "code": 17,
+    "models": 4,
+    "database": 4,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learning_candidates.md",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateEnrollmentLeadAction.php",
+    "app/Actions/GetEnrollmentFormAction.php",
+    "app/Actions/GetPricingPageAction.php",
+    "app/Enums/GroupStatus.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Controllers/PricingController.php",
+    "app/Http/Controllers/ThankYouController.php",
+    "app/Http/Middleware/CaptureSiteTracking.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/MarketingLead.php",
+    "app/Models/TrainingGroup.php",
+    "app/Models/TrainingProgram.php",
+    "[REDACTED_SECRET].php",
+    "app/Support/Site/",
+    "codex/memory/learned_patterns.md",
+    "database/migrations/2026_05_27_170000_add_translatable_public_fields_to_training_programs_table.php",
+    "database/migrations/2026_05_27_170001_add_public_content_fields_to_branches_table.php",
+    "database/migrations/2026_05_27_170002_add_site_visibility_fields_to_training_groups_table.php",
+    "database/migrations/2026_05_27_170003_add_public_tracking_fields_to_marketing_leads_table.php",
+    "tests/Feature/CrmLocalizationTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T17:28:10+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:28:10+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a78-f0a2-7fb0-bc26-a102fce8ca80",
+  "branch": "main",
+  "changed_file_count": 26,
+  "changed_file_groups": {
+    "code": 17,
+    "models": 4,
+    "database": 4,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learning_candidates.md",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateEnrollmentLeadAction.php",
+    "app/Actions/GetEnrollmentFormAction.php",
+    "app/Actions/GetPricingPageAction.php",
+    "app/Enums/GroupStatus.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Controllers/PricingController.php",
+    "app/Http/Controllers/ThankYouController.php",
+    "app/Http/Middleware/CaptureSiteTracking.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/MarketingLead.php",
+    "app/Models/TrainingGroup.php",
+    "app/Models/TrainingProgram.php",
+    "[REDACTED_SECRET].php",
+    "app/Support/Site/",
+    "codex/memory/learned_patterns.md",
+    "database/migrations/2026_05_27_170000_add_translatable_public_fields_to_training_programs_table.php",
+    "database/migrations/2026_05_27_170001_add_public_content_fields_to_branches_table.php",
+    "database/migrations/2026_05_27_170002_add_site_visibility_fields_to_training_groups_table.php",
+    "database/migrations/2026_05_27_170003_add_public_tracking_fields_to_marketing_leads_table.php",
+    "tests/Feature/CrmLocalizationTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T17:28:24+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:28:24+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a7a-c125-7f43-a6f2-9428030d8343",
+  "branch": "main",
+  "changed_file_count": 27,
+  "changed_file_groups": {
+    "code": 18,
+    "models": 4,
+    "database": 4,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learning_candidates.md",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateEnrollmentLeadAction.php",
+    "app/Actions/GetEnrollmentFormAction.php",
+    "app/Actions/GetPricingPageAction.php",
+    "app/Enums/GroupStatus.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Controllers/PricingController.php",
+    "app/Http/Controllers/ThankYouController.php",
+    "app/Http/Middleware/CaptureSiteTracking.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/MarketingLead.php",
+    "app/Models/TrainingGroup.php",
+    "app/Models/TrainingProgram.php",
+    "[REDACTED_SECRET].php",
+    "app/Support/Site/",
+    "codex/memory/learned_patterns.md",
+    "database/migrations/2026_05_27_170000_add_translatable_public_fields_to_training_programs_table.php",
+    "database/migrations/2026_05_27_170001_add_public_content_fields_to_branches_table.php",
+    "database/migrations/2026_05_27_170002_add_site_visibility_fields_to_training_groups_table.php",
+    "database/migrations/2026_05_27_170003_add_public_tracking_fields_to_marketing_leads_table.php",
+    "routes/web.php",
+    "tests/Feature/CrmLocalizationTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T17:28:24+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:28:24+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a7a-c125-7f43-a6f2-9428030d8343",
+  "branch": "main",
+  "changed_file_count": 27,
+  "changed_file_groups": {
+    "code": 18,
+    "models": 4,
+    "database": 4,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learning_candidates.md",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateEnrollmentLeadAction.php",
+    "app/Actions/GetEnrollmentFormAction.php",
+    "app/Actions/GetPricingPageAction.php",
+    "app/Enums/GroupStatus.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Controllers/PricingController.php",
+    "app/Http/Controllers/ThankYouController.php",
+    "app/Http/Middleware/CaptureSiteTracking.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/MarketingLead.php",
+    "app/Models/TrainingGroup.php",
+    "app/Models/TrainingProgram.php",
+    "[REDACTED_SECRET].php",
+    "app/Support/Site/",
+    "codex/memory/learned_patterns.md",
+    "database/migrations/2026_05_27_170000_add_translatable_public_fields_to_training_programs_table.php",
+    "database/migrations/2026_05_27_170001_add_public_content_fields_to_branches_table.php",
+    "database/migrations/2026_05_27_170002_add_site_visibility_fields_to_training_groups_table.php",
+    "database/migrations/2026_05_27_170003_add_public_tracking_fields_to_marketing_leads_table.php",
+    "routes/web.php",
+    "tests/Feature/CrmLocalizationTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T17:38:35+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:38:35+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a7a-f93d-71d2-b429-c1970c63bc7c",
+  "branch": "main",
+  "changed_file_count": 57,
+  "changed_file_groups": {
+    "code": 44,
+    "models": 5,
+    "orchid": 1,
+    "database": 5,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    ".codex/memory/learning_candidates.md",
+    "README.md",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateEnrollmentLeadAction.php",
+    "app/Actions/GetContactPageAction.php",
+    "app/Actions/GetEnrollmentFormAction.php",
+    "app/Actions/GetHomePageAction.php",
+    "app/Actions/GetKnowledgeArticleAction.php",
+    "app/Actions/GetKnowledgeBaseAction.php",
+    "app/Actions/GetPricingPageAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/SaveBranchAction.php",
+    "app/Actions/SaveTrainingGroupAction.php",
+    "app/Actions/SaveTrainingProgramAction.php",
+    "app/Enums/GroupStatus.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Controllers/PricingController.php",
+    "app/Http/Controllers/ThankYouController.php",
+    "app/Http/Middleware/CaptureSiteTracking.php",
+    "app/Http/Requests/BranchRequest.php",
+    "app/Http/Requests/LandingPageRequest.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/TrainingGroupRequest.php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/LandingPage.php",
+    "app/Models/MarketingLead.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T17:38:35+00:00
+
+```json
+{
+  "ts": "2026-05-27T17:38:35+00:00",
+  "event": "Stop",
+  "session_id": "019e6a3a-b783-7980-b184-db8ccda006f9",
+  "turn_id": "019e6a7a-f93d-71d2-b429-c1970c63bc7c",
+  "branch": "main",
+  "changed_file_count": 57,
+  "changed_file_groups": {
+    "code": 44,
+    "models": 5,
+    "orchid": 1,
+    "database": 5,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    ".codex/memory/learning_candidates.md",
+    "README.md",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateEnrollmentLeadAction.php",
+    "app/Actions/GetContactPageAction.php",
+    "app/Actions/GetEnrollmentFormAction.php",
+    "app/Actions/GetHomePageAction.php",
+    "app/Actions/GetKnowledgeArticleAction.php",
+    "app/Actions/GetKnowledgeBaseAction.php",
+    "app/Actions/GetPricingPageAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/SaveBranchAction.php",
+    "app/Actions/SaveTrainingGroupAction.php",
+    "app/Actions/SaveTrainingProgramAction.php",
+    "app/Enums/GroupStatus.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Controllers/PricingController.php",
+    "app/Http/Controllers/ThankYouController.php",
+    "app/Http/Middleware/CaptureSiteTracking.php",
+    "app/Http/Requests/BranchRequest.php",
+    "app/Http/Requests/LandingPageRequest.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/TrainingGroupRequest.php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/LandingPage.php",
+    "app/Models/MarketingLead.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

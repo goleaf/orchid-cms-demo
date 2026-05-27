@@ -16,15 +16,15 @@ class GetPublicReviewsAction
                 ->forPublicList()
                 ->published()
                 ->with([
-                    'trainingProgram:id,title,slug',
-                    'trainingGroup:id,name,code',
+                    'trainingProgram:id,title,title_translations,slug',
+                    'trainingGroup:id,name,name_translations,code',
                     'instructor:id,name,rating',
                 ])
                 ->orderByDesc('published_at')
                 ->simplePaginate(12)
                 ->withQueryString(),
-            'seoTitle' => 'Student reviews | DrivePro Academy',
-            'seoDescription' => 'Moderated student reviews, school rating, instructor ratings, course links, video reviews, and admin replies.',
+            'seoTitle' => tkey('website.reviews.seo.title'),
+            'seoDescription' => tkey('website.reviews.seo.description'),
         ];
     }
 }

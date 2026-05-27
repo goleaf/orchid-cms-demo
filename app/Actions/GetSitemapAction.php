@@ -17,6 +17,7 @@ class GetSitemapAction
         $staticUrls = collect([
             ['url' => route('site.home'), 'updated_at' => now()],
             ['url' => route('site.apply'), 'updated_at' => now()],
+            ['url' => route('site.prices'), 'updated_at' => now()],
             ['url' => route('site.instructors'), 'updated_at' => now()],
             ['url' => route('site.fleet'), 'updated_at' => now()],
             ['url' => route('site.reviews'), 'updated_at' => now()],
@@ -30,7 +31,7 @@ class GetSitemapAction
             ->orderBy('slug')
             ->get()
             ->map(fn (TrainingProgram $program): array => [
-                'url' => route('site.categories.show', $program),
+                'url' => route('site.courses.show', $program),
                 'updated_at' => $program->updated_at,
             ]);
 

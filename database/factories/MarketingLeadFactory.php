@@ -8,6 +8,7 @@ use App\Models\MarketingCampaign;
 use App\Models\MarketingLead;
 use App\Models\TrainingProgram;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<MarketingLead>
@@ -22,6 +23,7 @@ class MarketingLeadFactory extends Factory
     public function definition(): array
     {
         return [
+            'uuid' => (string) Str::uuid(),
             'marketing_campaign_id' => MarketingCampaign::factory(),
             'responsible_manager_id' => null,
             'branch_id' => Branch::factory(),
@@ -49,6 +51,28 @@ class MarketingLeadFactory extends Factory
             'rejection_reason' => null,
             'lost_reason_code' => null,
             'crm_snapshot' => null,
+            'utm_source' => 'website',
+            'utm_medium' => 'organic',
+            'utm_campaign' => 'factory',
+            'utm_term' => null,
+            'utm_content' => null,
+            'referrer_url' => null,
+            'landing_page' => null,
+            'form_page' => null,
+            'form_name' => null,
+            'locale' => 'ru',
+            'ip_address' => null,
+            'user_agent' => null,
         ];
+    }
+
+    public function websiteLead(): static
+    {
+        return $this->state(fn (): array => [
+            'source' => 'website',
+            'form_name' => 'enrollment',
+            'locale' => app()->getLocale(),
+            'privacy_accepted_at' => now(),
+        ]);
     }
 }

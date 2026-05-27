@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\LandingPage;
+use App\Services\TranslatableContentManager;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -14,7 +15,7 @@ class LandingPageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('platform.content.home') ?? false;
+        return $this->user()?->hasAnyAccess(['platform.content.home', 'website.manage_settings']) ?? false;
     }
 
     /**
@@ -26,29 +27,27 @@ class LandingPageRequest extends FormRequest
     {
         return [
             'page.id' => ['required', 'integer', Rule::exists(LandingPage::class, 'id')],
-            'page.title' => ['required', 'string', 'max:255'],
             'page.slug' => [
                 'required',
                 'string',
                 'max:255',
                 Rule::unique('landing_pages', 'slug')->ignore($this->input('page.id')),
             ],
-            'page.eyebrow' => ['nullable', 'string', 'max:255'],
-            'page.hero_title' => ['required', 'string', 'max:255'],
-            'page.hero_summary' => ['required', 'string', 'max:1000'],
-            'page.primary_button_label' => ['nullable', 'string', 'max:80'],
-            'page.primary_button_url' => ['nullable', 'string', 'max:255'],
-            'page.secondary_button_label' => ['nullable', 'string', 'max:80'],
-            'page.secondary_button_url' => ['nullable', 'string', 'max:255'],
-            'page.about_heading' => ['required', 'string', 'max:255'],
-            'page.about_body' => ['required', 'string', 'max:2000'],
-            'page.offer_one_title' => ['nullable', 'string', 'max:255'],
-            'page.offer_one_body' => ['nullable', 'string', 'max:1000'],
-            'page.offer_two_title' => ['nullable', 'string', 'max:255'],
-            'page.offer_two_body' => ['nullable', 'string', 'max:1000'],
-            'page.offer_three_title' => ['nullable', 'string', 'max:255'],
-            'page.offer_three_body' => ['nullable', 'string', 'max:1000'],
             'page.published_at' => ['nullable', 'date'],
+            ...app(TranslatableContentManager::class)->validationRules([
+                'title',
+                'eyebrow',
+                'hero_title',
+                'hero_summary',
+                'about_heading',
+                'about_body',
+                'offer_one_title',
+                'offer_one_body',
+                'offer_two_title',
+                'offer_two_body',
+                'offer_three_title',
+                'offer_three_body',
+            ]),
         ];
     }
 
@@ -57,6 +56,48 @@ class LandingPageRequest extends FormRequest
      */
     public function pageData(): array
     {
-        return $this->validated()['page'];
+        $validated = $this->validated();
+        $translations = app(TranslatableContentManager::class)->extract($this, [
+            'title',
+            'eyebrow',
+            'hero_title',
+            'hero_summary',
+            'about_heading',
+            'about_body',
+            'offer_one_title',
+            'offer_one_body',
+            'offer_two_title',
+            'offer_two_body',
+            'offer_three_title',
+            'offer_three_body',
+        ]);
+
+        return [
+            ...$validated['page'],
+            ...$translations,
+            'title' => $this->fallbackScalar($translations, 'title', 'Home'),
+            'eyebrow' => $this->fallbackScalar($translations, 'eyebrow'),
+            'hero_title' => $this->fallbackScalar($translations, 'hero_title', 'Home'),
+            'hero_summary' => $this->fallbackScalar($translations, 'hero_summary', ''),
+            'about_heading' => $this->fallbackScalar($translations, 'about_heading', ''),
+            'about_body' => $this->fallbackScalar($translations, 'about_body', ''),
+            'offer_one_title' => $this->fallbackScalar($translations, 'offer_one_title'),
+            'offer_one_body' => $this->fallbackScalar($translations, 'offer_one_body'),
+            'offer_two_title' => $this->fallbackScalar($translations, 'offer_two_title'),
+            'offer_two_body' => $this->fallbackScalar($translations, 'offer_two_body'),
+            'offer_three_title' => $this->fallbackScalar($translations, 'offer_three_title'),
+            'offer_three_body' => $this->fallbackScalar($translations, 'offer_three_body'),
+        ];
+    }
+
+    /**
+     * @param  array<string, array<string, mixed>>  $translations
+     */
+    private function fallbackScalar(array $translations, string $field, ?string $fallback = null): ?string
+    {
+        $value = app(TranslatableContentManager::class)
+            ->defaultValue($translations[$field.'_translations'] ?? []);
+
+        return filled($value) ? (string) $value : $fallback;
     }
 }

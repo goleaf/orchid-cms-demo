@@ -257,6 +257,45 @@
                 background: #ffffff;
             }
 
+            .article-body {
+                display: grid;
+                gap: 16px;
+            }
+
+            .article-body h2,
+            .article-body h3,
+            .article-body h4 {
+                margin: 16px 0 0;
+                line-height: 1.15;
+                letter-spacing: 0;
+            }
+
+            .article-body p,
+            .article-body ul,
+            .article-body ol,
+            .article-body pre,
+            .article-body table {
+                margin: 0;
+            }
+
+            .article-body ul,
+            .article-body ol {
+                padding-left: 22px;
+            }
+
+            .article-body pre {
+                overflow-x: auto;
+                padding: 14px;
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                background: #f8fafc;
+            }
+
+            .article-body code {
+                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+                font-size: 0.9em;
+            }
+
             .dark .card {
                 border-color: rgba(255, 255, 255, 0.14);
                 background: rgba(255, 255, 255, 0.08);
@@ -404,6 +443,28 @@
                 font-weight: 750;
             }
 
+            .inline-form {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 12px;
+                align-items: end;
+            }
+
+            .inline-form .full {
+                grid-column: 1 / -1;
+            }
+
+            .check-row {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .check-row input {
+                width: auto;
+                min-height: auto;
+            }
+
             .map {
                 display: grid;
                 min-height: 320px;
@@ -461,7 +522,8 @@
                 .grid.two,
                 .grid.three,
                 .grid.four,
-                .form-grid {
+                .form-grid,
+                .inline-form {
                     grid-template-columns: 1fr;
                 }
 
@@ -493,8 +555,10 @@
 
     <nav class="site-nav" aria-label="{{ tkey('website.navigation.main') }}">
         <div class="site-nav-inner">
-            <a class="brand" href="{{ route('site.home') }}">DrivePro Academy</a>
+            <a class="brand" href="{{ route('site.home') }}">{{ tkey('website.brand.name') }}</a>
             <div class="nav-links">
+                <a href="{{ route('site.home') }}#programs">{{ tkey('website.nav.programs') }}</a>
+                <a href="{{ route('site.prices') }}">{{ tkey('website.nav.prices') }}</a>
                 <a href="{{ route('site.apply') }}">{{ tkey('website.actions.apply') }}</a>
                 <a href="{{ route('site.instructors') }}">{{ tkey('website.nav.instructors') }}</a>
                 <a href="{{ route('site.fleet') }}">{{ tkey('website.nav.fleet') }}</a>
@@ -526,7 +590,7 @@
 
     <footer class="footer">
         <div class="section-inner">
-            <strong>DrivePro Academy</strong>
+            <strong>{{ tkey('website.brand.name') }}</strong>
             <p class="meta">{{ tkey('website.footer.description') }}</p>
         </div>
     </footer>

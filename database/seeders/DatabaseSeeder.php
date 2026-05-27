@@ -55,6 +55,7 @@ class DatabaseSeeder extends Seeder
             LanguageSeeder::class,
             SystemTranslationSeeder::class,
             CrmDictionarySeeder::class,
+            SystemDesignVibecodingSeeder::class,
         ]);
 
         LandingPage::query()->updateOrCreate(
@@ -834,6 +835,8 @@ class DatabaseSeeder extends Seeder
                 );
             }
         });
+
+        $this->call(PublicWebsiteSeeder::class);
 
         Cache::forget('driving-school.dashboard.metrics');
     }

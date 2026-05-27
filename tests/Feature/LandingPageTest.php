@@ -17,7 +17,15 @@ class LandingPageTest extends TestCase
             ->published()
             ->create([
                 'hero_title' => 'Editable driving school platform',
+                'hero_title_translations' => [
+                    'en' => 'Editable driving school platform',
+                    'ru' => 'Редактируемый сайт автошколы',
+                ],
                 'about_heading' => 'Prepared content flow',
+                'about_heading_translations' => [
+                    'en' => 'Prepared content flow',
+                    'ru' => 'Готовый поток контента',
+                ],
             ]);
 
         $response = $this->get('/');

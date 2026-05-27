@@ -4,14 +4,14 @@
     <header class="hero">
         <div class="hero-inner">
             <div class="hero-copy">
-                @if ($page->eyebrow)
-                    <p class="eyebrow">{{ $page->eyebrow }}</p>
+                @if ($page->displayText('eyebrow'))
+                    <p class="eyebrow">{{ $page->displayText('eyebrow') }}</p>
                 @endif
-                <h1>{{ $page->hero_title }}</h1>
-                <p class="lead">{{ $page->hero_summary }}</p>
+                <h1>{{ $page->displayText('hero_title') }}</h1>
+                <p class="lead">{{ $page->displayText('hero_summary') }}</p>
                 <div class="hero-actions">
-                    <a class="button" href="{{ route('site.apply') }}">Записаться</a>
-                    <a class="button secondary" href="#programs">Категории и цены</a>
+                    <a class="button" href="{{ route('site.apply') }}">{{ tkey('website.actions.apply') }}</a>
+                    <a class="button secondary" href="#programs">{{ tkey('website.home.hero.secondary_action') }}</a>
                 </div>
             </div>
         </div>
@@ -23,19 +23,19 @@
                 <div class="grid four">
                     <div class="card stat">
                         <strong>{{ $stats['students'] }}</strong>
-                        <span class="meta">учеников в системе</span>
+                        <span class="meta">{{ tkey('website.home.stats.students') }}</span>
                     </div>
                     <div class="card stat">
                         <strong>{{ $stats['pass_rate'] }}%</strong>
-                        <span class="meta">целевой процент сдачи</span>
+                        <span class="meta">{{ tkey('website.home.stats.pass_rate') }}</span>
                     </div>
                     <div class="card stat">
                         <strong>{{ $stats['instructors'] }}</strong>
-                        <span class="meta">активных инструкторов</span>
+                        <span class="meta">{{ tkey('website.home.stats.instructors') }}</span>
                     </div>
                     <div class="card stat">
                         <strong>{{ $stats['vehicles'] }}</strong>
-                        <span class="meta">учебных автомобилей</span>
+                        <span class="meta">{{ tkey('website.home.stats.vehicles') }}</span>
                     </div>
                 </div>
             </div>
@@ -45,23 +45,23 @@
             <div class="section-inner">
                 <div class="section-head">
                     <div>
-                        <p class="kicker">Автошкола</p>
-                        <h2>{{ $page->about_heading }}</h2>
+                        <p class="kicker">{{ tkey('website.home.about.kicker') }}</p>
+                        <h2>{{ $page->displayText('about_heading') }}</h2>
                     </div>
-                    <p class="lead">{{ $page->about_body }}</p>
+                    <p class="lead">{{ $page->displayText('about_body') }}</p>
                 </div>
 
                 <div class="grid three">
                     @forelse ($offers as $offer)
                         <article class="card">
-                            <p class="kicker">Преимущество {{ $loop->iteration }}</p>
+                            <p class="kicker">{{ tkey('website.home.about.benefit_number', ['number' => $loop->iteration]) }}</p>
                             <h3>{{ $offer['title'] }}</h3>
                             <p class="meta">{{ $offer['body'] }}</p>
                         </article>
                     @empty
                         <article class="card">
-                            <h3>Операционная база готова</h3>
-                            <p class="meta">Добавьте преимущества из Orchid CMS.</p>
+                            <h3>{{ tkey('website.home.empty.benefits_title') }}</h3>
+                            <p class="meta">{{ tkey('website.home.empty.benefits_body') }}</p>
                         </article>
                     @endforelse
                 </div>
@@ -72,33 +72,34 @@
             <div class="section-inner">
                 <div class="section-head">
                     <div>
-                        <p class="kicker">Категории</p>
-                        <h2>Программы, цены и часы обучения</h2>
+                        <p class="kicker">{{ tkey('website.home.programs.kicker') }}</p>
+                        <h2>{{ tkey('website.home.programs.title') }}</h2>
                     </div>
-                    <p class="lead">Каждая категория ведет на отдельную страницу с документами, группами, филиалами, инструкторами и машинами.</p>
+                    <p class="lead">{{ tkey('website.home.programs.lead') }}</p>
                 </div>
 
                 <div class="grid three">
                     @forelse ($programs as $program)
                         <article class="card">
-                            <p class="kicker">Категория {{ $program->license_category }}</p>
-                            <h3>{{ $program->title }}</h3>
-                            <p class="meta">{{ $program->description }}</p>
+                            <p class="kicker">{{ tkey('website.course.category_label', ['category' => $program->license_category]) }}</p>
+                            <h3>{{ $program->displayTitle() }}</h3>
+                            <p class="meta">{{ $program->displayShortDescription() }}</p>
                             <div class="facts">
-                                <span class="fact">{{ $program->duration_weeks }} weeks</span>
-                                <span class="fact">{{ $program->theory_hours }} theory h</span>
-                                <span class="fact">{{ $program->practice_hours }} practice h</span>
-                                <span class="fact">{{ $program->format }}</span>
+                                <span class="fact">{{ tkey('website.course.duration_weeks', ['weeks' => $program->duration_weeks]) }}</span>
+                                <span class="fact">{{ tkey('website.course.theory_hours_short', ['hours' => $program->theory_hours]) }}</span>
+                                <span class="fact">{{ tkey('website.course.practice_hours_short', ['hours' => $program->practice_hours]) }}</span>
+                                <span class="fact">{{ tkey('website.formats.'.$program->format) }}</span>
                             </div>
                             <p class="price">{{ $program->priceForHumans() }}</p>
                             <div class="actions">
-                                <a class="button" href="{{ route('site.categories.show', $program) }}">Подробнее</a>
+                                <a class="button secondary" href="{{ route('site.courses.show', $program) }}">{{ tkey('website.actions.details') }}</a>
+                                <a class="button" href="{{ route('site.apply', ['program' => $program->id]) }}">{{ tkey('website.actions.apply') }}</a>
                             </div>
                         </article>
                     @empty
                         <article class="card">
-                            <h3>Программы готовятся</h3>
-                            <p class="meta">Активные программы появятся после публикации в админке.</p>
+                            <h3>{{ tkey('website.home.empty.programs_title') }}</h3>
+                            <p class="meta">{{ tkey('website.home.empty.programs_body') }}</p>
                         </article>
                     @endforelse
                 </div>
@@ -109,37 +110,41 @@
             <div class="section-inner">
                 <div class="section-head">
                     <div>
-                        <p class="kicker">Наборы</p>
-                        <h2>Ближайшие группы</h2>
+                        <p class="kicker">{{ tkey('website.home.groups.kicker') }}</p>
+                        <h2>{{ tkey('website.home.groups.title') }}</h2>
                     </div>
-                    <p class="lead">Группы связаны с филиалом, программой, инструктором, вместимостью и статусом набора.</p>
+                    <p class="lead">{{ tkey('website.home.groups.lead') }}</p>
                 </div>
 
                 <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
-                                <th>Группа</th>
-                                <th>Категория</th>
-                                <th>Филиал</th>
-                                <th>Старт</th>
-                                <th>Инструктор</th>
-                                <th>Места</th>
+                                <th>{{ tkey('website.groups.columns.group') }}</th>
+                                <th>{{ tkey('website.groups.columns.course') }}</th>
+                                <th>{{ tkey('website.groups.columns.branch') }}</th>
+                                <th>{{ tkey('website.groups.columns.start') }}</th>
+                                <th>{{ tkey('website.groups.columns.instructor') }}</th>
+                                <th>{{ tkey('website.groups.columns.seats') }}</th>
+                                <th>{{ tkey('website.groups.columns.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($upcomingGroups as $group)
                                 <tr>
-                                    <td>{{ $group->name }}<br><span class="meta">{{ $group->code }}</span></td>
-                                    <td>{{ $group->trainingProgram->title }}</td>
-                                    <td>{{ $group->branch->city }}</td>
+                                    <td>{{ $group->displayName() }}<br><span class="meta">{{ $group->code }}</span></td>
+                                    <td>{{ $group->trainingProgram->displayTitle() }}</td>
+                                    <td>{{ $group->branch->displayCity() }}</td>
                                     <td>{{ $group->starts_on?->toDateString() ?? '-' }}</td>
                                     <td>{{ $group->instructor?->name ?? '-' }}</td>
-                                    <td>{{ $group->seatsAvailable() }} / {{ $group->capacity }}</td>
+                                    <td>{{ tkey('website.groups.seats_value', ['available' => $group->seatsAvailable(), 'capacity' => $group->capacity]) }}</td>
+                                    <td>
+                                        <a class="button secondary" href="{{ route('site.apply', ['program' => $group->training_program_id, 'branch' => $group->branch_id, 'group' => $group->id]) }}">{{ tkey('website.actions.apply') }}</a>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6">Ближайшие наборы пока не опубликованы.</td>
+                                    <td colspan="7">{{ tkey('website.groups.empty') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -152,62 +157,40 @@
             <div class="section-inner">
                 <div class="section-head">
                     <div>
-                        <p class="kicker">Процесс</p>
-                        <h2>Как проходит обучение</h2>
+                        <p class="kicker">{{ tkey('website.home.process.kicker') }}</p>
+                        <h2>{{ tkey('website.home.process.title') }}</h2>
                     </div>
-                    <p class="lead">Путь ученика проходит через заявку, CRM, LMS, расписание, документы, платежи и экзамены.</p>
+                    <p class="lead">{{ tkey('website.home.process.lead') }}</p>
                 </div>
 
                 <div class="grid four">
-                    @foreach ($steps as $step)
+                    @forelse ($steps as $step)
                         <article class="card">
-                            <p class="kicker">Шаг {{ $loop->iteration }}</p>
+                            <p class="kicker">{{ tkey('website.home.process.step_number', ['number' => $loop->iteration]) }}</p>
                             <h3>{{ $step['title'] }}</h3>
                             <p class="meta">{{ $step['body'] }}</p>
                         </article>
-                    @endforeach
+                    @empty
+                        <article class="card">
+                            <h3>{{ tkey('common.empty.no_records') }}</h3>
+                        </article>
+                    @endforelse
                 </div>
             </div>
         </section>
 
-        <section class="section">
+        <section class="section" id="prices">
             <div class="section-inner">
                 <div class="section-head">
                     <div>
-                        <p class="kicker">Команда и автопарк</p>
-                        <h2>Инструкторы и учебные машины</h2>
+                        <p class="kicker">{{ tkey('website.prices.kicker') }}</p>
+                        <h2>{{ tkey('website.prices.title') }}</h2>
                     </div>
-                    <p class="lead">Публичные профили показывают стаж, категории, языки, рейтинг, машину, филиал и доступность.</p>
+                    <p class="lead">{{ tkey('website.prices.lead') }}</p>
                 </div>
 
-                <div class="grid two">
-                    @foreach ($featuredInstructors as $instructor)
-                        <article class="card">
-                            <p class="kicker">{{ $instructor->branch->city }}</p>
-                            <h3>{{ $instructor->name }}</h3>
-                            <p class="meta">{{ $instructor->teaching_style }}</p>
-                            <div class="badge-list">
-                                <span class="badge">{{ $instructor->experience_years }} years</span>
-                                <span class="badge">{{ $instructor->rating }} rating</span>
-                                @foreach (($instructor->languages ?? []) as $language)
-                                    <span class="badge">{{ $language }}</span>
-                                @endforeach
-                            </div>
-                        </article>
-                    @endforeach
-
-                    @foreach ($featuredVehicles as $vehicle)
-                        <article class="card">
-                            <p class="kicker">{{ $vehicle->branch->city }}</p>
-                            <h3>{{ $vehicle->make }} {{ $vehicle->model }}</h3>
-                            <p class="meta">{{ $vehicle->description }}</p>
-                            <div class="badge-list">
-                                <span class="badge">{{ $vehicle->license_category }}</span>
-                                <span class="badge">{{ $vehicle->transmission }}</span>
-                                <span class="badge">{{ str($vehicle->status->value)->title() }}</span>
-                            </div>
-                        </article>
-                    @endforeach
+                <div class="actions">
+                    <a class="button" href="{{ route('site.prices') }}">{{ tkey('website.nav.prices') }}</a>
                 </div>
             </div>
         </section>
@@ -216,72 +199,81 @@
             <div class="section-inner">
                 <div class="section-head">
                     <div>
-                        <p class="kicker">Отзывы</p>
-                        <h2>Рейтинг школы {{ $stats['rating'] ?: '5.0' }}</h2>
+                        <p class="kicker">{{ tkey('website.home.faq.kicker') }}</p>
+                        <h2>{{ tkey('website.home.faq.title') }}</h2>
                     </div>
-                    <p class="lead">Публикуются только проверенные отзывы, с привязкой к курсу, группе или инструктору.</p>
-                </div>
-
-                <div class="grid three">
-                    @foreach ($reviews as $review)
-                        <article class="card">
-                            <p class="kicker">{{ $review->rating }} / 5</p>
-                            <h3>{{ $review->title }}</h3>
-                            <p>{{ $review->body }}</p>
-                            <p class="meta">{{ $review->author_name }} · {{ $review->trainingProgram?->title }}</p>
-                        </article>
-                    @endforeach
-                </div>
-
-                <div class="actions">
-                    <a class="button secondary" href="{{ route('site.reviews') }}">Все отзывы</a>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <div class="section-inner">
-                <div class="section-head">
-                    <div>
-                        <p class="kicker">FAQ</p>
-                        <h2>Частые вопросы</h2>
-                    </div>
-                    <p class="lead">Ответы закрывают вопросы по формату, документам, выбору инструктора и интенсивным курсам.</p>
+                    <p class="lead">{{ tkey('website.home.faq.lead') }}</p>
                 </div>
 
                 <div class="grid two">
-                    @foreach ($faq as $item)
+                    @forelse ($faq as $item)
                         <article class="card">
                             <h3>{{ $item['question'] }}</h3>
                             <p class="meta">{{ $item['answer'] }}</p>
                         </article>
-                    @endforeach
+                    @empty
+                        <article class="card">
+                            <h3>{{ tkey('common.empty.no_records') }}</h3>
+                        </article>
+                    @endforelse
                 </div>
             </div>
         </section>
 
-        <section class="section soft">
+        <section class="section">
             <div class="section-inner">
                 <div class="section-head">
                     <div>
-                        <p class="kicker">База знаний</p>
-                        <h2>Статьи для учеников</h2>
+                        <p class="kicker">{{ tkey('website.apply.kicker') }}</p>
+                        <h2>{{ tkey('website.apply.title') }}</h2>
                     </div>
-                    <p class="lead">Материалы по выбору автошколы, теории, практике, экзаменам, ошибкам и изменениям правил.</p>
+                    <p class="lead">{{ tkey('website.apply.lead') }}</p>
                 </div>
 
-                <div class="grid three">
-                    @foreach ($articles as $article)
-                        <article class="card">
-                            <p class="kicker">{{ $article->category }}</p>
-                            <h3>{{ $article->title }}</h3>
-                            <p class="meta">{{ $article->excerpt }}</p>
-                            <div class="actions">
-                                <a class="button secondary" href="{{ route('site.blog.show', $article) }}">Читать</a>
-                            </div>
-                        </article>
-                    @endforeach
-                </div>
+                <form method="POST" action="{{ route('site.apply.store') }}" class="card">
+                    @csrf
+                    <input type="hidden" name="source" value="website">
+                    <input type="hidden" name="form_name" value="homepage_enrollment">
+                    <input type="hidden" name="preferred_format" value="mixed">
+                    <input type="hidden" name="preferred_language" value="{{ app()->getLocale() }}">
+
+                    <div class="inline-form">
+                        <label>
+                            {{ tkey('crm.leads.fields.course') }}
+                            <select name="training_program_id" required>
+                                @foreach ($programs as $program)
+                                    <option value="{{ $program->id }}">{{ $program->displayTitle() }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                        <label>
+                            {{ tkey('crm.leads.fields.branch') }}
+                            <select name="branch_id" required>
+                                @foreach ($branches as $branch)
+                                    <option value="{{ $branch->id }}">{{ $branch->displayName() }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                        <label>
+                            {{ tkey('crm.leads.fields.first_name') }}
+                            <input name="first_name" required>
+                        </label>
+                        <label>
+                            {{ tkey('crm.leads.fields.phone') }}
+                            <input name="phone" required>
+                        </label>
+                        <label class="full">
+                            <span class="check-row">
+                                <input type="checkbox" name="privacy_consent" value="1" required>
+                                {{ tkey('website.forms.privacy_consent') }}
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="actions">
+                        <button class="button" type="submit">{{ tkey('website.actions.submit_application') }}</button>
+                    </div>
+                </form>
             </div>
         </section>
 
@@ -289,28 +281,36 @@
             <div class="section-inner">
                 <div class="section-head">
                     <div>
-                        <p class="kicker">Контакты</p>
-                        <h2>Филиалы и карта</h2>
+                        <p class="kicker">{{ tkey('website.contacts.kicker') }}</p>
+                        <h2>{{ tkey('website.contacts.title') }}</h2>
                     </div>
-                    <p class="lead">Каждый филиал связан с группами, инструкторами, машинами и заявками.</p>
+                    <p class="lead">{{ tkey('website.contacts.lead') }}</p>
                 </div>
 
                 <div class="grid two">
                     <div class="grid">
-                        @foreach ($branches as $branch)
+                        @forelse ($branches as $branch)
                             <article class="card">
-                                <h3>{{ $branch->name }}</h3>
-                                <p class="meta">{{ $branch->city }}, {{ $branch->address }}</p>
+                                <h3>{{ $branch->displayName() }}</h3>
+                                <p class="meta">{{ $branch->displayCity() }}, {{ $branch->displayAddress() }}</p>
+                                @if ($branch->displayWorkingHours())
+                                    <p class="meta">{{ $branch->displayWorkingHours() }}</p>
+                                @endif
                                 <div class="facts">
-                                    <span class="fact">{{ $branch->groups_count }} groups</span>
-                                    <span class="fact">{{ $branch->instructors_count }} instructors</span>
-                                    <span class="fact">{{ $branch->vehicles_count }} cars</span>
+                                    <span class="fact">{{ tkey('website.branches.groups_count', ['count' => $branch->groups_count]) }}</span>
+                                    <span class="fact">{{ tkey('website.branches.instructors_count', ['count' => $branch->instructors_count]) }}</span>
+                                    <span class="fact">{{ tkey('website.branches.vehicles_count', ['count' => $branch->vehicles_count]) }}</span>
                                 </div>
                             </article>
-                        @endforeach
+                        @empty
+                            <article class="card">
+                                <h3>{{ tkey('website.contacts.empty.title') }}</h3>
+                                <p class="meta">{{ tkey('website.contacts.empty.body') }}</p>
+                            </article>
+                        @endforelse
                     </div>
                     <div class="map">
-                        <strong>Branch map</strong>
+                        <strong>{{ tkey('website.contacts.map_placeholder') }}</strong>
                     </div>
                 </div>
             </div>

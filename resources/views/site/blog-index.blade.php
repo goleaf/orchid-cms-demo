@@ -4,9 +4,9 @@
     <main>
         <section class="section dark">
             <div class="section-inner">
-                <p class="kicker">Knowledge base</p>
-                <h1>Блог и база знаний</h1>
-                <p class="lead">Статьи про выбор автошколы, обучение, экзамены, теорию, практику, ошибки, новости и инструкции.</p>
+                <p class="kicker">{{ tkey('website.blog.kicker') }}</p>
+                <h1>{{ tkey('website.blog.title') }}</h1>
+                <p class="lead">{{ tkey('website.blog.description') }}</p>
                 <div class="badge-list">
                     @foreach ($categories as $category)
                         <span class="badge">{{ $category }}</span>
@@ -20,17 +20,17 @@
                 <div class="grid three">
                     @forelse ($articles as $article)
                         <article class="card">
-                            <p class="kicker">{{ $article->category }}</p>
+                            <p class="kicker">{{ $article->category_label }}</p>
                             <h3>{{ $article->title }}</h3>
                             <p class="meta">{{ $article->excerpt }}</p>
                             <div class="actions">
-                                <a class="button secondary" href="{{ route('site.blog.show', $article) }}">Читать</a>
+                                <a class="button secondary" href="{{ route('site.blog.show', $article) }}">{{ tkey('website.blog.actions.read') }}</a>
                             </div>
                         </article>
                     @empty
                         <article class="card">
-                            <h3>Статьи готовятся</h3>
-                            <p class="meta">Опубликованные материалы появятся после модерации.</p>
+                            <h3>{{ tkey('website.blog.empty.title') }}</h3>
+                            <p class="meta">{{ tkey('website.blog.empty.description') }}</p>
                         </article>
                     @endforelse
                 </div>

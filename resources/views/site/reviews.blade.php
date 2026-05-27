@@ -4,9 +4,9 @@
     <main>
         <section class="section dark">
             <div class="section-inner">
-                <p class="kicker">Reviews</p>
-                <h1>Отзывы учеников</h1>
-                <p class="lead">Отзывы проходят модерацию и могут быть привязаны к курсу, группе, инструктору или видеоотзыву.</p>
+                <p class="kicker">{{ tkey('website.reviews.kicker') }}</p>
+                <h1>{{ tkey('website.reviews.title') }}</h1>
+                <p class="lead">{{ tkey('website.reviews.lead') }}</p>
             </div>
         </section>
 
@@ -21,28 +21,28 @@
                             <p class="meta">{{ $review->author_name }}</p>
                             <div class="badge-list">
                                 @if ($review->trainingProgram)
-                                    <span class="badge">{{ $review->trainingProgram->title }}</span>
+                                    <span class="badge">{{ $review->trainingProgram->displayTitle() }}</span>
                                 @endif
                                 @if ($review->trainingGroup)
-                                    <span class="badge">{{ $review->trainingGroup->code }}</span>
+                                    <span class="badge">{{ $review->trainingGroup->displayName() }}</span>
                                 @endif
                                 @if ($review->instructor)
                                     <span class="badge">{{ $review->instructor->name }}</span>
                                 @endif
                             </div>
                             @if ($review->admin_reply)
-                                <p class="meta">Admin reply: {{ $review->admin_reply }}</p>
+                                <p class="meta">{{ tkey('website.reviews.admin_reply') }}: {{ $review->admin_reply }}</p>
                             @endif
                             @if ($review->video_url)
                                 <div class="actions">
-                                    <a class="button secondary" href="{{ $review->video_url }}">Видеоотзыв</a>
+                                    <a class="button secondary" href="{{ $review->video_url }}">{{ tkey('website.reviews.video') }}</a>
                                 </div>
                             @endif
                         </article>
                     @empty
                         <article class="card">
-                            <h3>Отзывы еще не опубликованы</h3>
-                            <p class="meta">После модерации отзывы появятся здесь.</p>
+                            <h3>{{ tkey('website.reviews.empty.title') }}</h3>
+                            <p class="meta">{{ tkey('website.reviews.empty.body') }}</p>
                         </article>
                     @endforelse
                 </div>

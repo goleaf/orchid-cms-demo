@@ -39,6 +39,32 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.content.home')
                 ->permission('platform.content.home'),
 
+            Menu::make(tkey('menu.website.courses'))
+                ->icon('bs.book')
+                ->route('platform.website.courses')
+                ->permission('website.manage_courses')
+                ->title(tkey('menu.website')),
+
+            Menu::make(tkey('menu.website.branches'))
+                ->icon('bs.building')
+                ->route('platform.website.branches')
+                ->permission('website.manage_branches'),
+
+            Menu::make(tkey('menu.website.groups'))
+                ->icon('bs.calendar-event')
+                ->route('platform.website.groups')
+                ->permission('website.manage_groups'),
+
+            Menu::make(tkey('menu.website.leads'))
+                ->icon('bs.inbox')
+                ->route('platform.website.leads')
+                ->permission('website.view_leads'),
+
+            Menu::make(tkey('menu.website.settings'))
+                ->icon('bs.sliders')
+                ->route('platform.website.settings')
+                ->permission('website.manage_settings'),
+
             Menu::make(tkey('menu.operations.branches'))
                 ->icon('bs.building')
                 ->route('platform.operations.branches')
@@ -195,6 +221,17 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('platform.content.home', tkey('permissions.content.home'))
                 ->addPermission('platform.lms.programs', tkey('permissions.lms.programs'))
                 ->addPermission('platform.documents', tkey('permissions.documents')),
+
+            ItemPermission::group(tkey('permissions.groups.website'))
+                ->addPermission('website.view', tkey('permissions.website.view'))
+                ->addPermission('website.manage_pages', tkey('permissions.website.manage_pages'))
+                ->addPermission('website.manage_courses', tkey('permissions.website.manage_courses'))
+                ->addPermission('website.manage_branches', tkey('permissions.website.manage_branches'))
+                ->addPermission('website.manage_groups', tkey('permissions.website.manage_groups'))
+                ->addPermission('website.manage_settings', tkey('permissions.website.manage_settings'))
+                ->addPermission('website.view_leads', tkey('permissions.website.view_leads'))
+                ->addPermission('website.update_leads', tkey('permissions.website.update_leads'))
+                ->addPermission('website.view_marketing', tkey('permissions.website.view_marketing')),
 
             ItemPermission::group(tkey('permissions.groups.operations'))
                 ->addPermission('platform.operations.branches', tkey('permissions.operations.branches'))
