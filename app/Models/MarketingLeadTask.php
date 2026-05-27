@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\LeadTaskPriority;
 use App\Enums\LeadTaskStatus;
+use Database\Factories\MarketingLeadTaskFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MarketingLeadTask extends Model
 {
-    /** @use HasFactory<\Database\Factories\MarketingLeadTaskFactory> */
+    /** @use HasFactory<MarketingLeadTaskFactory> */
     use HasFactory;
 
     protected $fillable = [

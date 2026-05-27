@@ -6,6 +6,7 @@ namespace App\Orchid\Screens\School;
 
 use App\Actions\AddLeadCommentAction;
 use App\Actions\AddLeadCommunicationAction;
+use App\Actions\MoveLeadToStatusAction;
 use App\Actions\UpdateMarketingLeadCrmAction;
 use App\Enums\LeadStatus;
 use App\Models\Branch;
@@ -369,8 +370,12 @@ class LeadEditScreen extends Screen
         ];
     }
 
-    public function save(MarketingLead $lead, Request $request, UpdateMarketingLeadCrmAction $updateLead): RedirectResponse
-    {
+    public function save(
+        MarketingLead $lead,
+        Request $request,
+        UpdateMarketingLeadCrmAction $updateLead,
+        MoveLeadToStatusAction $moveLead,
+    ): RedirectResponse {
         $data = $request->validate([
             'lead.responsible_manager_id' => ['nullable', 'integer', 'exists:users,id'],
             'lead.branch_id' => ['nullable', 'integer', 'exists:branches,id'],
@@ -396,11 +401,18 @@ class LeadEditScreen extends Screen
             'lead_budget_eur' => ['nullable', 'numeric', 'min:0', 'max:100000'],
         ]);
 
+        $targetStatus = LeadStatus::from($data['lead_status']);
+        $currentStatus = $lead->status;
+
         $updateLead->handle($lead, [
             ...$data['lead'],
-            'status' => $data['lead_status'],
+            'status' => $currentStatus,
             'budget_eur' => $data['lead_budget_eur'] ?? null,
         ]);
+
+        if ($currentStatus !== $targetStatus) {
+            $moveLead->handle($lead->refresh(), $targetStatus, $request->user(), 'CRM card status update.');
+        }
 
         Toast::info('Lead CRM card updated.');
 

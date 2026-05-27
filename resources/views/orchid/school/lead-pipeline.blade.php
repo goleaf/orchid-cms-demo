@@ -8,36 +8,44 @@
             <label class="form-label">Manager</label>
             <select class="form-select" name="manager_id">
                 <option value="">All managers</option>
-                @foreach ($filterOptions['managers'] as $id => $name)
+                @forelse ($filterOptions['managers'] as $id => $name)
                     <option value="{{ $id }}" @selected((string) $filters['manager_id'] === (string) $id)>{{ $name }}</option>
-                @endforeach
+                @empty
+                    <option value="" disabled>No managers found</option>
+                @endforelse
             </select>
         </div>
         <div class="col-md-2">
             <label class="form-label">Source</label>
             <select class="form-select" name="source">
                 <option value="">All sources</option>
-                @foreach ($filterOptions['sources'] as $value => $label)
+                @forelse ($filterOptions['sources'] as $value => $label)
                     <option value="{{ $value }}" @selected((string) $filters['source'] === (string) $value)>{{ $label }}</option>
-                @endforeach
+                @empty
+                    <option value="" disabled>No sources found</option>
+                @endforelse
             </select>
         </div>
         <div class="col-md-2">
             <label class="form-label">Category</label>
             <select class="form-select" name="license_category">
                 <option value="">All categories</option>
-                @foreach ($filterOptions['categories'] as $value => $label)
+                @forelse ($filterOptions['categories'] as $value => $label)
                     <option value="{{ $value }}" @selected((string) $filters['license_category'] === (string) $value)>{{ $label }}</option>
-                @endforeach
+                @empty
+                    <option value="" disabled>No categories found</option>
+                @endforelse
             </select>
         </div>
         <div class="col-md-2">
             <label class="form-label">Branch</label>
             <select class="form-select" name="branch_id">
                 <option value="">All branches</option>
-                @foreach ($filterOptions['branches'] as $id => $name)
+                @forelse ($filterOptions['branches'] as $id => $name)
                     <option value="{{ $id }}" @selected((string) $filters['branch_id'] === (string) $id)>{{ $name }}</option>
-                @endforeach
+                @empty
+                    <option value="" disabled>No branches found</option>
+                @endforelse
             </select>
         </div>
         <div class="col-md-2">
@@ -90,9 +98,11 @@
 <div class="bg-white rounded shadow-sm p-3 mb-4">
     <div class="d-flex flex-wrap gap-3 align-items-center">
         <strong>Status conversion report</strong>
-        @foreach ($report['by_status'] as $item)
+        @forelse ($report['by_status'] as $item)
             <span class="badge bg-light text-dark">{{ $item['status']->label() }}: {{ $item['count'] }}</span>
-        @endforeach
+        @empty
+            <span class="text-muted small">No statuses in current filter.</span>
+        @endforelse
     </div>
     <div class="d-flex flex-wrap gap-3 align-items-center mt-2">
         <strong>Loss reasons</strong>
@@ -112,7 +122,7 @@
 </form>
 
 <div class="lead-pipeline-board">
-    @foreach ($statuses as $status)
+    @forelse ($statuses as $status)
         <section class="lead-pipeline-column" data-status="{{ $status->value }}">
             <header class="lead-pipeline-column-head">
                 <strong>{{ $status->label() }}</strong>
@@ -150,7 +160,17 @@
                 @endforelse
             </div>
         </section>
-    @endforeach
+    @empty
+        <section class="lead-pipeline-column">
+            <header class="lead-pipeline-column-head">
+                <strong>No statuses</strong>
+                <span>0</span>
+            </header>
+            <div class="lead-pipeline-dropzone">
+                <div class="lead-pipeline-empty">No pipeline statuses configured</div>
+            </div>
+        </section>
+    @endforelse
 </div>
 
 <style>

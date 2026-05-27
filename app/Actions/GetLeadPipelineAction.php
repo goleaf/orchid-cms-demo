@@ -50,7 +50,7 @@ class GetLeadPipelineAction
             'statuses' => $statuses,
             'columns' => $statuses->mapWithKeys(fn (LeadStatus $status): array => [
                 $status->value => $leads
-                    ->where('status', $status)
+                    ->filter(fn (MarketingLead $lead): bool => $lead->status === $status)
                     ->values(),
             ])->all(),
             'filters' => [
@@ -104,8 +104,12 @@ class GetLeadPipelineAction
     private function conversionReport(Collection $leads, Collection $statuses): array
     {
         $total = max(1, $leads->count());
-        $becameStudents = $leads->where('status', LeadStatus::BecameStudent)->count();
-        $rejected = $leads->where('status', LeadStatus::Rejected)->count();
+        $becameStudents = $leads
+            ->filter(fn (MarketingLead $lead): bool => $lead->status === LeadStatus::BecameStudent)
+            ->count();
+        $rejected = $leads
+            ->filter(fn (MarketingLead $lead): bool => $lead->status === LeadStatus::Rejected)
+            ->count();
 
         return [
             'total' => $leads->count(),
@@ -114,7 +118,7 @@ class GetLeadPipelineAction
             'conversion_rate' => round(($becameStudents / $total) * 100, 1),
             'loss_rate' => round(($rejected / $total) * 100, 1),
             'loss_reasons' => $leads
-                ->where('status', LeadStatus::Rejected)
+                ->filter(fn (MarketingLead $lead): bool => $lead->status === LeadStatus::Rejected)
                 ->pluck('rejection_reason')
                 ->filter()
                 ->countBy()
@@ -123,7 +127,9 @@ class GetLeadPipelineAction
                 ->all(),
             'by_status' => $statuses->map(fn (LeadStatus $status): array => [
                 'status' => $status,
-                'count' => $leads->where('status', $status)->count(),
+                'count' => $leads
+                    ->filter(fn (MarketingLead $lead): bool => $lead->status === $status)
+                    ->count(),
             ])->all(),
         ];
     }

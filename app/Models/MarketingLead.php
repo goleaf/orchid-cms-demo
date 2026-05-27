@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\LeadStatus;
+use App\Enums\LeadTaskStatus;
 use Database\Factories\MarketingLeadFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -127,7 +128,7 @@ class MarketingLead extends Model
 
     public function openTasks(): HasMany
     {
-        return $this->tasks()->where('status', 'open');
+        return $this->tasks()->where('status', LeadTaskStatus::Open->value);
     }
 
     public function overdueTasks(): HasMany

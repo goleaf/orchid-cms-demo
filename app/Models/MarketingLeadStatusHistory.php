@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Enums\LeadStatus;
+use Database\Factories\MarketingLeadStatusHistoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MarketingLeadStatusHistory extends Model
 {
-    /** @use HasFactory<\Database\Factories\MarketingLeadStatusHistoryFactory> */
+    /** @use HasFactory<MarketingLeadStatusHistoryFactory> */
     use HasFactory;
 
     protected $fillable = [
