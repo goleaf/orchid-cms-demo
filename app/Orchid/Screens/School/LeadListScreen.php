@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace App\Orchid\Screens\School;
 
 use App\Enums\LeadStatus;
+use App\Models\Branch;
 use App\Models\LeadSource;
+use App\Models\LeadTag;
 use App\Models\MarketingLead;
+use App\Models\TrainingGroup;
+use App\Models\TrainingProgram;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
@@ -36,6 +41,26 @@ class LeadListScreen extends Screen
      */
     private array $managers = [];
 
+    /**
+     * @var array<int, string>
+     */
+    private array $branches = [];
+
+    /**
+     * @var array<int, string>
+     */
+    private array $programs = [];
+
+    /**
+     * @var array<int, string>
+     */
+    private array $groups = [];
+
+    /**
+     * @var array<int, string>
+     */
+    private array $tags = [];
+
     public function query(Request $request): iterable
     {
         $this->filters = [
@@ -43,7 +68,18 @@ class LeadListScreen extends Screen
             'status' => trim((string) $request->query('status')),
             'source' => trim((string) $request->query('source')),
             'manager_id' => trim((string) $request->query('manager_id')),
+            'branch_id' => trim((string) $request->query('branch_id')),
+            'training_program_id' => trim((string) $request->query('training_program_id')),
+            'training_group_id' => trim((string) $request->query('training_group_id')),
+            'tag_id' => trim((string) $request->query('tag_id')),
+            'created_from' => trim((string) $request->query('created_from')),
+            'created_to' => trim((string) $request->query('created_to')),
+            'follow_up_from' => trim((string) $request->query('follow_up_from')),
+            'follow_up_to' => trim((string) $request->query('follow_up_to')),
+            'utm_source' => trim((string) $request->query('utm_source')),
+            'utm_campaign' => trim((string) $request->query('utm_campaign')),
             'overdue' => trim((string) $request->query('overdue')),
+            'segment' => trim((string) $request->query('segment')),
         ];
 
         $this->managers = User::query()
@@ -52,37 +88,34 @@ class LeadListScreen extends Screen
             ->limit(100)
             ->pluck('name', 'id')
             ->all();
+        $this->branches = Branch::query()
+            ->forAdminList()
+            ->orderBy('sort_order')
+            ->orderBy('city')
+            ->get()
+            ->mapWithKeys(fn (Branch $branch): array => [$branch->id => $branch->displayName()])
+            ->all();
+        $this->programs = TrainingProgram::query()
+            ->forAcademyList()
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->get()
+            ->mapWithKeys(fn (TrainingProgram $program): array => [$program->id => $program->displayTitle()])
+            ->all();
+        $this->groups = TrainingGroup::query()
+            ->operationalList()
+            ->orderBy('starts_on')
+            ->get()
+            ->mapWithKeys(fn (TrainingGroup $group): array => [$group->id => $group->displayName()])
+            ->all();
+        $this->tags = LeadTag::query()
+            ->active()
+            ->ordered()
+            ->get(['id', 'slug', 'name', 'name_translations'])
+            ->mapWithKeys(fn (LeadTag $tag): array => [$tag->id => $tag->displayName()])
+            ->all();
 
-        $leads = MarketingLead::query()
-            ->forLeadList()
-            ->with([
-                'branch:id,name,city',
-                'marketingCampaign:id,name,channel',
-                'responsibleManager:id,name',
-                'trainingProgram:id,title',
-                'convertedStudentProfile:id,first_name,last_name',
-            ])
-            ->withCount(['comments', 'communications', 'documents', 'overdueTasks'])
-            ->when($this->filters['search'] !== '', function (Builder $query): void {
-                $search = $this->filters['search'];
-
-                $query->where(function (Builder $query) use ($search): void {
-                    $query
-                        ->where('first_name', 'like', '%'.$search.'%')
-                        ->orWhere('last_name', 'like', '%'.$search.'%')
-                        ->orWhere('email', 'like', '%'.$search.'%')
-                        ->orWhere('phone', 'like', '%'.$search.'%');
-                });
-            })
-            ->when($this->filters['status'] !== '', fn (Builder $query): Builder => $query->where('status', $this->filters['status']))
-            ->when($this->filters['source'] !== '', fn (Builder $query): Builder => $query->where('source', $this->filters['source']))
-            ->when($this->filters['manager_id'] !== '', fn (Builder $query): Builder => $query->where('responsible_manager_id', $this->filters['manager_id']))
-            ->when($this->filters['overdue'] === '1', fn (Builder $query): Builder => $query
-                ->where(function (Builder $query): void {
-                    $query
-                        ->where('next_follow_up_at', '<', now())
-                        ->orWhereHas('overdueTasks');
-                }))
+        $leads = $this->leadQuery($request)
             ->orderByDesc('created_at')
             ->simplePaginate(15)
             ->withQueryString();
@@ -119,9 +152,21 @@ class LeadListScreen extends Screen
     public function commandBar(): iterable
     {
         return [
+            Link::make(tkey('crm.leads.actions.create'))
+                ->icon('bs.plus-circle')
+                ->route('platform.marketing.leads.create'),
+
             Link::make(tkey('crm.leads.actions.open_pipeline'))
                 ->icon('bs.kanban')
                 ->route('platform.marketing.pipeline'),
+
+            Link::make(tkey('menu.crm.tasks'))
+                ->icon('bs.check2-square')
+                ->route('platform.crm.tasks'),
+
+            Button::make(tkey('common.actions.export_csv'))
+                ->icon('bs.download')
+                ->method('export'),
         ];
     }
 
@@ -151,6 +196,36 @@ class LeadListScreen extends Screen
                     ->options($this->managers)
                     ->value($this->filters['manager_id'] ?? ''),
 
+                Select::make('branch_id')
+                    ->title(tkey('crm.leads.filters.branch'))
+                    ->empty(tkey('crm.leads.filters.all_branches'), '')
+                    ->options($this->branches)
+                    ->value($this->filters['branch_id'] ?? ''),
+
+                Select::make('training_program_id')
+                    ->title(tkey('crm.leads.filters.course'))
+                    ->empty(tkey('crm.leads.filters.all_courses'), '')
+                    ->options($this->programs)
+                    ->value($this->filters['training_program_id'] ?? ''),
+
+                Select::make('training_group_id')
+                    ->title(tkey('crm.leads.filters.group'))
+                    ->empty(tkey('crm.leads.filters.all_groups'), '')
+                    ->options($this->groups)
+                    ->value($this->filters['training_group_id'] ?? ''),
+
+                Select::make('tag_id')
+                    ->title(tkey('crm.leads.filters.tag'))
+                    ->empty(tkey('crm.leads.filters.all_tags'), '')
+                    ->options($this->tags)
+                    ->value($this->filters['tag_id'] ?? ''),
+
+                Select::make('segment')
+                    ->title(tkey('crm.leads.filters.segment'))
+                    ->empty(tkey('crm.leads.filters.no_segment'), '')
+                    ->options($this->segments())
+                    ->value($this->filters['segment'] ?? ''),
+
                 Select::make('overdue')
                     ->title(tkey('crm.leads.filters.overdue'))
                     ->empty(tkey('crm.leads.filters.all_tasks'), '')
@@ -158,6 +233,14 @@ class LeadListScreen extends Screen
                         '1' => tkey('crm.leads.filters.only_overdue'),
                     ])
                     ->value($this->filters['overdue'] ?? ''),
+
+                Input::make('utm_source')
+                    ->title(tkey('crm.leads.fields.utm_source'))
+                    ->value($this->filters['utm_source'] ?? ''),
+
+                Input::make('utm_campaign')
+                    ->title(tkey('crm.leads.fields.utm_campaign'))
+                    ->value($this->filters['utm_campaign'] ?? ''),
 
                 Button::make(tkey('common.actions.search'))
                     ->icon('bs.search')
