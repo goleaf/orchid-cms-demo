@@ -266,9 +266,11 @@ class LeadListScreen extends Screen
                 TD::make('campaign', tkey('crm.leads.columns.campaign'))
                     ->render(fn (MarketingLead $lead): string => $lead->marketingCampaign?->name ?? '-'),
                 TD::make('branch', tkey('crm.leads.columns.branch'))
-                    ->render(fn (MarketingLead $lead): string => $lead->branch?->name ?? '-'),
+                    ->render(fn (MarketingLead $lead): string => $lead->branch?->displayName() ?? '-'),
                 TD::make('course', tkey('crm.leads.columns.course'))
-                    ->render(fn (MarketingLead $lead): string => $lead->trainingProgram?->title ?? '-'),
+                    ->render(fn (MarketingLead $lead): string => $lead->trainingProgram?->displayTitle() ?? '-'),
+                TD::make('group', tkey('crm.leads.columns.training_group'))
+                    ->render(fn (MarketingLead $lead): string => $lead->trainingGroup?->displayName() ?? '-'),
                 TD::make('source', tkey('crm.leads.columns.source'))
                     ->render(fn (MarketingLead $lead): string => $this->sourceLabels[$lead->source] ?? LeadSource::translatedLabel($lead->source)),
                 TD::make('license_category', tkey('crm.leads.columns.category'))
@@ -276,6 +278,8 @@ class LeadListScreen extends Screen
                     ->alignCenter(),
                 TD::make('manager', tkey('crm.leads.columns.manager'))
                     ->render(fn (MarketingLead $lead): string => $lead->responsibleManager?->name ?? '-'),
+                TD::make('tags', tkey('crm.leads.columns.tags'))
+                    ->render(fn (MarketingLead $lead): string => $lead->tags->map->displayName()->join(', ') ?: '-'),
                 TD::make('next_follow_up_at', tkey('crm.leads.columns.next_follow_up'))
                     ->render(fn (MarketingLead $lead): string => $lead->next_follow_up_at?->format('Y-m-d H:i') ?? '-'),
                 TD::make('created_at', tkey('crm.leads.columns.created_at'))
@@ -284,6 +288,10 @@ class LeadListScreen extends Screen
                     ->render(fn (MarketingLead $lead): string => $lead->budgetForHumans()),
                 TD::make('status', tkey('crm.leads.columns.status'))
                     ->render(fn (MarketingLead $lead): string => $lead->status->label()),
+                TD::make('duplicate', tkey('crm.leads.columns.duplicate'))
+                    ->render(fn (MarketingLead $lead): string => $lead->duplicateOf
+                        ? tkey('crm.leads.labels.duplicate_of', ['id' => $lead->duplicateOf->id])
+                        : ($lead->duplicates_count > 0 ? tkey('crm.leads.labels.has_duplicates', ['count' => $lead->duplicates_count]) : '-')),
                 TD::make('activity', tkey('crm.leads.columns.activity'))
                     ->render(fn (MarketingLead $lead): string => tkey('crm.leads.activity.summary', [
                         'communications' => $lead->communications_count,
