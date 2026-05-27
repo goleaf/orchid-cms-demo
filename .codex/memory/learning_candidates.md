@@ -854,3 +854,34 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T18:13:18+00:00
+
+```json
+{
+  "ts": "2026-05-27T18:13:18+00:00",
+  "event": "Stop",
+  "session_id": "019e6a96-6279-73a2-bd62-e85432689ea8",
+  "turn_id": "019e6aa1-2f29-70d3-82e4-4d54f5f1e247",
+  "branch": "main",
+  "changed_file_count": 11,
+  "changed_file_groups": {
+    "code": 6,
+    "orchid": 5
+  },
+  "changed_files_sample": [
+    "app/Actions/CompleteLeadTaskAction.php",
+    "app/Actions/CreateEnrollmentLeadAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "database/factories/MarketingLeadFactory.php",
+    "database/seeders/CrmDictionarySeeder.php",
+    "pp/Actions/CreateCallbackLeadAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

@@ -108,9 +108,33 @@ class LeadDictionaryEditScreen extends Screen
                     ->title(tkey('crm.dictionaries.fields.name'))
                     ->maxlength(255),
 
+                Input::make('item.color')
+                    ->title(tkey('crm.dictionaries.fields.color'))
+                    ->maxlength(32),
+
                 Switcher::make('item.is_active')
                     ->title(tkey('crm.dictionaries.fields.is_active'))
                     ->sendTrueOrFalse(),
+
+                Switcher::make('item.is_default')
+                    ->title(tkey('crm.dictionaries.fields.is_default'))
+                    ->sendTrueOrFalse()
+                    ->canSee($this->dictionary === 'statuses'),
+
+                Switcher::make('item.is_final')
+                    ->title(tkey('crm.dictionaries.fields.is_final'))
+                    ->sendTrueOrFalse()
+                    ->canSee($this->dictionary === 'statuses'),
+
+                Switcher::make('item.is_success')
+                    ->title(tkey('crm.dictionaries.fields.is_success'))
+                    ->sendTrueOrFalse()
+                    ->canSee($this->dictionary === 'statuses'),
+
+                Switcher::make('item.is_lost')
+                    ->title(tkey('crm.dictionaries.fields.is_lost'))
+                    ->sendTrueOrFalse()
+                    ->canSee($this->dictionary === 'statuses'),
 
                 Input::make('item.sort_order')
                     ->type('number')
@@ -152,7 +176,12 @@ class LeadDictionaryEditScreen extends Screen
                 Rule::unique($table, $keyColumn)->ignore($item->getKey()),
             ],
             'item.name' => ['nullable', 'string', 'max:255'],
+            'item.color' => ['nullable', 'string', 'max:32'],
             'item.is_active' => ['nullable', 'boolean'],
+            'item.is_default' => ['nullable', 'boolean'],
+            'item.is_final' => ['nullable', 'boolean'],
+            'item.is_success' => ['nullable', 'boolean'],
+            'item.is_lost' => ['nullable', 'boolean'],
             'item.sort_order' => ['required', 'integer', 'min:0'],
             ...$translations->validationRules(['name'], ['nullable', 'string', 'max:255']),
         ]);
@@ -160,10 +189,21 @@ class LeadDictionaryEditScreen extends Screen
         $item->fill([
             $keyColumn => $data['item'][$keyColumn],
             'name' => $data['item']['name'] ?? null,
+            'color' => $data['item']['color'] ?? null,
             ...$translations->extract($request, ['name']),
             'is_active' => (bool) ($data['item']['is_active'] ?? false),
             'sort_order' => (int) $data['item']['sort_order'],
         ]);
+
+        if ($dictionary === 'statuses') {
+            $item->fill([
+                'is_default' => (bool) ($data['item']['is_default'] ?? false),
+                'is_final' => (bool) ($data['item']['is_final'] ?? false),
+                'is_success' => (bool) ($data['item']['is_success'] ?? false),
+                'is_lost' => (bool) ($data['item']['is_lost'] ?? false),
+            ]);
+        }
+
         $item->save();
 
         Toast::info(tkey('crm.dictionaries.messages.saved'));

@@ -30,16 +30,24 @@ class CreateEnrollmentLeadAction
             ->select(['id', 'name', 'email'])
             ->where('email', 'admin@example.com')
             ->first();
+        $duplicate = app(DetectLeadDuplicateAction::class)->handle($data);
+        $budgetCents = filled($data['budget_eur'] ?? null)
+            ? (int) round(((float) $data['budget_eur']) * 100)
+            : null;
+        $isHot = $budgetCents !== null && $budgetCents >= 120000;
 
         $lead = MarketingLead::query()->create([
             'uuid' => (string) Str::uuid(),
             'marketing_campaign_id' => null,
             'responsible_manager_id' => $manager?->id,
+            'assigned_by_user_id' => null,
+            'assigned_at' => $manager !== null ? now() : null,
             'branch_id' => $data['branch_id'],
             'training_program_id' => $data['training_program_id'],
             'training_group_id' => $data['training_group_id'] ?? null,
             'instructor_id' => $data['instructor_id'] ?? null,
             'converted_student_profile_id' => null,
+            'duplicate_of_id' => $duplicate?->id,
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'] ?? null,
             'email' => $data['email'] ?? null,
@@ -52,14 +60,18 @@ class CreateEnrollmentLeadAction
             'preferred_format' => $data['preferred_format'],
             'preferred_language' => $data['preferred_language'],
             'preferred_time' => $data['preferred_time'] ?? null,
-            'budget_cents' => filled($data['budget_eur'] ?? null)
-                ? (int) round(((float) $data['budget_eur']) * 100)
-                : null,
-            'is_hot' => filled($data['budget_eur'] ?? null) && (float) $data['budget_eur'] >= 1200,
-            'next_follow_up_at' => now()->addHour(),
+            'budget_cents' => $budgetCents,
+            'is_hot' => $isHot,
+            'priority' => $isHot ? 'high' : 'normal',
+            'lead_score' => $isHot ? 80 : 50,
+            'next_follow_up_at' => now()->addMinutes(30),
             'last_status_changed_at' => now(),
             'privacy_accepted_at' => now(),
+            'consent_accepted' => true,
+            'consent_accepted_at' => now(),
+            'consent_text_version' => $data['consent_text_version'] ?? 'public-application-v1',
             'message' => $data['message'] ?? null,
+            'internal_comment' => null,
             'rejection_reason' => null,
             'lost_reason_code' => null,
             'crm_snapshot' => [
@@ -79,6 +91,14 @@ class CreateEnrollmentLeadAction
             'ip_address' => $data['ip_address'] ?? null,
             'user_agent' => $data['user_agent'] ?? null,
         ]);
+
+        app(RecordLeadActivityAction::class)->handle(
+            $lead,
+            $manager,
+            'created',
+            tkey('crm.activities.titles.created'),
+            tkey('crm.activities.messages.public_enrollment_created'),
+        );
 
         foreach ($documents as $document) {
             $lead->documents()->create([
@@ -117,6 +137,18 @@ class CreateEnrollmentLeadAction
             'reason' => tkey('crm.activities.reasons.public_application_received'),
             'changed_at' => now(),
         ]);
+
+        if ($duplicate !== null) {
+            app(RecordLeadActivityAction::class)->handle(
+                $lead,
+                $manager,
+                'marked_duplicate',
+                tkey('crm.activities.titles.possible_duplicate'),
+                tkey('crm.activities.messages.possible_duplicate', ['id' => $duplicate->id]),
+                null,
+                (string) $duplicate->id,
+            );
+        }
 
         app(CreateLeadTaskAction::class)->handle(
             $lead->refresh(),

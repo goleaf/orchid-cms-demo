@@ -35,7 +35,6 @@ class LeadDictionaryListScreen extends Screen
 
         return [
             'items' => $modelClass::query()
-                ->forDictionaryList()
                 ->ordered()
                 ->simplePaginate(20)
                 ->withQueryString(),
@@ -77,8 +76,15 @@ class LeadDictionaryListScreen extends Screen
                         ->route('platform.crm.dictionaries.edit', [$this->dictionary, $item->getKey()])),
                 TD::make('name', tkey('crm.dictionaries.fields.name'))
                     ->render(fn (Model $item): string => $item->displayName()),
+                TD::make('color', tkey('crm.dictionaries.fields.color'))
+                    ->render(fn (Model $item): string => (string) ($item->getAttribute('color') ?: '-')),
                 TD::make('is_active', tkey('crm.dictionaries.fields.is_active'))
                     ->render(fn (Model $item): string => $item->getAttribute('is_active') ? tkey('common.status.active') : tkey('common.status.inactive'))
+                    ->alignCenter(),
+                TD::make('is_final', tkey('crm.dictionaries.fields.is_final'))
+                    ->render(fn (Model $item): string => $this->dictionary === 'statuses'
+                        ? ($item->getAttribute('is_final') ? tkey('common.status.yes') : tkey('common.status.no'))
+                        : '-')
                     ->alignCenter(),
                 TD::make('sort_order', tkey('crm.dictionaries.fields.sort_order'))
                     ->render(fn (Model $item): string => (string) $item->getAttribute('sort_order'))

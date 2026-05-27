@@ -21,16 +21,20 @@ class CreateCallbackLeadAction
             ->select(['id', 'name', 'email'])
             ->where('email', 'admin@example.com')
             ->first();
+        $duplicate = app(DetectLeadDuplicateAction::class)->handle($data);
 
         $lead = MarketingLead::query()->create([
             'uuid' => (string) Str::uuid(),
             'marketing_campaign_id' => null,
             'responsible_manager_id' => $manager?->id,
+            'assigned_by_user_id' => null,
+            'assigned_at' => $manager !== null ? now() : null,
             'branch_id' => $data['branch_id'] ?? null,
             'training_program_id' => $data['training_program_id'] ?? null,
             'training_group_id' => null,
             'instructor_id' => null,
             'converted_student_profile_id' => null,
+            'duplicate_of_id' => $duplicate?->id,
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'] ?? null,
             'email' => $data['email'] ?? null,
@@ -45,10 +49,16 @@ class CreateCallbackLeadAction
             'preferred_time' => $data['preferred_time'] ?? null,
             'budget_cents' => null,
             'is_hot' => false,
+            'priority' => 'high',
+            'lead_score' => 60,
             'next_follow_up_at' => now()->addMinutes(30),
             'last_status_changed_at' => now(),
             'privacy_accepted_at' => now(),
+            'consent_accepted' => true,
+            'consent_accepted_at' => now(),
+            'consent_text_version' => $data['consent_text_version'] ?? 'callback-v1',
             'message' => $data['message'] ?? null,
+            'internal_comment' => null,
             'rejection_reason' => null,
             'lost_reason_code' => null,
             'crm_snapshot' => [
@@ -68,6 +78,14 @@ class CreateCallbackLeadAction
             'ip_address' => $data['ip_address'] ?? null,
             'user_agent' => $data['user_agent'] ?? null,
         ]);
+
+        app(RecordLeadActivityAction::class)->handle(
+            $lead,
+            $manager,
+            'created',
+            tkey('crm.activities.titles.created'),
+            tkey('website.callback.crm_comment'),
+        );
 
         app(AddLeadCommentAction::class)->handle(
             $lead,
@@ -98,6 +116,18 @@ class CreateCallbackLeadAction
             'reason' => tkey('website.callback.status_reason'),
             'changed_at' => now(),
         ]);
+
+        if ($duplicate !== null) {
+            app(RecordLeadActivityAction::class)->handle(
+                $lead,
+                $manager,
+                'marked_duplicate',
+                tkey('crm.activities.titles.possible_duplicate'),
+                tkey('crm.activities.messages.possible_duplicate', ['id' => $duplicate->id]),
+                null,
+                (string) $duplicate->id,
+            );
+        }
 
         app(CreateLeadTaskAction::class)->handle(
             $lead->refresh(),

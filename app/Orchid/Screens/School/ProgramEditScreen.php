@@ -20,7 +20,10 @@ use Orchid\Support\Facades\Toast;
 
 class ProgramEditScreen extends Screen
 {
-    public ?TrainingProgram $program = null;
+    /**
+     * @var TrainingProgram|null
+     */
+    public $program = null;
 
     public function query(?TrainingProgram $program = null): iterable
     {

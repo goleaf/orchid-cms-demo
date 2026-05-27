@@ -23,7 +23,10 @@ use Orchid\Support\Facades\Toast;
 
 class GroupEditScreen extends Screen
 {
-    public ?TrainingGroup $group = null;
+    /**
+     * @var TrainingGroup|null
+     */
+    public $group = null;
 
     /**
      * @var array<int, string>

@@ -19,7 +19,10 @@ use Orchid\Support\Facades\Toast;
 
 class BranchEditScreen extends Screen
 {
-    public ?Branch $branch = null;
+    /**
+     * @var Branch|null
+     */
+    public $branch = null;
 
     public function query(?Branch $branch = null): iterable
     {
