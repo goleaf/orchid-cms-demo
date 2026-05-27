@@ -15,6 +15,7 @@ class LeadSource extends Model
         'code',
         'name',
         'name_translations',
+        'color',
         'is_system',
         'is_active',
         'sort_order',

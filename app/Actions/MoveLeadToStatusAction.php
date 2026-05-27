@@ -25,7 +25,13 @@ class MoveLeadToStatusAction
             'contacted_at' => $status === LeadStatus::Contacted && $lead->contacted_at === null
                 ? now()
                 : $lead->contacted_at,
-            'converted_at' => $status === LeadStatus::BecameStudent && $lead->converted_at === null
+            'last_contacted_at' => in_array($status, [LeadStatus::Contacted, LeadStatus::Consultation, LeadStatus::ConsultationDone], true)
+                ? now()
+                : $lead->last_contacted_at,
+            'closed_at' => $status->isFinal() && $lead->closed_at === null
+                ? now()
+                : ($status->isFinal() ? $lead->closed_at : null),
+            'converted_at' => $status->isSuccess() && $lead->converted_at === null
                 ? now()
                 : $lead->converted_at,
         ])->save();
@@ -49,6 +55,16 @@ class MoveLeadToStatusAction
             );
         }
 
+        app(RecordLeadActivityAction::class)->handle(
+            $lead->refresh(),
+            $user,
+            'status_changed',
+            tkey('crm.activities.titles.status_changed'),
+            $reason,
+            $fromStatus?->label(),
+            $status->label(),
+        );
+
         return $lead->refresh();
     }
 
@@ -57,10 +73,10 @@ class MoveLeadToStatusAction
         return match ($status) {
             LeadStatus::New, LeadStatus::NoAnswer => now()->addHour(),
             LeadStatus::Contacted => now()->addDay(),
-            LeadStatus::ConsultationDone => now()->addDays(2),
+            LeadStatus::Consultation, LeadStatus::ConsultationDone => now()->addDays(2),
             LeadStatus::WaitingDocuments, LeadStatus::WaitingPayment => now()->addDay(),
-            LeadStatus::AssignedToGroup => now()->addDays(3),
-            LeadStatus::BecameStudent, LeadStatus::Rejected, LeadStatus::Duplicate, LeadStatus::Spam, LeadStatus::Archived => null,
+            LeadStatus::ReadyToEnroll, LeadStatus::AssignedToGroup => now()->addDays(3),
+            LeadStatus::Enrolled, LeadStatus::BecameStudent, LeadStatus::Lost, LeadStatus::Rejected, LeadStatus::Duplicate, LeadStatus::Spam, LeadStatus::Archived => null,
         };
     }
 

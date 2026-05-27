@@ -28,6 +28,8 @@ class AddLeadCommunicationAction
         ?Carbon $callbackRequiredAt = null,
         ?string $callRecordingUrl = null,
         ?string $callRecordingReference = null,
+        ?string $callResult = null,
+        ?int $durationSeconds = null,
     ): MarketingLeadCommunication {
         $callbackAt = $callbackRequired
             ? ($callbackRequiredAt ?? now()->addDay())
@@ -46,10 +48,28 @@ class AddLeadCommunicationAction
             'callback_required_at' => $callbackAt,
             'call_recording_url' => $callRecordingUrl,
             'call_recording_reference' => $callRecordingReference,
+            'call_result' => $callResult,
+            'duration_seconds' => $durationSeconds,
             'metadata' => $this->metadata($metadata, $template),
         ]);
 
         $this->applyLeadFollowUpState($lead, $user, $clientRepliedAt, $callbackAt);
+
+        app(RecordLeadActivityAction::class)->handle(
+            $lead->refresh(),
+            $user,
+            $this->activityType($channel),
+            tkey('crm.activities.titles.communication_logged'),
+            $communication->subject ?: $communication->body,
+            null,
+            null,
+            [
+                'communication_id' => $communication->id,
+                'channel' => $channel,
+                'direction' => $direction,
+                'call_result' => $callResult,
+            ],
+        );
 
         return $communication;
     }
@@ -104,5 +124,15 @@ class AddLeadCommunicationAction
                 tkey('crm.tasks.system_notes.callback_reminder'),
             );
         }
+    }
+
+    private function activityType(string $channel): string
+    {
+        return match ($channel) {
+            'phone' => 'call_logged',
+            'email' => 'email_logged',
+            'telegram', 'whatsapp', 'messenger', 'sms' => 'messenger_logged',
+            default => 'communication_logged',
+        };
     }
 }

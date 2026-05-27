@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MarketingLeadTask extends Model
 {
     /** @use HasFactory<MarketingLeadTaskFactory> */
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'marketing_lead_id',
@@ -32,6 +34,7 @@ class MarketingLeadTask extends Model
         'priority' => LeadTaskPriority::class,
         'due_at' => 'datetime',
         'completed_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     public function marketingLead(): BelongsTo
@@ -60,5 +63,13 @@ class MarketingLeadTask extends Model
             ->open()
             ->whereNotNull('due_at')
             ->where('due_at', '<', now());
+    }
+
+    public function isOverdue(): bool
+    {
+        return $this->status !== LeadTaskStatus::Done
+            && $this->status !== LeadTaskStatus::Cancelled
+            && $this->due_at !== null
+            && $this->due_at->isPast();
     }
 }

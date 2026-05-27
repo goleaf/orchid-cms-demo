@@ -817,3 +817,40 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T18:10:06+00:00
+
+```json
+{
+  "ts": "2026-05-27T18:10:06+00:00",
+  "event": "Stop",
+  "session_id": "019e6a96-6279-73a2-bd62-e85432689ea8",
+  "turn_id": "019e6a9f-488d-78e2-8f6c-30c7607e5c78",
+  "branch": "main",
+  "changed_file_count": 17,
+  "changed_file_groups": {
+    "code": 9,
+    "models": 8
+  },
+  "changed_files_sample": [
+    "app/Actions/AddLeadCommunicationAction.php",
+    "app/Actions/AssignLeadManagerAction.php",
+    "app/Actions/CreateLeadTaskAction.php",
+    "app/Actions/DetectLeadDuplicateAction.php",
+    "app/Actions/MoveLeadToStatusAction.php",
+    "app/Actions/RecordLeadActivityAction.php",
+    "app/Enums/LeadStatus.php",
+    "app/Models/LeadLostReason.php",
+    "app/Models/LeadSource.php",
+    "app/Models/LeadStatus.php",
+    "app/Models/LeadTag.php",
+    "app/Models/MarketingLead.php",
+    "app/Models/MarketingLeadActivity.php",
+    "app/Models/MarketingLeadCommunication.php",
+    "app/Models/MarketingLeadTask.php",
+    "app/Support/Crm/PhoneNormalizer.php",
+    "pp/Actions/AddLeadCommentAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

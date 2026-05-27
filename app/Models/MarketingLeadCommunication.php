@@ -25,6 +25,8 @@ class MarketingLeadCommunication extends Model
         'callback_required_at',
         'call_recording_url',
         'call_recording_reference',
+        'call_result',
+        'duration_seconds',
         'metadata',
     ];
 
@@ -33,6 +35,7 @@ class MarketingLeadCommunication extends Model
         'client_replied_at' => 'datetime',
         'callback_required_at' => 'datetime',
         'metadata' => 'array',
+        'duration_seconds' => 'integer',
     ];
 
     public function marketingLead(): BelongsTo

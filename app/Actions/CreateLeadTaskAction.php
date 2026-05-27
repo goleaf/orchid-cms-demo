@@ -19,7 +19,7 @@ class CreateLeadTaskAction
         LeadTaskPriority $priority = LeadTaskPriority::Normal,
         ?string $notes = null,
     ): MarketingLeadTask {
-        return $lead->tasks()->create([
+        $task = $lead->tasks()->create([
             'assigned_to_user_id' => $lead->responsible_manager_id,
             'created_by_user_id' => $createdBy?->id,
             'title' => $title,
@@ -29,5 +29,18 @@ class CreateLeadTaskAction
             'completed_at' => null,
             'notes' => $notes,
         ]);
+
+        app(RecordLeadActivityAction::class)->handle(
+            $lead,
+            $createdBy,
+            'task_created',
+            tkey('crm.activities.titles.task_created'),
+            $title,
+            null,
+            null,
+            ['task_id' => $task->id],
+        );
+
+        return $task;
     }
 }

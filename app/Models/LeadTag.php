@@ -15,6 +15,7 @@ class LeadTag extends Model
         'slug',
         'name',
         'name_translations',
+        'color',
         'is_system',
         'is_active',
         'sort_order',
