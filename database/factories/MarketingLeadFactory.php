@@ -47,6 +47,7 @@ class MarketingLeadFactory extends Factory
             'converted_at' => null,
             'message' => $this->faker->optional()->sentence(),
             'rejection_reason' => null,
+            'lost_reason_code' => null,
             'crm_snapshot' => null,
         ];
     }

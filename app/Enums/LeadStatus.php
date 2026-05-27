@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
+use App\Models\LeadStatus as LeadStatusDictionary;
+
 enum LeadStatus: string
 {
     case New = 'new';
@@ -19,20 +21,7 @@ enum LeadStatus: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::New => 'Новая заявка',
-            self::NoAnswer => 'Не дозвонились',
-            self::Contacted => 'Связались',
-            self::ConsultationDone => 'Консультация проведена',
-            self::WaitingDocuments => 'Ждёт документы',
-            self::WaitingPayment => 'Ждёт оплату',
-            self::AssignedToGroup => 'Записан в группу',
-            self::BecameStudent => 'Стал учеником',
-            self::Rejected => 'Отказ',
-            self::Duplicate => 'Дубль',
-            self::Spam => 'Спам',
-            self::Archived => 'Архив',
-        };
+        return LeadStatusDictionary::translatedLabel($this->value);
     }
 
     /**

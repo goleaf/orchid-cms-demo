@@ -90,21 +90,52 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.documents')
                 ->permission('platform.documents'),
 
+            Menu::make(tkey('menu.crm.leads'))
+                ->icon('bs.funnel')
+                ->route('platform.marketing.leads')
+                ->permission('platform.marketing.leads')
+                ->title(tkey('menu.crm')),
+
+            Menu::make(tkey('menu.crm.new_leads'))
+                ->icon('bs.inbox')
+                ->route('platform.marketing.leads', ['status' => 'new'])
+                ->permission('platform.marketing.leads'),
+
+            Menu::make(tkey('menu.crm.overdue_tasks'))
+                ->icon('bs.exclamation-triangle')
+                ->route('platform.marketing.leads', ['overdue' => '1'])
+                ->permission('platform.marketing.leads'),
+
+            Menu::make(tkey('menu.crm.pipeline'))
+                ->icon('bs.kanban')
+                ->route('platform.marketing.pipeline')
+                ->permission('platform.marketing.pipeline'),
+
+            Menu::make(tkey('menu.crm.statuses'))
+                ->icon('bs.ui-checks-grid')
+                ->route('platform.crm.dictionaries', 'statuses')
+                ->permission('crm.leads.manage_dictionaries'),
+
+            Menu::make(tkey('menu.crm.sources'))
+                ->icon('bs.signpost-split')
+                ->route('platform.crm.dictionaries', 'sources')
+                ->permission('crm.leads.manage_dictionaries'),
+
+            Menu::make(tkey('menu.crm.lost_reasons'))
+                ->icon('bs.x-octagon')
+                ->route('platform.crm.dictionaries', 'lost-reasons')
+                ->permission('crm.leads.manage_dictionaries'),
+
+            Menu::make(tkey('menu.crm.tags'))
+                ->icon('bs.tags')
+                ->route('platform.crm.dictionaries', 'tags')
+                ->permission('crm.leads.manage_dictionaries'),
+
             Menu::make(tkey('menu.marketing.campaigns'))
                 ->icon('bs.megaphone')
                 ->route('platform.marketing.campaigns')
                 ->permission('platform.marketing.campaigns')
                 ->title(tkey('menu.marketing')),
-
-            Menu::make(tkey('menu.marketing.pipeline'))
-                ->icon('bs.kanban')
-                ->route('platform.marketing.pipeline')
-                ->permission('platform.marketing.pipeline'),
-
-            Menu::make(tkey('menu.marketing.leads'))
-                ->icon('bs.funnel')
-                ->route('platform.marketing.leads')
-                ->permission('platform.marketing.leads'),
 
             Menu::make(tkey('menu.marketing.templates'))
                 ->icon('bs.chat-square-text')

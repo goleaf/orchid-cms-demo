@@ -35,6 +35,7 @@ class UpdateMarketingLeadCrmAction
             'is_hot' => (bool) ($data['is_hot'] ?? $lead->is_hot),
             'next_follow_up_at' => $data['next_follow_up_at'] ?? $lead->next_follow_up_at,
             'rejection_reason' => $data['rejection_reason'] ?? null,
+            'lost_reason_code' => $data['lost_reason_code'] ?? null,
             'message' => $data['message'] ?? null,
         ])->save();
 

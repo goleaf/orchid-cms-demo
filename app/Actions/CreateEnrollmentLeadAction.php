@@ -59,6 +59,7 @@ class CreateEnrollmentLeadAction
             'privacy_accepted_at' => now(),
             'message' => $data['message'] ?? null,
             'rejection_reason' => null,
+            'lost_reason_code' => null,
             'crm_snapshot' => [
                 'form' => 'public_enrollment',
                 'captured_at' => now()->toIso8601String(),

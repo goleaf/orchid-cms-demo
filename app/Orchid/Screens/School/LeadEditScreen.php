@@ -11,6 +11,8 @@ use App\Actions\UpdateMarketingLeadCrmAction;
 use App\Enums\LeadStatus;
 use App\Models\Branch;
 use App\Models\Instructor;
+use App\Models\LeadLostReason;
+use App\Models\LeadSource;
 use App\Models\MarketingLead;
 use App\Models\MarketingLeadComment;
 use App\Models\MarketingLeadCommunication;
@@ -64,6 +66,16 @@ class LeadEditScreen extends Screen
      * @var array<int, string>
      */
     private array $instructors = [];
+
+    /**
+     * @var array<string, string>
+     */
+    private array $sources = [];
+
+    /**
+     * @var array<string, string>
+     */
+    private array $lostReasons = [];
 
     /**
      * @var array<int, string>
@@ -150,6 +162,8 @@ class LeadEditScreen extends Screen
             ->orderBy('name')
             ->pluck('name', 'id')
             ->all();
+        $this->sources = LeadSource::translatedLabels();
+        $this->lostReasons = LeadLostReason::translatedLabels();
         $this->messageTemplates = MarketingMessageTemplate::query()
             ->active()
             ->select(['id', 'name', 'channel', 'sort_order'])
@@ -174,12 +188,14 @@ class LeadEditScreen extends Screen
 
     public function name(): ?string
     {
-        return 'CRM lead: '.($this->lead?->fullName() ?? 'Lead');
+        return tkey('crm.leads.edit_title', [
+            'name' => $this->lead?->fullName() ?? tkey('crm.leads.fallback.lead'),
+        ]);
     }
 
     public function description(): ?string
     {
-        return 'Sales card with calls, SMS, email, messengers, templates, reminders, comments, history, and documents.';
+        return tkey('crm.leads.edit_description');
     }
 
     public function permission(): iterable
@@ -190,11 +206,11 @@ class LeadEditScreen extends Screen
     public function commandBar(): iterable
     {
         return [
-            Link::make('Back to leads')
+            Link::make(tkey('crm.leads.actions.back_to_leads'))
                 ->icon('bs.arrow-left')
                 ->route('platform.marketing.leads'),
 
-            Button::make('Save CRM card')
+            Button::make(tkey('crm.leads.actions.save_crm_card'))
                 ->icon('bs.check2-circle')
                 ->method('save'),
         ];
@@ -206,216 +222,227 @@ class LeadEditScreen extends Screen
             Layout::columns([
                 Layout::rows([
                     Input::make('lead.first_name')
-                        ->title('First name')
+                        ->title(tkey('crm.leads.fields.first_name'))
                         ->required(),
                     Input::make('lead.last_name')
-                        ->title('Last name'),
+                        ->title(tkey('crm.leads.fields.last_name')),
                     Input::make('lead.phone')
-                        ->title('Phone'),
+                        ->title(tkey('crm.leads.fields.phone')),
                     Input::make('lead.email')
-                        ->title('Email')
+                        ->title(tkey('crm.leads.fields.email'))
                         ->type('email'),
                     Input::make('lead.messenger')
-                        ->title('Messenger'),
+                        ->title(tkey('crm.leads.fields.preferred_messenger')),
                     Input::make('lead.city')
-                        ->title('City'),
-                ])->title('Contact'),
+                        ->title(tkey('crm.leads.fields.city')),
+                ])->title(tkey('crm.leads.sections.main_information')),
 
                 Layout::rows([
                     Select::make('lead_status')
-                        ->title('Status')
+                        ->title(tkey('crm.leads.fields.status'))
                         ->options($this->leadStatusOptions())
                         ->required(),
                     Select::make('lead.responsible_manager_id')
-                        ->title('Responsible manager')
+                        ->title(tkey('crm.leads.fields.manager'))
                         ->options($this->managers)
-                        ->empty('No manager'),
+                        ->empty(tkey('crm.leads.empty.no_manager')),
                     Select::make('lead.branch_id')
-                        ->title('Branch')
+                        ->title(tkey('crm.leads.fields.branch'))
                         ->options($this->branches)
-                        ->empty('No branch'),
+                        ->empty(tkey('crm.leads.empty.no_branch')),
                     Select::make('lead.training_program_id')
-                        ->title('Desired course')
+                        ->title(tkey('crm.leads.fields.course'))
                         ->options($this->programs)
-                        ->empty('No course'),
+                        ->empty(tkey('crm.leads.empty.no_course')),
                     Select::make('lead.training_group_id')
-                        ->title('Desired group')
+                        ->title(tkey('crm.leads.fields.training_group'))
                         ->options($this->groups)
-                        ->empty('No group'),
+                        ->empty(tkey('crm.leads.empty.no_group')),
                     Select::make('lead.instructor_id')
-                        ->title('Preferred instructor')
+                        ->title(tkey('crm.leads.fields.instructor'))
                         ->options($this->instructors)
-                        ->empty('No instructor'),
-                ])->title('Sales ownership'),
+                        ->empty(tkey('crm.leads.empty.no_instructor')),
+                ])->title(tkey('crm.leads.sections.crm_information')),
             ]),
 
             Layout::columns([
                 Layout::rows([
                     Input::make('lead.license_category')
-                        ->title('License category'),
+                        ->title(tkey('crm.leads.fields.course_category')),
                     Input::make('lead.preferred_format')
-                        ->title('Preferred format'),
+                        ->title(tkey('crm.leads.fields.preferred_format')),
                     Input::make('lead.preferred_language')
-                        ->title('Training language'),
+                        ->title(tkey('crm.leads.fields.locale')),
                     Input::make('lead.preferred_time')
-                        ->title('Preferred training time'),
+                        ->title(tkey('crm.leads.fields.preferred_time')),
                     Input::make('lead_budget_eur')
-                        ->title('Budget EUR')
+                        ->title(tkey('crm.leads.fields.budget'))
                         ->type('number')
                         ->step('0.01'),
                     Select::make('lead.is_hot')
-                        ->title('Hot lead')
+                        ->title(tkey('crm.leads.fields.priority'))
                         ->options([
-                            0 => 'No',
-                            1 => 'Yes',
+                            0 => tkey('common.status.no'),
+                            1 => tkey('common.status.yes'),
                         ]),
                     Input::make('lead.next_follow_up_at')
-                        ->title('Next follow-up')
+                        ->title(tkey('crm.leads.fields.next_follow_up_at'))
                         ->type('datetime-local'),
-                ])->title('Training intent'),
+                ])->title(tkey('crm.leads.sections.training_interest')),
 
                 Layout::rows([
-                    Input::make('lead.source')
-                        ->title('Source')
+                    Select::make('lead.source')
+                        ->title(tkey('crm.leads.fields.source'))
+                        ->options($this->sources)
                         ->required(),
                     Input::make('lead.utm_source')
-                        ->title('UTM source')
+                        ->title(tkey('crm.leads.fields.utm_source'))
                         ->disabled(),
                     Input::make('lead.utm_medium')
-                        ->title('UTM medium')
+                        ->title(tkey('crm.leads.fields.utm_medium'))
                         ->disabled(),
                     Input::make('lead.utm_campaign')
-                        ->title('UTM campaign')
+                        ->title(tkey('crm.leads.fields.utm_campaign'))
+                        ->disabled(),
+                    Input::make('lead.utm_content')
+                        ->title(tkey('crm.leads.fields.utm_content'))
+                        ->disabled(),
+                    Input::make('lead.utm_term')
+                        ->title(tkey('crm.leads.fields.utm_term'))
                         ->disabled(),
                     Input::make('lead.referrer_url')
-                        ->title('Referrer')
+                        ->title(tkey('crm.leads.fields.referrer'))
                         ->disabled(),
-                ])->title('Attribution'),
+                ])->title(tkey('crm.leads.sections.marketing_data')),
             ]),
 
             Layout::rows([
                 TextArea::make('lead.message')
-                    ->title('Lead message')
+                    ->title(tkey('crm.leads.fields.comment'))
                     ->rows(4),
+                Select::make('lead.lost_reason_code')
+                    ->title(tkey('crm.leads.fields.lost_reason'))
+                    ->options($this->lostReasons)
+                    ->empty(tkey('crm.leads.empty.no_lost_reason')),
                 TextArea::make('lead.rejection_reason')
-                    ->title('Rejection reason')
+                    ->title(tkey('crm.leads.fields.internal_comment'))
                     ->rows(3),
-            ])->title('Notes'),
+            ])->title(tkey('crm.leads.sections.system_data')),
 
             Layout::columns([
                 Layout::rows([
                     TextArea::make('comment.body')
-                        ->title('New comment')
+                        ->title(tkey('crm.leads.fields.comment'))
                         ->rows(3),
-                    Button::make('Add comment')
+                    Button::make(tkey('crm.leads.actions.add_note'))
                         ->icon('bs.chat-left-text')
                         ->method('addComment'),
-                ])->title('Comments'),
+                ])->title(tkey('crm.leads.sections.activity_timeline')),
 
                 Layout::rows([
                     Select::make('communication.channel')
-                        ->title('Channel')
+                        ->title(tkey('crm.communications.fields.channel'))
                         ->options($this->communicationChannels())
-                        ->empty('Select channel'),
+                        ->empty(tkey('crm.communications.empty.select_channel')),
                     Select::make('communication.template_id')
-                        ->title('Message template')
+                        ->title(tkey('crm.communications.fields.message_template'))
                         ->options($this->messageTemplates)
-                        ->empty('No template'),
+                        ->empty(tkey('crm.communications.empty.no_template')),
                     Select::make('communication.direction')
-                        ->title('Direction')
+                        ->title(tkey('crm.communications.fields.direction'))
                         ->options($this->communicationDirections())
-                        ->empty('Select direction'),
+                        ->empty(tkey('crm.communications.empty.select_direction')),
                     Input::make('communication.subject')
-                        ->title('Subject'),
+                        ->title(tkey('crm.communications.fields.subject')),
                     TextArea::make('communication.body')
-                        ->title('Communication note')
+                        ->title(tkey('crm.communications.fields.body'))
                         ->rows(3),
                     CheckBox::make('communication.client_replied')
                         ->sendTrueOrFalse()
-                        ->title('Client replied')
-                        ->placeholder('Client replied'),
+                        ->title(tkey('crm.communications.fields.client_replied'))
+                        ->placeholder(tkey('crm.communications.fields.client_replied')),
                     CheckBox::make('communication.callback_required')
                         ->sendTrueOrFalse()
-                        ->title('Need callback')
-                        ->placeholder('Need callback'),
+                        ->title(tkey('crm.communications.fields.callback_required'))
+                        ->placeholder(tkey('crm.communications.fields.callback_required')),
                     Input::make('communication.callback_required_at')
-                        ->title('Callback time')
+                        ->title(tkey('crm.communications.fields.callback_required_at'))
                         ->type('datetime-local'),
                     Input::make('communication.call_recording_url')
-                        ->title('Call recording URL')
+                        ->title(tkey('crm.communications.fields.call_recording_url'))
                         ->type('url'),
                     Input::make('communication.call_recording_reference')
-                        ->title('Telephony recording ID'),
-                    Button::make('Add communication')
+                        ->title(tkey('crm.communications.fields.call_recording_reference')),
+                    Button::make(tkey('crm.leads.actions.log_call'))
                         ->icon('bs.telephone')
                         ->method('addCommunication'),
-                ])->title('Communication history'),
+                ])->title(tkey('crm.communications.title')),
             ]),
 
             Layout::table('lead.comments', [
-                TD::make('created_at', 'Date')
+                TD::make('created_at', tkey('crm.leads.columns.created_at'))
                     ->render(fn (MarketingLeadComment $comment): string => $comment->created_at->format('Y-m-d H:i')),
-                TD::make('user', 'User')
-                    ->render(fn (MarketingLeadComment $comment): string => $comment->user?->name ?? 'System'),
-                TD::make('body', 'Comment')
+                TD::make('user', tkey('crm.leads.columns.user'))
+                    ->render(fn (MarketingLeadComment $comment): string => $comment->user?->name ?? tkey('common.system')),
+                TD::make('body', tkey('crm.leads.fields.comment'))
                     ->render(fn (MarketingLeadComment $comment): string => $comment->body),
-            ])->title('Latest comments'),
+            ])->title(tkey('crm.leads.sections.latest_comments')),
 
             Layout::table('lead.communications', [
-                TD::make('communicated_at', 'Date')
+                TD::make('communicated_at', tkey('crm.leads.columns.created_at'))
                     ->render(fn (MarketingLeadCommunication $communication): string => $communication->communicated_at->format('Y-m-d H:i')),
-                TD::make('channel', 'Channel')
-                    ->render(fn (MarketingLeadCommunication $communication): string => str($communication->channel)->replace('_', ' ')->title()->toString()),
-                TD::make('direction', 'Direction')
-                    ->render(fn (MarketingLeadCommunication $communication): string => str($communication->direction)->title()->toString()),
-                TD::make('messageTemplate', 'Template')
+                TD::make('channel', tkey('crm.communications.fields.channel'))
+                    ->render(fn (MarketingLeadCommunication $communication): string => tkey('crm.communication.channels.'.$communication->channel)),
+                TD::make('direction', tkey('crm.communications.fields.direction'))
+                    ->render(fn (MarketingLeadCommunication $communication): string => tkey('crm.communications.directions.'.$communication->direction)),
+                TD::make('messageTemplate', tkey('crm.communications.fields.message_template'))
                     ->render(fn (MarketingLeadCommunication $communication): string => $communication->messageTemplate?->name ?? '-'),
-                TD::make('subject', 'Subject')
+                TD::make('subject', tkey('crm.communications.fields.subject'))
                     ->render(fn (MarketingLeadCommunication $communication): string => $communication->subject ?? '-'),
-                TD::make('body', 'Body')
+                TD::make('body', tkey('crm.communications.fields.body'))
                     ->render(fn (MarketingLeadCommunication $communication): string => $communication->body ?? '-'),
-                TD::make('flags', 'Flags')
+                TD::make('flags', tkey('crm.communications.fields.flags'))
                     ->render(fn (MarketingLeadCommunication $communication): string => $this->communicationFlags($communication)),
-                TD::make('recording', 'Recording')
+                TD::make('recording', tkey('crm.communications.fields.recording'))
                     ->render(fn (MarketingLeadCommunication $communication): string => $communication->call_recording_url ?? $communication->call_recording_reference ?? '-'),
-            ])->title('All recent communications'),
+            ])->title(tkey('crm.communications.recent_title')),
 
             Layout::table('lead.tasks', [
-                TD::make('due_at', 'Due')
+                TD::make('due_at', tkey('crm.tasks.fields.due_at'))
                     ->render(fn (MarketingLeadTask $task): string => $task->due_at?->format('Y-m-d H:i') ?? '-'),
-                TD::make('title', 'Task')
+                TD::make('title', tkey('crm.tasks.fields.title'))
                     ->render(fn (MarketingLeadTask $task): string => $task->title),
-                TD::make('assignedTo', 'Manager')
+                TD::make('assignedTo', tkey('crm.tasks.fields.assigned_to'))
                     ->render(fn (MarketingLeadTask $task): string => $task->assignedTo?->name ?? '-'),
-                TD::make('priority', 'Priority')
-                    ->render(fn (MarketingLeadTask $task): string => str($task->priority->value)->title()->toString()),
-                TD::make('status', 'Status')
-                    ->render(fn (MarketingLeadTask $task): string => str($task->status->value)->title()->toString()),
-            ])->title('Manager tasks'),
+                TD::make('priority', tkey('crm.tasks.fields.priority'))
+                    ->render(fn (MarketingLeadTask $task): string => $task->priority->label()),
+                TD::make('status', tkey('crm.tasks.fields.status'))
+                    ->render(fn (MarketingLeadTask $task): string => $task->status->label()),
+            ])->title(tkey('crm.leads.sections.tasks')),
 
             Layout::table('lead.statusHistories', [
-                TD::make('changed_at', 'Changed')
+                TD::make('changed_at', tkey('crm.status_history.fields.changed_at'))
                     ->render(fn (MarketingLeadStatusHistory $history): string => $history->changed_at->format('Y-m-d H:i')),
-                TD::make('from_status', 'From')
+                TD::make('from_status', tkey('crm.status_history.fields.from_status'))
                     ->render(fn (MarketingLeadStatusHistory $history): string => $history->from_status?->label() ?? '-'),
-                TD::make('to_status', 'To')
+                TD::make('to_status', tkey('crm.status_history.fields.to_status'))
                     ->render(fn (MarketingLeadStatusHistory $history): string => $history->to_status->label()),
-                TD::make('user', 'User')
-                    ->render(fn (MarketingLeadStatusHistory $history): string => $history->user?->name ?? 'System'),
-                TD::make('reason', 'Reason')
+                TD::make('user', tkey('crm.leads.columns.user'))
+                    ->render(fn (MarketingLeadStatusHistory $history): string => $history->user?->name ?? tkey('common.system')),
+                TD::make('reason', tkey('crm.status_history.fields.reason'))
                     ->render(fn (MarketingLeadStatusHistory $history): string => $history->reason ?? '-'),
-            ])->title('Status history'),
+            ])->title(tkey('crm.status_history.title')),
 
             Layout::table('lead.documents', [
-                TD::make('original_name', 'Document')
+                TD::make('original_name', tkey('crm.documents.fields.document'))
                     ->render(fn (MarketingLeadDocument $document): string => $document->original_name),
-                TD::make('mime_type', 'Type')
+                TD::make('mime_type', tkey('crm.documents.fields.type'))
                     ->render(fn (MarketingLeadDocument $document): string => $document->mime_type ?? '-'),
-                TD::make('size', 'Size')
+                TD::make('size', tkey('crm.documents.fields.size'))
                     ->render(fn (MarketingLeadDocument $document): string => number_format($document->size / 1024, 1).' KB'),
-                TD::make('created_at', 'Uploaded')
+                TD::make('created_at', tkey('crm.documents.fields.uploaded_at'))
                     ->render(fn (MarketingLeadDocument $document): string => $document->created_at->format('Y-m-d H:i')),
-            ])->title('Attached documents'),
+            ])->title(tkey('crm.documents.title')),
         ];
     }
 
@@ -446,6 +473,7 @@ class LeadEditScreen extends Screen
             'lead.is_hot' => ['nullable', 'boolean'],
             'lead.next_follow_up_at' => ['nullable', 'date'],
             'lead.message' => ['nullable', 'string', 'max:2000'],
+            'lead.lost_reason_code' => ['nullable', 'string', Rule::in(array_keys($this->lostReasons))],
             'lead.rejection_reason' => ['nullable', 'string', 'max:2000'],
             'lead_budget_eur' => ['nullable', 'numeric', 'min:0', 'max:100000'],
         ]);
@@ -460,10 +488,10 @@ class LeadEditScreen extends Screen
         ]);
 
         if ($currentStatus !== $targetStatus) {
-            $moveLead->handle($lead->refresh(), $targetStatus, $request->user(), 'CRM card status update.');
+            $moveLead->handle($lead->refresh(), $targetStatus, $request->user(), tkey('crm.activities.reasons.crm_card_status_update'));
         }
 
-        Toast::info('Lead CRM card updated.');
+        Toast::info(tkey('crm.leads.messages.updated'));
 
         return redirect()->route('platform.marketing.leads.edit', $lead);
     }
@@ -476,7 +504,7 @@ class LeadEditScreen extends Screen
 
         $addComment->handle($lead, $request->user(), $data['comment']['body']);
 
-        Toast::info('Comment added.');
+        Toast::info(tkey('crm.leads.messages.comment_added'));
 
         return redirect()->route('platform.marketing.leads.edit', $lead);
     }
@@ -520,7 +548,7 @@ class LeadEditScreen extends Screen
             $payload['call_recording_reference'] ?? null,
         );
 
-        Toast::info('Communication added.');
+        Toast::info(tkey('crm.leads.messages.communication_added'));
 
         return redirect()->route('platform.marketing.leads.edit', $lead);
     }
@@ -551,16 +579,18 @@ class LeadEditScreen extends Screen
     private function communicationDirections(): array
     {
         return [
-            'inbound' => 'Inbound',
-            'outbound' => 'Outbound',
+            'inbound' => tkey('crm.communications.directions.inbound'),
+            'outbound' => tkey('crm.communications.directions.outbound'),
         ];
     }
 
     private function communicationFlags(MarketingLeadCommunication $communication): string
     {
         return collect([
-            $communication->hasClientReply() ? 'Client replied' : null,
-            $communication->needsCallback() ? 'Callback '.$communication->callback_required_at?->format('Y-m-d H:i') : null,
+            $communication->hasClientReply() ? tkey('crm.communications.flags.client_replied') : null,
+            $communication->needsCallback() ? tkey('crm.communications.flags.callback_at', [
+                'time' => $communication->callback_required_at?->format('Y-m-d H:i'),
+            ]) : null,
         ])->filter()->join(' / ') ?: '-';
     }
 }

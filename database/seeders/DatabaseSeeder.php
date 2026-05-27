@@ -54,6 +54,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             LanguageSeeder::class,
             SystemTranslationSeeder::class,
+            CrmDictionarySeeder::class,
         ]);
 
         LandingPage::query()->updateOrCreate(
@@ -451,6 +452,7 @@ class DatabaseSeeder extends Seeder
                 'converted_at' => now()->subDays(14),
                 'message' => 'Interested in evening manual category B lessons.',
                 'rejection_reason' => null,
+                'lost_reason_code' => null,
                 'crm_snapshot' => ['form' => 'public_enrollment', 'captured_at' => now()->subDays(18)->toIso8601String()],
                 'utm_source' => 'website',
                 'utm_medium' => 'organic',
@@ -488,6 +490,7 @@ class DatabaseSeeder extends Seeder
                 'converted_at' => null,
                 'message' => 'Asked for intensive course availability.',
                 'rejection_reason' => null,
+                'lost_reason_code' => null,
                 'crm_snapshot' => ['form' => 'public_enrollment', 'captured_at' => now()->subDays(2)->toIso8601String()],
                 'utm_source' => 'google',
                 'utm_medium' => 'cpc',
@@ -525,6 +528,7 @@ class DatabaseSeeder extends Seeder
                 'converted_at' => null,
                 'message' => 'Asked for a lower budget option.',
                 'rejection_reason' => 'Budget too low',
+                'lost_reason_code' => 'budget_too_low',
                 'crm_snapshot' => ['form' => 'public_enrollment', 'captured_at' => now()->subDays(7)->toIso8601String()],
                 'utm_source' => 'facebook',
                 'utm_medium' => 'paid_social',

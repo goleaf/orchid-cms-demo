@@ -13,6 +13,8 @@ use App\Orchid\Screens\School\ExamListScreen;
 use App\Orchid\Screens\School\FleetListScreen;
 use App\Orchid\Screens\School\GroupListScreen;
 use App\Orchid\Screens\School\InstructorListScreen;
+use App\Orchid\Screens\School\LeadDictionaryEditScreen;
+use App\Orchid\Screens\School\LeadDictionaryListScreen;
 use App\Orchid\Screens\School\LeadEditScreen;
 use App\Orchid\Screens\School\LeadListScreen;
 use App\Orchid\Screens\School\LeadPipelineScreen;
@@ -136,14 +138,14 @@ Route::screen('marketing/pipeline', LeadPipelineScreen::class)
     ->name('platform.marketing.pipeline')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Sales Pipeline', route('platform.marketing.pipeline')));
+        ->push(tkey('menu.crm.pipeline'), route('platform.marketing.pipeline')));
 
 // Marketing > Leads
 Route::screen('marketing/leads', LeadListScreen::class)
     ->name('platform.marketing.leads')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push('Leads', route('platform.marketing.leads')));
+        ->push(tkey('menu.crm.leads'), route('platform.marketing.leads')));
 
 // Marketing > Leads > CRM card
 Route::screen('marketing/leads/{lead}/edit', LeadEditScreen::class)
@@ -151,6 +153,25 @@ Route::screen('marketing/leads/{lead}/edit', LeadEditScreen::class)
     ->breadcrumbs(fn (Trail $trail, $lead) => $trail
         ->parent('platform.marketing.leads')
         ->push($lead->fullName(), route('platform.marketing.leads.edit', $lead)));
+
+// CRM > Dictionaries
+Route::screen('crm/dictionaries/{dictionary}/create', LeadDictionaryEditScreen::class)
+    ->name('platform.crm.dictionaries.create')
+    ->breadcrumbs(fn (Trail $trail, string $dictionary) => $trail
+        ->parent('platform.crm.dictionaries', $dictionary)
+        ->push(tkey('crm.dictionaries.create_title'), route('platform.crm.dictionaries.create', $dictionary)));
+
+Route::screen('crm/dictionaries/{dictionary}/{record}/edit', LeadDictionaryEditScreen::class)
+    ->name('platform.crm.dictionaries.edit')
+    ->breadcrumbs(fn (Trail $trail, string $dictionary, string $record) => $trail
+        ->parent('platform.crm.dictionaries', $dictionary)
+        ->push(tkey('crm.dictionaries.edit_title'), route('platform.crm.dictionaries.edit', [$dictionary, $record])));
+
+Route::screen('crm/dictionaries/{dictionary}', LeadDictionaryListScreen::class)
+    ->name('platform.crm.dictionaries')
+    ->breadcrumbs(fn (Trail $trail, string $dictionary) => $trail
+        ->parent('platform.index')
+        ->push(tkey(\App\Support\Crm\LeadDictionaryRegistry::definition($dictionary)['title_key']), route('platform.crm.dictionaries', $dictionary)));
 
 // Marketing > Message Templates
 Route::screen('marketing/message-templates/create', MessageTemplateEditScreen::class)

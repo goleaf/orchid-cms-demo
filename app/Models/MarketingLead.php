@@ -45,6 +45,7 @@ class MarketingLead extends Model
         'converted_at',
         'message',
         'rejection_reason',
+        'lost_reason_code',
         'crm_snapshot',
         'utm_source',
         'utm_medium',
@@ -182,6 +183,7 @@ class MarketingLead extends Model
             'contacted_at',
             'converted_at',
             'rejection_reason',
+            'lost_reason_code',
             'created_at',
         ]);
     }
@@ -218,6 +220,7 @@ class MarketingLead extends Model
             'converted_at',
             'message',
             'rejection_reason',
+            'lost_reason_code',
             'crm_snapshot',
             'utm_source',
             'utm_medium',
