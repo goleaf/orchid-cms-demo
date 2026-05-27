@@ -1392,3 +1392,80 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T21:41:06+00:00
+
+```json
+{
+  "ts": "2026-05-27T21:41:06+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6b54-81bc-7211-9a55-37f3009ba260",
+  "branch": "main",
+  "changed_file_count": 42,
+  "changed_file_groups": {
+    "code": 31,
+    "models": 3,
+    "orchid": 5,
+    "database": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    "app/Actions/GenerateRobotsTxtAction.php",
+    "app/Actions/GenerateSitemapAction.php",
+    "app/Actions/GetBranchPageAction.php",
+    "app/Actions/GetContactPageAction.php",
+    "app/Actions/GetHomePageAction.php",
+    "app/Actions/GetPricingPageAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GetSitePageAction.php",
+    "app/Actions/GetSitemapAction.php",
+    "app/Actions/UpdateSeoMetadataAction.php",
+    "app/Http/Controllers/RobotsController.php",
+    "app/Http/Controllers/SitePageController.php",
+    "app/Http/Controllers/SitemapController.php",
+    "app/Http/Requests/StoreBranchRequest.php",
+    "app/Http/Requests/StoreCourseRequest.php",
+    "app/Http/Requests/StoreSitePageRequest.php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/SitePage.php",
+    "app/Models/TrainingProgram.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Rules/PublicPageIndexableRule.php",
+    "app/Rules/SeoDescriptionLengthRule.php",
+    "app/Rules/SeoTitleLengthRule.php",
+    "app/Rules/ValidCanonicalUrlRule.php",
+    "codex/memory/learned_patterns.md"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-27T21:50:51+00:00
+
+```json
+{
+  "ts": "2026-05-27T21:50:51+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6b62-5ae6-74e3-877c-a6d1cb615704",
+  "branch": "main",
+  "changed_file_count": 4,
+  "changed_file_groups": {
+    "code": 2,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    "codex/memory/learning_candidates.md",
+    "docs/public-website.md",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

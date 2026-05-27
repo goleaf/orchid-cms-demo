@@ -4,7 +4,12 @@ namespace Tests\Feature;
 
 use App\Actions\CaptureUtmDataAction;
 use App\Actions\CreateCallbackLeadAction;
+use App\Actions\CreateOrUpdateBranchAction;
+use App\Actions\CreateOrUpdateCourseAction;
+use App\Actions\CreateOrUpdateSitePageAction;
 use App\Actions\CreateWebsiteLeadAction;
+use App\Actions\GenerateSeoMetadataAction;
+use App\Actions\HideCourseFromSiteAction;
 use App\Actions\NormalizePhoneAction;
 use App\Actions\PublishBranchOnSiteAction;
 use App\Actions\PublishCourseOnSiteAction;
@@ -17,6 +22,7 @@ use App\Models\Branch;
 use App\Models\Course;
 use App\Models\CourseCategory;
 use App\Models\Lead;
+use App\Models\SitePage;
 use App\Models\TrainingGroup;
 use App\Models\User;
 use App\Notifications\EnrollmentLeadAutoReplyNotification;
@@ -335,6 +341,84 @@ class PublicWebsiteActionsRequestsRulesTest extends TestCase
         $published = app(PublishCourseOnSiteAction::class)->handle($course);
 
         $this->assertTrue($published->is_visible_on_site);
+    }
+
+    public function test_content_management_actions_create_records_and_generate_seo_fallbacks(): void
+    {
+        $this->seed();
+
+        $category = CourseCategory::factory()->create();
+
+        $page = app(CreateOrUpdateSitePageAction::class)->handle(null, [
+            'type' => 'custom',
+            'slug' => 'action-managed-page',
+            'title_translations' => ['ru' => 'Страница Action', 'en' => 'Action Page'],
+            'content_translations' => ['ru' => 'Контент страницы Action', 'en' => 'Action page content'],
+            'is_active' => true,
+            'is_indexable' => true,
+            'published_at' => now(),
+        ]);
+
+        $course = app(CreateOrUpdateCourseAction::class)->handle(null, [
+            'course_category_id' => $category->id,
+            'slug' => 'action-managed-course',
+            'name_translations' => ['ru' => 'Курс Action', 'en' => 'Action Course'],
+            'short_description_translations' => ['ru' => 'Краткое описание Action', 'en' => 'Short action description'],
+            'description_translations' => ['ru' => 'Описание курса Action', 'en' => 'Action course description'],
+            'price' => '990.00',
+            'currency' => 'EUR',
+            'is_active' => true,
+            'is_visible_on_site' => true,
+            'is_indexable' => true,
+        ]);
+
+        $branch = app(CreateOrUpdateBranchAction::class)->handle(null, [
+            'slug' => 'action-managed-branch',
+            'name_translations' => ['ru' => 'Филиал Action', 'en' => 'Action Branch'],
+            'city_translations' => ['ru' => 'Вильнюс', 'en' => 'Vilnius'],
+            'address_translations' => ['ru' => 'Тестовая улица 1', 'en' => 'Test Street 1'],
+            'description_translations' => ['ru' => 'Описание филиала Action', 'en' => 'Action branch description'],
+            'phone' => '+370 600 55555',
+            'email' => 'branch-action@example.com',
+            'is_active' => true,
+            'is_visible_on_site' => true,
+            'is_indexable' => true,
+        ]);
+
+        $this->assertInstanceOf(SitePage::class, $page);
+        $this->assertInstanceOf(Course::class, $course);
+        $this->assertInstanceOf(Branch::class, $branch);
+        $this->assertSame('Страница Action', $page->seo_title_translations['ru']);
+        $this->assertSame('Action Course', $course->seo_title_translations['en']);
+        $this->assertSame('Action Branch', $branch->seo_title_translations['en']);
+        $this->assertSame(99000, $course->price_cents);
+    }
+
+    public function test_hide_course_from_site_action_hides_public_course(): void
+    {
+        $course = Course::factory()->create([
+            'is_active' => true,
+            'is_visible_on_site' => true,
+        ]);
+
+        $hidden = app(HideCourseFromSiteAction::class)->handle($course);
+
+        $this->assertFalse($hidden->is_visible_on_site);
+    }
+
+    public function test_generate_seo_metadata_action_fills_missing_open_graph_values(): void
+    {
+        $this->seed();
+
+        $metadata = app(GenerateSeoMetadataAction::class)->handle([
+            'name_translations' => ['ru' => 'SEO заголовок', 'en' => 'SEO title'],
+            'description_translations' => ['ru' => 'SEO описание', 'en' => 'SEO description'],
+        ]);
+
+        $this->assertSame('SEO title', $metadata['seo_title_translations']['en']);
+        $this->assertSame('SEO description', $metadata['seo_description_translations']['en']);
+        $this->assertSame('SEO title', $metadata['og_title_translations']['en']);
+        $this->assertSame('SEO description', $metadata['og_description_translations']['en']);
     }
 
     public function test_publish_branch_action_validates_and_makes_branch_visible(): void

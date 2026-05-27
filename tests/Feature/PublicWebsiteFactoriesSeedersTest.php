@@ -16,8 +16,11 @@ use App\Models\TranslationString;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\WebsiteBranchSeeder;
 use Database\Seeders\WebsiteCourseSeeder;
+use Database\Seeders\WebsiteFaqSeeder;
 use Database\Seeders\WebsitePageSeeder;
 use Database\Seeders\WebsitePricingSeeder;
+use Database\Seeders\WebsiteSettingsSeeder;
+use Database\Seeders\WebsiteTestimonialSeeder;
 use Database\Seeders\WebsiteTranslationSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -135,6 +138,48 @@ class PublicWebsiteFactoriesSeedersTest extends TestCase
 
         $this->assertGreaterThanOrEqual(2, Branch::query()->active()->visibleOnSite()->count());
         $this->assertTrue(Branch::query()->where('slug', 'vilnius-main')->active()->visibleOnSite()->exists());
+    }
+
+    public function test_website_faq_seeder_creates_common_faq_idempotently(): void
+    {
+        $this->seed(WebsiteFaqSeeder::class);
+        $this->seed(WebsiteFaqSeeder::class);
+
+        $faq = Faq::query()->ordered()->firstOrFail();
+
+        $this->assertSame(3, Faq::query()->active()->count());
+        $this->assertArrayHasKey('en', $faq->question_translations);
+        $this->assertArrayHasKey('ru', $faq->answer_translations);
+    }
+
+    public function test_website_testimonial_seeder_creates_published_testimonials_idempotently(): void
+    {
+        $this->seed(WebsiteTestimonialSeeder::class);
+        $this->seed(WebsiteTestimonialSeeder::class);
+
+        $testimonial = Testimonial::query()->published()->featured()->firstOrFail();
+
+        $this->assertSame(2, Testimonial::query()->published()->count());
+        $this->assertSame(5, $testimonial->rating);
+        $this->assertArrayHasKey('lt', $testimonial->text_translations);
+    }
+
+    public function test_website_settings_seeder_creates_default_settings_idempotently(): void
+    {
+        $this->seed(WebsiteSettingsSeeder::class);
+        $this->seed(WebsiteSettingsSeeder::class);
+
+        $this->assertSame(9, SiteSetting::query()->count());
+        $this->assertDatabaseHas('site_settings', [
+            'key' => 'default_phone',
+            'group' => 'contacts',
+            'is_public' => true,
+        ]);
+        $this->assertDatabaseHas('site_settings', [
+            'key' => 'robots_txt',
+            'group' => 'seo',
+            'is_public' => false,
+        ]);
     }
 
     public function test_website_translation_seeder_creates_translation_keys(): void
