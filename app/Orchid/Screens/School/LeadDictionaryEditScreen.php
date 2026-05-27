@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\School;
 
+use App\Actions\DeleteLeadDictionaryAction;
+use App\Actions\SaveLeadDictionaryAction;
+use App\Http\Requests\Marketing\LeadDictionaryDeleteRequest;
+use App\Http\Requests\Marketing\LeadDictionaryRequest;
 use App\Orchid\Support\TranslatableFields;
-use App\Services\TranslatableContentManager;
 use App\Support\Crm\LeadDictionaryRegistry;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
@@ -171,94 +172,26 @@ class LeadDictionaryEditScreen extends Screen
     }
 
     public function save(
-        Request $request,
-        TranslatableContentManager $translations,
+        LeadDictionaryRequest $request,
+        SaveLeadDictionaryAction $saveDictionary,
         string $dictionary,
         ?string $record = null
     ): RedirectResponse {
-        abort_unless($request->user()?->hasAccess('crm.leads.manage_dictionaries'), 403);
-
-        $definition = LeadDictionaryRegistry::definition($dictionary);
-
-        /** @var class-string<Model> $modelClass */
-        $modelClass = $definition['model'];
-        $item = filled($record)
-            ? $modelClass::query()->findOrFail($record)
-            : new $modelClass;
-
-        $keyColumn = (string) $definition['key_column'];
-        $table = $item->getTable();
-
-        $data = $request->validate([
-            'item.'.$keyColumn => [
-                'required',
-                'string',
-                'max:120',
-                Rule::unique($table, $keyColumn)->ignore($item->getKey()),
-            ],
-            'item.name' => ['nullable', 'string', 'max:255'],
-            'item.color' => ['nullable', 'string', 'max:32'],
-            'item.is_active' => ['nullable', 'boolean'],
-            'item.is_public' => ['nullable', 'boolean'],
-            'item.is_default' => ['nullable', 'boolean'],
-            'item.is_final' => ['nullable', 'boolean'],
-            'item.is_success' => ['nullable', 'boolean'],
-            'item.is_lost' => ['nullable', 'boolean'],
-            'item.is_duplicate' => ['nullable', 'boolean'],
-            'item.is_spam' => ['nullable', 'boolean'],
-            'item.sort_order' => ['required', 'integer', 'min:0'],
-            ...$translations->validationRules(['name'], ['nullable', 'string', 'max:255']),
-            ...$translations->validationRules(['description'], ['nullable', 'string', 'max:1000']),
-        ]);
-
-        $item->fill([
-            $keyColumn => $data['item'][$keyColumn],
-            'name' => $data['item']['name'] ?? null,
-            'color' => $data['item']['color'] ?? null,
-            ...$translations->extract($request, ['name']),
-            ...$translations->extract($request, ['description']),
-            'is_active' => (bool) ($data['item']['is_active'] ?? false),
-            'sort_order' => (int) $data['item']['sort_order'],
-        ]);
-
-        if ($dictionary === 'statuses') {
-            $item->fill([
-                'is_default' => (bool) ($data['item']['is_default'] ?? false),
-                'is_final' => (bool) ($data['item']['is_final'] ?? false),
-                'is_success' => (bool) ($data['item']['is_success'] ?? false),
-                'is_lost' => (bool) ($data['item']['is_lost'] ?? false),
-                'is_public' => (bool) ($data['item']['is_public'] ?? false),
-                'is_duplicate' => (bool) ($data['item']['is_duplicate'] ?? false),
-                'is_spam' => (bool) ($data['item']['is_spam'] ?? false),
-            ]);
-        }
-
-        $item->save();
-
-        if ($dictionary === 'statuses' && (bool) $item->getAttribute('is_default')) {
-            $modelClass::query()
-                ->whereKeyNot($item->getKey())
-                ->update(['is_default' => false]);
-        }
+        $saveDictionary->handle($dictionary, $record, $request->dictionaryData());
 
         Toast::info(tkey('crm.dictionaries.messages.saved'));
 
         return redirect()->route('platform.crm.dictionaries', $dictionary);
     }
 
-    public function delete(Request $request, string $dictionary, string $record): RedirectResponse
+    public function delete(
+        LeadDictionaryDeleteRequest $request,
+        DeleteLeadDictionaryAction $deleteDictionary,
+        string $dictionary,
+        string $record
+    ): RedirectResponse
     {
-        abort_unless($request->user()?->hasAccess('crm.leads.manage_dictionaries'), 403);
-
-        $definition = LeadDictionaryRegistry::definition($dictionary);
-
-        /** @var class-string<Model> $modelClass */
-        $modelClass = $definition['model'];
-        $item = $modelClass::query()->findOrFail($record);
-
-        abort_if((bool) $item->getAttribute('is_system'), 403);
-
-        $item->delete();
+        $deleteDictionary->handle($dictionary, $request->recordId());
 
         Toast::info(tkey('crm.dictionaries.messages.deleted'));
 

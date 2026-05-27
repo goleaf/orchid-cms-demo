@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\School;
 
+use App\Actions\DeleteLeadDictionaryAction;
+use App\Http\Requests\Marketing\LeadDictionaryDeleteRequest;
 use App\Support\Crm\LeadDictionaryRegistry;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
@@ -112,20 +114,11 @@ class LeadDictionaryListScreen extends Screen
         ];
     }
 
-    public function delete(Request $request): RedirectResponse
+    public function delete(LeadDictionaryDeleteRequest $request, DeleteLeadDictionaryAction $deleteDictionary): RedirectResponse
     {
-        abort_unless($request->user()?->hasAccess('crm.leads.manage_dictionaries'), 403);
+        $dictionary = $request->dictionaryName();
 
-        $dictionary = (string) $request->input('dictionary', $this->dictionary);
-        $definition = LeadDictionaryRegistry::definition($dictionary);
-
-        /** @var class-string<Model> $modelClass */
-        $modelClass = $definition['model'];
-        $item = $modelClass::query()->findOrFail($request->integer('record'));
-
-        abort_if((bool) $item->getAttribute('is_system'), 403);
-
-        $item->delete();
+        $deleteDictionary->handle($dictionary, $request->recordId());
 
         Toast::info(tkey('crm.dictionaries.messages.deleted'));
 

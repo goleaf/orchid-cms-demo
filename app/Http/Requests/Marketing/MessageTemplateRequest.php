@@ -35,6 +35,25 @@ class MessageTemplateRequest extends FormRequest
     }
 
     /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'template.name.required' => tkey('crm.validation.message_template_name_required'),
+            'template.name.max' => tkey('crm.validation.message_template_name_too_long'),
+            'template.channel.in' => tkey('crm.validation.message_template_channel_invalid'),
+            'template.subject.max' => tkey('crm.validation.message_template_subject_too_long'),
+            'template.body.required' => tkey('crm.validation.message_template_body_required'),
+            'template.body.max' => tkey('crm.validation.message_template_body_too_long'),
+            'template.sort_order.required' => tkey('crm.validation.message_template_sort_order_required'),
+            'template.sort_order.integer' => tkey('crm.validation.message_template_sort_order_invalid'),
+            'template.sort_order.min' => tkey('crm.validation.message_template_sort_order_invalid'),
+            'template.sort_order.max' => tkey('crm.validation.message_template_sort_order_invalid'),
+        ];
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function templateData(): array

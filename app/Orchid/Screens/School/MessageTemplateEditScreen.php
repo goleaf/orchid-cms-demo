@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\School;
 
+use App\Actions\DeleteMarketingMessageTemplateAction;
 use App\Actions\SaveMarketingMessageTemplateAction;
 use App\Http\Requests\Marketing\MessageTemplateRequest;
+use App\Http\Requests\Marketing\MessageTemplateDeleteRequest;
 use App\Models\MarketingMessageTemplate;
 use Illuminate\Http\RedirectResponse;
 use Orchid\Screen\Actions\Button;
@@ -122,11 +124,14 @@ class MessageTemplateEditScreen extends Screen
         return redirect()->route('platform.marketing.templates');
     }
 
-    public function delete(MarketingMessageTemplate $messageTemplate): RedirectResponse
+    public function delete(
+        MessageTemplateDeleteRequest $request,
+        DeleteMarketingMessageTemplateAction $deleteTemplate,
+    ): RedirectResponse
     {
-        abort_unless(request()->user()?->hasAccess('platform.marketing.templates'), 403);
+        $messageTemplate = MarketingMessageTemplate::query()->findOrFail($request->templateId());
 
-        $messageTemplate->delete();
+        $deleteTemplate->handle($messageTemplate);
 
         Toast::info(tkey('crm.message_templates.messages.deleted'));
 
