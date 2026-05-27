@@ -1639,3 +1639,44 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-27T23:28:40+00:00
+
+```json
+{
+  "ts": "2026-05-27T23:28:40+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6bae-29ab-73c0-ae77-632654b8ef37",
+  "branch": "main",
+  "changed_file_count": 20,
+  "changed_file_groups": {
+    "code": 9,
+    "orchid": 10,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "app/Actions/GetLeadPipelineAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Orchid/PlatformProvider.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Rules/ValidLeadStatusTransitionRule.php",
+    "[REDACTED_SECRET].php",
+    "database/seeders/CrmTranslationSeeder.php",
+    "pp/Actions/ChangeLeadStatusAction.php",
+    "resources/views/orchid/school/lead-pipeline.blade.php",
+    "routes/platform.php",
+    "tests/Feature/CrmOrchidAdminUiTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

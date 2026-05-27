@@ -15,6 +15,7 @@ class ValidLeadStatusTransitionRule implements ValidationRule
     public function __construct(
         private readonly ?MarketingLead $lead,
         private readonly ?User $user = null,
+        private readonly bool $allowOverride = false,
     ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
@@ -31,7 +32,7 @@ class ValidLeadStatusTransitionRule implements ValidationRule
             return;
         }
 
-        if ($this->user?->hasAccess('crm.leads.override_status_transition')) {
+        if ($this->allowOverride && ($this->user?->hasAccess('crm.leads.override_status_transition') ?? false)) {
             return;
         }
 

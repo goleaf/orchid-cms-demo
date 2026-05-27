@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\School;
 
+use App\Actions\CancelLeadTaskAction;
 use App\Actions\CompleteLeadTaskAction;
+use App\Enums\LeadTaskPriority;
 use App\Enums\LeadTaskStatus;
+use App\Http\Requests\Marketing\CancelLeadTaskRequest;
 use App\Http\Requests\Marketing\LeadTaskCompletionRequest;
 use App\Models\MarketingLeadTask;
 use App\Models\User;
@@ -13,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
+use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Screen;
@@ -37,6 +41,8 @@ class LeadTaskListScreen extends Screen
         $this->filters = [
             'segment' => (string) $request->query('segment', 'open'),
             'assigned_to_user_id' => (string) $request->query('assigned_to_user_id', ''),
+            'priority' => (string) $request->query('priority', ''),
+            'status' => (string) $request->query('status', ''),
         ];
 
         $this->managers = User::query()
@@ -54,6 +60,10 @@ class LeadTaskListScreen extends Screen
             ])
             ->when($this->filters['assigned_to_user_id'] !== '', fn (Builder $query): Builder => $query
                 ->where('assigned_to_user_id', $this->filters['assigned_to_user_id']))
+            ->when($this->filters['priority'] !== '', fn (Builder $query): Builder => $query
+                ->where('priority', $this->filters['priority']))
+            ->when($this->filters['status'] !== '', fn (Builder $query): Builder => $query
+                ->where('status', $this->filters['status']))
             ->when($this->filters['segment'] === 'my' && $request->user() !== null, fn (Builder $query): Builder => $query
                 ->where('assigned_to_user_id', $request->user()->id)
                 ->whereIn('status', [LeadTaskStatus::Open->value, LeadTaskStatus::InProgress->value]))
@@ -64,6 +74,8 @@ class LeadTaskListScreen extends Screen
                 ->whereIn('status', [LeadTaskStatus::Open->value, LeadTaskStatus::InProgress->value])
                 ->whereDate('due_at', today()))
             ->when($this->filters['segment'] === 'done', fn (Builder $query): Builder => $query->where('status', LeadTaskStatus::Done->value))
+            ->when($this->filters['segment'] === 'completed', fn (Builder $query): Builder => $query->where('status', LeadTaskStatus::Done->value))
+            ->when($this->filters['segment'] === 'cancelled', fn (Builder $query): Builder => $query->where('status', LeadTaskStatus::Cancelled->value))
             ->orderBy('due_at')
             ->simplePaginate(20)
             ->withQueryString();
@@ -93,7 +105,7 @@ class LeadTaskListScreen extends Screen
         return [
             Link::make(tkey('menu.crm.leads'))
                 ->icon('bs.list-ul')
-                ->route('platform.marketing.leads'),
+                ->route('platform.crm.leads'),
         ];
     }
 
@@ -109,6 +121,8 @@ class LeadTaskListScreen extends Screen
                         'today' => tkey('crm.tasks.segments.today'),
                         'overdue' => tkey('crm.tasks.segments.overdue'),
                         'done' => tkey('crm.tasks.segments.done'),
+                        'completed' => tkey('crm.tasks.statuses.done'),
+                        'cancelled' => tkey('crm.tasks.statuses.cancelled'),
                     ])
                     ->value($this->filters['segment'] ?? 'open'),
 
@@ -117,6 +131,18 @@ class LeadTaskListScreen extends Screen
                     ->empty(tkey('crm.leads.filters.all_managers'), '')
                     ->options($this->managers)
                     ->value($this->filters['assigned_to_user_id'] ?? ''),
+
+                Select::make('priority')
+                    ->title(tkey('crm.tasks.fields.priority'))
+                    ->empty(tkey('crm.leads.filters.all_priorities'), '')
+                    ->options($this->priorityOptions())
+                    ->value($this->filters['priority'] ?? ''),
+
+                Select::make('status')
+                    ->title(tkey('crm.tasks.fields.status'))
+                    ->empty(tkey('crm.leads.filters.all_statuses'), '')
+                    ->options($this->statusOptions())
+                    ->value($this->filters['status'] ?? ''),
 
                 Button::make(tkey('common.actions.search'))
                     ->icon('bs.search')
@@ -132,7 +158,7 @@ class LeadTaskListScreen extends Screen
                 TD::make('lead', tkey('crm.leads.title'))
                     ->render(fn (MarketingLeadTask $task): string => $task->marketingLead
                         ? (string) Link::make($task->marketingLead->fullName())
-                            ->route('platform.marketing.leads.edit', $task->marketingLead)
+                            ->route('platform.crm.leads.edit', $task->marketingLead)
                         : '-'),
                 TD::make('assignedTo', tkey('crm.tasks.fields.assigned_to'))
                     ->render(fn (MarketingLeadTask $task): string => $task->assignedTo?->name ?? '-'),
@@ -142,11 +168,23 @@ class LeadTaskListScreen extends Screen
                     ->render(fn (MarketingLeadTask $task): string => $task->status->label()),
                 TD::make('actions', tkey('crm.leads.columns.actions'))
                     ->alignRight()
-                    ->render(fn (MarketingLeadTask $task): string => (string) Button::make(tkey('crm.tasks.actions.complete'))
-                        ->icon('bs.check2')
-                        ->method('complete')
-                        ->parameters(['task' => $task->id])
-                        ->canSee($task->status !== LeadTaskStatus::Done)),
+                    ->render(fn (MarketingLeadTask $task): DropDown => DropDown::make()
+                        ->icon('bs.three-dots-vertical')
+                        ->list([
+                            Link::make(tkey('crm.leads.actions.open'))
+                                ->icon('bs.box-arrow-in-right')
+                                ->route('platform.crm.leads.edit', $task->marketingLead),
+                            Button::make(tkey('crm.tasks.actions.complete'))
+                                ->icon('bs.check2')
+                                ->method('complete')
+                                ->parameters(['task' => $task->id])
+                                ->canSee($task->status !== LeadTaskStatus::Done && $task->status !== LeadTaskStatus::Cancelled),
+                            Button::make(tkey('crm.leads.actions.cancel_task'))
+                                ->icon('bs.x-circle')
+                                ->method('cancel')
+                                ->parameters(['task' => $task->id])
+                                ->canSee($task->status !== LeadTaskStatus::Done && $task->status !== LeadTaskStatus::Cancelled),
+                        ])),
             ]),
         ];
     }
@@ -156,6 +194,8 @@ class LeadTaskListScreen extends Screen
         return redirect()->route('platform.crm.tasks', array_filter([
             'segment' => $request->input('segment'),
             'assigned_to_user_id' => $request->input('assigned_to_user_id'),
+            'priority' => $request->input('priority'),
+            'status' => $request->input('status'),
         ], fn (mixed $value): bool => filled($value)));
     }
 
@@ -170,6 +210,17 @@ class LeadTaskListScreen extends Screen
         return redirect()->route('platform.crm.tasks', $request->query());
     }
 
+    public function cancel(CancelLeadTaskRequest $request, CancelLeadTaskAction $cancelTask): RedirectResponse
+    {
+        $task = MarketingLeadTask::query()->findOrFail($request->taskId());
+
+        $cancelTask->handle($task, $request->user(), $request->reason());
+
+        Toast::info(tkey('crm.leads.messages.task_cancelled'));
+
+        return redirect()->route('platform.crm.tasks', $request->query());
+    }
+
     private function dueLabel(MarketingLeadTask $task): string
     {
         $value = $task->due_at?->format('Y-m-d H:i') ?? '-';
@@ -177,5 +228,25 @@ class LeadTaskListScreen extends Screen
         return $task->isOverdue()
             ? tkey('crm.tasks.labels.overdue_value', ['value' => $value])
             : $value;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function priorityOptions(): array
+    {
+        return collect(LeadTaskPriority::cases())
+            ->mapWithKeys(fn (LeadTaskPriority $priority): array => [$priority->value => $priority->label()])
+            ->all();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function statusOptions(): array
+    {
+        return collect(LeadTaskStatus::cases())
+            ->mapWithKeys(fn (LeadTaskStatus $status): array => [$status->value => $status->label()])
+            ->all();
     }
 }

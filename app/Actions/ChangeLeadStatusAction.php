@@ -20,7 +20,7 @@ class ChangeLeadStatusAction
         bool $allowOverride = false,
     ): MarketingLead {
         $targetStatus = $status instanceof LeadStatus ? $status : LeadStatus::from((string) $status);
-        $override = $allowOverride || ($user?->hasAccess('crm.leads.override_status_transition') ?? false);
+        $override = $allowOverride && ($user?->hasAccess('crm.leads.override_status_transition') ?? false);
 
         if ($lead->is_converted && ! $override && $targetStatus !== LeadStatus::Archived) {
             throw ValidationException::withMessages([

@@ -28,8 +28,9 @@ class ChangeLeadStatusRequest extends FormRequest
                 'required',
                 Rule::enum(LeadStatus::class),
                 new ActiveLeadStatusRule,
-                new ValidLeadStatusTransitionRule($this->lead(), $this->user()),
+                new ValidLeadStatusTransitionRule($this->lead(), $this->user(), $this->boolean('override_status_transition')),
             ],
+            'override_status_transition' => ['nullable', 'boolean'],
             'reason' => ['nullable', 'string', 'max:2000'],
             'lost_reason_code' => ['nullable', 'string', new ActiveLeadLostReasonRule],
         ];

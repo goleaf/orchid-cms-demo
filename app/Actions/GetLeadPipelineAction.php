@@ -7,6 +7,7 @@ use App\Models\Branch;
 use App\Models\LeadLostReason;
 use App\Models\LeadSource;
 use App\Models\MarketingLead;
+use App\Models\TrainingProgram;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -28,9 +29,14 @@ class GetLeadPipelineAction
             ])
             ->withCount(['comments', 'communications', 'documents', 'openTasks', 'overdueTasks'])
             ->when(filled($filters['manager_id'] ?? null), fn (Builder $query) => $query->where('responsible_manager_id', $filters['manager_id']))
+            ->when(($filters['only_my'] ?? null) === '1' && filled($filters['current_user_id'] ?? null), fn (Builder $query) => $query
+                ->where('responsible_manager_id', $filters['current_user_id']))
             ->when(filled($filters['source'] ?? null), fn (Builder $query) => $query->where('source', $filters['source']))
+            ->when(filled($filters['training_program_id'] ?? null), fn (Builder $query) => $query->where('training_program_id', $filters['training_program_id']))
             ->when(filled($filters['license_category'] ?? null), fn (Builder $query) => $query->where('license_category', $filters['license_category']))
             ->when(filled($filters['branch_id'] ?? null), fn (Builder $query) => $query->where('branch_id', $filters['branch_id']))
+            ->when(filled($filters['created_from'] ?? null), fn (Builder $query) => $query->whereDate('created_at', '>=', $filters['created_from']))
+            ->when(filled($filters['created_to'] ?? null), fn (Builder $query) => $query->whereDate('created_at', '<=', $filters['created_to']))
             ->when(($filters['hot'] ?? null) === '1', fn (Builder $query) => $query->where('is_hot', true))
             ->when(($filters['overdue'] ?? null) === '1', fn (Builder $query) => $query
                 ->where(function (Builder $inner): void {
@@ -77,10 +83,14 @@ class GetLeadPipelineAction
             'filters' => [
                 'manager_id' => $filters['manager_id'] ?? null,
                 'source' => $filters['source'] ?? null,
+                'training_program_id' => $filters['training_program_id'] ?? null,
                 'license_category' => $filters['license_category'] ?? null,
                 'branch_id' => $filters['branch_id'] ?? null,
+                'only_my' => $filters['only_my'] ?? null,
                 'hot' => $filters['hot'] ?? null,
                 'overdue' => $filters['overdue'] ?? null,
+                'created_from' => $filters['created_from'] ?? null,
+                'created_to' => $filters['created_to'] ?? null,
             ],
             'filterOptions' => [
                 'managers' => User::query()
@@ -91,6 +101,14 @@ class GetLeadPipelineAction
                     ->all(),
                 'sources' => LeadSource::translatedLabels(),
                 'categories' => $this->distinctValues('license_category'),
+                'programs' => TrainingProgram::query()
+                    ->forAcademyList()
+                    ->orderBy('sort_order')
+                    ->orderBy('title')
+                    ->limit(100)
+                    ->get()
+                    ->mapWithKeys(fn (TrainingProgram $program): array => [$program->id => $program->displayTitle()])
+                    ->all(),
                 'branches' => Branch::query()
                     ->forAdminList()
                     ->orderBy('city')
@@ -170,6 +188,9 @@ class GetLeadPipelineAction
             'source' => tkey('crm.leads.fields.source'),
             'all_sources' => tkey('crm.leads.filters.all_sources'),
             'no_sources_found' => tkey('crm.leads.empty.no_sources_found'),
+            'course' => tkey('crm.leads.fields.course'),
+            'all_courses' => tkey('crm.leads.filters.all_courses'),
+            'no_courses_found' => tkey('crm.leads.empty.no_course'),
             'category' => tkey('crm.leads.columns.category'),
             'all_categories' => tkey('crm.leads.filters.all_categories'),
             'no_categories_found' => tkey('crm.leads.empty.no_categories_found'),
@@ -177,6 +198,9 @@ class GetLeadPipelineAction
             'all_branches' => tkey('crm.leads.filters.all_branches'),
             'no_branches_found' => tkey('crm.leads.empty.no_branches_found'),
             'flags' => tkey('crm.leads.filters.flags'),
+            'only_my' => tkey('crm.leads.filters.only_my'),
+            'created_from' => tkey('crm.leads.filters.created_from'),
+            'created_to' => tkey('crm.leads.filters.created_to'),
             'hot' => tkey('crm.leads.flags.hot'),
             'overdue' => tkey('crm.leads.flags.overdue'),
             'filter' => tkey('common.actions.search'),

@@ -25,11 +25,17 @@ class LeadPipelineScreen extends Screen
         return $pipeline->handle($request->only([
             'manager_id',
             'source',
+            'training_program_id',
             'license_category',
             'branch_id',
+            'only_my',
             'hot',
             'overdue',
-        ]));
+            'created_from',
+            'created_to',
+        ]) + [
+            'current_user_id' => $request->user()?->id,
+        ]);
     }
 
     public function name(): ?string
@@ -44,7 +50,7 @@ class LeadPipelineScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['crm.leads.view', 'platform.marketing.pipeline'];
+        return ['crm.pipeline.view', 'platform.marketing.pipeline'];
     }
 
     public function commandBar(): iterable
@@ -52,7 +58,7 @@ class LeadPipelineScreen extends Screen
         return [
             Link::make(tkey('crm.leads.title'))
                 ->icon('bs.list-ul')
-                ->route('platform.marketing.leads'),
+                ->route($this->leadIndexRoute()),
         ];
     }
 
@@ -77,5 +83,12 @@ class LeadPipelineScreen extends Screen
         ]));
 
         return redirect()->back();
+    }
+
+    private function leadIndexRoute(): string
+    {
+        return request()->routeIs('platform.marketing.*')
+            ? 'platform.marketing.leads'
+            : 'platform.crm.leads';
     }
 }

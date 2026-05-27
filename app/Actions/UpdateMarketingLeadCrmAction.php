@@ -14,6 +14,10 @@ class UpdateMarketingLeadCrmAction
         $previousManagerId = $lead->responsible_manager_id;
         $duplicate = app(DetectLeadDuplicateAction::class)->handle($data, $lead);
 
+        $duplicateOfId = array_key_exists('duplicate_of_id', $data)
+            ? $data['duplicate_of_id']
+            : ($lead->duplicate_of_id ?? $duplicate?->id);
+
         $lead->fill([
             'responsible_manager_id' => $data['responsible_manager_id'] ?? null,
             'assigned_by_user_id' => ($previousManagerId !== ($data['responsible_manager_id'] ?? null))
@@ -26,6 +30,7 @@ class UpdateMarketingLeadCrmAction
             'training_program_id' => $data['training_program_id'] ?? null,
             'training_group_id' => $data['training_group_id'] ?? null,
             'instructor_id' => $data['instructor_id'] ?? null,
+            'full_name' => $data['full_name'] ?? null,
             'first_name' => $data['first_name'],
             'middle_name' => $data['middle_name'] ?? null,
             'last_name' => $data['last_name'] ?? null,
@@ -53,7 +58,7 @@ class UpdateMarketingLeadCrmAction
             'lost_reason_code' => $data['lost_reason_code'] ?? null,
             'message' => $data['message'] ?? null,
             'internal_comment' => $data['internal_comment'] ?? null,
-            'duplicate_of_id' => $data['duplicate_of_id'] ?? $duplicate?->id,
+            'duplicate_of_id' => $duplicateOfId,
             'consent_accepted' => (bool) ($data['consent_accepted'] ?? $lead->consent_accepted),
             'consent_accepted_at' => $data['consent_accepted_at'] ?? $lead->consent_accepted_at,
             'consent_text_version' => $data['consent_text_version'] ?? $lead->consent_text_version,

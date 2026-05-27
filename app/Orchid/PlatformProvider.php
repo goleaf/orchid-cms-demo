@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Orchid;
 
+use App\Models\MarketingLead;
+use App\Models\MarketingLeadTask;
 use Orchid\Platform\Dashboard;
 use Orchid\Platform\ItemPermission;
 use Orchid\Platform\OrchidServiceProvider;
@@ -143,29 +145,37 @@ class PlatformProvider extends OrchidServiceProvider
 
             Menu::make(tkey('menu.crm.leads'))
                 ->icon('bs.funnel')
-                ->route('platform.marketing.leads')
+                ->route('platform.crm.leads')
                 ->permission('crm.leads.view')
                 ->title(tkey('menu.crm')),
 
             Menu::make(tkey('menu.crm.new_leads'))
                 ->icon('bs.inbox')
-                ->route('platform.marketing.leads', ['status' => 'new'])
-                ->permission('crm.leads.view'),
+                ->route('platform.crm.leads', ['segment' => 'new'])
+                ->permission('crm.leads.view')
+                ->badge(fn (): int => MarketingLead::query()->new()->count()),
 
             Menu::make(tkey('menu.crm.my_leads'))
                 ->icon('bs.person-check')
-                ->route('platform.marketing.leads', ['segment' => 'my'])
+                ->route('platform.crm.leads', ['segment' => 'my'])
                 ->permission('crm.leads.view'),
+
+            Menu::make(tkey('menu.crm.unassigned'))
+                ->icon('bs.person-dash')
+                ->route('platform.crm.leads', ['segment' => 'unassigned'])
+                ->permission('crm.leads.view')
+                ->badge(fn (): int => MarketingLead::query()->open()->unassigned()->count()),
 
             Menu::make(tkey('menu.crm.overdue_tasks'))
                 ->icon('bs.exclamation-triangle')
-                ->route('platform.marketing.leads', ['overdue' => '1'])
-                ->permission('crm.leads.view'),
+                ->route('platform.crm.tasks', ['segment' => 'overdue'])
+                ->permission('crm.leads.manage_tasks')
+                ->badge(fn (): int => MarketingLeadTask::query()->overdue()->count()),
 
             Menu::make(tkey('menu.crm.pipeline'))
                 ->icon('bs.kanban')
-                ->route('platform.marketing.pipeline')
-                ->permission('crm.leads.view'),
+                ->route('platform.crm.pipeline')
+                ->permission('crm.pipeline.view'),
 
             Menu::make(tkey('menu.crm.tasks'))
                 ->icon('bs.check2-square')
@@ -174,23 +184,23 @@ class PlatformProvider extends OrchidServiceProvider
 
             Menu::make(tkey('menu.crm.statuses'))
                 ->icon('bs.ui-checks-grid')
-                ->route('platform.crm.dictionaries', 'statuses')
+                ->route('platform.crm.statuses')
                 ->permission('crm.leads.manage_dictionaries'),
 
             Menu::make(tkey('menu.crm.sources'))
                 ->icon('bs.signpost-split')
-                ->route('platform.crm.dictionaries', 'sources')
+                ->route('platform.crm.sources')
                 ->permission('crm.leads.manage_dictionaries'),
 
             Menu::make(tkey('menu.crm.lost_reasons'))
                 ->icon('bs.x-octagon')
-                ->route('platform.crm.dictionaries', 'lost-reasons')
+                ->route('platform.crm.lost-reasons')
                 ->permission('crm.leads.manage_dictionaries'),
 
             Menu::make(tkey('menu.crm.tags'))
                 ->icon('bs.tags')
-                ->route('platform.crm.dictionaries', 'tags')
-                ->permission('crm.leads.manage_dictionaries'),
+                ->route('platform.crm.tags')
+                ->permission(['crm.leads.manage_dictionaries', 'crm.leads.manage_tags']),
 
             Menu::make(tkey('menu.marketing.campaigns'))
                 ->icon('bs.megaphone')
@@ -294,13 +304,17 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('crm.leads.create', tkey('permissions.crm.leads.create'))
                 ->addPermission('crm.leads.update', tkey('permissions.crm.leads.update'))
                 ->addPermission('crm.leads.delete', tkey('permissions.crm.leads.delete'))
+                ->addPermission('crm.leads.archive', tkey('permissions.crm.leads.archive'))
                 ->addPermission('crm.leads.assign', tkey('permissions.crm.leads.assign'))
                 ->addPermission('crm.leads.change_status', tkey('permissions.crm.leads.change_status'))
+                ->addPermission('crm.leads.override_status_transition', tkey('permissions.crm.leads.override_status_transition'))
                 ->addPermission('crm.leads.manage_tasks', tkey('permissions.crm.leads.manage_tasks'))
                 ->addPermission('crm.leads.manage_dictionaries', tkey('permissions.crm.leads.manage_dictionaries'))
+                ->addPermission('crm.leads.manage_tags', tkey('permissions.crm.leads.manage_tags'))
                 ->addPermission('crm.leads.view_marketing', tkey('permissions.crm.leads.view_marketing'))
                 ->addPermission('crm.leads.convert', tkey('permissions.crm.leads.convert'))
-                ->addPermission('crm.leads.export', tkey('permissions.crm.leads.export')),
+                ->addPermission('crm.leads.export', tkey('permissions.crm.leads.export'))
+                ->addPermission('crm.pipeline.view', tkey('permissions.crm.pipeline.view')),
 
             ItemPermission::group(tkey('permissions.groups.system'))
                 ->addPermission('platform.systems.roles', tkey('permissions.system.roles'))

@@ -19,7 +19,11 @@ use App\Orchid\Screens\School\LeadDictionaryEditScreen;
 use App\Orchid\Screens\School\LeadDictionaryListScreen;
 use App\Orchid\Screens\School\LeadEditScreen;
 use App\Orchid\Screens\School\LeadListScreen;
+use App\Orchid\Screens\School\LeadLostReasonListScreen;
 use App\Orchid\Screens\School\LeadPipelineScreen;
+use App\Orchid\Screens\School\LeadSourceListScreen;
+use App\Orchid\Screens\School\LeadStatusListScreen;
+use App\Orchid\Screens\School\LeadTagListScreen;
 use App\Orchid\Screens\School\LeadTaskListScreen;
 use App\Orchid\Screens\School\MessageTemplateEditScreen;
 use App\Orchid\Screens\School\MessageTemplateListScreen;
@@ -330,6 +334,13 @@ Route::screen('marketing/pipeline', LeadPipelineScreen::class)
         ->parent('platform.index')
         ->push(tkey('menu.crm.pipeline'), route('platform.marketing.pipeline')));
 
+// CRM > Pipeline
+Route::screen('crm/pipeline', LeadPipelineScreen::class)
+    ->name('platform.crm.pipeline')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.crm.pipeline'), route('platform.crm.pipeline')));
+
 // Marketing > Leads
 Route::screen('marketing/leads/create', LeadEditScreen::class)
     ->name('platform.marketing.leads.create')
@@ -350,12 +361,56 @@ Route::screen('marketing/leads/{lead}/edit', LeadEditScreen::class)
         ->parent('platform.marketing.leads')
         ->push($lead->fullName(), route('platform.marketing.leads.edit', $lead)));
 
+// CRM > Leads
+Route::screen('crm/leads/create', LeadEditScreen::class)
+    ->name('platform.crm.leads.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.crm.leads')
+        ->push(tkey('crm.leads.create_title'), route('platform.crm.leads.create')));
+
+Route::screen('crm/leads/{lead}/edit', LeadEditScreen::class)
+    ->name('platform.crm.leads.edit')
+    ->breadcrumbs(fn (Trail $trail, $lead) => $trail
+        ->parent('platform.crm.leads')
+        ->push($lead->fullName(), route('platform.crm.leads.edit', $lead)));
+
+Route::screen('crm/leads', LeadListScreen::class)
+    ->name('platform.crm.leads')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.crm.leads'), route('platform.crm.leads')));
+
 // CRM > Tasks
 Route::screen('crm/tasks', LeadTaskListScreen::class)
     ->name('platform.crm.tasks')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
         ->push(tkey('menu.crm.tasks'), route('platform.crm.tasks')));
+
+// CRM > Dictionary shortcuts
+Route::screen('crm/statuses', LeadStatusListScreen::class)
+    ->name('platform.crm.statuses')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.crm.statuses'), route('platform.crm.statuses')));
+
+Route::screen('crm/sources', LeadSourceListScreen::class)
+    ->name('platform.crm.sources')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.crm.sources'), route('platform.crm.sources')));
+
+Route::screen('crm/lost-reasons', LeadLostReasonListScreen::class)
+    ->name('platform.crm.lost-reasons')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.crm.lost_reasons'), route('platform.crm.lost-reasons')));
+
+Route::screen('crm/tags', LeadTagListScreen::class)
+    ->name('platform.crm.tags')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.crm.tags'), route('platform.crm.tags')));
 
 // CRM > Dictionaries
 Route::screen('crm/dictionaries/{dictionary}/create', LeadDictionaryEditScreen::class)

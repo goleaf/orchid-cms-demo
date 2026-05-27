@@ -1,9 +1,11 @@
 @php
     /** @var \Illuminate\Support\Collection<int, \App\Enums\LeadStatus> $statuses */
+    $pipelineRoute = request()->routeIs('platform.marketing.*') ? 'platform.marketing.pipeline' : 'platform.crm.pipeline';
+    $leadEditRoute = request()->routeIs('platform.marketing.*') ? 'platform.marketing.leads.edit' : 'platform.crm.leads.edit';
 @endphp
 
 <div class="bg-white rounded shadow-sm p-4 mb-4">
-    <form method="GET" action="{{ route('platform.marketing.pipeline') }}" class="row g-3 align-items-end">
+    <form method="GET" action="{{ route($pipelineRoute) }}" class="row g-3 align-items-end">
         <div class="col-md-2">
             <label class="form-label">{{ $labels['manager'] }}</label>
             <select class="form-select" name="manager_id">
@@ -23,6 +25,17 @@
                     <option value="{{ $value }}" @selected((string) $filters['source'] === (string) $value)>{{ $label }}</option>
                 @empty
                     <option value="" disabled>{{ $labels['no_sources_found'] }}</option>
+                @endforelse
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">{{ $labels['course'] }}</label>
+            <select class="form-select" name="training_program_id">
+                <option value="">{{ $labels['all_courses'] }}</option>
+                @forelse ($filterOptions['programs'] as $id => $name)
+                    <option value="{{ $id }}" @selected((string) $filters['training_program_id'] === (string) $id)>{{ $name }}</option>
+                @empty
+                    <option value="" disabled>{{ $labels['no_courses_found'] }}</option>
                 @endforelse
             </select>
         </div>
@@ -52,6 +65,10 @@
             <label class="form-label">{{ $labels['flags'] }}</label>
             <div class="d-flex gap-3">
                 <label class="form-check">
+                    <input class="form-check-input" type="checkbox" name="only_my" value="1" @checked($filters['only_my'] === '1')>
+                    <span class="form-check-label">{{ $labels['only_my'] }}</span>
+                </label>
+                <label class="form-check">
                     <input class="form-check-input" type="checkbox" name="hot" value="1" @checked($filters['hot'] === '1')>
                     <span class="form-check-label">{{ $labels['hot'] }}</span>
                 </label>
@@ -61,9 +78,17 @@
                 </label>
             </div>
         </div>
+        <div class="col-md-2">
+            <label class="form-label">{{ $labels['created_from'] }}</label>
+            <input class="form-control" type="date" name="created_from" value="{{ $filters['created_from'] }}">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">{{ $labels['created_to'] }}</label>
+            <input class="form-control" type="date" name="created_to" value="{{ $filters['created_to'] }}">
+        </div>
         <div class="col-md-2 d-flex gap-2">
             <button class="btn btn-primary w-100" type="submit">{{ $labels['filter'] }}</button>
-            <a class="btn btn-outline-secondary" href="{{ route('platform.marketing.pipeline') }}">{{ $labels['reset'] }}</a>
+            <a class="btn btn-outline-secondary" href="{{ route($pipelineRoute) }}">{{ $labels['reset'] }}</a>
         </div>
     </form>
 </div>
@@ -114,7 +139,7 @@
     </div>
 </div>
 
-<form id="lead-pipeline-move" method="POST" action="{{ route('platform.marketing.pipeline', ['method' => 'moveLead']) }}" class="d-none">
+<form id="lead-pipeline-move" method="POST" action="{{ route($pipelineRoute, ['method' => 'moveLead']) }}" class="d-none">
     @csrf
     <input type="hidden" name="lead_id" id="lead-pipeline-lead-id">
     <input type="hidden" name="status" id="lead-pipeline-status">
@@ -133,7 +158,7 @@
                 @forelse ($columns[$status->value] as $lead)
                     <article class="lead-pipeline-card" draggable="true" data-lead-id="{{ $lead->id }}">
                         <div class="d-flex justify-content-between gap-2">
-                            <a href="{{ route('platform.marketing.leads.edit', $lead) }}"><strong>{{ $lead->fullName() }}</strong></a>
+                            <a href="{{ route($leadEditRoute, $lead) }}"><strong>{{ $lead->fullName() }}</strong></a>
                             @if ($lead->is_hot)
                                 <span class="badge bg-danger">{{ $labels['hot'] }}</span>
                             @endif

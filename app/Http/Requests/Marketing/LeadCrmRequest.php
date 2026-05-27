@@ -52,6 +52,7 @@ class LeadCrmRequest extends FormRequest
             'lead.training_program_id' => ['nullable', 'integer', Rule::exists(TrainingProgram::class, 'id')],
             'lead.training_group_id' => ['nullable', 'integer', Rule::exists(TrainingGroup::class, 'id')],
             'lead.instructor_id' => ['nullable', 'integer', Rule::exists(Instructor::class, 'id')],
+            'lead.full_name' => ['nullable', 'string', 'max:240'],
             'lead.first_name' => ['required', 'string', 'max:120'],
             'lead.middle_name' => ['nullable', 'string', 'max:120'],
             'lead.last_name' => ['nullable', 'string', 'max:120'],
@@ -70,8 +71,9 @@ class LeadCrmRequest extends FormRequest
                 'required',
                 Rule::enum(LeadStatus::class),
                 new ActiveLeadStatusRule,
-                new ValidLeadStatusTransitionRule($this->routeLead(), $this->user()),
+                new ValidLeadStatusTransitionRule($this->routeLead(), $this->user(), $this->boolean('override_status_transition')),
             ],
+            'override_status_transition' => ['nullable', 'boolean'],
             'lead.license_category' => ['nullable', 'string', 'max:40'],
             'lead.preferred_format' => ['nullable', 'string', 'max:60'],
             'lead.preferred_language' => ['nullable', 'string', 'max:60'],
@@ -138,13 +140,20 @@ class LeadCrmRequest extends FormRequest
             'training_program_id',
             'training_group_id',
             'instructor_id',
-            'duplicate_of_id',
         ] as $key) {
             $lead[$key] = $this->nullableInteger($lead[$key] ?? null);
         }
 
+        if (array_key_exists('duplicate_of_id', $lead)) {
+            $lead['duplicate_of_id'] = $this->nullableInteger($lead['duplicate_of_id']);
+        }
+
         $lead['is_hot'] = (bool) ($lead['is_hot'] ?? false);
-        $lead['consent_accepted'] = (bool) ($lead['consent_accepted'] ?? false);
+
+        if (array_key_exists('consent_accepted', $lead)) {
+            $lead['consent_accepted'] = (bool) $lead['consent_accepted'];
+        }
+
         $lead['lead_score'] = filled($lead['lead_score'] ?? null) ? (int) $lead['lead_score'] : 0;
 
         return $lead;

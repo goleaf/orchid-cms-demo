@@ -27,6 +27,8 @@ class SuperadminPermissions
             'platform.marketing.pipeline',
             'platform.marketing.leads',
             'platform.marketing.templates',
+            'platform.crm.pipeline',
+            'platform.crm.leads',
             'platform.crm.tasks',
             'platform.systems.roles',
             'platform.systems.users',
@@ -57,13 +59,17 @@ class SuperadminPermissions
             'crm.leads.create',
             'crm.leads.update',
             'crm.leads.delete',
+            'crm.leads.archive',
             'crm.leads.assign',
             'crm.leads.change_status',
+            'crm.leads.override_status_transition',
             'crm.leads.manage_tasks',
             'crm.leads.manage_dictionaries',
+            'crm.leads.manage_tags',
             'crm.leads.view_marketing',
             'crm.leads.convert',
             'crm.leads.export',
+            'crm.pipeline.view',
         ];
     }
 

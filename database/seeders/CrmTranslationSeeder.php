@@ -167,6 +167,7 @@ class CrmTranslationSeeder extends SystemTranslationSeeder
             $this->entry('crm', 'crm.tasks.fields.created_by', ['ru' => 'Создал', 'en' => 'Created by', 'lt' => 'Sukure', 'pl' => 'Utworzyl']),
             $this->entry('crm', 'crm.tasks.fields.cancelled_at', ['ru' => 'Отменено', 'en' => 'Cancelled at', 'lt' => 'Atsaukta', 'pl' => 'Anulowano']),
             $this->entry('crm', 'crm.tasks.fields.created_at', ['ru' => 'Создано', 'en' => 'Created at', 'lt' => 'Sukurta', 'pl' => 'Utworzono']),
+            $this->entry('crm', 'crm.leads.filters.all_priorities', ['ru' => 'Все приоритеты', 'en' => 'All priorities', 'lt' => 'Visi prioritetai', 'pl' => 'Wszystkie priorytety']),
             $this->entry('crm', 'crm.tasks.defaults.contact_new_manual_lead', ['ru' => 'Связаться с новым ручным лидом', 'en' => 'Contact the new manual lead', 'lt' => 'Susisiekti su nauja rankine uzklausa', 'pl' => 'Skontaktuj sie z nowym recznym leadem']),
             $this->entry('crm', 'crm.calls.title', ['ru' => 'Звонки', 'en' => 'Calls', 'lt' => 'Skambuciai', 'pl' => 'Rozmowy']),
             $this->entry('crm', 'crm.calls.fields.result', ['ru' => 'Результат', 'en' => 'Result', 'lt' => 'Rezultatas', 'pl' => 'Wynik']),

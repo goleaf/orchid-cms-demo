@@ -6,14 +6,25 @@ namespace App\Orchid\Screens\School;
 
 use App\Actions\AddLeadCommentAction;
 use App\Actions\AddLeadCommunicationAction;
+use App\Actions\AddLeadNoteAction;
+use App\Actions\AssignLeadManagerAction;
+use App\Actions\CancelLeadTaskAction;
+use App\Actions\ChangeLeadStatusAction;
 use App\Actions\CompleteLeadTaskAction;
 use App\Actions\CreateLeadTaskAction;
+use App\Actions\LogLeadCallAction;
 use App\Actions\MarkLeadDuplicateAction;
 use App\Actions\MarkLeadLostAction;
 use App\Actions\MarkLeadSpamAction;
 use App\Actions\PrepareLeadForEnrollmentAction;
+use App\Actions\PrepareLeadForStudentConversionAction;
+use App\Actions\ReopenLeadAction;
 use App\Actions\SaveMarketingLeadCrmAction;
 use App\Enums\LeadStatus;
+use App\Http\Requests\Marketing\AddLeadNoteRequest;
+use App\Http\Requests\Marketing\AssignLeadManagerRequest;
+use App\Http\Requests\Marketing\CancelLeadTaskRequest;
+use App\Http\Requests\Marketing\ChangeLeadStatusRequest;
 use App\Http\Requests\Marketing\LeadCommentRequest;
 use App\Http\Requests\Marketing\LeadCommunicationRequest;
 use App\Http\Requests\Marketing\LeadCrmRequest;
@@ -22,6 +33,12 @@ use App\Http\Requests\Marketing\LeadLostRequest;
 use App\Http\Requests\Marketing\LeadStatusActionRequest;
 use App\Http\Requests\Marketing\LeadTaskCompletionRequest;
 use App\Http\Requests\Marketing\LeadTaskRequest;
+use App\Http\Requests\Marketing\LogLeadCallRequest;
+use App\Http\Requests\Marketing\MarkLeadDuplicateRequest;
+use App\Http\Requests\Marketing\MarkLeadLostRequest;
+use App\Http\Requests\Marketing\MarkLeadSpamRequest;
+use App\Http\Requests\Marketing\ReopenLeadRequest;
+use App\Http\Requests\Marketing\StoreLeadTaskRequest;
 use App\Models\Branch;
 use App\Models\Instructor;
 use App\Models\LeadLostReason;
@@ -41,6 +58,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Select;
@@ -117,6 +135,9 @@ class LeadEditScreen extends Screen
                     'instructor:id,name',
                     'marketingCampaign:id,name,channel',
                     'convertedStudentProfile:id,first_name,last_name',
+                    'convertedEnrollment:id,status',
+                    'createdBy:id,name',
+                    'updatedBy:id,name',
                     'duplicateOf:id,first_name,last_name,phone,email,status',
                     'duplicates:id,duplicate_of_id,first_name,last_name,phone,email,status,created_at',
                     'tags:id,slug,name,name_translations,color',
@@ -228,6 +249,12 @@ class LeadEditScreen extends Screen
             'lead.tag_ids' => $this->lead->exists ? $this->lead->tags->pluck('id')->all() : [],
             'lead.next_follow_up_at' => $this->lead->next_follow_up_at?->format('Y-m-d\TH:i'),
             'lead.last_contacted_at' => $this->lead->last_contacted_at?->format('Y-m-d\TH:i'),
+            'lead.created_by_name' => $this->lead->createdBy?->name,
+            'lead.updated_by_name' => $this->lead->updatedBy?->name,
+            'lead.converted_student_name' => $this->lead->convertedStudentProfile?->fullName(),
+            'lead.converted_enrollment_label' => $this->lead->convertedEnrollment !== null
+                ? '#'.$this->lead->convertedEnrollment->id
+                : null,
             'lead_budget_eur' => $this->lead->budget_cents !== null
                 ? number_format($this->lead->budget_cents / 100, 2, '.', '')
                 : null,
@@ -252,7 +279,7 @@ class LeadEditScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['crm.leads.create', 'crm.leads.update', 'platform.marketing.leads', 'website.update_leads'];
+        return ['crm.leads.create', 'crm.leads.update', 'platform.marketing.leads'];
     }
 
     public function commandBar(): iterable
@@ -260,16 +287,71 @@ class LeadEditScreen extends Screen
         return [
             Link::make(tkey('crm.leads.actions.back_to_leads'))
                 ->icon('bs.arrow-left')
-                ->route('platform.marketing.leads'),
+                ->route($this->leadIndexRoute()),
 
             Button::make(tkey('crm.leads.actions.save_crm_card'))
                 ->icon('bs.check2-circle')
                 ->method('save'),
 
-            Button::make(tkey('crm.leads.actions.prepare_enrollment'))
+            Button::make(tkey('crm.leads.actions.save_and_return'))
+                ->icon('bs.check2-all')
+                ->method('saveAndReturn'),
+
+            ModalToggle::make(tkey('crm.leads.actions.change_status'))
+                ->icon('bs.arrow-repeat')
+                ->modal('changeStatusModal')
+                ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.change_status')),
+
+            ModalToggle::make(tkey('crm.leads.actions.assign_manager'))
                 ->icon('bs.person-check')
-                ->method('prepareEnrollment')
-                ->canSee($this->lead?->exists ?? false),
+                ->modal('assignManagerModal')
+                ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.assign')),
+
+            ModalToggle::make(tkey('crm.leads.actions.add_note'))
+                ->icon('bs.chat-left-text')
+                ->modal('addNoteModal')
+                ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.update')),
+
+            ModalToggle::make(tkey('crm.leads.actions.log_call'))
+                ->icon('bs.telephone')
+                ->modal('logCallModal')
+                ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.update')),
+
+            ModalToggle::make(tkey('crm.leads.actions.create_task'))
+                ->icon('bs.check2-square')
+                ->modal('createTaskModal')
+                ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.manage_tasks')),
+
+            ModalToggle::make(tkey('crm.leads.actions.mark_lost'))
+                ->icon('bs.x-octagon')
+                ->modal('markLostModal')
+                ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.change_status')),
+
+            ModalToggle::make(tkey('crm.leads.actions.mark_duplicate'))
+                ->icon('bs.files')
+                ->modal('markDuplicateModal')
+                ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.change_status')),
+
+            Button::make(tkey('crm.leads.actions.mark_spam'))
+                ->icon('bs.exclamation-octagon')
+                ->method('markSpam')
+                ->confirm(tkey('crm.leads.messages.marked_spam'))
+                ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.change_status')),
+
+            ModalToggle::make(tkey('crm.leads.actions.reopen'))
+                ->icon('bs.arrow-counterclockwise')
+                ->modal('reopenModal')
+                ->canSee($this->lead?->exists && $this->lead->is_closed && $this->hasCrmAccess('crm.leads.change_status')),
+
+            Button::make(tkey('crm.leads.actions.prepare_conversion'))
+                ->icon('bs.person-check')
+                ->method('prepareConversion')
+                ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.convert')),
+
+            Button::make(tkey('crm.leads.actions.convert_to_student'))
+                ->icon('bs.person-plus')
+                ->method('convertToStudent')
+                ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.convert')),
         ];
     }
 
@@ -280,9 +362,17 @@ class LeadEditScreen extends Screen
                 Layout::rows([
                     Input::make('lead.id')
                         ->type('hidden'),
+                    Input::make('lead.lead_number')
+                        ->title(tkey('crm.leads.fields.lead_number'))
+                        ->disabled()
+                        ->canSee($this->lead?->exists ?? false),
+                    Input::make('lead.full_name')
+                        ->title(tkey('crm.leads.fields.full_name')),
                     Input::make('lead.first_name')
                         ->title(tkey('crm.leads.fields.first_name'))
                         ->required(),
+                    Input::make('lead.middle_name')
+                        ->title(tkey('crm.leads.fields.middle_name')),
                     Input::make('lead.last_name')
                         ->title(tkey('crm.leads.fields.last_name')),
                     Input::make('lead.phone')
@@ -304,6 +394,10 @@ class LeadEditScreen extends Screen
                     Select::make('lead_status')
                         ->title(tkey('crm.leads.fields.status'))
                         ->options($this->leadStatusOptions())
+                        ->required(),
+                    Select::make('lead.source')
+                        ->title(tkey('crm.leads.fields.source'))
+                        ->options($this->sources)
                         ->required(),
                     Select::make('lead.responsible_manager_id')
                         ->title(tkey('crm.leads.fields.manager'))
@@ -342,6 +436,11 @@ class LeadEditScreen extends Screen
                         ->title(tkey('crm.leads.fields.locale')),
                     Input::make('lead.preferred_time')
                         ->title(tkey('crm.leads.fields.preferred_time')),
+                    Input::make('lead.desired_start_date')
+                        ->title(tkey('crm.leads.fields.desired_start_date'))
+                        ->type('date'),
+                    Input::make('lead.preferred_gearbox')
+                        ->title(tkey('crm.leads.fields.preferred_gearbox')),
                     Input::make('lead_budget_eur')
                         ->title(tkey('crm.leads.fields.budget'))
                         ->type('number')
@@ -370,10 +469,6 @@ class LeadEditScreen extends Screen
                 ])->title(tkey('crm.leads.sections.training_interest')),
 
                 Layout::rows([
-                    Select::make('lead.source')
-                        ->title(tkey('crm.leads.fields.source'))
-                        ->options($this->sources)
-                        ->required(),
                     Input::make('lead.utm_source')
                         ->title(tkey('crm.leads.fields.utm_source'))
                         ->disabled(),
@@ -411,7 +506,9 @@ class LeadEditScreen extends Screen
                         ->title(tkey('crm.leads.fields.user_agent'))
                         ->rows(3)
                         ->disabled(),
-                ])->title(tkey('crm.leads.sections.marketing_data')),
+                ])
+                    ->title(tkey('crm.leads.sections.marketing_data'))
+                    ->canSee($this->canViewMarketing()),
             ]),
 
             Layout::rows([
@@ -431,18 +528,37 @@ class LeadEditScreen extends Screen
                 Input::make('lead.duplicate_of_id')
                     ->title(tkey('crm.leads.fields.duplicate_of'))
                     ->type('number')
-                    ->min(1),
+                    ->min(1)
+                    ->disabled(),
                 CheckBox::make('lead.consent_accepted')
                     ->sendTrueOrFalse()
                     ->title(tkey('crm.leads.fields.consent_accepted'))
-                    ->placeholder(tkey('crm.leads.fields.consent_accepted')),
+                    ->placeholder(tkey('crm.leads.fields.consent_accepted'))
+                    ->disabled(),
                 Input::make('lead.consent_accepted_at')
                     ->title(tkey('crm.leads.fields.consent_accepted_at'))
                     ->disabled(),
                 Input::make('lead.consent_text_version')
-                    ->title(tkey('crm.leads.fields.consent_text_version')),
+                    ->title(tkey('crm.leads.fields.consent_text_version'))
+                    ->disabled(),
                 Input::make('lead.uuid')
                     ->title(tkey('crm.leads.fields.uuid'))
+                    ->disabled()
+                    ->canSee($this->lead?->exists ?? false),
+                Input::make('lead.created_by_name')
+                    ->title(tkey('crm.leads.fields.created_by'))
+                    ->disabled()
+                    ->canSee($this->lead?->exists ?? false),
+                Input::make('lead.updated_by_name')
+                    ->title(tkey('crm.leads.fields.updated_by'))
+                    ->disabled()
+                    ->canSee($this->lead?->exists ?? false),
+                Input::make('lead.created_at')
+                    ->title(tkey('crm.leads.fields.created_at'))
+                    ->disabled()
+                    ->canSee($this->lead?->exists ?? false),
+                Input::make('lead.updated_at')
+                    ->title(tkey('crm.leads.fields.updated_at'))
                     ->disabled()
                     ->canSee($this->lead?->exists ?? false),
                 Input::make('lead.closed_at')
@@ -451,6 +567,14 @@ class LeadEditScreen extends Screen
                     ->canSee($this->lead?->exists ?? false),
                 Input::make('lead.converted_at')
                     ->title(tkey('crm.leads.fields.converted_at'))
+                    ->disabled()
+                    ->canSee($this->lead?->exists ?? false),
+                Input::make('lead.converted_student_name')
+                    ->title(tkey('crm.leads.fields.converted_student'))
+                    ->disabled()
+                    ->canSee($this->lead?->exists ?? false),
+                Input::make('lead.converted_enrollment_label')
+                    ->title(tkey('crm.leads.fields.converted_enrollment'))
                     ->disabled()
                     ->canSee($this->lead?->exists ?? false),
             ])->title(tkey('crm.leads.sections.system_data')),
@@ -576,11 +700,18 @@ class LeadEditScreen extends Screen
                     ->render(fn (MarketingLeadTask $task): string => $task->status->label()),
                 TD::make('actions', tkey('crm.leads.columns.actions'))
                     ->alignRight()
-                    ->render(fn (MarketingLeadTask $task): string => (string) Button::make(tkey('crm.tasks.actions.complete'))
-                        ->icon('bs.check2')
-                        ->method('completeTask')
-                        ->parameters(['task' => $task->id])
-                        ->canSee($task->completed_at === null)),
+                    ->render(fn (MarketingLeadTask $task): string => collect([
+                        (string) Button::make(tkey('crm.tasks.actions.complete'))
+                            ->icon('bs.check2')
+                            ->method('completeTask')
+                            ->parameters(['task' => $task->id])
+                            ->canSee($task->completed_at === null && $task->cancelled_at === null),
+                        (string) Button::make(tkey('crm.leads.actions.cancel_task'))
+                            ->icon('bs.x-circle')
+                            ->method('cancelTask')
+                            ->parameters(['task' => $task->id])
+                            ->canSee($task->completed_at === null && $task->cancelled_at === null),
+                    ])->join(' ')),
             ])->title(tkey('crm.leads.sections.tasks')),
 
             Layout::table('lead.activities', [
@@ -601,7 +732,7 @@ class LeadEditScreen extends Screen
                     ->render(fn (MarketingLead $duplicate): string => (string) $duplicate->id),
                 TD::make('name', tkey('crm.leads.columns.full_name'))
                     ->render(fn (MarketingLead $duplicate): string => (string) Link::make($duplicate->fullName())
-                        ->route('platform.marketing.leads.edit', $duplicate)),
+                        ->route($this->leadEditRoute(), $duplicate)),
                 TD::make('phone', tkey('crm.leads.columns.phone'))
                     ->render(fn (MarketingLead $duplicate): string => $duplicate->phone ?? '-'),
                 TD::make('status', tkey('crm.leads.columns.status'))
@@ -663,6 +794,138 @@ class LeadEditScreen extends Screen
                 TD::make('created_at', tkey('crm.documents.fields.uploaded_at'))
                     ->render(fn (MarketingLeadDocument $document): string => $document->created_at->format('Y-m-d H:i')),
             ])->title(tkey('crm.documents.title')),
+
+            Layout::modal('changeStatusModal', Layout::rows([
+                Select::make('status')
+                    ->title(tkey('crm.leads.fields.status'))
+                    ->options($this->leadStatusOptions())
+                    ->required(),
+                Select::make('lost_reason_code')
+                    ->title(tkey('crm.leads.fields.lost_reason'))
+                    ->options($this->lostReasons)
+                    ->empty(tkey('crm.leads.empty.no_lost_reason')),
+                TextArea::make('reason')
+                    ->title(tkey('crm.leads.fields.comment'))
+                    ->rows(3),
+            ]))
+                ->title(tkey('crm.leads.actions.change_status'))
+                ->method('changeStatus')
+                ->applyButton(tkey('crm.leads.actions.change_status'))
+                ->canSee($this->lead?->exists ?? false),
+
+            Layout::modal('assignManagerModal', Layout::rows([
+                Select::make('manager_id')
+                    ->title(tkey('crm.leads.fields.manager'))
+                    ->options($this->managers)
+                    ->empty(tkey('crm.leads.empty.no_manager')),
+            ]))
+                ->title(tkey('crm.leads.actions.assign_manager'))
+                ->method('assignManager')
+                ->applyButton(tkey('crm.leads.actions.assign_manager'))
+                ->canSee($this->lead?->exists ?? false),
+
+            Layout::modal('addNoteModal', Layout::rows([
+                TextArea::make('comment.body')
+                    ->title(tkey('crm.leads.fields.comment'))
+                    ->rows(4)
+                    ->required(),
+            ]))
+                ->title(tkey('crm.leads.actions.add_note'))
+                ->method('addNote')
+                ->applyButton(tkey('crm.leads.actions.add_note'))
+                ->canSee($this->lead?->exists ?? false),
+
+            Layout::modal('logCallModal', Layout::rows([
+                Select::make('call.result')
+                    ->title(tkey('crm.calls.fields.result'))
+                    ->options($this->callResults())
+                    ->required(),
+                Input::make('call.duration_seconds')
+                    ->title(tkey('crm.calls.fields.duration_seconds'))
+                    ->type('number')
+                    ->min(0),
+                TextArea::make('call.comment')
+                    ->title(tkey('crm.calls.fields.comment'))
+                    ->rows(3),
+                Input::make('call.next_follow_up_at')
+                    ->title(tkey('crm.calls.fields.next_follow_up_at'))
+                    ->type('datetime-local'),
+                Select::make('call.lost_reason_code')
+                    ->title(tkey('crm.leads.fields.lost_reason'))
+                    ->options($this->lostReasons)
+                    ->empty(tkey('crm.leads.empty.no_lost_reason')),
+            ]))
+                ->title(tkey('crm.leads.actions.log_call'))
+                ->method('logCall')
+                ->applyButton(tkey('crm.leads.actions.log_call'))
+                ->canSee($this->lead?->exists ?? false),
+
+            Layout::modal('createTaskModal', Layout::rows([
+                Input::make('task.title')
+                    ->title(tkey('crm.tasks.fields.title'))
+                    ->required(),
+                TextArea::make('task.notes')
+                    ->title(tkey('crm.tasks.fields.description'))
+                    ->rows(3),
+                Select::make('task.assigned_to_user_id')
+                    ->title(tkey('crm.tasks.fields.assigned_to'))
+                    ->options($this->managers)
+                    ->empty(tkey('crm.leads.empty.no_manager')),
+                Select::make('task.priority')
+                    ->title(tkey('crm.tasks.fields.priority'))
+                    ->options($this->taskPriorityOptions()),
+                Input::make('task.due_at')
+                    ->title(tkey('crm.tasks.fields.due_at'))
+                    ->type('datetime-local'),
+            ]))
+                ->title(tkey('crm.leads.actions.create_task'))
+                ->method('createTask')
+                ->applyButton(tkey('crm.leads.actions.create_task'))
+                ->canSee($this->lead?->exists ?? false),
+
+            Layout::modal('markLostModal', Layout::rows([
+                Select::make('lost.reason')
+                    ->title(tkey('crm.leads.fields.lost_reason'))
+                    ->options($this->lostReasons)
+                    ->empty(tkey('crm.leads.empty.no_lost_reason'))
+                    ->required(),
+                TextArea::make('lost.comment')
+                    ->title(tkey('crm.leads.fields.lost_comment'))
+                    ->rows(3),
+            ]))
+                ->title(tkey('crm.leads.actions.mark_lost'))
+                ->method('markLost')
+                ->applyButton(tkey('crm.leads.actions.mark_lost'))
+                ->canSee($this->lead?->exists ?? false),
+
+            Layout::modal('markDuplicateModal', Layout::rows([
+                Input::make('duplicate.original_id')
+                    ->title(tkey('crm.leads.fields.duplicate_of'))
+                    ->type('number')
+                    ->min(1)
+                    ->required(),
+                TextArea::make('duplicate.comment')
+                    ->title(tkey('crm.leads.fields.comment'))
+                    ->rows(3),
+            ]))
+                ->title(tkey('crm.leads.actions.mark_duplicate'))
+                ->method('markDuplicate')
+                ->applyButton(tkey('crm.leads.actions.mark_duplicate'))
+                ->canSee($this->lead?->exists ?? false),
+
+            Layout::modal('reopenModal', Layout::rows([
+                Select::make('status')
+                    ->title(tkey('crm.leads.fields.status'))
+                    ->options($this->openStatusOptions())
+                    ->empty(tkey('crm.leads.filters.all_statuses')),
+                TextArea::make('reason')
+                    ->title(tkey('crm.leads.fields.comment'))
+                    ->rows(3),
+            ]))
+                ->title(tkey('crm.leads.actions.reopen'))
+                ->method('reopen')
+                ->applyButton(tkey('crm.leads.actions.reopen'))
+                ->canSee($this->lead?->exists ?? false),
         ];
     }
 
@@ -670,26 +933,18 @@ class LeadEditScreen extends Screen
         LeadCrmRequest $request,
         SaveMarketingLeadCrmAction $saveLead,
     ): RedirectResponse {
-        $isNew = $request->leadId() === null;
-        $lead = $isNew
-            ? null
-            : MarketingLead::query()
-                ->forCrmDetail()
-                ->whereKey($request->leadId())
-                ->firstOrFail();
+        $lead = $this->persistLead($request, $saveLead);
 
-        $lead = $saveLead->handle(
-            $lead,
-            $request->leadData(),
-            $request->targetStatus(),
-            $request->user(),
-            $request->budgetEur(),
-            $request->tagIds(),
-        );
+        return redirect()->route($this->leadEditRoute(), $lead);
+    }
 
-        Toast::info($isNew ? tkey('crm.leads.messages.created') : tkey('crm.leads.messages.updated'));
+    public function saveAndReturn(
+        LeadCrmRequest $request,
+        SaveMarketingLeadCrmAction $saveLead,
+    ): RedirectResponse {
+        $this->persistLead($request, $saveLead);
 
-        return redirect()->route('platform.marketing.leads.edit', $lead);
+        return redirect()->route($this->leadIndexRoute());
     }
 
     public function addComment(MarketingLead $lead, LeadCommentRequest $request, AddLeadCommentAction $addComment): RedirectResponse
@@ -698,7 +953,7 @@ class LeadEditScreen extends Screen
 
         Toast::info(tkey('crm.leads.messages.comment_added'));
 
-        return redirect()->route('platform.marketing.leads.edit', $lead);
+        return redirect()->route($this->leadEditRoute(), $lead);
     }
 
     public function addCommunication(MarketingLead $lead, LeadCommunicationRequest $request, AddLeadCommunicationAction $addCommunication): RedirectResponse
@@ -725,10 +980,10 @@ class LeadEditScreen extends Screen
 
         Toast::info(tkey('crm.leads.messages.communication_added'));
 
-        return redirect()->route('platform.marketing.leads.edit', $lead);
+        return redirect()->route($this->leadEditRoute(), $lead);
     }
 
-    public function createTask(MarketingLead $lead, LeadTaskRequest $request, CreateLeadTaskAction $createTask): RedirectResponse
+    public function createTask(MarketingLead $lead, StoreLeadTaskRequest $request, CreateLeadTaskAction $createTask): RedirectResponse
     {
         $payload = $request->taskData();
         $createTask->handle(
@@ -743,7 +998,7 @@ class LeadEditScreen extends Screen
 
         Toast::info(tkey('crm.tasks.messages.created'));
 
-        return redirect()->route('platform.marketing.leads.edit', $lead);
+        return redirect()->route($this->leadEditRoute(), $lead);
     }
 
     public function completeTask(MarketingLead $lead, LeadTaskCompletionRequest $request, CompleteLeadTaskAction $completeTask): RedirectResponse
@@ -754,34 +1009,45 @@ class LeadEditScreen extends Screen
 
         Toast::info(tkey('crm.tasks.messages.completed'));
 
-        return redirect()->route('platform.marketing.leads.edit', $lead);
+        return redirect()->route($this->leadEditRoute(), $lead);
     }
 
-    public function markLost(MarketingLead $lead, LeadLostRequest $request, MarkLeadLostAction $markLeadLost): RedirectResponse
+    public function cancelTask(MarketingLead $lead, CancelLeadTaskRequest $request, CancelLeadTaskAction $cancelTask): RedirectResponse
+    {
+        $task = $lead->tasks()->findOrFail($request->taskId());
+
+        $cancelTask->handle($task, $request->user(), $request->reason());
+
+        Toast::info(tkey('crm.leads.messages.task_cancelled'));
+
+        return redirect()->route($this->leadEditRoute(), $lead);
+    }
+
+    public function markLost(MarketingLead $lead, MarkLeadLostRequest $request, MarkLeadLostAction $markLeadLost): RedirectResponse
     {
         $markLeadLost->handle($lead, $request->reason(), $request->comment(), $request->user());
 
         Toast::info(tkey('crm.leads.messages.marked_lost'));
 
-        return redirect()->route('platform.marketing.leads.edit', $lead);
+        return redirect()->route($this->leadEditRoute(), $lead);
     }
 
-    public function markDuplicate(MarketingLead $lead, LeadDuplicateRequest $request, MarkLeadDuplicateAction $markLeadDuplicate): RedirectResponse
+    public function markDuplicate(MarketingLead $lead, MarkLeadDuplicateRequest $request, MarkLeadDuplicateAction $markLeadDuplicate): RedirectResponse
     {
         $markLeadDuplicate->handle($lead, $request->originalId(), $request->comment(), $request->user());
 
         Toast::info(tkey('crm.leads.messages.marked_duplicate'));
 
-        return redirect()->route('platform.marketing.leads.edit', $lead);
+        return redirect()->route($this->leadEditRoute(), $lead);
     }
 
-    public function markSpam(MarketingLead $lead, LeadStatusActionRequest $request, MarkLeadSpamAction $markLeadSpam): RedirectResponse
+    public function markSpam(MarketingLead $lead, MarkLeadSpamRequest $request, MarkLeadSpamAction $markLeadSpam): RedirectResponse
     {
         $markLeadSpam->handle($lead, $request->user(), tkey('crm.activities.reasons.marked_spam'));
 
         Toast::info(tkey('crm.leads.messages.marked_spam'));
 
-        return redirect()->route('platform.marketing.leads.edit', $lead);
+        return redirect()->route($this->leadEditRoute(), $lead);
     }
 
     public function prepareEnrollment(
@@ -793,7 +1059,97 @@ class LeadEditScreen extends Screen
 
         Toast::info(tkey('crm.leads.messages.student_module_next_block'));
 
-        return redirect()->route('platform.marketing.leads.edit', $lead);
+        return redirect()->route($this->leadEditRoute(), $lead);
+    }
+
+    public function changeStatus(
+        MarketingLead $lead,
+        ChangeLeadStatusRequest $request,
+        ChangeLeadStatusAction $changeLeadStatus,
+    ): RedirectResponse {
+        $changeLeadStatus->handle(
+            $lead,
+            $request->status(),
+            $request->user(),
+            $request->reason(),
+            $request->lostReasonCode(),
+        );
+
+        Toast::info(tkey('crm.leads.messages.status_changed'));
+
+        return redirect()->route($this->leadEditRoute(), $lead);
+    }
+
+    public function assignManager(
+        MarketingLead $lead,
+        AssignLeadManagerRequest $request,
+        AssignLeadManagerAction $assignLeadManager,
+    ): RedirectResponse {
+        $manager = $request->managerId() === null
+            ? null
+            : User::query()->findOrFail($request->managerId());
+
+        $assignLeadManager->handle($lead, $manager, $request->user());
+
+        Toast::info(tkey('crm.leads.messages.manager_assigned'));
+
+        return redirect()->route($this->leadEditRoute(), $lead);
+    }
+
+    public function addNote(MarketingLead $lead, AddLeadNoteRequest $request, AddLeadNoteAction $addLeadNote): RedirectResponse
+    {
+        $addLeadNote->handle($lead, $request->user(), $request->body());
+
+        Toast::info(tkey('crm.leads.messages.note_added'));
+
+        return redirect()->route($this->leadEditRoute(), $lead);
+    }
+
+    public function logCall(MarketingLead $lead, LogLeadCallRequest $request, LogLeadCallAction $logLeadCall): RedirectResponse
+    {
+        $payload = $request->callData();
+
+        $logLeadCall->handle(
+            $lead,
+            $request->user(),
+            $payload['result'],
+            $payload['duration_seconds'] ?? null,
+            $payload['comment'] ?? null,
+            $request->nextFollowUpAt(),
+            $payload['lost_reason_code'] ?? null,
+        );
+
+        Toast::info(tkey('crm.leads.messages.call_logged'));
+
+        return redirect()->route($this->leadEditRoute(), $lead);
+    }
+
+    public function reopen(MarketingLead $lead, ReopenLeadRequest $request, ReopenLeadAction $reopenLead): RedirectResponse
+    {
+        $reopenLead->handle($lead, $request->user(), $request->status(), $request->reason());
+
+        Toast::info(tkey('crm.leads.messages.reopened'));
+
+        return redirect()->route($this->leadEditRoute(), $lead);
+    }
+
+    public function prepareConversion(
+        MarketingLead $lead,
+        LeadStatusActionRequest $request,
+        PrepareLeadForStudentConversionAction $prepareLead,
+    ): RedirectResponse {
+        $result = $prepareLead->handle($lead, $request->user());
+
+        Toast::info($result['message']);
+
+        return redirect()->route($this->leadEditRoute(), $lead);
+    }
+
+    public function convertToStudent(MarketingLead $lead, LeadStatusActionRequest $request): RedirectResponse
+    {
+        Toast::info(tkey('crm.leads.messages.student_module_next_block'));
+
+        return redirect()->route($this->leadEditRoute(), $lead);
     }
 
     /**
@@ -802,6 +1158,19 @@ class LeadEditScreen extends Screen
     private function leadStatusOptions(): array
     {
         return collect(LeadStatus::cases())
+            ->mapWithKeys(fn (LeadStatus $status): array => [
+                $status->value => $status->label(),
+            ])
+            ->all();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function openStatusOptions(): array
+    {
+        return collect(LeadStatus::cases())
+            ->reject(fn (LeadStatus $status): bool => $status->isFinal())
             ->mapWithKeys(fn (LeadStatus $status): array => [
                 $status->value => $status->label(),
             ])
@@ -864,5 +1233,53 @@ class LeadEditScreen extends Screen
                 'time' => $communication->callback_required_at?->format('Y-m-d H:i'),
             ]) : null,
         ])->filter()->join(' / ') ?: '-';
+    }
+
+    private function persistLead(LeadCrmRequest $request, SaveMarketingLeadCrmAction $saveLead): MarketingLead
+    {
+        $isNew = $request->leadId() === null;
+        $lead = $isNew
+            ? null
+            : MarketingLead::query()
+                ->forCrmDetail()
+                ->whereKey($request->leadId())
+                ->firstOrFail();
+
+        $lead = $saveLead->handle(
+            $lead,
+            $request->leadData(),
+            $request->targetStatus(),
+            $request->user(),
+            $request->budgetEur(),
+            $request->tagIds(),
+        );
+
+        Toast::info($isNew ? tkey('crm.leads.messages.created') : tkey('crm.leads.messages.updated'));
+
+        return $lead;
+    }
+
+    private function leadIndexRoute(): string
+    {
+        return request()->routeIs('platform.marketing.*')
+            ? 'platform.marketing.leads'
+            : 'platform.crm.leads';
+    }
+
+    private function leadEditRoute(): string
+    {
+        return request()->routeIs('platform.marketing.*')
+            ? 'platform.marketing.leads.edit'
+            : 'platform.crm.leads.edit';
+    }
+
+    private function canViewMarketing(): bool
+    {
+        return request()->user()?->hasAccess('crm.leads.view_marketing') ?? false;
+    }
+
+    private function hasCrmAccess(string $permission): bool
+    {
+        return request()->user()?->hasAnyAccess([$permission, 'platform.marketing.leads']) ?? false;
     }
 }

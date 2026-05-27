@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
+use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Select;
@@ -130,7 +131,7 @@ class LeadListScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['crm.leads.view', 'platform.marketing.leads', 'website.view_leads'];
+        return ['crm.leads.view', 'platform.marketing.leads'];
     }
 
     public function commandBar(): iterable
@@ -138,11 +139,11 @@ class LeadListScreen extends Screen
         return [
             Link::make(tkey('crm.leads.actions.create'))
                 ->icon('bs.plus-circle')
-                ->route('platform.marketing.leads.create'),
+                ->route($this->leadCreateRoute()),
 
             Link::make(tkey('crm.leads.actions.open_pipeline'))
                 ->icon('bs.kanban')
-                ->route('platform.marketing.pipeline'),
+                ->route($this->pipelineRoute()),
 
             Link::make(tkey('menu.crm.tasks'))
                 ->icon('bs.check2-square')
@@ -150,7 +151,8 @@ class LeadListScreen extends Screen
 
             Button::make(tkey('common.actions.export_csv'))
                 ->icon('bs.download')
-                ->method('export'),
+                ->method('export')
+                ->canSee(request()->user()?->hasAccess('crm.leads.export') ?? false),
         ];
     }
 
@@ -193,7 +195,7 @@ class LeadListScreen extends Screen
                     ->value($this->filters['training_program_id'] ?? ''),
 
                 Select::make('training_group_id')
-                    ->title(tkey('crm.leads.filters.group'))
+                    ->title(tkey('crm.leads.filters.training_group'))
                     ->empty(tkey('crm.leads.filters.all_groups'), '')
                     ->options($this->groups)
                     ->value($this->filters['training_group_id'] ?? ''),
@@ -218,13 +220,45 @@ class LeadListScreen extends Screen
                     ])
                     ->value($this->filters['overdue'] ?? ''),
 
+                Select::make('only_my')
+                    ->title(tkey('crm.leads.filters.only_my'))
+                    ->empty(tkey('common.status.no'), '')
+                    ->options(['1' => tkey('common.status.yes')])
+                    ->value($this->filters['only_my'] ?? ''),
+
+                Select::make('only_unassigned')
+                    ->title(tkey('crm.leads.filters.only_unassigned'))
+                    ->empty(tkey('common.status.no'), '')
+                    ->options(['1' => tkey('common.status.yes')])
+                    ->value($this->filters['only_unassigned'] ?? ''),
+
+                Select::make('only_duplicates')
+                    ->title(tkey('crm.leads.filters.only_duplicates'))
+                    ->empty(tkey('common.status.no'), '')
+                    ->options(['1' => tkey('common.status.yes')])
+                    ->value($this->filters['only_duplicates'] ?? ''),
+
+                Select::make('only_open')
+                    ->title(tkey('crm.leads.filters.only_open'))
+                    ->empty(tkey('common.status.no'), '')
+                    ->options(['1' => tkey('common.status.yes')])
+                    ->value($this->filters['only_open'] ?? ''),
+
+                Select::make('only_closed')
+                    ->title(tkey('crm.leads.filters.only_closed'))
+                    ->empty(tkey('common.status.no'), '')
+                    ->options(['1' => tkey('common.status.yes')])
+                    ->value($this->filters['only_closed'] ?? ''),
+
                 Input::make('utm_source')
-                    ->title(tkey('crm.leads.fields.utm_source'))
-                    ->value($this->filters['utm_source'] ?? ''),
+                    ->title(tkey('crm.leads.filters.utm_source'))
+                    ->value($this->filters['utm_source'] ?? '')
+                    ->canSee($this->canViewMarketing()),
 
                 Input::make('utm_campaign')
-                    ->title(tkey('crm.leads.fields.utm_campaign'))
-                    ->value($this->filters['utm_campaign'] ?? ''),
+                    ->title(tkey('crm.leads.filters.utm_campaign'))
+                    ->value($this->filters['utm_campaign'] ?? '')
+                    ->canSee($this->canViewMarketing()),
 
                 Input::make('created_from')
                     ->type('date')
@@ -236,15 +270,15 @@ class LeadListScreen extends Screen
                     ->title(tkey('crm.leads.filters.created_to'))
                     ->value($this->filters['created_to'] ?? ''),
 
-                Input::make('follow_up_from')
+                Input::make('next_follow_up_from')
                     ->type('date')
-                    ->title(tkey('crm.leads.filters.follow_up_from'))
-                    ->value($this->filters['follow_up_from'] ?? ''),
+                    ->title(tkey('crm.leads.filters.next_follow_up_from'))
+                    ->value($this->filters['next_follow_up_from'] ?? ''),
 
-                Input::make('follow_up_to')
+                Input::make('next_follow_up_to')
                     ->type('date')
-                    ->title(tkey('crm.leads.filters.follow_up_to'))
-                    ->value($this->filters['follow_up_to'] ?? ''),
+                    ->title(tkey('crm.leads.filters.next_follow_up_to'))
+                    ->value($this->filters['next_follow_up_to'] ?? ''),
 
                 Button::make(tkey('common.actions.search'))
                     ->icon('bs.search')
@@ -256,9 +290,11 @@ class LeadListScreen extends Screen
                 TD::make('id', tkey('crm.leads.columns.id'))
                     ->render(fn (MarketingLead $lead): string => (string) $lead->id)
                     ->alignCenter(),
+                TD::make('lead_number', tkey('crm.leads.fields.lead_number'))
+                    ->render(fn (MarketingLead $lead): string => $lead->lead_number ?? '-'),
                 TD::make('name', tkey('crm.leads.columns.full_name'))
                     ->render(fn (MarketingLead $lead): string => (string) Link::make($lead->fullName())
-                        ->route('platform.marketing.leads.edit', $lead)),
+                        ->route($this->leadEditRoute(), $lead)),
                 TD::make('phone', tkey('crm.leads.columns.phone'))
                     ->render(fn (MarketingLead $lead): string => $lead->phone ?? '-'),
                 TD::make('email', tkey('crm.leads.columns.email'))
@@ -268,7 +304,8 @@ class LeadListScreen extends Screen
                 TD::make('city', tkey('crm.leads.columns.city'))
                     ->render(fn (MarketingLead $lead): string => $lead->city ?? '-'),
                 TD::make('campaign', tkey('crm.leads.columns.campaign'))
-                    ->render(fn (MarketingLead $lead): string => $lead->marketingCampaign?->name ?? '-'),
+                    ->render(fn (MarketingLead $lead): string => $lead->marketingCampaign?->name ?? '-')
+                    ->canSee($this->canViewMarketing()),
                 TD::make('branch', tkey('crm.leads.columns.branch'))
                     ->render(fn (MarketingLead $lead): string => $lead->branch?->displayName() ?? '-'),
                 TD::make('course', tkey('crm.leads.columns.course'))
@@ -285,13 +322,21 @@ class LeadListScreen extends Screen
                 TD::make('tags', tkey('crm.leads.columns.tags'))
                     ->render(fn (MarketingLead $lead): string => $lead->tags->map->displayName()->join(', ') ?: '-'),
                 TD::make('next_follow_up_at', tkey('crm.leads.columns.next_follow_up'))
-                    ->render(fn (MarketingLead $lead): string => $lead->next_follow_up_at?->format('Y-m-d H:i') ?? '-'),
+                    ->render(fn (MarketingLead $lead): string => $lead->is_overdue
+                        ? tkey('crm.tasks.labels.overdue_value', ['value' => $lead->next_follow_up_at?->format('Y-m-d H:i') ?? '-'])
+                        : ($lead->next_follow_up_at?->format('Y-m-d H:i') ?? '-')),
                 TD::make('created_at', tkey('crm.leads.columns.created_at'))
                     ->render(fn (MarketingLead $lead): string => $lead->created_at->format('Y-m-d H:i')),
                 TD::make('budget', tkey('crm.leads.columns.budget'))
                     ->render(fn (MarketingLead $lead): string => $lead->budgetForHumans()),
                 TD::make('status', tkey('crm.leads.columns.status'))
-                    ->render(fn (MarketingLead $lead): string => $lead->status->label()),
+                    ->render(fn (MarketingLead $lead): string => collect([
+                        $lead->status->label(),
+                        $lead->is_duplicate ? tkey('crm.leads.statuses.duplicate') : null,
+                        $lead->is_spam ? tkey('crm.leads.statuses.spam') : null,
+                        $lead->is_lost ? tkey('crm.leads.statuses.lost') : null,
+                        $lead->is_converted ? tkey('crm.leads.segments.converted') : null,
+                    ])->filter()->unique()->join(' / ')),
                 TD::make('duplicate', tkey('crm.leads.columns.duplicate'))
                     ->render(fn (MarketingLead $lead): string => $lead->duplicateOf
                         ? tkey('crm.leads.labels.duplicate_of', ['id' => $lead->duplicateOf->id])
@@ -307,16 +352,47 @@ class LeadListScreen extends Screen
                 TD::make('actions', tkey('crm.leads.columns.actions'))
                     ->cantHide()
                     ->alignRight()
-                    ->render(fn (MarketingLead $lead): string => (string) Link::make(tkey('crm.leads.actions.open'))
-                        ->icon('bs.box-arrow-in-right')
-                        ->route('platform.marketing.leads.edit', $lead)),
+                    ->render(fn (MarketingLead $lead): DropDown => DropDown::make()
+                        ->icon('bs.three-dots-vertical')
+                        ->list([
+                            Link::make(tkey('crm.leads.actions.open'))
+                                ->icon('bs.box-arrow-in-right')
+                                ->route($this->leadEditRoute(), $lead),
+                            Link::make(tkey('crm.leads.actions.edit'))
+                                ->icon('bs.pencil')
+                                ->route($this->leadEditRoute(), $lead),
+                            Link::make(tkey('crm.leads.actions.change_status'))
+                                ->icon('bs.arrow-repeat')
+                                ->route($this->leadEditRoute(), $lead),
+                            Link::make(tkey('crm.leads.actions.assign_manager'))
+                                ->icon('bs.person-check')
+                                ->route($this->leadEditRoute(), $lead),
+                            Link::make(tkey('crm.leads.actions.add_note'))
+                                ->icon('bs.chat-left-text')
+                                ->route($this->leadEditRoute(), $lead),
+                            Link::make(tkey('crm.leads.actions.log_call'))
+                                ->icon('bs.telephone')
+                                ->route($this->leadEditRoute(), $lead),
+                            Link::make(tkey('crm.leads.actions.create_task'))
+                                ->icon('bs.check2-square')
+                                ->route($this->leadEditRoute(), $lead),
+                            Link::make(tkey('crm.leads.actions.mark_lost'))
+                                ->icon('bs.x-octagon')
+                                ->route($this->leadEditRoute(), $lead),
+                            Link::make(tkey('crm.leads.actions.mark_duplicate'))
+                                ->icon('bs.files')
+                                ->route($this->leadEditRoute(), $lead),
+                            Link::make(tkey('crm.leads.actions.mark_spam'))
+                                ->icon('bs.exclamation-octagon')
+                                ->route($this->leadEditRoute(), $lead),
+                        ])),
             ]),
         ];
     }
 
     public function filter(Request $request): RedirectResponse
     {
-        return redirect()->route('platform.marketing.leads', array_filter([
+        return redirect()->route($this->leadIndexRoute(), array_filter([
             'search' => $request->input('search'),
             'status' => $request->input('status'),
             'source' => $request->input('source'),
@@ -330,9 +406,14 @@ class LeadListScreen extends Screen
             'utm_campaign' => $request->input('utm_campaign'),
             'created_from' => $request->input('created_from'),
             'created_to' => $request->input('created_to'),
-            'follow_up_from' => $request->input('follow_up_from'),
-            'follow_up_to' => $request->input('follow_up_to'),
+            'next_follow_up_from' => $request->input('next_follow_up_from'),
+            'next_follow_up_to' => $request->input('next_follow_up_to'),
             'overdue' => $request->input('overdue'),
+            'only_my' => $request->input('only_my'),
+            'only_unassigned' => $request->input('only_unassigned'),
+            'only_duplicates' => $request->input('only_duplicates'),
+            'only_open' => $request->input('only_open'),
+            'only_closed' => $request->input('only_closed'),
         ], fn (mixed $value): bool => filled($value)));
     }
 
@@ -386,10 +467,15 @@ class LeadListScreen extends Screen
             ->when($this->filters['tag_id'] !== '', fn (Builder $query): Builder => $query->whereHas('tags', fn (Builder $query): Builder => $query->whereKey($this->filters['tag_id'])))
             ->when($this->filters['created_from'] !== '', fn (Builder $query): Builder => $query->whereDate('created_at', '>=', $this->filters['created_from']))
             ->when($this->filters['created_to'] !== '', fn (Builder $query): Builder => $query->whereDate('created_at', '<=', $this->filters['created_to']))
-            ->when($this->filters['follow_up_from'] !== '', fn (Builder $query): Builder => $query->whereDate('next_follow_up_at', '>=', $this->filters['follow_up_from']))
-            ->when($this->filters['follow_up_to'] !== '', fn (Builder $query): Builder => $query->whereDate('next_follow_up_at', '<=', $this->filters['follow_up_to']))
-            ->when($this->filters['utm_source'] !== '', fn (Builder $query): Builder => $query->where('utm_source', $this->filters['utm_source']))
-            ->when($this->filters['utm_campaign'] !== '', fn (Builder $query): Builder => $query->where('utm_campaign', $this->filters['utm_campaign']))
+            ->when($this->filters['next_follow_up_from'] !== '', fn (Builder $query): Builder => $query->whereDate('next_follow_up_at', '>=', $this->filters['next_follow_up_from']))
+            ->when($this->filters['next_follow_up_to'] !== '', fn (Builder $query): Builder => $query->whereDate('next_follow_up_at', '<=', $this->filters['next_follow_up_to']))
+            ->when($this->canViewMarketing() && $this->filters['utm_source'] !== '', fn (Builder $query): Builder => $query->where('utm_source', $this->filters['utm_source']))
+            ->when($this->canViewMarketing() && $this->filters['utm_campaign'] !== '', fn (Builder $query): Builder => $query->where('utm_campaign', $this->filters['utm_campaign']))
+            ->when($this->filters['only_my'] === '1' && $request->user() !== null, fn (Builder $query): Builder => $query->assignedTo($request->user()->id))
+            ->when($this->filters['only_unassigned'] === '1', fn (Builder $query): Builder => $query->unassigned())
+            ->when($this->filters['only_duplicates'] === '1', fn (Builder $query): Builder => $query->duplicates())
+            ->when($this->filters['only_open'] === '1', fn (Builder $query): Builder => $query->open())
+            ->when($this->filters['only_closed'] === '1', fn (Builder $query): Builder => $query->closed())
             ->when($this->filters['overdue'] === '1', fn (Builder $query): Builder => $query
                 ->where(function (Builder $query): void {
                     $query
@@ -402,17 +488,25 @@ class LeadListScreen extends Screen
     private function applySegment(Builder $query, string $segment, Request $request): Builder
     {
         return match ($segment) {
+            'all' => $query,
+            'new' => $query->new(),
             'my' => $request->user() === null ? $query : $query->where('responsible_manager_id', $request->user()->id),
+            'my_leads' => $request->user() === null ? $query : $query->where('responsible_manager_id', $request->user()->id),
             'unassigned' => $query->whereNull('responsible_manager_id'),
             'today' => $query->whereDate('next_follow_up_at', today()),
+            'call_today' => $query->dueToday(),
+            'overdue' => $query->where(function (Builder $query): void {
+                $query
+                    ->overdueFollowUp()
+                    ->orWhereHas('overdueTasks');
+            }),
             'waiting_payment' => $query->where('status', LeadStatus::WaitingPayment->value),
             'waiting_documents' => $query->where('status', LeadStatus::WaitingDocuments->value),
             'hot' => $query->where('is_hot', true),
-            'duplicate' => $query->where(fn (Builder $query): Builder => $query
-                ->where('status', LeadStatus::Duplicate->value)
-                ->orWhereNotNull('duplicate_of_id')),
+            'duplicate', 'duplicates' => $query->duplicates(),
             'lost' => $query->whereIn('status', [LeadStatus::Lost->value, LeadStatus::Rejected->value]),
             'spam' => $query->where('status', LeadStatus::Spam->value),
+            'converted' => $query->converted(),
             'open' => $query->whereIn('status', LeadStatus::openPipelineValues()),
             'closed' => $query->whereNotNull('closed_at'),
             default => $query,
@@ -425,15 +519,22 @@ class LeadListScreen extends Screen
     private function segments(): array
     {
         return [
+            'all' => tkey('crm.leads.segments.all'),
+            'new' => tkey('crm.leads.segments.new'),
             'my' => tkey('crm.leads.segments.my'),
+            'my_leads' => tkey('crm.leads.segments.my_leads'),
             'unassigned' => tkey('crm.leads.segments.unassigned'),
             'today' => tkey('crm.leads.segments.today'),
+            'call_today' => tkey('crm.leads.segments.call_today'),
+            'overdue' => tkey('crm.leads.segments.overdue'),
             'waiting_payment' => tkey('crm.leads.segments.waiting_payment'),
             'waiting_documents' => tkey('crm.leads.segments.waiting_documents'),
             'hot' => tkey('crm.leads.segments.hot'),
             'duplicate' => tkey('crm.leads.segments.duplicate'),
+            'duplicates' => tkey('crm.leads.segments.duplicates'),
             'lost' => tkey('crm.leads.segments.lost'),
             'spam' => tkey('crm.leads.segments.spam'),
+            'converted' => tkey('crm.leads.segments.converted'),
             'open' => tkey('crm.leads.segments.open'),
             'closed' => tkey('crm.leads.segments.closed'),
         ];
@@ -455,12 +556,50 @@ class LeadListScreen extends Screen
             'tag_id' => trim((string) $request->query('tag_id')),
             'created_from' => trim((string) $request->query('created_from')),
             'created_to' => trim((string) $request->query('created_to')),
-            'follow_up_from' => trim((string) $request->query('follow_up_from')),
-            'follow_up_to' => trim((string) $request->query('follow_up_to')),
+            'next_follow_up_from' => trim((string) ($request->query('next_follow_up_from') ?? $request->query('follow_up_from'))),
+            'next_follow_up_to' => trim((string) ($request->query('next_follow_up_to') ?? $request->query('follow_up_to'))),
             'utm_source' => trim((string) $request->query('utm_source')),
             'utm_campaign' => trim((string) $request->query('utm_campaign')),
             'overdue' => trim((string) $request->query('overdue')),
+            'only_my' => trim((string) $request->query('only_my')),
+            'only_unassigned' => trim((string) $request->query('only_unassigned')),
+            'only_duplicates' => trim((string) $request->query('only_duplicates')),
+            'only_open' => trim((string) $request->query('only_open')),
+            'only_closed' => trim((string) $request->query('only_closed')),
             'segment' => trim((string) $request->query('segment')),
         ];
+    }
+
+    private function leadIndexRoute(): string
+    {
+        return request()->routeIs('platform.marketing.*')
+            ? 'platform.marketing.leads'
+            : 'platform.crm.leads';
+    }
+
+    private function leadCreateRoute(): string
+    {
+        return request()->routeIs('platform.marketing.*')
+            ? 'platform.marketing.leads.create'
+            : 'platform.crm.leads.create';
+    }
+
+    private function leadEditRoute(): string
+    {
+        return request()->routeIs('platform.marketing.*')
+            ? 'platform.marketing.leads.edit'
+            : 'platform.crm.leads.edit';
+    }
+
+    private function pipelineRoute(): string
+    {
+        return request()->routeIs('platform.marketing.*')
+            ? 'platform.marketing.pipeline'
+            : 'platform.crm.pipeline';
+    }
+
+    private function canViewMarketing(): bool
+    {
+        return request()->user()?->hasAccess('crm.leads.view_marketing') ?? false;
     }
 }
