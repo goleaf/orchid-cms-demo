@@ -542,15 +542,7 @@ class LeadEditScreen extends Screen
      */
     private function communicationChannels(): array
     {
-        return [
-            'phone' => 'Phone call',
-            'sms' => 'SMS',
-            'email' => 'Email',
-            'whatsapp' => 'WhatsApp',
-            'telegram' => 'Telegram',
-            'viber' => 'Viber',
-            'web_form' => 'Web form',
-        ];
+        return MarketingMessageTemplate::channelOptions();
     }
 
     /**

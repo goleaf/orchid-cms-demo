@@ -12,6 +12,16 @@ class MarketingMessageTemplate extends Model
     /** @use HasFactory<MarketingMessageTemplateFactory> */
     use HasFactory;
 
+    private const CHANNELS = [
+        'phone',
+        'sms',
+        'email',
+        'whatsapp',
+        'telegram',
+        'viber',
+        'web_form',
+    ];
+
     protected $fillable = [
         'name',
         'channel',
@@ -31,6 +41,21 @@ class MarketingMessageTemplate extends Model
         return $query->where('is_active', true);
     }
 
+    public function scopeForTemplateList(Builder $query): Builder
+    {
+        return $query->select([
+            'id',
+            'name',
+            'channel',
+            'subject',
+            'body',
+            'is_active',
+            'sort_order',
+            'created_at',
+            'updated_at',
+        ]);
+    }
+
     public function scopeForChannel(Builder $query, ?string $channel): Builder
     {
         return $query->where(function (Builder $inner) use ($channel): void {
@@ -42,10 +67,35 @@ class MarketingMessageTemplate extends Model
 
     public function displayName(): string
     {
-        $channel = $this->channel === null
-            ? 'Any'
-            : str($this->channel)->replace('_', ' ')->title()->toString();
+        return "{$this->name} ({$this->channelLabel()})";
+    }
 
-        return "{$this->name} ({$channel})";
+    public function channelLabel(): string
+    {
+        if ($this->channel === null) {
+            return tkey('crm.communication.channels.any');
+        }
+
+        return tkey('crm.communication.channels.'.$this->channel);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function channelValues(): array
+    {
+        return self::CHANNELS;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function channelOptions(): array
+    {
+        return collect(self::CHANNELS)
+            ->mapWithKeys(fn (string $channel): array => [
+                $channel => tkey('crm.communication.channels.'.$channel),
+            ])
+            ->all();
     }
 }

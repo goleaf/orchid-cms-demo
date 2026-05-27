@@ -156,6 +156,7 @@ class DrivingSchoolPlatformTest extends TestCase
             'platform.marketing.campaigns' => 'Marketing campaigns',
             'platform.marketing.pipeline' => 'Sales pipeline',
             'platform.marketing.leads' => 'Marketing leads',
+            'platform.marketing.templates' => 'Шаблоны сообщений',
         ])->each(function (string $label, string $routeName) use ($admin): void {
             $this->actingAs($admin)
                 ->get(route($routeName))
@@ -220,6 +221,78 @@ class DrivingSchoolPlatformTest extends TestCase
             ->assertSee('Status history')
             ->assertSee('Attached documents')
             ->assertSee('application-document.pdf');
+    }
+
+    public function test_admin_can_manage_marketing_message_templates(): void
+    {
+        $this->seed();
+
+        $admin = User::query()
+            ->where('email', 'admin@example.com')
+            ->firstOrFail();
+        $template = MarketingMessageTemplate::query()
+            ->where('name', 'SMS callback reminder')
+            ->firstOrFail();
+
+        $this->actingAs($admin)
+            ->get(route('platform.marketing.templates'))
+            ->assertOk()
+            ->assertSee('Шаблоны сообщений')
+            ->assertSee('SMS callback reminder')
+            ->assertSee('SMS');
+
+        $this->actingAs($admin)
+            ->get(route('platform.marketing.templates.edit', $template))
+            ->assertOk()
+            ->assertSee('Редактировать шаблон сообщения')
+            ->assertSee('SMS callback reminder');
+
+        $this->actingAs($admin)
+            ->post(route('platform.marketing.templates.edit', ['messageTemplate' => $template, 'method' => 'save']), [
+                'template' => [
+                    'name' => 'SMS callback reminder',
+                    'channel' => 'sms',
+                    'subject' => null,
+                    'body' => 'Updated callback copy for the CRM manager.',
+                    'is_active' => '1',
+                    'sort_order' => 25,
+                ],
+            ])
+            ->assertRedirect(route('platform.marketing.templates'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('marketing_message_templates', [
+            'id' => $template->id,
+            'body' => 'Updated callback copy for the CRM manager.',
+            'sort_order' => 25,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('platform.marketing.templates.create'))
+            ->assertOk()
+            ->assertSee('Создать шаблон сообщения');
+
+        $this->actingAs($admin)
+            ->post(route('platform.marketing.templates.create', ['method' => 'save']), [
+                'template' => [
+                    'name' => 'WhatsApp document reminder',
+                    'channel' => 'whatsapp',
+                    'subject' => 'Documents',
+                    'body' => 'Please send the missing documents before the lesson.',
+                    'is_active' => '1',
+                    'sort_order' => 40,
+                ],
+            ])
+            ->assertRedirect(route('platform.marketing.templates'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('marketing_message_templates', [
+            'name' => 'WhatsApp document reminder',
+            'channel' => 'whatsapp',
+            'is_active' => true,
+            'sort_order' => 40,
+        ]);
     }
 
     public function test_admin_can_log_multichannel_lead_communication_with_callback(): void

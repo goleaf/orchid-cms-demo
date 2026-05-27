@@ -106,6 +106,11 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.marketing.leads')
                 ->permission('platform.marketing.leads'),
 
+            Menu::make(tkey('menu.marketing.templates'))
+                ->icon('bs.chat-square-text')
+                ->route('platform.marketing.templates')
+                ->permission('platform.marketing.templates'),
+
             Menu::make(tkey('menu.website.view'))
                 ->icon('bs.box-arrow-up-right')
                 ->route('site.home')
@@ -173,7 +178,20 @@ class PlatformProvider extends OrchidServiceProvider
             ItemPermission::group(tkey('permissions.groups.marketing'))
                 ->addPermission('platform.marketing.campaigns', tkey('permissions.marketing.campaigns'))
                 ->addPermission('platform.marketing.pipeline', tkey('permissions.marketing.pipeline'))
-                ->addPermission('platform.marketing.leads', tkey('permissions.marketing.leads')),
+                ->addPermission('platform.marketing.leads', tkey('permissions.marketing.leads'))
+                ->addPermission('platform.marketing.templates', tkey('permissions.marketing.templates')),
+
+            ItemPermission::group(tkey('permissions.groups.crm'))
+                ->addPermission('crm.leads.view', tkey('permissions.crm.leads.view'))
+                ->addPermission('crm.leads.create', tkey('permissions.crm.leads.create'))
+                ->addPermission('crm.leads.update', tkey('permissions.crm.leads.update'))
+                ->addPermission('crm.leads.delete', tkey('permissions.crm.leads.delete'))
+                ->addPermission('crm.leads.assign', tkey('permissions.crm.leads.assign'))
+                ->addPermission('crm.leads.change_status', tkey('permissions.crm.leads.change_status'))
+                ->addPermission('crm.leads.manage_dictionaries', tkey('permissions.crm.leads.manage_dictionaries'))
+                ->addPermission('crm.leads.view_marketing', tkey('permissions.crm.leads.view_marketing'))
+                ->addPermission('crm.leads.convert', tkey('permissions.crm.leads.convert'))
+                ->addPermission('crm.leads.export', tkey('permissions.crm.leads.export')),
 
             ItemPermission::group(tkey('permissions.groups.system'))
                 ->addPermission('platform.systems.roles', tkey('permissions.system.roles'))

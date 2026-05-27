@@ -16,6 +16,8 @@ use App\Orchid\Screens\School\InstructorListScreen;
 use App\Orchid\Screens\School\LeadEditScreen;
 use App\Orchid\Screens\School\LeadListScreen;
 use App\Orchid\Screens\School\LeadPipelineScreen;
+use App\Orchid\Screens\School\MessageTemplateEditScreen;
+use App\Orchid\Screens\School\MessageTemplateListScreen;
 use App\Orchid\Screens\School\PaymentListScreen;
 use App\Orchid\Screens\School\ProgramListScreen;
 use App\Orchid\Screens\School\ScheduleListScreen;
@@ -149,6 +151,25 @@ Route::screen('marketing/leads/{lead}/edit', LeadEditScreen::class)
     ->breadcrumbs(fn (Trail $trail, $lead) => $trail
         ->parent('platform.marketing.leads')
         ->push($lead->fullName(), route('platform.marketing.leads.edit', $lead)));
+
+// Marketing > Message Templates
+Route::screen('marketing/message-templates/create', MessageTemplateEditScreen::class)
+    ->name('platform.marketing.templates.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.marketing.templates')
+        ->push(tkey('crm.message_templates.create_title'), route('platform.marketing.templates.create')));
+
+Route::screen('marketing/message-templates/{messageTemplate}/edit', MessageTemplateEditScreen::class)
+    ->name('platform.marketing.templates.edit')
+    ->breadcrumbs(fn (Trail $trail, $messageTemplate) => $trail
+        ->parent('platform.marketing.templates')
+        ->push($messageTemplate->name, route('platform.marketing.templates.edit', $messageTemplate)));
+
+Route::screen('marketing/message-templates', MessageTemplateListScreen::class)
+    ->name('platform.marketing.templates')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('crm.message_templates.title'), route('platform.marketing.templates')));
 
 // System > Languages
 Route::screen('system/languages/create', LanguageEditScreen::class)
