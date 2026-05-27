@@ -20,14 +20,26 @@ class Instructor extends Model
         'name',
         'email',
         'phone',
+        'photo_path',
         'license_number',
+        'experience_years',
+        'rating',
+        'review_count',
         'categories',
+        'languages',
+        'availability_summary',
+        'teaching_style',
+        'bio',
         'status',
         'hired_at',
     ];
 
     protected $casts = [
         'categories' => 'array',
+        'languages' => 'array',
+        'experience_years' => 'integer',
+        'rating' => 'decimal:2',
+        'review_count' => 'integer',
         'status' => InstructorStatus::class,
         'hired_at' => 'date',
     ];
@@ -57,6 +69,11 @@ class Instructor extends Model
         return $this->hasMany(TrainingGroup::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(StudentReview::class);
+    }
+
     public function scopeForAdminList(Builder $query): Builder
     {
         return $query->select([
@@ -65,10 +82,23 @@ class Instructor extends Model
             'name',
             'email',
             'phone',
+            'photo_path',
             'license_number',
+            'experience_years',
+            'rating',
+            'review_count',
             'categories',
+            'languages',
+            'availability_summary',
+            'teaching_style',
+            'bio',
             'status',
             'hired_at',
         ]);
+    }
+
+    public function scopeForPublicDirectory(Builder $query): Builder
+    {
+        return $query->forAdminList();
     }
 }

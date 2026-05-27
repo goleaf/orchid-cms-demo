@@ -18,6 +18,7 @@ class Vehicle extends Model
     protected $fillable = [
         'branch_id',
         'instructor_id',
+        'photo_path',
         'registration_number',
         'make',
         'model',
@@ -26,6 +27,9 @@ class Vehicle extends Model
         'transmission',
         'odometer_km',
         'status',
+        'availability_summary',
+        'description',
+        'features',
         'next_service_at',
         'next_inspection_at',
     ];
@@ -33,6 +37,7 @@ class Vehicle extends Model
     protected $casts = [
         'year' => 'integer',
         'odometer_km' => 'integer',
+        'features' => 'array',
         'status' => VehicleStatus::class,
         'next_service_at' => 'date',
         'next_inspection_at' => 'date',
@@ -64,6 +69,7 @@ class Vehicle extends Model
             'id',
             'branch_id',
             'instructor_id',
+            'photo_path',
             'registration_number',
             'make',
             'model',
@@ -72,6 +78,9 @@ class Vehicle extends Model
             'transmission',
             'odometer_km',
             'status',
+            'availability_summary',
+            'description',
+            'features',
             'next_service_at',
             'next_inspection_at',
         ]);

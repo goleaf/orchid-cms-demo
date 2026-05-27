@@ -13,6 +13,7 @@ use App\Orchid\Screens\School\ExamListScreen;
 use App\Orchid\Screens\School\FleetListScreen;
 use App\Orchid\Screens\School\GroupListScreen;
 use App\Orchid\Screens\School\InstructorListScreen;
+use App\Orchid\Screens\School\LeadEditScreen;
 use App\Orchid\Screens\School\LeadListScreen;
 use App\Orchid\Screens\School\PaymentListScreen;
 use App\Orchid\Screens\School\ProgramListScreen;
@@ -129,6 +130,13 @@ Route::screen('marketing/leads', LeadListScreen::class)
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
         ->push('Leads', route('platform.marketing.leads')));
+
+// Marketing > Leads > CRM card
+Route::screen('marketing/leads/{lead}/edit', LeadEditScreen::class)
+    ->name('platform.marketing.leads.edit')
+    ->breadcrumbs(fn (Trail $trail, $lead) => $trail
+        ->parent('platform.marketing.leads')
+        ->push($lead->fullName(), route('platform.marketing.leads.edit', $lead)));
 
 // Platform > Profile
 Route::screen('profile', UserProfileScreen::class)

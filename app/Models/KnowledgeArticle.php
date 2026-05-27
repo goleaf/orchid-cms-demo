@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Enums\ArticleStatus;
+use Database\Factories\KnowledgeArticleFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class KnowledgeArticle extends Model
 {
-    /** @use HasFactory<\Database\Factories\KnowledgeArticleFactory> */
+    /** @use HasFactory<KnowledgeArticleFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -37,6 +38,11 @@ class KnowledgeArticle extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     public function scopePublished(Builder $query): Builder
     {

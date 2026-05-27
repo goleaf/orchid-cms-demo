@@ -20,15 +20,29 @@ class TrainingProgram extends Model
         'transmission',
         'theory_hours',
         'practice_hours',
+        'duration_weeks',
+        'format',
+        'available_languages',
         'price_cents',
         'description',
+        'required_documents',
+        'admission_requirements',
         'is_active',
+        'seo_title',
+        'meta_description',
+        'canonical_url',
+        'open_graph_image',
+        'structured_data',
     ];
 
     protected $casts = [
         'theory_hours' => 'integer',
         'practice_hours' => 'integer',
+        'duration_weeks' => 'integer',
+        'available_languages' => 'array',
         'price_cents' => 'integer',
+        'required_documents' => 'array',
+        'structured_data' => 'array',
         'is_active' => 'boolean',
     ];
 
@@ -47,9 +61,19 @@ class TrainingProgram extends Model
         return $this->hasMany(TrainingGroup::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(StudentReview::class);
+    }
+
     public function priceForHumans(): string
     {
         return number_format($this->price_cents / 100, 2).' EUR';
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
     }
 
     public function scopeActive(Builder $query): Builder
@@ -67,8 +91,20 @@ class TrainingProgram extends Model
             'transmission',
             'theory_hours',
             'practice_hours',
+            'duration_weeks',
+            'format',
+            'available_languages',
             'price_cents',
+            'description',
+            'required_documents',
+            'admission_requirements',
             'is_active',
+            'seo_title',
+            'meta_description',
+            'canonical_url',
+            'open_graph_image',
+            'structured_data',
+            'updated_at',
         ]);
     }
 }

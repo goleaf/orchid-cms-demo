@@ -2,8 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Models\Branch;
+use App\Models\MarketingLead;
+use App\Models\TrainingGroup;
+use App\Models\TrainingProgram;
 use App\Models\User;
+use App\Notifications\EnrollmentLeadAutoReplyNotification;
+use App\Notifications\EnrollmentLeadSubmittedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class DrivingSchoolPlatformTest extends TestCase
@@ -17,7 +24,104 @@ class DrivingSchoolPlatformTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('Driving lessons, exams, and school operations')
-            ->assertSee('Student CRM and cabinet base');
+            ->assertSee('Student CRM and cabinet base')
+            ->assertSee('Программы, цены и часы обучения')
+            ->assertSee('Ближайшие группы');
+    }
+
+    public function test_public_auto_school_pages_render_seeded_catalog(): void
+    {
+        $this->seed();
+
+        $program = TrainingProgram::query()
+            ->where('slug', 'category-b-manual')
+            ->firstOrFail();
+
+        collect([
+            route('site.categories.show', $program) => 'Category B Manual',
+            route('site.apply') => 'Запись в автошколу',
+            route('site.instructors') => 'Инструкторы автошколы',
+            route('site.fleet') => 'Автопарк',
+            route('site.reviews') => 'Отзывы учеников',
+            route('site.blog.index') => 'Блог и база знаний',
+            route('site.contacts') => 'Филиалы и контакты',
+            route('site.sitemap') => '<urlset',
+            route('site.robots') => 'Sitemap:',
+        ])->each(function (string $needle, string $url): void {
+            $this->get($url)
+                ->assertOk()
+                ->assertSee($needle, false);
+        });
+    }
+
+    public function test_online_enrollment_creates_crm_lead_and_notifications(): void
+    {
+        Notification::fake();
+        $this->seed();
+
+        $admin = User::query()
+            ->where('email', 'admin@example.com')
+            ->firstOrFail();
+        $program = TrainingProgram::query()
+            ->where('slug', 'category-b-manual')
+            ->firstOrFail();
+        $branch = Branch::query()
+            ->where('slug', 'vilnius-main')
+            ->firstOrFail();
+        $group = TrainingGroup::query()
+            ->where('code', 'B-VNO-001')
+            ->firstOrFail();
+
+        $this->from(route('site.apply'))
+            ->post(route('site.apply.store'), [
+                'training_program_id' => $program->id,
+                'branch_id' => $branch->id,
+                'training_group_id' => $group->id,
+                'first_name' => 'Ieva',
+                'last_name' => 'Norkute',
+                'email' => 'ieva@example.com',
+                'phone' => '+370 600 44444',
+                'messenger' => 'WhatsApp',
+                'city' => 'Vilnius',
+                'preferred_format' => 'mixed',
+                'preferred_language' => 'English',
+                'preferred_time' => 'Weekday evenings',
+                'budget_eur' => '1450',
+                'message' => 'I want to join the next group.',
+                'privacy_consent' => '1',
+                'source' => 'website',
+                'utm_source' => 'google',
+                'utm_medium' => 'cpc',
+                'utm_campaign' => 'spring-category-b',
+            ])
+            ->assertRedirect(route('site.apply'))
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('status');
+
+        $this->assertDatabaseHas('marketing_leads', [
+            'first_name' => 'Ieva',
+            'last_name' => 'Norkute',
+            'email' => 'ieva@example.com',
+            'status' => 'new',
+            'training_program_id' => $program->id,
+            'training_group_id' => $group->id,
+            'preferred_format' => 'mixed',
+            'preferred_language' => 'English',
+            'messenger' => 'WhatsApp',
+            'city' => 'Vilnius',
+            'budget_cents' => 145000,
+            'utm_campaign' => 'spring-category-b',
+        ]);
+
+        $lead = MarketingLead::query()
+            ->where('email', 'ieva@example.com')
+            ->firstOrFail();
+
+        Notification::assertSentTo($admin, EnrollmentLeadSubmittedNotification::class);
+        Notification::assertSentOnDemand(EnrollmentLeadAutoReplyNotification::class);
+        $this->assertSame('B', $lead->license_category);
+        $this->assertSame(1, $lead->comments()->count());
+        $this->assertSame(1, $lead->communications()->count());
     }
 
     public function test_admin_can_open_core_auto_school_sections(): void
@@ -78,6 +182,21 @@ class DrivingSchoolPlatformTest extends TestCase
             ->get(route('platform.marketing.leads'))
             ->assertOk()
             ->assertSee('Tomas Jankauskas')
-            ->assertSee('Qualified');
+            ->assertSee('Консультация проведена')
+            ->assertSee('Telegram')
+            ->assertSee('1,500.00 EUR');
+
+        $lead = MarketingLead::query()
+            ->where('email', 'lead@drivepro.test')
+            ->firstOrFail();
+
+        $this->actingAs($admin)
+            ->get(route('platform.marketing.leads.edit', $lead))
+            ->assertOk()
+            ->assertSee('CRM lead: Tomas Jankauskas')
+            ->assertSee('Responsible manager')
+            ->assertSee('Communication history')
+            ->assertSee('Attached documents')
+            ->assertSee('application-document.pdf');
     }
 }

@@ -1,340 +1,319 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="{{ $page->hero_summary }}">
-    <title>{{ $page->title }}</title>
+@extends('site.layout')
 
-    @once
-        <style>
-            :root {
-                color-scheme: light;
-                --ink: #111827;
-                --muted: #5b6472;
-                --surface: #ffffff;
-                --line: #d8dee8;
-                --accent: #0f766e;
-                --accent-strong: #115e59;
-                --warm: #c2410c;
-                --soft: #f6f7f9;
-            }
+@section('content')
+    <header class="hero">
+        <div class="hero-inner">
+            <div class="hero-copy">
+                @if ($page->eyebrow)
+                    <p class="eyebrow">{{ $page->eyebrow }}</p>
+                @endif
+                <h1>{{ $page->hero_title }}</h1>
+                <p class="lead">{{ $page->hero_summary }}</p>
+                <div class="hero-actions">
+                    <a class="button" href="{{ route('site.apply') }}">Записаться</a>
+                    <a class="button secondary" href="#programs">Категории и цены</a>
+                </div>
+            </div>
+        </div>
+    </header>
 
-            * {
-                box-sizing: border-box;
-            }
-
-            body {
-                margin: 0;
-                color: var(--ink);
-                background: var(--surface);
-                font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-                line-height: 1.5;
-            }
-
-            a {
-                color: inherit;
-            }
-
-            .site-shell {
-                min-height: 100vh;
-                background: var(--surface);
-            }
-
-            .site-nav {
-                position: absolute;
-                z-index: 2;
-                top: 0;
-                left: 0;
-                right: 0;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                width: min(1120px, calc(100% - 32px));
-                margin: 0 auto;
-                padding: 22px 0;
-                color: #ffffff;
-            }
-
-            .brand {
-                font-weight: 800;
-                letter-spacing: 0;
-            }
-
-            .nav-link {
-                font-size: 0.92rem;
-                font-weight: 700;
-                text-decoration: none;
-                border-bottom: 2px solid rgba(255, 255, 255, 0.65);
-            }
-
-            .hero {
-                position: relative;
-                display: grid;
-                min-height: clamp(620px, 88vh, 760px);
-                isolation: isolate;
-                overflow: hidden;
-                color: #ffffff;
-                background-image:
-                    linear-gradient(90deg, rgba(10, 15, 25, 0.88), rgba(10, 15, 25, 0.62) 42%, rgba(10, 15, 25, 0.08)),
-                    url("{{ asset('images/driving-school-hero.png') }}");
-                background-position: center;
-                background-size: cover;
-            }
-
-            .hero-inner {
-                width: min(1120px, calc(100% - 32px));
-                margin: 0 auto;
-                padding: 116px 0 128px;
-                align-self: center;
-            }
-
-            .hero-copy {
-                max-width: 650px;
-            }
-
-            .eyebrow {
-                margin: 0 0 18px;
-                color: #99f6e4;
-                font-size: 0.82rem;
-                font-weight: 800;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-            }
-
-            h1,
-            h2,
-            h3,
-            p {
-                margin-top: 0;
-            }
-
-            h1 {
-                max-width: 14ch;
-                margin-bottom: 24px;
-                font-size: clamp(2.75rem, 6.5vw, 5.4rem);
-                line-height: 0.95;
-                letter-spacing: 0;
-            }
-
-            .hero-summary {
-                max-width: 58ch;
-                margin-bottom: 34px;
-                color: rgba(255, 255, 255, 0.86);
-                font-size: clamp(1.05rem, 2vw, 1.24rem);
-            }
-
-            .hero-actions {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 12px;
-            }
-
-            .site-button {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 46px;
-                padding: 0 18px;
-                border: 1px solid var(--accent);
-                border-radius: 8px;
-                background: var(--accent);
-                color: #ffffff;
-                font-weight: 800;
-                text-decoration: none;
-            }
-
-            .site-button-secondary {
-                border-color: rgba(255, 255, 255, 0.55);
-                background: rgba(255, 255, 255, 0.12);
-                backdrop-filter: blur(10px);
-            }
-
-            .content-band {
-                margin-top: -72px;
-                padding: 0 0 80px;
-            }
-
-            .content-inner {
-                width: min(1120px, calc(100% - 32px));
-                margin: 0 auto;
-            }
-
-            .intro-panel {
-                display: grid;
-                grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-                gap: 36px;
-                padding: 34px;
-                border: 1px solid var(--line);
-                border-radius: 8px;
-                background: var(--surface);
-                box-shadow: 0 24px 70px rgba(15, 23, 42, 0.14);
-            }
-
-            .section-heading p {
-                margin-bottom: 10px;
-                color: var(--warm);
-                font-size: 0.78rem;
-                font-weight: 800;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-            }
-
-            .section-heading h2 {
-                margin-bottom: 0;
-                font-size: clamp(1.9rem, 4vw, 3rem);
-                line-height: 1.04;
-                letter-spacing: 0;
-            }
-
-            .intro-panel > p {
-                margin: 0;
-                color: var(--muted);
-                font-size: 1.04rem;
-            }
-
-            .offer-grid {
-                display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 16px;
-                margin-top: 26px;
-            }
-
-            .offer-card {
-                min-height: 210px;
-                padding: 24px;
-                border: 1px solid var(--line);
-                border-radius: 8px;
-                background: var(--soft);
-            }
-
-            .offer-card span {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                width: 32px;
-                height: 32px;
-                margin-bottom: 22px;
-                border-radius: 999px;
-                background: var(--accent);
-                color: #ffffff;
-                font-size: 0.88rem;
-                font-weight: 800;
-            }
-
-            .offer-card h3 {
-                margin-bottom: 10px;
-                font-size: 1.18rem;
-                letter-spacing: 0;
-            }
-
-            .offer-card p {
-                margin-bottom: 0;
-                color: var(--muted);
-            }
-
-            @media (max-width: 760px) {
-                .site-nav {
-                    width: min(100% - 24px, 1120px);
-                    padding-top: 18px;
-                }
-
-                .hero {
-                    min-height: 700px;
-                    background-position: 58% center;
-                }
-
-                .hero-inner {
-                    width: min(100% - 24px, 1120px);
-                    padding-top: 104px;
-                }
-
-                h1 {
-                    max-width: 11ch;
-                }
-
-                .content-band {
-                    margin-top: -54px;
-                }
-
-                .content-inner {
-                    width: min(100% - 24px, 1120px);
-                }
-
-                .intro-panel {
-                    grid-template-columns: 1fr;
-                    gap: 18px;
-                    padding: 22px;
-                }
-
-                .offer-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-        </style>
-    @endonce
-</head>
-<body>
-    <div class="site-shell">
-        <nav class="site-nav" aria-label="Main navigation">
-            <a class="brand" href="{{ route('site.home') }}">{{ $page->title }}</a>
-            <a class="nav-link" href="{{ url('/admin') }}">Admin</a>
-        </nav>
-
-        <header class="hero">
-            <div class="hero-inner">
-                <div class="hero-copy">
-                    @if ($page->eyebrow)
-                        <p class="eyebrow">{{ $page->eyebrow }}</p>
-                    @endif
-
-                    <h1>{{ $page->hero_title }}</h1>
-                    <p class="hero-summary">{{ $page->hero_summary }}</p>
-
-                    <div class="hero-actions">
-                        @if ($page->primary_button_label && $page->primary_button_url)
-                            <x-site.button :href="$page->primary_button_url">
-                                {{ $page->primary_button_label }}
-                            </x-site.button>
-                        @endif
-
-                        @if ($page->secondary_button_label && $page->secondary_button_url)
-                            <x-site.button :href="$page->secondary_button_url" variant="secondary">
-                                {{ $page->secondary_button_label }}
-                            </x-site.button>
-                        @endif
+    <main>
+        <section class="section soft">
+            <div class="section-inner">
+                <div class="grid four">
+                    <div class="card stat">
+                        <strong>{{ $stats['students'] }}</strong>
+                        <span class="meta">учеников в системе</span>
+                    </div>
+                    <div class="card stat">
+                        <strong>{{ $stats['pass_rate'] }}%</strong>
+                        <span class="meta">целевой процент сдачи</span>
+                    </div>
+                    <div class="card stat">
+                        <strong>{{ $stats['instructors'] }}</strong>
+                        <span class="meta">активных инструкторов</span>
+                    </div>
+                    <div class="card stat">
+                        <strong>{{ $stats['vehicles'] }}</strong>
+                        <span class="meta">учебных автомобилей</span>
                     </div>
                 </div>
             </div>
-        </header>
+        </section>
 
-        <main id="content" class="content-band">
-            <div class="content-inner">
-                <section class="intro-panel" aria-labelledby="about-heading">
-                    <x-site.section-heading
-                        eyebrow="Content"
-                        :title="$page->about_heading"
-                    />
-                    <p id="about-heading">{{ $page->about_body }}</p>
-                </section>
+        <section class="section">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">Автошкола</p>
+                        <h2>{{ $page->about_heading }}</h2>
+                    </div>
+                    <p class="lead">{{ $page->about_body }}</p>
+                </div>
 
-                <section class="offer-grid" aria-label="Prepared sections">
+                <div class="grid three">
                     @forelse ($offers as $offer)
-                        <article class="offer-card">
-                            <span>{{ $loop->iteration }}</span>
+                        <article class="card">
+                            <p class="kicker">Преимущество {{ $loop->iteration }}</p>
                             <h3>{{ $offer['title'] }}</h3>
-                            <p>{{ $offer['body'] }}</p>
+                            <p class="meta">{{ $offer['body'] }}</p>
                         </article>
                     @empty
-                        <article class="offer-card">
-                            <span>0</span>
-                            <h3>No sections published</h3>
-                            <p>Add homepage sections from the Orchid dashboard.</p>
+                        <article class="card">
+                            <h3>Операционная база готова</h3>
+                            <p class="meta">Добавьте преимущества из Orchid CMS.</p>
                         </article>
                     @endforelse
-                </section>
+                </div>
             </div>
-        </main>
-    </div>
-</body>
-</html>
+        </section>
+
+        <section id="programs" class="section soft">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">Категории</p>
+                        <h2>Программы, цены и часы обучения</h2>
+                    </div>
+                    <p class="lead">Каждая категория ведет на отдельную страницу с документами, группами, филиалами, инструкторами и машинами.</p>
+                </div>
+
+                <div class="grid three">
+                    @forelse ($programs as $program)
+                        <article class="card">
+                            <p class="kicker">Категория {{ $program->license_category }}</p>
+                            <h3>{{ $program->title }}</h3>
+                            <p class="meta">{{ $program->description }}</p>
+                            <div class="facts">
+                                <span class="fact">{{ $program->duration_weeks }} weeks</span>
+                                <span class="fact">{{ $program->theory_hours }} theory h</span>
+                                <span class="fact">{{ $program->practice_hours }} practice h</span>
+                                <span class="fact">{{ $program->format }}</span>
+                            </div>
+                            <p class="price">{{ $program->priceForHumans() }}</p>
+                            <div class="actions">
+                                <a class="button" href="{{ route('site.categories.show', $program) }}">Подробнее</a>
+                            </div>
+                        </article>
+                    @empty
+                        <article class="card">
+                            <h3>Программы готовятся</h3>
+                            <p class="meta">Активные программы появятся после публикации в админке.</p>
+                        </article>
+                    @endforelse
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">Наборы</p>
+                        <h2>Ближайшие группы</h2>
+                    </div>
+                    <p class="lead">Группы связаны с филиалом, программой, инструктором, вместимостью и статусом набора.</p>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Группа</th>
+                                <th>Категория</th>
+                                <th>Филиал</th>
+                                <th>Старт</th>
+                                <th>Инструктор</th>
+                                <th>Места</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($upcomingGroups as $group)
+                                <tr>
+                                    <td>{{ $group->name }}<br><span class="meta">{{ $group->code }}</span></td>
+                                    <td>{{ $group->trainingProgram->title }}</td>
+                                    <td>{{ $group->branch->city }}</td>
+                                    <td>{{ $group->starts_on?->toDateString() ?? '-' }}</td>
+                                    <td>{{ $group->instructor?->name ?? '-' }}</td>
+                                    <td>{{ $group->seatsAvailable() }} / {{ $group->capacity }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6">Ближайшие наборы пока не опубликованы.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="section dark">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">Процесс</p>
+                        <h2>Как проходит обучение</h2>
+                    </div>
+                    <p class="lead">Путь ученика проходит через заявку, CRM, LMS, расписание, документы, платежи и экзамены.</p>
+                </div>
+
+                <div class="grid four">
+                    @foreach ($steps as $step)
+                        <article class="card">
+                            <p class="kicker">Шаг {{ $loop->iteration }}</p>
+                            <h3>{{ $step['title'] }}</h3>
+                            <p class="meta">{{ $step['body'] }}</p>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">Команда и автопарк</p>
+                        <h2>Инструкторы и учебные машины</h2>
+                    </div>
+                    <p class="lead">Публичные профили показывают стаж, категории, языки, рейтинг, машину, филиал и доступность.</p>
+                </div>
+
+                <div class="grid two">
+                    @foreach ($featuredInstructors as $instructor)
+                        <article class="card">
+                            <p class="kicker">{{ $instructor->branch->city }}</p>
+                            <h3>{{ $instructor->name }}</h3>
+                            <p class="meta">{{ $instructor->teaching_style }}</p>
+                            <div class="badge-list">
+                                <span class="badge">{{ $instructor->experience_years }} years</span>
+                                <span class="badge">{{ $instructor->rating }} rating</span>
+                                @foreach (($instructor->languages ?? []) as $language)
+                                    <span class="badge">{{ $language }}</span>
+                                @endforeach
+                            </div>
+                        </article>
+                    @endforeach
+
+                    @foreach ($featuredVehicles as $vehicle)
+                        <article class="card">
+                            <p class="kicker">{{ $vehicle->branch->city }}</p>
+                            <h3>{{ $vehicle->make }} {{ $vehicle->model }}</h3>
+                            <p class="meta">{{ $vehicle->description }}</p>
+                            <div class="badge-list">
+                                <span class="badge">{{ $vehicle->license_category }}</span>
+                                <span class="badge">{{ $vehicle->transmission }}</span>
+                                <span class="badge">{{ str($vehicle->status->value)->title() }}</span>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <section class="section soft">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">Отзывы</p>
+                        <h2>Рейтинг школы {{ $stats['rating'] ?: '5.0' }}</h2>
+                    </div>
+                    <p class="lead">Публикуются только проверенные отзывы, с привязкой к курсу, группе или инструктору.</p>
+                </div>
+
+                <div class="grid three">
+                    @foreach ($reviews as $review)
+                        <article class="card">
+                            <p class="kicker">{{ $review->rating }} / 5</p>
+                            <h3>{{ $review->title }}</h3>
+                            <p>{{ $review->body }}</p>
+                            <p class="meta">{{ $review->author_name }} · {{ $review->trainingProgram?->title }}</p>
+                        </article>
+                    @endforeach
+                </div>
+
+                <div class="actions">
+                    <a class="button secondary" href="{{ route('site.reviews') }}">Все отзывы</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">FAQ</p>
+                        <h2>Частые вопросы</h2>
+                    </div>
+                    <p class="lead">Ответы закрывают вопросы по формату, документам, выбору инструктора и интенсивным курсам.</p>
+                </div>
+
+                <div class="grid two">
+                    @foreach ($faq as $item)
+                        <article class="card">
+                            <h3>{{ $item['question'] }}</h3>
+                            <p class="meta">{{ $item['answer'] }}</p>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <section class="section soft">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">База знаний</p>
+                        <h2>Статьи для учеников</h2>
+                    </div>
+                    <p class="lead">Материалы по выбору автошколы, теории, практике, экзаменам, ошибкам и изменениям правил.</p>
+                </div>
+
+                <div class="grid three">
+                    @foreach ($articles as $article)
+                        <article class="card">
+                            <p class="kicker">{{ $article->category }}</p>
+                            <h3>{{ $article->title }}</h3>
+                            <p class="meta">{{ $article->excerpt }}</p>
+                            <div class="actions">
+                                <a class="button secondary" href="{{ route('site.blog.show', $article) }}">Читать</a>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="contacts">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">Контакты</p>
+                        <h2>Филиалы и карта</h2>
+                    </div>
+                    <p class="lead">Каждый филиал связан с группами, инструкторами, машинами и заявками.</p>
+                </div>
+
+                <div class="grid two">
+                    <div class="grid">
+                        @foreach ($branches as $branch)
+                            <article class="card">
+                                <h3>{{ $branch->name }}</h3>
+                                <p class="meta">{{ $branch->city }}, {{ $branch->address }}</p>
+                                <div class="facts">
+                                    <span class="fact">{{ $branch->groups_count }} groups</span>
+                                    <span class="fact">{{ $branch->instructors_count }} instructors</span>
+                                    <span class="fact">{{ $branch->vehicles_count }} cars</span>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                    <div class="map">
+                        <strong>Branch map</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+@endsection

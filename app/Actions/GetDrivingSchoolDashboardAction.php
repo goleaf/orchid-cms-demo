@@ -43,7 +43,7 @@ class GetDrivingSchoolDashboardAction
                     ->whereIn('status', [GroupStatus::Recruiting->value, GroupStatus::Active->value])
                     ->count(),
                 'openLeads' => MarketingLead::query()
-                    ->whereIn('status', [LeadStatus::New->value, LeadStatus::Contacted->value, LeadStatus::Qualified->value])
+                    ->whereIn('status', LeadStatus::openPipelineValues())
                     ->count(),
                 'paidRevenue' => Payment::query()
                     ->where('status', PaymentStatus::Paid->value)

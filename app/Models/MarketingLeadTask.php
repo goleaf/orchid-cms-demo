@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\LeadTaskPriority;
+use App\Enums\LeadTaskStatus;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class MarketingLeadTask extends Model
+{
+    /** @use HasFactory<\Database\Factories\MarketingLeadTaskFactory> */
+    use HasFactory;
+
+    protected $fillable = [
+        'marketing_lead_id',
+        'assigned_to_user_id',
+        'created_by_user_id',
+        'title',
+        'status',
+        'priority',
+        'due_at',
+        'completed_at',
+        'notes',
+    ];
+
+    protected $casts = [
+        'status' => LeadTaskStatus::class,
+        'priority' => LeadTaskPriority::class,
+        'due_at' => 'datetime',
+        'completed_at' => 'datetime',
+    ];
+
+    public function marketingLead(): BelongsTo
+    {
+        return $this->belongsTo(MarketingLead::class);
+    }
+
+    public function assignedTo(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to_user_id');
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_user_id');
+    }
+
+    public function scopeOpen(Builder $query): Builder
+    {
+        return $query->where('status', LeadTaskStatus::Open->value);
+    }
+
+    public function scopeOverdue(Builder $query): Builder
+    {
+        return $query
+            ->open()
+            ->whereNotNull('due_at')
+            ->where('due_at', '<', now());
+    }
+}

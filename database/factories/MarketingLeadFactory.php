@@ -6,6 +6,7 @@ use App\Enums\LeadStatus;
 use App\Models\Branch;
 use App\Models\MarketingCampaign;
 use App\Models\MarketingLead;
+use App\Models\TrainingProgram;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,18 +23,31 @@ class MarketingLeadFactory extends Factory
     {
         return [
             'marketing_campaign_id' => MarketingCampaign::factory(),
+            'responsible_manager_id' => null,
             'branch_id' => Branch::factory(),
+            'training_program_id' => TrainingProgram::factory(),
+            'training_group_id' => null,
+            'instructor_id' => null,
             'converted_student_profile_id' => null,
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->optional()->lastName(),
             'email' => $this->faker->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
+            'messenger' => $this->faker->randomElement(['WhatsApp', 'Telegram', 'Viber']),
+            'city' => $this->faker->city(),
             'source' => $this->faker->randomElement(['website', 'facebook', 'google_ads', 'referral']),
             'status' => LeadStatus::New,
             'license_category' => 'B',
+            'preferred_format' => 'mixed',
+            'preferred_language' => 'English',
+            'preferred_time' => 'Evenings',
+            'budget_cents' => $this->faker->optional()->numberBetween(50_000, 180_000),
+            'privacy_accepted_at' => now(),
             'contacted_at' => null,
             'converted_at' => null,
             'message' => $this->faker->optional()->sentence(),
+            'rejection_reason' => null,
+            'crm_snapshot' => null,
         ];
     }
 }
