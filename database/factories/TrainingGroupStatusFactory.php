@@ -45,7 +45,7 @@ class TrainingGroupStatusFactory extends Factory
 
     public function planned(): static
     {
-        return $this->scheduled();
+        return $this->dictionaryState('planned', $this->translations('Запланирована', 'Planned', 'Suplanuota', 'Zaplanowana'), '#64748b', ['is_public' => true, 'accepts_enrollments' => true]);
     }
 
     public function recruiting(): static
@@ -78,9 +78,19 @@ class TrainingGroupStatusFactory extends Factory
         return $this->dictionaryState('active', $this->translations('Идет обучение', 'Active', 'Vyksta mokymai', 'Aktywna'), '#2563eb', ['is_in_progress' => true]);
     }
 
+    public function inProgress(): static
+    {
+        return $this->dictionaryState('in_progress', $this->translations('В процессе', 'In progress', 'Vyksta', 'W trakcie'), '#2563eb', ['is_in_progress' => true]);
+    }
+
     public function completed(): static
     {
         return $this->dictionaryState('completed', $this->translations('Завершена', 'Completed', 'Baigta', 'Ukonczona'), '#475569', ['is_final' => true, 'is_success' => true]);
+    }
+
+    public function finished(): static
+    {
+        return $this->dictionaryState('finished', $this->translations('Окончена', 'Finished', 'Baigta', 'Zakonczona'), '#475569', ['is_final' => true, 'is_success' => true]);
     }
 
     public function paused(): static
@@ -114,6 +124,9 @@ class TrainingGroupStatusFactory extends Factory
      */
     private function dictionaryState(string $code, array $translations, string $color, array $flags = []): static
     {
+        $flags['is_open_for_enrollment'] = (bool) ($flags['is_open_for_enrollment'] ?? $flags['accepts_enrollments'] ?? false);
+        $flags['accepts_enrollments'] = $flags['is_open_for_enrollment'];
+
         return $this->state(fn (): array => [
             'code' => $code,
             'name' => $translations['en'],

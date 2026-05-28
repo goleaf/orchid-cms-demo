@@ -32,7 +32,7 @@ class BranchFactory extends Factory
             'name_translations' => $this->translations('Филиал DrivePro Academy', $name, 'DrivePro Academy filialas', 'Oddzial DrivePro Academy'),
             'slug' => $this->faker->unique()->slug(2),
             'city' => $city,
-            'city_translations' => $this->translations('Вильнюс', $city, 'Vilnius', 'Wilno'),
+            'city_translations' => $this->translations('Вильнюс', $city, 'Vilniaus miestas', 'Wilno'),
             'address' => $address,
             'address_translations' => $this->translations('Gedimino pr. 1', $address, 'Gedimino pr. 1', 'Gedimino pr. 1'),
             'phone' => $this->faker->phoneNumber(),
@@ -87,9 +87,9 @@ class BranchFactory extends Factory
     {
         return $this->state(fn (): array => [
             'name' => 'DrivePro Academy Vilnius',
-            'name_translations' => $this->translations('DrivePro Academy Вильнюс', 'DrivePro Academy Vilnius', 'DrivePro Academy Vilnius', 'DrivePro Academy Wilno'),
+            'name_translations' => $this->translations('DrivePro Academy Вильнюс', 'DrivePro Academy Vilnius', 'DrivePro Academy Vilniaus filialas', 'DrivePro Academy Wilno'),
             'city' => 'Vilnius',
-            'city_translations' => $this->translations('Вильнюс', 'Vilnius', 'Vilnius', 'Wilno'),
+            'city_translations' => $this->translations('Вильнюс', 'Vilnius', 'Vilniaus miestas', 'Wilno'),
             'address_translations' => $this->translations('Gedimino pr. 1', 'Gedimino Ave. 1', 'Gedimino pr. 1', 'Gedimino pr. 1'),
             'description_translations' => $this->translations('Филиал автошколы для консультаций и занятий.', 'Driving school branch for consultations and lessons.', 'Vairavimo mokyklos filialas konsultacijoms ir pamokoms.', 'Oddzial szkoly jazdy do konsultacji i zajec.'),
         ]);

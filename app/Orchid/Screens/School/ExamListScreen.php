@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\School;
 
-use App\Models\Exam;
+use App\Models\ExamSession;
 use App\Support\LocalizedLabel;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
@@ -15,15 +15,17 @@ class ExamListScreen extends Screen
     public function query(): iterable
     {
         return [
-            'exams' => Exam::query()
+            'sessions' => ExamSession::query()
                 ->forExamList()
                 ->with([
+                    'branch:id,name,name_translations,city,city_translations',
                     'instructor:id,name',
-                    'enrollment:id,student_profile_id,training_program_id',
-                    'enrollment.studentProfile:id,first_name,last_name',
-                    'enrollment.trainingProgram:id,title,license_category',
+                    'trainingProgram:id,title,name_translations,license_category',
+                    'group:id,group_number,name,name_translations',
+                    'vehicle:id,registration_number,make,model',
                 ])
-                ->orderBy('scheduled_at')
+                ->withCount('attempts')
+                ->orderBy('starts_at')
                 ->simplePaginate(15),
         ];
     }
@@ -40,7 +42,7 @@ class ExamListScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['platform.exams'];
+        return ['platform.exams', 'exams.view'];
     }
 
     public function commandBar(): iterable
@@ -51,23 +53,29 @@ class ExamListScreen extends Screen
     public function layout(): iterable
     {
         return [
-            Layout::table('exams', [
-                TD::make('scheduled_at', tkey('operations.columns.scheduled'))
-                    ->render(fn (Exam $exam): string => $exam->scheduled_at->format('Y-m-d H:i')),
-                TD::make('student', tkey('operations.columns.student'))
-                    ->render(fn (Exam $exam): string => $exam->enrollment->studentProfile->fullName()),
-                TD::make('program', tkey('operations.columns.program'))
-                    ->render(fn (Exam $exam): string => $exam->enrollment->trainingProgram->title),
+            Layout::table('sessions', [
+                TD::make('starts_at', tkey('exams.columns.starts_at'))
+                    ->sort()
+                    ->render(fn (ExamSession $session): string => $session->starts_at->format('Y-m-d H:i')),
                 TD::make('exam_type', tkey('operations.columns.type'))
-                    ->render(fn (Exam $exam): string => LocalizedLabel::for('operations.exam_types', $exam->exam_type)),
-                TD::make('attempt_number', tkey('operations.columns.attempt'))
-                    ->render(fn (Exam $exam): string => (string) $exam->attempt_number)
+                    ->render(fn (ExamSession $session): string => LocalizedLabel::for('exams.types', $session->exam_type)),
+                TD::make('provider', tkey('exams.columns.provider'))
+                    ->render(fn (ExamSession $session): string => LocalizedLabel::for('exams.providers', $session->provider)),
+                TD::make('program', tkey('operations.columns.program'))
+                    ->render(fn (ExamSession $session): string => $session->trainingProgram?->displayTitle() ?? '-'),
+                TD::make('group', tkey('exams.columns.group'))
+                    ->render(fn (ExamSession $session): string => $session->group?->displayName() ?? '-'),
+                TD::make('instructor', tkey('exams.columns.instructor'))
+                    ->render(fn (ExamSession $session): string => $session->instructor?->name ?? '-'),
+                TD::make('capacity', tkey('exams.columns.capacity'))
+                    ->alignCenter()
+                    ->render(fn (ExamSession $session): string => $session->seats_taken.'/'.$session->capacity),
+                TD::make('attempts_count', tkey('exams.columns.attempts'))
                     ->alignCenter(),
                 TD::make('status', tkey('operations.columns.status'))
-                    ->render(fn (Exam $exam): string => LocalizedLabel::for('operations.statuses.exams', $exam->status)),
-                TD::make('score', tkey('operations.columns.score'))
-                    ->alignCenter()
-                    ->render(fn (Exam $exam): string => $exam->score ? (string) $exam->score : '-'),
+                    ->render(fn (ExamSession $session): string => LocalizedLabel::for('exams.session_statuses', $session->status)),
+                TD::make('location', tkey('exams.columns.location'))
+                    ->render(fn (ExamSession $session): string => $session->location ?: ($session->branch?->displayName() ?? '-')),
             ]),
         ];
     }

@@ -2,6 +2,12 @@
 
 ## 2026-05-28
 
+- Added the foundation for managing exam admissions, exam sessions, attempts, results, and retakes
+- Added clearer exam permissions and translated admin labels for exam workflows
+- Updated the exam admin page to show scheduled sessions with program, group, instructor, seat, status, and location details
+- Prepared communication and reminder records for future student notifications and follow-ups
+- Improved seeded homepage, branch, and training group data so public pages show more complete multilingual demo content
+
 - Added the foundation for managing exam readiness, exam sessions, attempts, results, and retakes
 - Improved student group membership tracking, including transfers, waiting lists, completed memberships, and capacity counts
 - Improved website lead listings so source and form names display as friendly translated labels

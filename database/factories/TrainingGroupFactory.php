@@ -49,10 +49,6 @@ class TrainingGroupFactory extends Factory
             'administrator_id' => null,
             'teacher_id' => null,
             'capacity' => $capacity,
-            'capacity_total' => $capacity,
-            'capacity_reserved' => 0,
-            'capacity_taken' => $placesTaken,
-            'capacity_waitlist' => 0,
             'places_taken' => $placesTaken,
             'starts_on' => $startsOn,
             'ends_on' => $endsOn,
@@ -94,8 +90,6 @@ class TrainingGroupFactory extends Factory
         return $this->state(fn (): array => [
             'status' => GroupStatus::AlmostFull,
             'capacity' => 12,
-            'capacity_total' => 12,
-            'capacity_taken' => 11,
             'places_taken' => 11,
         ]);
     }
@@ -104,8 +98,6 @@ class TrainingGroupFactory extends Factory
     {
         return $this->state(fn (): array => [
             'capacity' => 12,
-            'capacity_total' => 12,
-            'capacity_taken' => 12,
             'places_taken' => 12,
         ]);
     }

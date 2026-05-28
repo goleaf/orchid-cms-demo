@@ -151,7 +151,7 @@ class PlatformProvider extends OrchidServiceProvider
             Menu::make(tkey('menu.exams'))
                 ->icon('bs.clipboard-check')
                 ->route('platform.exams')
-                ->permission('platform.exams'),
+                ->permission(['platform.exams', 'exams.view']),
 
             Menu::make(tkey('menu.finance.payments'))
                 ->icon('bs.credit-card')
@@ -364,6 +364,12 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('platform.schedule.lessons', tkey('permissions.schedule.lessons'))
                 ->addPermission('platform.fleet.vehicles', tkey('permissions.fleet.vehicles'))
                 ->addPermission('platform.exams', tkey('permissions.exams'))
+                ->addPermission('exams.view', tkey('permissions.exams.view'))
+                ->addPermission('exams.manage_admissions', tkey('permissions.exams.manage_admissions'))
+                ->addPermission('exams.manage_sessions', tkey('permissions.exams.manage_sessions'))
+                ->addPermission('exams.record_results', tkey('permissions.exams.record_results'))
+                ->addPermission('exams.schedule_retakes', tkey('permissions.exams.schedule_retakes'))
+                ->addPermission('exams.view_activities', tkey('permissions.exams.view_activities'))
                 ->addPermission('platform.finance.payments', tkey('permissions.finance.payments')),
 
             ItemPermission::group(tkey('permissions.groups.education'))

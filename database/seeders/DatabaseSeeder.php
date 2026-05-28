@@ -24,7 +24,6 @@ use App\Models\Enrollment;
 use App\Models\Exam;
 use App\Models\Instructor;
 use App\Models\KnowledgeArticle;
-use App\Models\LandingPage;
 use App\Models\MarketingCampaign;
 use App\Models\MarketingLead;
 use App\Models\MarketingMessageTemplate;
@@ -58,17 +57,11 @@ class DatabaseSeeder extends Seeder
             StudentDictionarySeeder::class,
             StudentTranslationSeeder::class,
             EducationSeeder::class,
+            ExamTranslationSeeder::class,
             SystemDesignVibecodingSeeder::class,
         ]);
 
-        LandingPage::query()->updateOrCreate(
-            ['slug' => 'home'],
-            LandingPage::factory()
-                ->home()
-                ->published()
-                ->make()
-                ->only((new LandingPage)->getFillable()),
-        );
+        $this->call(LandingPageHomeSeeder::class);
 
         $branch = Branch::query()->updateOrCreate(
             ['slug' => 'vilnius-main'],
@@ -651,6 +644,8 @@ class DatabaseSeeder extends Seeder
                 'expires_at' => now()->addYear()->toDateString(),
             ],
         ));
+
+        $this->call(ExamDemoSeeder::class);
 
         collect([
             [

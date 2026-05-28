@@ -2582,3 +2582,53 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T09:08:20+00:00
+
+```json
+{
+  "ts": "2026-05-28T09:08:20+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6dbe-3930-7641-bcd0-713479f8eacd",
+  "branch": "main",
+  "changed_file_count": 27,
+  "changed_file_groups": {
+    "code": 20,
+    "models": 2,
+    "orchid": 2,
+    "database": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    "app/Http/Requests/Exams/",
+    "app/Models/TrainingGroup.php",
+    "app/Orchid/PlatformProvider.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "database/factories/BranchFactory.php",
+    "database/factories/ExamActivityFactory.php",
+    "[REDACTED_SECRET].php",
+    "database/factories/ExamAdmissionFactory.php",
+    "database/factories/ExamAttemptFactory.php",
+    "database/factories/ExamSessionFactory.php",
+    "database/factories/TrainingGroupFactory.php",
+    "[REDACTED_SECRET].php",
+    "database/migrations/2026_05_28_110000_create_communication_foundation_tables.php",
+    "database/seeders/DatabaseSeeder.php",
+    "database/seeders/EducationGroupSeeder.php",
+    "[REDACTED_SECRET].php",
+    "database/seeders/ExamDemoSeeder.php",
+    "database/seeders/ExamSeeder.php",
+    "database/seeders/ExamTranslationSeeder.php",
+    "database/seeders/LandingPageHomeSeeder.php",
+    "[REDACTED_SECRET].php",
+    "database/seeders/WebsiteBranchSeeder.php",
+    "docs/training-groups.md",
+    "pp/Models/LearningProgram.php",
+    "tests/Feature/EducationGroupBlockTest.php",
+    "tests/Feature/LandingPageTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

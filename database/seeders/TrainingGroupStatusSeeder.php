@@ -14,18 +14,25 @@ class TrainingGroupStatusSeeder extends Seeder
     public function run(): void
     {
         $this->seedFactoryBackedDictionary(TrainingGroupStatus::class, 'code', [
-            ['code' => 'planned', 'state' => 'planned'],
+            ['code' => 'draft', 'state' => 'draft'],
             ['code' => 'recruiting', 'state' => 'recruiting'],
-            ['code' => 'open', 'state' => 'open'],
             ['code' => 'almost_full', 'state' => 'almostFull'],
-            ['code' => 'active', 'state' => 'active'],
+            ['code' => 'full', 'state' => 'full'],
             ['code' => 'closed', 'state' => 'closed'],
+            ['code' => 'scheduled', 'state' => 'scheduled'],
+            ['code' => 'active', 'state' => 'active'],
+            ['code' => 'paused', 'state' => 'paused'],
             ['code' => 'completed', 'state' => 'completed'],
             ['code' => 'cancelled', 'state' => 'cancelled'],
+            ['code' => 'archived', 'state' => 'archived'],
+            ['code' => 'planned', 'state' => 'planned'],
+            ['code' => 'open', 'state' => 'open'],
+            ['code' => 'in_progress', 'state' => 'inProgress'],
+            ['code' => 'finished', 'state' => 'finished'],
         ]);
 
         TrainingGroupStatus::query()
-            ->where('code', '!=', 'planned')
+            ->where('code', '!=', 'draft')
             ->update(['is_default' => false]);
 
         TrainingGroup::query()

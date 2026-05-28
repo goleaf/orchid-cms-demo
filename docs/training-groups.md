@@ -10,21 +10,22 @@ Training groups connect public website group selection, CRM lead conversion, stu
 
 ## Models
 
-- `TrainingGroup`: existing `training_groups` model extended with `status_id`, `enrollment_closes_on`, `learning_notes`, `schedule_notes`, memberships, schedule patterns, and activities.
+- `TrainingGroup`: existing `training_groups` model extended with status dictionary linkage, course aliases, first-class learning program linkage, capacity aliases, public visibility flags, memberships, schedule patterns, and activities.
 - `TrainingGroupStatus`: dictionary for group lifecycle and enrollment rules.
 - `TrainingGroupMembership`: links `StudentEnrollment` and `Student` to a group while preserving membership history.
-- `LearningProgram`: compatibility model over `training_programs`.
-- `LearningProgramModule`: compatibility model over `course_modules`.
+- `LearningProgram`: first-class reusable program table linked back to existing `training_programs` courses and course categories.
+- `LearningProgramModule`: first-class program modules for theory, practice, exams, onboarding, documents, and future education flow.
 - `LearningTopic`: reusable program topics for future lesson and attendance modules.
 - `TrainingGroupSchedulePattern`: recurring day/time pattern for future calendar generation.
 - `TrainingGroupActivity`: timeline for membership, schedule, and status events.
 
 ## Data Reuse
 
-- Courses and learning programs use `training_programs`.
-- Learning modules use `course_modules`.
+- Courses continue to use `training_programs`; `training_groups.course_id` is an alias of existing `training_program_id`.
 - Students use `student_profiles` through `Student`.
 - Enrollments use `enrollments` through `StudentEnrollment`.
+- Learning programs now use `learning_programs`.
+- Learning modules now use `learning_program_modules`.
 - CRM leads use `marketing_leads`.
 - No SaaS tenant, subscription, reseller, or multi-company tables are part of this block.
 
@@ -119,7 +120,7 @@ Routes:
 2. Lead can select a group.
 3. Lead conversion creates `StudentEnrollment`.
 4. `AddStudentToTrainingGroupAction` links the enrollment to `TrainingGroupMembership`.
-5. Group capacity updates through `places_taken`.
+5. Group capacity updates through both legacy `places_taken` and new `capacity_taken`.
 6. `TrainingGroupActivity` records the group timeline.
 
 The same group assignment flow is used from student enrollment creation and lead conversion, so group capacity, active membership records, enrollment group fields, and student/group activity entries stay in sync.

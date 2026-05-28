@@ -67,6 +67,8 @@ class EducationGroupBlockTest extends TestCase
             'training_group_memberships',
             'training_group_schedule_patterns',
             'training_group_activities',
+            'learning_programs',
+            'learning_program_modules',
             'training_programs',
             'course_modules',
             'learning_topics',
@@ -77,47 +79,116 @@ class EducationGroupBlockTest extends TestCase
             $this->assertTrue(Schema::hasTable($table), $table);
         }
 
-        $this->assertFalse(Schema::hasTable('learning_programs'));
         $this->assertFalse(Schema::hasTable('students'));
         $this->assertFalse(Schema::hasTable('student_enrollments'));
         $this->assertFalse(Schema::hasTable('leads'));
 
-        foreach (['status_id', 'enrollment_closes_on', 'learning_notes', 'schedule_notes'] as $column) {
+        foreach ([
+            'uuid',
+            'group_number',
+            'code',
+            'course_id',
+            'training_program_id',
+            'course_category_id',
+            'branch_id',
+            'status_id',
+            'learning_program_id',
+            'manager_id',
+            'administrator_id',
+            'teacher_id',
+            'name_translations',
+            'description_translations',
+            'public_description_translations',
+            'schedule_summary_translations',
+            'start_date',
+            'planned_end_date',
+            'actual_end_date',
+            'capacity_total',
+            'capacity_reserved',
+            'capacity_taken',
+            'capacity_waitlist',
+            'is_visible_on_site',
+            'is_featured',
+            'is_accepting_applications',
+            'timezone',
+            'default_lesson_duration_minutes',
+            'notes',
+            'internal_notes',
+            'enrollment_closes_on',
+            'learning_notes',
+            'schedule_notes',
+        ] as $column) {
             $this->assertTrue(Schema::hasColumn('training_groups', $column), $column);
         }
 
-        foreach (['uuid', 'code', 'title_translations', 'description_translations'] as $column) {
-            $this->assertTrue(Schema::hasColumn('course_modules', $column), $column);
+        foreach (['code', 'name_translations', 'is_open_for_enrollment', 'is_archived'] as $column) {
+            $this->assertTrue(Schema::hasColumn('training_group_statuses', $column), $column);
+        }
+
+        foreach (['student_id', 'student_enrollment_id', 'transfer_from_group_id', 'transfer_to_group_id', 'transfer_reason'] as $column) {
+            $this->assertTrue(Schema::hasColumn('training_group_memberships', $column), $column);
+        }
+
+        foreach (['uuid', 'course_id', 'course_category_id', 'code', 'name_translations', 'description_translations'] as $column) {
+            $this->assertTrue(Schema::hasColumn('learning_programs', $column), $column);
+        }
+
+        foreach (['learning_program_id', 'code', 'type', 'name_translations', 'required_hours'] as $column) {
+            $this->assertTrue(Schema::hasColumn('learning_program_modules', $column), $column);
+        }
+
+        foreach (['learning_program_module_id', 'name_translations', 'estimated_hours'] as $column) {
+            $this->assertTrue(Schema::hasColumn('learning_topics', $column), $column);
+        }
+
+        foreach (['type', 'day_of_week', 'start_time', 'end_time', 'classroom_id', 'location_translations', 'notes_translations'] as $column) {
+            $this->assertTrue(Schema::hasColumn('training_group_schedule_patterns', $column), $column);
+        }
+
+        foreach (['student_id', 'student_enrollment_id', 'membership_id', 'type', 'meta'] as $column) {
+            $this->assertTrue(Schema::hasColumn('training_group_activities', $column), $column);
         }
     }
 
     public function test_group_models_relationships_scopes_and_helpers_work(): void
     {
         $status = TrainingGroupStatus::query()->where('code', 'recruiting')->firstOrFail();
-        $program = LearningProgram::factory()->create(['title' => 'Block 4 Program']);
+        $course = TrainingProgram::factory()->create(['title' => 'Block 4 Course']);
+        $program = LearningProgram::factory()->create([
+            'course_id' => $course->id,
+            'name_translations' => ['en' => 'Block 4 Program', 'ru' => 'Block 4 Program'],
+        ]);
         $module = LearningProgramModule::factory()->theory()->create([
-            'training_program_id' => $program->id,
-            'title' => 'Theory module',
-            'title_translations' => ['en' => 'Theory module', 'ru' => 'Theory module'],
+            'learning_program_id' => $program->id,
+            'name_translations' => ['en' => 'Theory module', 'ru' => 'Theory module'],
+            'required_hours' => 12,
         ]);
         $topic = LearningTopic::factory()->practice()->create([
-            'training_program_id' => $program->id,
-            'course_module_id' => $module->id,
-            'title_translations' => ['en' => 'Practice topic', 'ru' => 'Practice topic'],
+            'training_program_id' => $course->id,
+            'learning_program_module_id' => $module->id,
+            'name_translations' => ['en' => 'Practice topic', 'ru' => 'Practice topic'],
         ]);
         $group = TrainingGroup::factory()->create([
-            'training_program_id' => $program->id,
+            'training_program_id' => $course->id,
+            'course_id' => $course->id,
+            'learning_program_id' => $program->id,
             'status' => GroupStatus::Recruiting,
             'status_id' => $status->id,
             'capacity' => 8,
+            'capacity_total' => 8,
+            'capacity_taken' => 2,
             'places_taken' => 2,
         ]);
         $pattern = TrainingGroupSchedulePattern::factory()->theory()->create([
             'training_group_id' => $group->id,
+            'day_of_week' => 1,
+            'start_time' => '18:00',
+            'end_time' => '20:00',
         ]);
+        $student = Student::factory()->active()->create();
         $enrollment = StudentEnrollment::factory()->active()->create([
-            'student_profile_id' => Student::factory()->active()->create()->id,
-            'training_program_id' => $program->id,
+            'student_profile_id' => $student->id,
+            'training_program_id' => $course->id,
         ]);
         $membership = TrainingGroupMembership::factory()->active()->create([
             'training_group_id' => $group->id,
@@ -131,20 +202,34 @@ class EducationGroupBlockTest extends TestCase
             'student_profile_id' => $enrollment->student_profile_id,
         ]);
 
-        $group = $group->fresh(['statusRecord', 'memberships', 'schedulePatterns', 'activities']);
+        $group = $group->fresh(['statusRecord', 'learningProgram.modules.topics', 'memberships', 'students', 'schedulePatterns', 'activities']);
 
         $this->assertTrue($group->statusRecord->is($status));
+        $this->assertTrue($group->learningProgram->is($program));
         $this->assertTrue($group->acceptsEnrollment());
         $this->assertSame(6, $group->available_places);
+        $this->assertSame(25, $group->capacity_percent);
+        $this->assertFalse($group->is_full);
         $this->assertCount(1, $group->memberships);
         $this->assertTrue($group->activeMemberships()->whereKey($membership->id)->exists());
+        $this->assertTrue($group->students->first()->is($student));
+        $this->assertTrue($student->trainingGroups()->whereKey($group->id)->exists());
+        $this->assertTrue($enrollment->groupMemberships()->whereKey($membership->id)->exists());
+        $this->assertTrue($enrollment->activeGroupMembership()->whereKey($membership->id)->exists());
         $this->assertTrue($group->schedulePatterns->first()->is($pattern));
         $this->assertTrue($group->activities()->where('type', 'student_added')->exists());
         $this->assertTrue($program->topics()->whereKey($topic->id)->exists());
         $this->assertTrue($module->topics()->whereKey($topic->id)->exists());
         $this->assertSame('Theory module', $module->displayTitle('en'));
         $this->assertSame('Practice topic', $topic->displayTitle('en'));
+        $this->assertSame(12.0, $program->fresh('modules')->total_required_hours);
+        $this->assertSame('Monday', $pattern->display_day);
+        $this->assertSame('18:00-20:00', $pattern->display_time_range);
         $this->assertSame('Student added', $group->activities()->firstOrFail()->display_type);
+
+        $this->assertTrue(TrainingGroup::query()->search('GROUP')->whereKey($group->id)->exists());
+        $this->assertTrue(TrainingGroup::query()->visibleOnSite()->whereKey($group->id)->exists());
+        $this->assertTrue(TrainingGroup::query()->openForEnrollment()->whereKey($group->id)->exists());
     }
 
     public function test_status_seeder_and_translation_seeder_are_idempotent(): void
@@ -157,9 +242,13 @@ class EducationGroupBlockTest extends TestCase
         $this->assertSame($statusCount, TrainingGroupStatus::query()->count());
         $this->assertSame(1, TrainingGroupStatus::query()->where('is_default', true)->count());
         $this->assertDatabaseHas('training_group_statuses', [
-            'code' => 'planned',
+            'code' => 'draft',
             'is_default' => true,
-            'accepts_enrollments' => true,
+            'accepts_enrollments' => false,
+        ]);
+        $this->assertDatabaseHas('training_group_statuses', [
+            'code' => 'recruiting',
+            'is_open_for_enrollment' => true,
         ]);
 
         $this->seed(EducationTranslationSeeder::class);
@@ -195,9 +284,12 @@ class EducationGroupBlockTest extends TestCase
 
         $this->assertSame($group->id, $enrollment->training_group_id);
         $this->assertSame(1, $group->refresh()->places_taken);
+        $this->assertSame(1, $group->capacity_taken);
         $this->assertDatabaseHas('training_group_memberships', [
             'training_group_id' => $group->id,
+            'student_id' => $student->id,
             'student_profile_id' => $student->id,
+            'student_enrollment_id' => $enrollment->id,
             'enrollment_id' => $enrollment->id,
             'status' => 'active',
         ]);
@@ -215,6 +307,7 @@ class EducationGroupBlockTest extends TestCase
         app(RemoveStudentFromTrainingGroupAction::class)->handle($membership, $user, 'cancelled');
 
         $this->assertSame(0, $group->refresh()->places_taken);
+        $this->assertSame(0, $group->capacity_taken);
         $this->assertNull($enrollment->refresh()->training_group_id);
         $this->assertSame('left', $membership->refresh()->status);
         $this->assertDatabaseHas('training_group_activities', [

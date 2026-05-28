@@ -12,8 +12,8 @@ class WebsiteBranchSeeder extends Seeder
         $branches = [
             'vilnius-main' => [
                 'code' => 'VILNIUS_MAIN',
-                'name' => ['ru' => 'DrivePro Academy Вильнюс', 'en' => 'DrivePro Academy Vilnius', 'lt' => 'DrivePro Academy Vilnius', 'pl' => 'DrivePro Academy Wilno'],
-                'city' => ['ru' => 'Вильнюс', 'en' => 'Vilnius', 'lt' => 'Vilnius', 'pl' => 'Wilno'],
+                'name' => ['ru' => 'DrivePro Academy Вильнюс', 'en' => 'DrivePro Academy Vilnius', 'lt' => 'DrivePro Academy Vilniaus filialas', 'pl' => 'DrivePro Academy Wilno'],
+                'city' => ['ru' => 'Вильнюс', 'en' => 'Vilnius', 'lt' => 'Vilniaus miestas', 'pl' => 'Wilno'],
                 'address' => ['ru' => 'Gedimino pr. 1', 'en' => 'Gedimino Ave. 1', 'lt' => 'Gedimino pr. 1', 'pl' => 'Gedimino pr. 1'],
                 'phone' => '+370 600 00000',
                 'email' => 'vilnius@drivepro.test',
@@ -22,8 +22,8 @@ class WebsiteBranchSeeder extends Seeder
             ],
             'kaunas-center' => [
                 'code' => 'KAUNAS_CENTER',
-                'name' => ['ru' => 'DrivePro Academy Каунас', 'en' => 'DrivePro Academy Kaunas', 'lt' => 'DrivePro Academy Kaunas', 'pl' => 'DrivePro Academy Kowno'],
-                'city' => ['ru' => 'Каунас', 'en' => 'Kaunas', 'lt' => 'Kaunas', 'pl' => 'Kowno'],
+                'name' => ['ru' => 'DrivePro Academy Каунас', 'en' => 'DrivePro Academy Kaunas', 'lt' => 'DrivePro Academy Kauno filialas', 'pl' => 'DrivePro Academy Kowno'],
+                'city' => ['ru' => 'Каунас', 'en' => 'Kaunas', 'lt' => 'Kauno miestas', 'pl' => 'Kowno'],
                 'address' => ['ru' => 'Laisves al. 10', 'en' => 'Laisves Ave. 10', 'lt' => 'Laisves al. 10', 'pl' => 'Laisves al. 10'],
                 'phone' => '+370 600 00010',
                 'email' => 'kaunas@drivepro.test',

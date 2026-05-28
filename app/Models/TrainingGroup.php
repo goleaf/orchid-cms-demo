@@ -290,18 +290,27 @@ class TrainingGroup extends Model
     {
         return $query
             ->where('is_visible_on_site', true)
-            ->whereIn('status', [
-                GroupStatus::Planned->value,
-                GroupStatus::Recruiting->value,
-                GroupStatus::Open->value,
-                GroupStatus::AlmostFull->value,
-            ]);
+            ->where(function (Builder $query): void {
+                $query
+                    ->whereIn('status', [
+                        GroupStatus::Planned->value,
+                        GroupStatus::Recruiting->value,
+                        GroupStatus::Open->value,
+                        GroupStatus::AlmostFull->value,
+                    ])
+                    ->orWhereHas('statusRecord', fn (Builder $query): Builder => $query->where('is_public', true));
+            });
     }
 
     public function scopeOpenForEnrollment(Builder $query): Builder
     {
         return $query
             ->visibleOnSite()
+            ->where(function (Builder $query): void {
+                $query
+                    ->where('is_accepting_applications', true)
+                    ->orWhereHas('statusRecord', fn (Builder $query): Builder => $query->where('is_open_for_enrollment', true));
+            })
             ->where(function (Builder $query): void {
                 $query
                     ->whereColumn('places_taken', '<', 'capacity')
@@ -346,9 +355,17 @@ class TrainingGroup extends Model
 
     public function scopeByStatus(Builder $query, GroupStatus|string|null $status): Builder
     {
-        return filled($status)
-            ? $query->where('status', $status instanceof GroupStatus ? $status->value : $status)
-            : $query;
+        if (blank($status)) {
+            return $query;
+        }
+
+        $statusValue = $status instanceof GroupStatus ? $status->value : (string) $status;
+
+        return $query->where(function (Builder $query) use ($statusValue): void {
+            $query
+                ->where('status', $statusValue)
+                ->orWhereHas('statusRecord', fn (Builder $query): Builder => $query->where('code', $statusValue));
+        });
     }
 
     public function scopeStartsAfter(Builder $query, mixed $date): Builder
@@ -543,19 +560,19 @@ class TrainingGroup extends Model
 
     private function syncEducationAliases(): void
     {
-        if ($this->getAttribute('course_id') === null) {
+        if ($this->getAttribute('course_id') === null || ($this->isDirty('training_program_id') && ! $this->isDirty('course_id'))) {
             $this->setAttribute('course_id', $this->getAttribute('training_program_id'));
         }
 
-        if ($this->getAttribute('training_program_id') === null) {
+        if ($this->getAttribute('training_program_id') === null || ($this->isDirty('course_id') && ! $this->isDirty('training_program_id'))) {
             $this->setAttribute('training_program_id', $this->getAttribute('course_id'));
         }
 
-        if ($this->getAttribute('capacity_total') === null) {
+        if ($this->getAttribute('capacity_total') === null || ($this->isDirty('capacity') && ! $this->isDirty('capacity_total'))) {
             $this->setAttribute('capacity_total', $this->getAttribute('capacity'));
         }
 
-        if ($this->getAttribute('capacity') === null) {
+        if ($this->getAttribute('capacity') === null || ($this->isDirty('capacity_total') && ! $this->isDirty('capacity'))) {
             $this->setAttribute('capacity', $this->getAttribute('capacity_total') ?? 12);
         }
 
@@ -563,7 +580,7 @@ class TrainingGroup extends Model
             $this->setAttribute('capacity_reserved', 0);
         }
 
-        if ($this->getAttribute('capacity_taken') === null) {
+        if ($this->getAttribute('capacity_taken') === null || ($this->isDirty('places_taken') && ! $this->isDirty('capacity_taken'))) {
             $this->setAttribute('capacity_taken', $this->getAttribute('places_taken') ?? 0);
         }
 
@@ -571,23 +588,23 @@ class TrainingGroup extends Model
             $this->setAttribute('capacity_waitlist', 0);
         }
 
-        if ($this->getAttribute('places_taken') === null) {
+        if ($this->getAttribute('places_taken') === null || ($this->isDirty('capacity_taken') && ! $this->isDirty('places_taken'))) {
             $this->setAttribute('places_taken', $this->getAttribute('capacity_taken') ?? 0);
         }
 
-        if ($this->getAttribute('start_date') === null) {
+        if ($this->getAttribute('start_date') === null || ($this->isDirty('starts_on') && ! $this->isDirty('start_date'))) {
             $this->setAttribute('start_date', $this->getAttribute('starts_on'));
         }
 
-        if ($this->getAttribute('starts_on') === null) {
+        if ($this->getAttribute('starts_on') === null || ($this->isDirty('start_date') && ! $this->isDirty('starts_on'))) {
             $this->setAttribute('starts_on', $this->getAttribute('start_date'));
         }
 
-        if ($this->getAttribute('planned_end_date') === null) {
+        if ($this->getAttribute('planned_end_date') === null || ($this->isDirty('ends_on') && ! $this->isDirty('planned_end_date'))) {
             $this->setAttribute('planned_end_date', $this->getAttribute('ends_on'));
         }
 
-        if ($this->getAttribute('ends_on') === null) {
+        if ($this->getAttribute('ends_on') === null || ($this->isDirty('planned_end_date') && ! $this->isDirty('ends_on'))) {
             $this->setAttribute('ends_on', $this->getAttribute('planned_end_date'));
         }
 
