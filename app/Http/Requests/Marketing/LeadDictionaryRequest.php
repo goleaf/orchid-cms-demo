@@ -5,6 +5,8 @@ namespace App\Http\Requests\Marketing;
 use App\Services\TranslatableContentManager;
 use App\Support\Crm\LeadDictionaryRegistry;
 use App\Rules\DictionaryCodeRule;
+use App\Rules\OnlyOneDefaultLeadStatusRule;
+use App\Rules\SystemDictionaryCodeProtectedRule;
 use App\Rules\TranslatedDictionaryNameRequiredRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +39,7 @@ class LeadDictionaryRequest extends FormRequest
         /** @var class-string<Model> $modelClass */
         $modelClass = $definition['model'];
         $prototype = new $modelClass;
+        $recordId = $this->recordId();
 
         return [
             'item.'.$keyColumn => [
@@ -44,13 +47,14 @@ class LeadDictionaryRequest extends FormRequest
                 'string',
                 'max:120',
                 new DictionaryCodeRule,
-                Rule::unique($prototype->getTable(), $keyColumn)->ignore($this->recordId()),
+                new SystemDictionaryCodeProtectedRule($this->dictionaryName(), $recordId),
+                Rule::unique($prototype->getTable(), $keyColumn)->ignore($recordId),
             ],
             'item.name' => ['nullable', 'string', 'max:255'],
             'item.color' => ['nullable', 'string', 'max:32'],
             'item.is_active' => ['nullable', 'boolean'],
             'item.is_public' => ['nullable', 'boolean'],
-            'item.is_default' => ['nullable', 'boolean'],
+            'item.is_default' => ['nullable', 'boolean', new OnlyOneDefaultLeadStatusRule($this->dictionaryName(), $recordId)],
             'item.is_final' => ['nullable', 'boolean'],
             'item.is_success' => ['nullable', 'boolean'],
             'item.is_lost' => ['nullable', 'boolean'],

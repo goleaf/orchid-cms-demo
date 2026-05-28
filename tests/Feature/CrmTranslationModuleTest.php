@@ -462,6 +462,16 @@ class CrmTranslationModuleTest extends TestCase
                 'deleted',
                 'cannot_delete_used_item',
             ]),
+            ...$this->prefixed('crm.validation.', [
+                'dictionary_key_required',
+                'dictionary_key_unique',
+                'dictionary_record_unavailable',
+                'dictionary_system_record_locked',
+                'dictionary_system_code_locked',
+                'dictionary_default_status_inactive',
+                'dictionary_default_status_required',
+                'dictionary_final_status_locked',
+            ]),
             ...$this->prefixed('crm.leads.validation.', [
                 'phone_or_email_required',
                 'invalid_status_transition',

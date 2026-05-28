@@ -2,8 +2,10 @@
 
 namespace App\Actions;
 
+use App\Rules\DictionaryItemCanBeDeletedRule;
 use App\Support\Crm\LeadDictionaryRegistry;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class DeleteLeadDictionaryAction
@@ -15,11 +17,13 @@ class DeleteLeadDictionaryAction
         /** @var class-string<Model> $modelClass */
         $modelClass = $definition['model'];
         $item = $modelClass::query()->findOrFail($record);
+        $validator = Validator::make(
+            ['record' => $item->getKey()],
+            ['record' => [new DictionaryItemCanBeDeletedRule($dictionary)]],
+        );
 
-        if ((bool) $item->getAttribute('is_system')) {
-            throw ValidationException::withMessages([
-                'record' => tkey('crm.validation.dictionary_system_record_locked'),
-            ]);
+        if ($validator->fails()) {
+            throw ValidationException::withMessages($validator->errors()->toArray());
         }
 
         $item->delete();

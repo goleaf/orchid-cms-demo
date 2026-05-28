@@ -1782,3 +1782,39 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T02:33:29+00:00
+
+```json
+{
+  "ts": "2026-05-28T02:33:29+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6c5e-0eb0-7c43-9f8b-bb1ef07fb4a7",
+  "branch": "main",
+  "changed_file_count": 16,
+  "changed_file_groups": {
+    "code": 14,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    "app/Actions/DeleteLeadLostReasonAction.php",
+    "app/Actions/DeleteLeadSourceAction.php",
+    "app/Actions/DeleteLeadStatusAction.php",
+    "app/Actions/DeleteLeadTagAction.php",
+    "app/Actions/SaveLeadDictionaryAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Rules/OnlyOneDefaultLeadStatusRule.php",
+    "[REDACTED_SECRET].php",
+    "app/Support/Crm/LeadDictionaryUsage.php",
+    "[REDACTED_SECRET].php",
+    "pp/Actions/DeleteLeadDictionaryAction.php",
+    "[REDACTED_SECRET].php",
+    "tests/Feature/CrmTranslationModuleTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

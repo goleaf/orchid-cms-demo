@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Marketing;
 
-use App\Rules\EditableLeadDictionaryRecordRule;
+use App\Rules\DictionaryItemCanBeDeletedRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -31,7 +31,7 @@ class LeadDictionaryDeleteRequest extends FormRequest
             'record' => [
                 'required',
                 'integer',
-                new EditableLeadDictionaryRecordRule($this->dictionaryName()),
+                new DictionaryItemCanBeDeletedRule($this->dictionaryName()),
             ],
         ];
     }
