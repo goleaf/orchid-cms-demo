@@ -2910,3 +2910,107 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T09:38:09+00:00
+
+```json
+{
+  "ts": "2026-05-28T09:38:09+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6dd9-94e6-72a3-871f-8792a136b368",
+  "branch": "main",
+  "changed_file_count": 61,
+  "changed_file_groups": {
+    "code": 32,
+    "models": 21,
+    "orchid": 2,
+    "tests": 6
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateLearningTopicAction.php",
+    "app/Actions/CreateTrainingGroupAction.php",
+    "app/Actions/UpdateLearningTopicAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/CourseCategory.php",
+    "app/Models/Enrollment.php",
+    "app/Models/ExamActivity.php",
+    "app/Models/ExamAdmissionRule.php",
+    "app/Models/ExamAttempt.php",
+    "app/Models/ExamAttemptStatus.php",
+    "app/Models/ExamChecklistItem.php",
+    "app/Models/ExamParticipant.php",
+    "app/Models/ExamResult.php",
+    "app/Models/ExamResultStatus.php",
+    "app/Models/ExamRetake.php",
+    "app/Models/ExamSession.php",
+    "app/Models/ExamStatus.php",
+    "app/Models/ExamType.php",
+    "app/Models/Instructor.php",
+    "app/Models/StudentProfile.php",
+    "app/Models/TrainingGroup.php",
+    "app/Models/TrainingProgram.php",
+    "app/Models/User.php",
+    "app/Models/Vehicle.php",
+    "app/Orchid/PlatformProvider.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "changelog.md"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T09:38:19+00:00
+
+```json
+{
+  "ts": "2026-05-28T09:38:19+00:00",
+  "event": "Stop",
+  "session_id": "019e6d9c-1446-78f3-b720-8f17cbb16ed9",
+  "turn_id": "019e6deb-6cac-7c22-9011-d02b2f3d3300",
+  "branch": "main",
+  "changed_file_count": 61,
+  "changed_file_groups": {
+    "code": 32,
+    "models": 21,
+    "orchid": 2,
+    "tests": 6
+  },
+  "changed_files_sample": [
+    ".codex/memory/decisions.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateLearningTopicAction.php",
+    "app/Actions/CreateTrainingGroupAction.php",
+    "app/Actions/UpdateLearningTopicAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Models/Branch.php",
+    "app/Models/CourseCategory.php",
+    "app/Models/Enrollment.php",
+    "app/Models/ExamActivity.php",
+    "app/Models/ExamAdmissionRule.php",
+    "app/Models/ExamAttempt.php",
+    "app/Models/ExamAttemptStatus.php",
+    "app/Models/ExamChecklistItem.php",
+    "app/Models/ExamParticipant.php",
+    "app/Models/ExamResult.php",
+    "app/Models/ExamResultStatus.php",
+    "app/Models/ExamRetake.php",
+    "app/Models/ExamSession.php",
+    "app/Models/ExamStatus.php",
+    "app/Models/ExamType.php",
+    "app/Models/Instructor.php",
+    "app/Models/StudentProfile.php",
+    "app/Models/TrainingGroup.php",
+    "app/Models/TrainingProgram.php",
+    "app/Models/User.php",
+    "app/Models/Vehicle.php",
+    "app/Orchid/PlatformProvider.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

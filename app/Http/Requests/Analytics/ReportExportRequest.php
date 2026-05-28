@@ -41,7 +41,7 @@ class ReportExportRequest extends FormRequest
         return filled($id) ? (int) $id : null;
     }
 
-    public function format(): ReportExportFormat
+    public function exportFormat(): ReportExportFormat
     {
         return ReportExportFormat::from($this->validated('format'));
     }

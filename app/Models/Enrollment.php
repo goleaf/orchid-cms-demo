@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -188,6 +189,26 @@ class Enrollment extends Model
     public function examAttempts(): HasMany
     {
         return $this->hasMany(ExamAttempt::class, 'enrollment_id');
+    }
+
+    public function examParticipants(): HasMany
+    {
+        return $this->hasMany(ExamParticipant::class, 'enrollment_id');
+    }
+
+    public function examChecklistItems(): HasMany
+    {
+        return $this->hasMany(ExamChecklistItem::class, 'enrollment_id');
+    }
+
+    public function examResults(): HasManyThrough
+    {
+        return $this->hasManyThrough(ExamResult::class, ExamAttempt::class, 'enrollment_id', 'attempt_id');
+    }
+
+    public function examRetakes(): HasMany
+    {
+        return $this->hasMany(ExamRetake::class, 'enrollment_id');
     }
 
     public function payments(): HasMany

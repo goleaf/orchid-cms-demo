@@ -93,6 +93,7 @@ class PublicWebsiteFactoriesSeedersTest extends TestCase
             ->create();
 
         $this->assertTrue($page->is_active);
+        $this->assertCompleteSitePage($page);
         $this->assertSame('Категория B', $category->displayName('ru'));
         $this->assertTrue($course->is_featured);
         $this->assertTrue($package->is_visible_on_site);
@@ -113,6 +114,11 @@ class PublicWebsiteFactoriesSeedersTest extends TestCase
 
         $this->assertSame(6, SitePage::query()->count());
         $this->assertTrue(SitePage::query()->where('type', 'home')->where('slug', 'home')->exists());
+
+        SitePage::query()
+            ->ordered()
+            ->get()
+            ->each(fn (SitePage $page): bool => $this->assertCompleteSitePage($page));
     }
 
     public function test_website_course_seeder_creates_visible_courses(): void
@@ -210,5 +216,41 @@ class PublicWebsiteFactoriesSeedersTest extends TestCase
         $this->assertSame('google', $lead->utm_source);
         $this->assertTrue($lead->consent_accepted);
         $this->assertNotNull($lead->consent_accepted_at);
+    }
+
+    private function assertCompleteSitePage(SitePage $page): bool
+    {
+        foreach ($this->sitePageTranslationFields() as $field) {
+            $translations = $page->getTranslations($field);
+
+            foreach (['ru', 'en', 'lt', 'pl'] as $locale) {
+                $this->assertArrayHasKey($locale, $translations, $page->slug.' '.$field.' '.$locale);
+                $this->assertNotSame('', trim((string) $translations[$locale]), $page->slug.' '.$field.' '.$locale);
+            }
+        }
+
+        $this->assertNotEmpty($page->og_image);
+        $this->assertNotEmpty($page->canonical_url);
+        $this->assertNotEmpty($page->template);
+        $this->assertNotNull($page->published_at);
+
+        return true;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function sitePageTranslationFields(): array
+    {
+        return [
+            'title',
+            'subtitle',
+            'content',
+            'excerpt',
+            'seo_title',
+            'seo_description',
+            'og_title',
+            'og_description',
+        ];
     }
 }

@@ -23,7 +23,7 @@ This project is a Laravel Orchid operating system for one local driving school c
 - Exams: [`exams.md`](exams.md)
 - Documents: [`documents.md`](documents.md)
 - Payments: [`payments.md`](payments.md)
-- Communications and reminders: [`communications.md`](communications.md)
+- Communications and reminders: [`communications.md`](communications.md) and [`notifications.md`](notifications.md)
 - Dashboard and analytics foundation: [`analytics.md`](analytics.md)
 - Local Orchid workflow: [`orchid-local-documentation.md`](orchid-local-documentation.md)
 - Codex automation: [`codex-automation.md`](codex-automation.md)

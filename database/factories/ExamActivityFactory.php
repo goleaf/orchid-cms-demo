@@ -23,8 +23,10 @@ class ExamActivityFactory extends Factory
             'exam_admission_id' => null,
             'exam_session_id' => null,
             'exam_attempt_id' => null,
+            'attempt_id' => null,
             'enrollment_id' => StudentEnrollment::factory(),
             'student_profile_id' => Student::factory(),
+            'student_id' => null,
             'training_group_id' => null,
             'user_id' => User::factory(),
             'type' => $this->faker->randomElement(['admission_saved', 'session_scheduled', 'attempt_recorded', 'retake_scheduled']),
@@ -42,6 +44,7 @@ class ExamActivityFactory extends Factory
             'exam_admission_id' => $admission->id,
             'enrollment_id' => $admission->enrollment_id,
             'student_profile_id' => $admission->student_profile_id,
+            'student_id' => $admission->student_profile_id,
             'training_group_id' => $admission->training_group_id,
         ]);
     }
@@ -58,10 +61,12 @@ class ExamActivityFactory extends Factory
     {
         return $this->state(fn (): array => [
             'exam_attempt_id' => $attempt->id,
+            'attempt_id' => $attempt->id,
             'exam_admission_id' => $attempt->exam_admission_id,
             'exam_session_id' => $attempt->exam_session_id,
             'enrollment_id' => $attempt->enrollment_id,
             'student_profile_id' => $attempt->student_profile_id,
+            'student_id' => $attempt->student_profile_id,
             'training_group_id' => $attempt->training_group_id,
         ]);
     }

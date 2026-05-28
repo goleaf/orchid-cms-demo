@@ -106,6 +106,11 @@ class Branch extends Model
         return $this->hasMany(DrivingLesson::class);
     }
 
+    public function examSessions(): HasMany
+    {
+        return $this->hasMany(ExamSession::class);
+    }
+
     public function groups(): HasMany
     {
         return $this->hasMany(TrainingGroup::class);

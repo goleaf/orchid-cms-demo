@@ -103,7 +103,7 @@ class StudentCrmIntegrationTest extends TestCase
         $this->assertSame($course->id, $enrollment->training_program_id);
         $this->assertSame($branch->id, $enrollment->branch_id);
         $this->assertSame($group->id, $enrollment->training_group_id);
-        $this->assertSame(2, $group->refresh()->places_taken);
+        $this->assertSame(1, $group->refresh()->places_taken);
         $this->assertSame($student->id, $lead->converted_student_profile_id);
         $this->assertSame($enrollment->id, $lead->converted_enrollment_id);
         $this->assertNotNull($lead->converted_at);

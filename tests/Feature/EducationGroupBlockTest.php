@@ -339,6 +339,8 @@ class EducationGroupBlockTest extends TestCase
         $this->assertSame($translationCount, TranslationString::query()->where('key', 'menu.education')->count());
         $this->assertSame('Training groups', tkey('menu.education.groups'));
         $this->assertSame('The group cannot accept this enrollment.', tkey('education.validation.group_cannot_accept_enrollment'));
+        $this->assertSame('Invalid group status transition.', tkey('education.groups.validation.invalid_status_transition'));
+        $this->assertSame('Group capacity changed', tkey('education.activities.titles.capacity_changed'));
     }
 
     public function test_group_membership_action_updates_capacity_membership_and_activity(): void
@@ -396,6 +398,251 @@ class EducationGroupBlockTest extends TestCase
             'training_group_id' => $group->id,
             'type' => 'student_removed',
         ]);
+    }
+
+    public function test_training_group_actions_manage_status_schedule_publication_and_learning_programs(): void
+    {
+        $user = User::factory()->create();
+        $manager = User::factory()->create();
+        $teacher = User::factory()->create();
+        $course = TrainingProgram::factory()->create();
+        $branch = Branch::factory()->create();
+        $draft = TrainingGroupStatus::query()->where('code', 'draft')->firstOrFail();
+        $recruiting = TrainingGroupStatus::query()->where('code', 'recruiting')->firstOrFail();
+
+        TrainingGroup::factory()->create([
+            'group_number' => 'GRP-'.now()->year.'-0001',
+        ]);
+
+        $number = app(GenerateTrainingGroupNumberAction::class)->handle();
+        $this->assertSame('GRP-'.now()->year.'-0002', $number);
+
+        $group = app(CreateTrainingGroupAction::class)->handle([
+            'group_number' => $number,
+            'training_program_id' => $course->id,
+            'course_id' => $course->id,
+            'branch_id' => $branch->id,
+            'status_id' => $draft->id,
+            'name_translations' => ['en' => 'Action group'],
+            'capacity_total' => 2,
+            'capacity' => 2,
+        ], $user);
+
+        $this->assertSame($number, $group->group_number);
+        $this->assertSame($draft->id, $group->status_id);
+        $this->assertDatabaseHas('training_group_activities', [
+            'training_group_id' => $group->id,
+            'type' => 'created',
+        ]);
+
+        $group = app(ChangeTrainingGroupStatusAction::class)->handle($group, $recruiting, $user);
+
+        $this->assertSame($recruiting->id, $group->status_id);
+        $this->assertDatabaseHas('training_group_activities', [
+            'training_group_id' => $group->id,
+            'type' => 'status_changed',
+        ]);
+
+        $learningProgram = app(CreateLearningProgramAction::class)->handle([
+            'course_id' => $course->id,
+            'code' => 'category_b_actions',
+            'name_translations' => ['en' => 'Category B action program'],
+            'is_default' => true,
+            'is_active' => true,
+        ], $user);
+        $learningProgram = app(UpdateLearningProgramAction::class)->handle($learningProgram, [
+            'course_id' => $course->id,
+            'code' => 'category_b_actions',
+            'name_translations' => ['en' => 'Updated Category B action program'],
+            'is_default' => true,
+            'is_active' => true,
+        ], $user);
+        $module = app(CreateLearningProgramModuleAction::class)->handle([
+            'learning_program_id' => $learningProgram->id,
+            'code' => 'theory_actions',
+            'type' => 'theory',
+            'name_translations' => ['en' => 'Theory actions'],
+            'required_hours' => 12,
+            'is_required' => true,
+            'is_active' => true,
+        ], $user);
+        $module = app(UpdateLearningProgramModuleAction::class)->handle($module, [
+            'learning_program_id' => $learningProgram->id,
+            'code' => 'theory_actions',
+            'type' => 'theory',
+            'name_translations' => ['en' => 'Updated theory actions'],
+            'required_hours' => 14,
+            'is_required' => true,
+            'is_active' => true,
+        ], $user);
+        $topic = app(CreateLearningTopicAction::class)->handle([
+            'learning_program_module_id' => $module->id,
+            'code' => 'traffic_rules_actions',
+            'name_translations' => ['en' => 'Traffic rules actions'],
+            'topic_type' => 'theory',
+            'estimated_hours' => 2,
+            'is_required' => true,
+            'is_active' => true,
+        ], $user);
+        $topic = app(UpdateLearningTopicAction::class)->handle($topic, [
+            'learning_program_module_id' => $module->id,
+            'code' => 'traffic_rules_actions',
+            'name_translations' => ['en' => 'Updated traffic rules actions'],
+            'topic_type' => 'theory',
+            'estimated_hours' => 3,
+            'is_required' => true,
+            'is_active' => true,
+        ], $user);
+
+        $this->assertSame('Updated Category B action program', $learningProgram->display_name);
+        $this->assertSame('Updated theory actions', $module->display_name);
+        $this->assertSame('Updated traffic rules actions', $topic->display_name);
+
+        $group = app(AssignLearningProgramToGroupAction::class)->handle($group, $learningProgram, $user);
+        $group = app(UpdateTrainingGroupAction::class)->handle($group, [
+            'capacity_total' => 3,
+            'capacity' => 3,
+            'learning_program_id' => $learningProgram->id,
+            'teacher_id' => $teacher->id,
+            'manager_id' => $manager->id,
+        ], $user);
+
+        $this->assertSame($learningProgram->id, $group->learning_program_id);
+        $this->assertSame($teacher->id, $group->teacher_id);
+        $this->assertSame($manager->id, $group->manager_id);
+        $this->assertDatabaseHas('training_group_activities', ['training_group_id' => $group->id, 'type' => 'learning_program_assigned']);
+        $this->assertDatabaseHas('training_group_activities', ['training_group_id' => $group->id, 'type' => 'teacher_assigned']);
+        $this->assertDatabaseHas('training_group_activities', ['training_group_id' => $group->id, 'type' => 'manager_assigned']);
+
+        $pattern = app(CreateTrainingGroupSchedulePatternAction::class)->handle([
+            'training_group_id' => $group->id,
+            'type' => 'theory',
+            'day_of_week' => 1,
+            'start_time' => '18:00',
+            'end_time' => '20:00',
+            'is_active' => true,
+        ], $user);
+        $pattern = app(UpdateTrainingGroupSchedulePatternAction::class)->handle($pattern, [
+            'day_of_week' => 3,
+            'start_time' => '18:30',
+            'end_time' => '20:30',
+        ], $user);
+
+        $this->assertSame(3, $pattern->day_of_week);
+        app(DeleteTrainingGroupSchedulePatternAction::class)->handle($pattern, $user);
+        $this->assertFalse($pattern->refresh()->is_active);
+
+        $group = app(PublishTrainingGroupOnSiteAction::class)->handle($group->refresh(), $user);
+        $this->assertTrue($group->is_visible_on_site);
+        $this->assertTrue($group->is_accepting_applications);
+
+        $group = app(HideTrainingGroupFromSiteAction::class)->handle($group, $user);
+        $this->assertFalse($group->is_visible_on_site);
+        $this->assertFalse($group->is_accepting_applications);
+
+        app(AddTrainingGroupNoteAction::class)->handle($group, 'Internal group note', $user);
+        $this->assertDatabaseHas('training_group_activities', [
+            'training_group_id' => $group->id,
+            'type' => 'note_added',
+            'body' => 'Internal group note',
+        ]);
+    }
+
+    public function test_group_membership_actions_prevent_overbooking_waitlist_transfer_and_complete(): void
+    {
+        $user = User::factory()->create();
+        $program = TrainingProgram::factory()->create();
+        $status = TrainingGroupStatus::query()->where('code', 'recruiting')->firstOrFail();
+        $source = TrainingGroup::factory()->create([
+            'training_program_id' => $program->id,
+            'course_id' => $program->id,
+            'status' => GroupStatus::Recruiting,
+            'status_id' => $status->id,
+            'capacity' => 1,
+            'capacity_total' => 1,
+            'places_taken' => 0,
+            'capacity_taken' => 0,
+        ]);
+        $target = TrainingGroup::factory()->create([
+            'training_program_id' => $program->id,
+            'course_id' => $program->id,
+            'status' => GroupStatus::Recruiting,
+            'status_id' => $status->id,
+            'capacity' => 2,
+            'capacity_total' => 2,
+            'places_taken' => 0,
+            'capacity_taken' => 0,
+        ]);
+        $enrollment = StudentEnrollment::factory()->active()->create([
+            'training_program_id' => $program->id,
+            'training_group_id' => null,
+        ]);
+        $secondEnrollment = StudentEnrollment::factory()->active()->create([
+            'training_program_id' => $program->id,
+            'training_group_id' => null,
+        ]);
+
+        $membership = app(AddStudentToTrainingGroupAction::class)->handle($enrollment, $source, $user);
+        $source = app(RecalculateTrainingGroupCapacityAction::class)->handle($source, $user);
+
+        $this->assertSame(1, $source->capacity_taken);
+        $this->assertTrue($source->is_full);
+
+        $this->expectException(ValidationException::class);
+        app(AddStudentToTrainingGroupAction::class)->handle($secondEnrollment, $source, $user);
+    }
+
+    public function test_waitlist_transfer_complete_and_archive_actions_work(): void
+    {
+        $user = User::factory()->create();
+        $program = TrainingProgram::factory()->create();
+        $status = TrainingGroupStatus::query()->where('code', 'recruiting')->firstOrFail();
+        $source = TrainingGroup::factory()->create([
+            'training_program_id' => $program->id,
+            'course_id' => $program->id,
+            'status' => GroupStatus::Recruiting,
+            'status_id' => $status->id,
+            'capacity' => 1,
+            'capacity_total' => 1,
+            'places_taken' => 0,
+            'capacity_taken' => 0,
+        ]);
+        $target = TrainingGroup::factory()->create([
+            'training_program_id' => $program->id,
+            'course_id' => $program->id,
+            'status' => GroupStatus::Recruiting,
+            'status_id' => $status->id,
+            'capacity' => 2,
+            'capacity_total' => 2,
+            'places_taken' => 0,
+            'capacity_taken' => 0,
+        ]);
+        $enrollment = StudentEnrollment::factory()->active()->create(['training_program_id' => $program->id, 'training_group_id' => null]);
+        $waitlistedEnrollment = StudentEnrollment::factory()->active()->create(['training_program_id' => $program->id, 'training_group_id' => null]);
+
+        $membership = app(AddStudentToTrainingGroupAction::class)->handle($enrollment, $source, $user);
+        $waitlisted = app(WaitlistStudentForTrainingGroupAction::class)->handle($waitlistedEnrollment, $source->refresh(), $user);
+
+        $this->assertSame('waitlisted', $waitlisted->status);
+        $this->assertSame(1, $source->refresh()->capacity_waitlist);
+
+        $newMembership = app(TransferStudentBetweenGroupsAction::class)->handle($membership->refresh(), $target, $user, false, 'schedule change');
+
+        $this->assertSame('transferred', $membership->refresh()->status);
+        $this->assertSame('active', $newMembership->status);
+        $this->assertSame($target->id, $enrollment->refresh()->training_group_id);
+        $this->assertSame(0, $source->refresh()->capacity_taken);
+        $this->assertSame(1, $target->refresh()->capacity_taken);
+
+        app(CompleteTrainingGroupMembershipAction::class)->handle($newMembership, $user);
+        $this->assertSame('completed', $newMembership->refresh()->status);
+        $this->assertNull($enrollment->refresh()->training_group_id);
+
+        $activeEnrollment = StudentEnrollment::factory()->active()->create(['training_program_id' => $program->id, 'training_group_id' => null]);
+        app(AddStudentToTrainingGroupAction::class)->handle($activeEnrollment, $target->refresh(), $user);
+
+        $this->expectException(ValidationException::class);
+        app(ArchiveTrainingGroupAction::class)->handle($target->refresh(), $user);
     }
 
     public function test_group_capacity_and_program_rules_return_translated_errors(): void
@@ -482,6 +729,118 @@ class EducationGroupBlockTest extends TestCase
         );
         $this->assertTrue($validator->fails());
         $this->assertSame(tkey('education.validation.duplicate_membership'), $validator->errors()->first('membership.enrollment_id'));
+    }
+
+    public function test_block_four_custom_rules_return_translated_errors(): void
+    {
+        $program = TrainingProgram::factory()->create();
+        $draft = TrainingGroupStatus::query()->where('code', 'draft')->firstOrFail();
+        $active = TrainingGroupStatus::query()->where('code', 'active')->firstOrFail();
+        $closed = TrainingGroupStatus::query()->where('code', 'closed')->firstOrFail();
+        $group = TrainingGroup::factory()->create([
+            'training_program_id' => $program->id,
+            'status_id' => $draft->id,
+            'status' => GroupStatus::Planned,
+            'capacity' => 1,
+            'capacity_total' => 1,
+            'places_taken' => 1,
+            'capacity_taken' => 1,
+        ]);
+        $closedGroup = TrainingGroup::factory()->create([
+            'training_program_id' => $program->id,
+            'status_id' => $closed->id,
+            'status' => GroupStatus::Closed,
+            'capacity' => 2,
+            'capacity_total' => 2,
+            'places_taken' => 0,
+            'capacity_taken' => 0,
+        ]);
+        $enrollment = StudentEnrollment::factory()->active()->create(['training_program_id' => $program->id]);
+        $membership = TrainingGroupMembership::factory()->completed()->create([
+            'training_group_id' => $group->id,
+            'student_profile_id' => $enrollment->student_profile_id,
+            'enrollment_id' => $enrollment->id,
+        ]);
+        TrainingGroupSchedulePattern::factory()->theory()->create([
+            'training_group_id' => $group->id,
+            'day_of_week' => 1,
+            'start_time' => '18:00',
+            'end_time' => '20:00',
+        ]);
+        $inactiveProgram = LearningProgram::factory()->inactive()->create();
+
+        $validator = Validator::make(['status_id' => $active->id], ['status_id' => [new ValidTrainingGroupStatusTransitionRule($group)]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.invalid_status_transition'), $validator->errors()->first('status_id'));
+
+        $validator = Validator::make(['capacity' => 0], ['capacity' => [new ValidTrainingGroupCapacityValueRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.invalid_capacity'), $validator->errors()->first('capacity'));
+
+        $validator = Validator::make(['group_id' => $group->id], ['group_id' => [new TrainingGroupCapacityRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.capacity_exceeded'), $validator->errors()->first('group_id'));
+
+        $validator = Validator::make(['group_id' => $closedGroup->id], ['group_id' => [new TrainingGroupOpenForEnrollmentRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.group_not_open_for_enrollment'), $validator->errors()->first('group_id'));
+
+        $validator = Validator::make(
+            ['group' => ['start_date' => now()->addDay()->toDateString(), 'planned_end_date' => now()->toDateString()]],
+            ['group.planned_end_date' => [new TrainingGroupDateRangeRule]]
+        );
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.start_date_after_end_date'), $validator->errors()->first('group.planned_end_date'));
+
+        $validator = Validator::make(['day' => 8], ['day' => [new ValidDayOfWeekRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.invalid_day_of_week'), $validator->errors()->first('day'));
+
+        $validator = Validator::make(
+            ['pattern' => ['start_time' => '20:00', 'end_time' => '18:00']],
+            ['pattern.end_time' => [new SchedulePatternTimeRangeRule]]
+        );
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.end_time_before_start_time'), $validator->errors()->first('pattern.end_time'));
+
+        $validator = Validator::make(
+            ['pattern' => ['training_group_id' => $group->id, 'day_of_week' => 1, 'type' => 'theory', 'start_time' => '18:00', 'end_time' => '20:00']],
+            ['pattern.end_time' => [new DuplicateSchedulePatternRule]]
+        );
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.duplicate_schedule_pattern'), $validator->errors()->first('pattern.end_time'));
+
+        $validator = Validator::make(['type' => 'bad'], ['type' => [new ValidSchedulePatternTypeRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.invalid_schedule_pattern_type'), $validator->errors()->first('type'));
+
+        $validator = Validator::make(['type' => 'bad'], ['type' => [new ValidLearningProgramModuleTypeRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.invalid_module_type'), $validator->errors()->first('type'));
+
+        $validator = Validator::make(['program_id' => $inactiveProgram->id], ['program_id' => [new LearningProgramIsActiveRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.learning_program_not_active'), $validator->errors()->first('program_id'));
+
+        $validator = Validator::make(['name_translations' => ['en' => '']], ['name_translations' => [new TranslatedGroupNameRequiredRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.default_group_name_required'), $validator->errors()->first('name_translations'));
+
+        $validator = Validator::make(['name_translations' => ['en' => '']], ['name_translations' => [new TranslatedLearningProgramNameRequiredRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.default_learning_program_name_required'), $validator->errors()->first('name_translations'));
+
+        $validator = Validator::make(['group' => $closedGroup->id], ['group' => [new GroupCanBePublishedRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.group_cannot_be_published'), $validator->errors()->first('group'));
+
+        $validator = Validator::make(['membership_id' => $membership->id], ['membership_id' => [new GroupMembershipCanBeTransferredRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.membership_cannot_be_transferred'), $validator->errors()->first('membership_id'));
+
+        $validator = Validator::make(['membership_id' => $membership->id], ['membership_id' => [new GroupMembershipCanBeRemovedRule]]);
+        $this->assertTrue($validator->fails());
+        $this->assertSame(tkey('education.groups.validation.membership_cannot_be_removed'), $validator->errors()->first('membership_id'));
     }
 
     public function test_training_group_screen_save_and_member_modal_use_actions_and_requests(): void
@@ -605,15 +964,80 @@ class EducationGroupBlockTest extends TestCase
             LearningTopic::class,
             TrainingGroupSchedulePattern::class,
             TrainingGroupActivity::class,
+            GenerateTrainingGroupNumberAction::class,
+            CreateTrainingGroupAction::class,
+            UpdateTrainingGroupAction::class,
+            ChangeTrainingGroupStatusAction::class,
+            ArchiveTrainingGroupAction::class,
+            RecalculateTrainingGroupCapacityAction::class,
             CreateOrUpdateTrainingGroupAction::class,
             AddStudentToTrainingGroupAction::class,
             RemoveStudentFromTrainingGroupAction::class,
+            WaitlistStudentForTrainingGroupAction::class,
+            TransferStudentBetweenGroupsAction::class,
+            CompleteTrainingGroupMembershipAction::class,
+            CreateTrainingGroupSchedulePatternAction::class,
+            UpdateTrainingGroupSchedulePatternAction::class,
+            DeleteTrainingGroupSchedulePatternAction::class,
+            PublishTrainingGroupOnSiteAction::class,
+            HideTrainingGroupFromSiteAction::class,
+            AssignLearningProgramToGroupAction::class,
+            CreateLearningProgramAction::class,
+            UpdateLearningProgramAction::class,
+            CreateLearningProgramModuleAction::class,
+            UpdateLearningProgramModuleAction::class,
+            CreateLearningTopicAction::class,
+            UpdateLearningTopicAction::class,
+            AddTrainingGroupNoteAction::class,
             TrainingGroupRequest::class,
+            StoreTrainingGroupRequest::class,
+            UpdateTrainingGroupRequest::class,
+            ChangeTrainingGroupStatusRequest::class,
+            ArchiveTrainingGroupRequest::class,
+            AddStudentToTrainingGroupRequest::class,
+            RemoveStudentFromTrainingGroupRequest::class,
+            WaitlistStudentForTrainingGroupRequest::class,
+            TransferStudentBetweenGroupsRequest::class,
+            CompleteTrainingGroupMembershipRequest::class,
+            StoreTrainingGroupSchedulePatternRequest::class,
+            UpdateTrainingGroupSchedulePatternRequest::class,
+            DeleteTrainingGroupSchedulePatternRequest::class,
+            PublishTrainingGroupRequest::class,
+            HideTrainingGroupRequest::class,
+            AssignLearningProgramToGroupRequest::class,
+            StoreLearningProgramRequest::class,
+            UpdateLearningProgramRequest::class,
+            StoreLearningProgramModuleRequest::class,
+            UpdateLearningProgramModuleRequest::class,
+            StoreLearningTopicRequest::class,
+            UpdateLearningTopicRequest::class,
+            AddTrainingGroupNoteRequest::class,
             TrainingGroupStatusRequest::class,
             TrainingGroupMembershipRequest::class,
             LearningTopicRequest::class,
             TrainingGroupSchedulePatternRequest::class,
             TrainingGroupCanAcceptEnrollmentRule::class,
+            ValidTrainingGroupStatusTransitionRule::class,
+            TrainingGroupCanBeUpdatedRule::class,
+            TrainingGroupCanBeArchivedRule::class,
+            TrainingGroupCapacityRule::class,
+            ValidTrainingGroupCapacityValueRule::class,
+            StudentEnrollmentCanJoinGroupRule::class,
+            StudentEnrollmentNotAlreadyInActiveGroupRule::class,
+            TrainingGroupOpenForEnrollmentRule::class,
+            TrainingGroupCanAcceptApplicationsRule::class,
+            TrainingGroupDateRangeRule::class,
+            ValidDayOfWeekRule::class,
+            SchedulePatternTimeRangeRule::class,
+            DuplicateSchedulePatternRule::class,
+            ValidSchedulePatternTypeRule::class,
+            LearningProgramIsActiveRule::class,
+            ValidLearningProgramModuleTypeRule::class,
+            TranslatedGroupNameRequiredRule::class,
+            TranslatedLearningProgramNameRequiredRule::class,
+            GroupCanBePublishedRule::class,
+            GroupMembershipCanBeTransferredRule::class,
+            GroupMembershipCanBeRemovedRule::class,
             TrainingGroupEnrollmentMatchesProgramRule::class,
             TrainingGroupMembershipNotDuplicateRule::class,
             ActiveTrainingGroupStatusRule::class,
@@ -645,6 +1069,7 @@ class EducationGroupBlockTest extends TestCase
             'education.groups.view',
             'education.groups.create',
             'education.groups.update',
+            'education.groups.override_status_transition',
             'education.manage_statuses',
             'education.manage_memberships',
             'education.manage_schedule_patterns',

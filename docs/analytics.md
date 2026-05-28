@@ -1,72 +1,101 @@
-# Dashboard and Analytics Foundation
+# Reports, Analytics, Dashboard, and KPI Foundation
 
-Project baseline: follow [`docs/project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). Analytics work is Laravel + Orchid + Blade, uses Eloquent only, and keeps all visible admin/public text translatable.
+Project baseline: follow [`docs/project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). Analytics work is Laravel + Orchid + Blade, uses Eloquent only, and keeps all visible admin text translatable.
 
-This module is for one local driving school. It does not add tenants, subscription billing, reseller logic, platform-owner dashboards, or multi-company reporting.
+This module is for one local driving school. It does not add tenants, subscriptions, reseller reporting, platform-owner dashboards, multi-company reporting, third-party telemetry, an external business intelligence platform, a data warehouse, or artificial intelligence forecasting.
 
 ## Purpose
 
-The current analytics foundation is the local dashboard and lightweight operational counters. It gives staff a quick view of school activity without building a full reporting warehouse yet.
+Block 12 adds the foundation for local owner reporting and operational analytics:
 
-Current dashboard data includes:
+- owner dashboard widgets,
+- saved report definitions,
+- report run history,
+- report export records,
+- key performance indicator metrics,
+- key performance indicator targets,
+- daily or period snapshots,
+- analytics cache records,
+- per-user dashboard preferences.
 
-- active student count,
-- active enrollment count,
-- today's scheduled lessons,
-- scheduled exams,
-- active groups,
-- open CRM leads,
-- paid revenue total,
-- upcoming lesson list with student, program, branch, instructor, and vehicle context.
-
-Full historical analytics, chart widgets, cohort reporting, revenue forecasting, instructor utilization, and exportable management reports are future work.
+The first admin surface is a read-only owner dashboard in Orchid. It shows live counters, seeded widget definitions, saved reports, recent runs, and KPI snapshots.
 
 ## Data Sources
 
-Dashboard metrics are derived from existing local school tables:
+Dashboard and report data comes from existing local school modules:
 
-- `student_profiles`
-- `enrollments`
-- `driving_lessons`
-- `exams`
-- `training_groups`
-- `marketing_leads`
-- `payments`
+- CRM leads,
+- students and enrollments,
+- groups and schedules,
+- driving lessons,
+- student documents,
+- payments,
+- exam admissions, sessions, and attempts,
+- notification delivery records.
 
-The upcoming lesson list uses lesson records with eager loaded branch, instructor, vehicle, enrollment, student, and program context.
+The foundation intentionally reuses existing tables and relationships. It does not create a separate warehouse or duplicate operational records.
+
+## Reporting Model
+
+Report definitions describe reusable local reports such as lead pipeline, enrollment health, lesson utilization, payment summary, and exam readiness.
+
+Report runs store the filters, period, status, summary, row count, start time, finish time, and result payload. Report exports store export format, status, file name, row count, filters, and expiration metadata. The current foundation records exports; later work can attach generated files behind the same Action boundary.
+
+## KPI Model
+
+KPI metrics define what the school tracks. KPI targets define expected values by period and optional local scope such as branch, training program, or group. KPI snapshots store calculated values, target values, status, source payload, and calculation time.
+
+Supported target directions are increase, decrease, and maintain. Snapshot status is derived as on track, warning, off track, or neutral.
+
+## Analytics Cache
+
+Analytics cache records store reusable dashboard or report payloads with tags, refresh time, and expiration time. Long-running or expensive future widgets should refresh this cache through Actions or scheduled jobs instead of recalculating inside Orchid screens.
 
 ## Admin Surface
 
-The main platform dashboard reads prepared data from the dashboard Action. The Action is responsible for query shape, caching, limits, and eager loading.
+The Orchid owner dashboard:
 
-Do not calculate dashboard metrics directly in Blade.
+- prepares all data in an Action before rendering,
+- eager loads report and KPI relationships used by table rows,
+- displays metric counters through Orchid metrics,
+- exposes only local driving-school analytics,
+- is protected by analytics permissions.
 
-## Query Notes
+Do not calculate analytics metrics in Blade views, table render loops, or repeated conditionals.
 
-The current dashboard behavior:
+## Validation And Permissions
 
-- caches the main counters briefly,
-- limits upcoming lessons,
-- eager loads all displayed relationships,
-- uses model scopes where they exist,
-- keeps the dashboard local to one driving school.
+The foundation includes dedicated Form Requests and custom Rules for:
 
-Future analytics that touches large data should use scheduled cache refreshes, model scopes, and pre-aggregated tables or snapshots instead of repeated live aggregates in widgets.
+- report definitions,
+- report runs,
+- report exports,
+- KPI metrics,
+- KPI targets,
+- dashboard preferences,
+- analytics codes,
+- active reports,
+- active KPI metrics,
+- date ranges,
+- dashboard widget codes.
+
+Analytics permissions are part of the local superadmin permission set and are seeded with multilingual labels.
 
 ## Tests
 
-Relevant existing verification:
+Relevant verification:
 
+- `AnalyticsBlockFoundationTest`
 - `DrivingSchoolPlatformTest`
-- `EducationGroupBlockTest`
-- `ExamBlockFoundationTest`
+- `SystemLocalizationTest`
+- `SuperadminRoleTest`
 
-Future analytics work should add tests for metric permissions, cache invalidation, date boundaries, locale-safe labels, and query counts.
+Future analytics work should add focused tests for generated export files, scheduled cache refreshes, query-count regressions, and larger date ranges.
 
-## TODOs
+## Next Work
 
-- Add dashboard widgets backed by cached model aggregates.
-- Add historical snapshots for revenue, leads, enrollments, lessons, and exams.
-- Add instructor and vehicle utilization reports.
-- Add group capacity and student progress reporting.
-- Add CSV exports only through authorized Actions.
+- Add editable Orchid screens for managing report definitions, KPI metrics, and KPI targets.
+- Add authorized export file generation through Actions.
+- Add scheduled KPI snapshot refreshes.
+- Add instructor, vehicle, group capacity, and student progress reports.
+- Add chart widgets backed by cached snapshots.

@@ -251,6 +251,7 @@ class CommunicationModuleFoundationTest extends TestCase
         $admin = User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin-communications@example.test',
+            'preferred_locale' => 'en',
         ]);
 
         $admin->forceFill([

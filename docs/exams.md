@@ -10,11 +10,20 @@ The exam module connects student readiness, documents, payments, lessons, groups
 
 ## Storage
 
+- `exam_types`: translatable exam type dictionary for internal theory, internal practical, official theory placeholders, and official practical placeholders.
+- `exam_statuses`: translatable session lifecycle dictionary for draft, scheduled, open, in-progress, completed, cancelled, and archived sessions.
+- `exam_attempt_statuses`: translatable attempt lifecycle dictionary for planned, allowed, blocked, in-progress, passed, failed, no-show, cancelled, and archived attempts.
+- `exam_result_statuses`: translatable result lifecycle dictionary for pending, passed, failed, needs-retake, and cancelled outcomes.
+- `exam_admission_rules`: reusable readiness rules by exam type, course, and course category.
 - `exam_admissions`: readiness record for an enrollment and exam type.
 - `exam_admission_checklist_items`: readiness checklist items for documents, payment, and training hours.
-- `exam_sessions`: planned or completed internal sessions and official/state placeholders.
-- `exam_attempts`: scheduled attempts, results, failures, passes, no-shows, cancellations, and retakes.
-- `exam_activities`: activity timeline for admissions, sessions, attempts, and retakes.
+- `exam_sessions`: planned or completed internal sessions and official/state placeholders with normalized type and status links.
+- `exam_participants`: students registered into an exam session with admission and block-state tracking.
+- `exam_attempts`: scheduled attempts, results, failures, passes, no-shows, cancellations, and retakes with normalized attempt status links.
+- `exam_results`: scored or manually decided attempt outcomes with examiner comments and mistake summaries.
+- `exam_retakes`: retake planning links from failed, no-show, or cancelled attempts to the next attempt.
+- `exam_checklist_items`: session or attempt checklist items tied directly to a student and enrollment.
+- `exam_activities`: activity timeline for admissions, sessions, attempts, retakes, and result changes.
 
 The module reuses existing school data:
 
@@ -78,19 +87,29 @@ Rule failures use exam translation keys under `exams.validation.*`.
 
 Factories:
 
+- `ExamTypeFactory`
+- `ExamStatusFactory`
+- `ExamAttemptStatusFactory`
+- `ExamResultStatusFactory`
+- `ExamAdmissionRuleFactory`
 - `ExamAdmissionFactory`
 - `ExamAdmissionChecklistItemFactory`
 - `ExamSessionFactory`
+- `ExamParticipantFactory`
 - `ExamAttemptFactory`
+- `ExamResultFactory`
+- `ExamRetakeFactory`
+- `ExamChecklistItemFactory`
 - `ExamActivityFactory`
 
 Seeders:
 
+- `ExamDictionarySeeder`
 - `ExamTranslationSeeder`
 - `ExamDemoSeeder`
 - `ExamSeeder`
 
-Demo records are created through factories and reuse existing student, enrollment, group, payment, and document records when available.
+Dictionary and demo records are created through factories and reuse existing student, enrollment, group, payment, and document records when available.
 
 ## Permissions
 
@@ -123,6 +142,13 @@ Future screens should keep admissions, sessions, attempts, results, and retakes 
 - Actions for readiness, session scheduling, result recording, retakes, and activity history.
 - Custom rules, FormRequest classes, translated validation errors, and permissions.
 - Seeders and the Orchid exam route.
+
+`ExamDatabaseModelsTest` verifies:
+
+- The normalized exam database tables and requested columns.
+- Model creation and relationships for types, statuses, admission rules, sessions, participants, attempts, results, retakes, checklist items, and activities.
+- Translated display helpers and query scopes.
+- Dictionary seed records for local internal exams and official placeholders.
 
 ## TODOs
 

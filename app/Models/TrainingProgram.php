@@ -143,6 +143,16 @@ class TrainingProgram extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    public function examAdmissionRules(): HasMany
+    {
+        return $this->hasMany(ExamAdmissionRule::class, 'course_id');
+    }
+
+    public function examSessions(): HasMany
+    {
+        return $this->hasMany(ExamSession::class, 'training_program_id');
+    }
+
     public function groups(): HasMany
     {
         return $this->hasMany(TrainingGroup::class, 'training_program_id');

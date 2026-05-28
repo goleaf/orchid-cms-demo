@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -225,6 +226,26 @@ class StudentProfile extends Model
     public function examAttempts(): HasMany
     {
         return $this->hasMany(ExamAttempt::class, 'student_profile_id');
+    }
+
+    public function examParticipants(): HasMany
+    {
+        return $this->hasMany(ExamParticipant::class, 'student_id');
+    }
+
+    public function examChecklistItems(): HasMany
+    {
+        return $this->hasMany(ExamChecklistItem::class, 'student_id');
+    }
+
+    public function examResults(): HasManyThrough
+    {
+        return $this->hasManyThrough(ExamResult::class, ExamAttempt::class, 'student_profile_id', 'attempt_id');
+    }
+
+    public function examRetakes(): HasMany
+    {
+        return $this->hasMany(ExamRetake::class, 'student_id');
     }
 
     public function fullName(): string

@@ -68,6 +68,11 @@ class CourseCategory extends Model
         return $this->hasMany(PricingPackage::class);
     }
 
+    public function examAdmissionRules(): HasMany
+    {
+        return $this->hasMany(ExamAdmissionRule::class);
+    }
+
     public function displayName(?string $locale = null): string
     {
         return $this->getTranslation('name', $locale)

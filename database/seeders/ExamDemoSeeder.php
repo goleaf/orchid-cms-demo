@@ -132,19 +132,24 @@ class ExamDemoSeeder extends Seeder
                 ->only((new ExamSession)->getFillable()),
         );
 
+        $attemptData = ExamAttempt::factory()
+            ->forAdmission($admission)
+            ->forSession($session)
+            ->make([
+                'status' => ExamAttemptStatus::Scheduled,
+                'passed' => false,
+                'no_show' => false,
+            ])
+            ->only((new ExamAttempt)->getFillable());
+
+        $attemptData['no_show'] = false;
+
         ExamAttempt::query()->firstOrCreate(
             [
                 'exam_admission_id' => $admission->id,
                 'attempt_number' => 1,
             ],
-            ExamAttempt::factory()
-                ->forAdmission($admission)
-                ->forSession($session)
-                ->make([
-                    'status' => ExamAttemptStatus::Scheduled,
-                    'passed' => false,
-                ])
-                ->only((new ExamAttempt)->getFillable()),
+            $attemptData,
         );
     }
 }

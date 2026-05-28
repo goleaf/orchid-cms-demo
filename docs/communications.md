@@ -1,82 +1,92 @@
 # Communications, Reminders, and Notifications
 
-Project baseline: follow [`docs/project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). Communication work is Laravel + Orchid + Blade, uses Eloquent only, and keeps all visible admin/public text translatable.
+Project baseline: follow [`project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). Communication work is Laravel + Orchid + Blade, uses Eloquent only, and keeps all visible admin and validation text translatable.
 
 This module is for one local driving school. It does not add tenants, subscription billing, reseller logic, platform-owner dashboards, external messaging providers, or multi-company isolation.
 
 ## Purpose
 
-The communication foundation prepares shared records for student follow-ups, CRM follow-ups, reminders, templates, user preferences, and delivery history.
+The communication foundation gives the school one place to manage internal notifications, reusable message templates, scheduled reminders, user preferences, student communication history, CRM lead communication history, and delivery logs.
 
-Current committed behavior is schema-level foundation. It supports later admin screens, Actions, jobs, and provider integrations without adding them prematurely.
+CRM lead calls and notes continue to use the existing lead communication history. Student communication history is stored separately and can link back to the original lead, enrollment, reminder, template, and channel.
 
-CRM already has lead communication records for calls and lead history. This module prepares the broader cross-module communication layer for students and internal notifications.
+## Admin Surface
+
+The Orchid administration area now exposes communication pages for:
+
+- notification channels,
+- message templates,
+- scheduled reminders,
+- delivery logs.
+
+Protected pages require the communications permissions seeded for the local superadmin role. Destructive provider behavior is not present because external providers are placeholders only.
 
 ## Storage
 
-The committed communication foundation creates:
+The module uses these records:
 
-- `notification_channels`: available internal or external channels with provider/settings placeholders.
-- `communication_templates`: reusable multilingual message templates by type and channel.
+- `notification_channels`: internal, email, phone, and future external channel definitions.
+- `communication_templates`: multilingual subjects and bodies by type and channel.
+- `communication_reminders`: scheduled follow-ups for leads, students, enrollments, assignees, channels, and templates.
+- `notification_delivery_logs`: queue, sent, failed, skipped, and read history for internal and future external delivery.
 - `user_notification_preferences`: per-user channel and event preferences.
-- `communication_reminders`: scheduled reminders linked to leads, students, enrollments, assignees, channels, and templates.
-- `student_communications`: student communication timeline entries linked to students, enrollments, leads, templates, and reminders.
-- `notification_delivery_logs`: outbound or inbound delivery history for users, students, leads, communications, reminders, and templates.
+- `student_communications`: student timeline entries for calls, emails, reminders, and future messages.
+- Existing CRM lead communication records remain the CRM lead history.
 
-Existing CRM communication records remain under the CRM lead workflow until a later consolidation step is designed.
+## Channels
 
-## Scope Boundaries
+The seeded channels are:
 
-In scope now:
+- internal admin notifications through the database notification channel,
+- email through the current Laravel mail configuration,
+- phone as manual call history,
+- SMS placeholder,
+- WhatsApp placeholder,
+- Telegram placeholder.
 
-- local schema for reminders and delivery logs,
-- multilingual names, subjects, and bodies where the schema stores user-visible content,
-- relationships to leads, students, enrollments, users, channels, and templates,
-- indexes for due reminder queues and delivery history lookup.
-
-Out of scope now:
-
-- SMS, email, WhatsApp, telephony, or push provider integration,
-- queued sending jobs,
-- provider callback handling,
-- communication admin screens,
-- automated notification rules,
-- AI-generated messages.
+The placeholder channels intentionally do not send real messages. They can create skipped delivery logs so the workflow is traceable before a provider is selected.
 
 ## Data Flow
 
-Future Actions should create reminders and student communications from CRM, student, document, payment, exam, and schedule workflows.
+Actions handle the write paths:
 
-Future Jobs should read due reminders by status and due time, resolve channel preferences, render templates, create delivery logs, and update delivery status.
+- create or update channels, templates, and reminders,
+- render templates with named variables,
+- log student communication history,
+- create internal admin notifications,
+- record notification delivery attempts,
+- mark placeholder external channels as skipped,
+- complete scheduled reminders.
 
-Public website lead intake can continue to create CRM communication records and internal notifications. A later change can map those events into this shared layer after the model and admin workflow are implemented.
+Screens and controllers should pass prepared data into views. Blade templates must not query communications, reminders, templates, or delivery logs directly.
 
 ## Query Notes
 
-The schema already includes indexes for:
+The schema includes indexes for:
 
 - active notification channels by sort order,
-- active templates by channel/type,
-- notification preferences by channel, event, and enabled flag,
-- reminders by status, assignee, due time, lead, and student,
-- student communications by student, lead, channel, and communication time,
-- delivery logs by status, channel, lead, student, recipient, and created time.
+- active templates by channel and type,
+- reminder status, assignee, due date, lead, and student,
+- student communication timelines by student, lead, channel, and communication time,
+- delivery logs by status, channel, lead, student, recipient, and created time,
+- user preferences by channel, event, and enabled state.
 
-Use Eloquent scopes and Actions for queue-ready queries. Do not add raw SQL or query from Blade.
+Use Eloquent scopes and Actions for queue-ready queries. Do not add raw SQL or query from Blade or table render loops.
 
-## Tests
+## Verification
 
-Relevant existing verification:
+Focused verification:
 
-- `ExamBlockFoundationTest` for the committed schema foundation.
-- CRM lead communication tests for the existing lead-level communication workflow.
+```bash
+php artisan test --filter=CommunicationModuleFoundationTest
+```
 
-Future communication work should add focused tests for template validation, reminder scheduling, delivery log writes, notification preferences, authorization, and translation keys.
+Shared checks after communication admin changes:
 
-## TODOs
+```bash
+php artisan test --filter=DrivingSchoolPlatformTest
+php artisan test --filter=SystemLocalizationTest
+php artisan test --filter=SuperadminRoleTest
+```
 
-- Add Eloquent models, factories, and seeders for the shared communication foundation.
-- Add admin screens for channels, templates, reminders, and delivery logs.
-- Add Actions for scheduling, completing, cancelling, and sending reminders.
-- Add queued jobs for due reminders and provider delivery.
-- Add safe provider integrations only after local school workflows are proven.
+Run the full suite when communication changes touch shared permissions, translations, student history, CRM history, or admin navigation.

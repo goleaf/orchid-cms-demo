@@ -218,6 +218,11 @@ class TrainingGroup extends Model
         return $this->hasMany(ExamSession::class);
     }
 
+    public function examSessionAliases(): HasMany
+    {
+        return $this->hasMany(ExamSession::class, 'group_id');
+    }
+
     public function examAttempts(): HasMany
     {
         return $this->hasMany(ExamAttempt::class);

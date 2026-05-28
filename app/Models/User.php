@@ -74,6 +74,21 @@ class User extends Authenticatable
         return $this->hasMany(UserNotificationPreference::class);
     }
 
+    public function dashboardPreferences(): HasMany
+    {
+        return $this->hasMany(UserDashboardPreference::class);
+    }
+
+    public function reportRuns(): HasMany
+    {
+        return $this->hasMany(ReportRun::class, 'created_by_id');
+    }
+
+    public function reportExports(): HasMany
+    {
+        return $this->hasMany(ReportExport::class, 'created_by_id');
+    }
+
     public function communicationReminders(): HasMany
     {
         return $this->hasMany(CommunicationReminder::class, 'assigned_to_user_id');

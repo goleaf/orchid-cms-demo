@@ -58,6 +58,11 @@ class Vehicle extends Model
         return $this->hasMany(DrivingLesson::class);
     }
 
+    public function examSessions(): HasMany
+    {
+        return $this->hasMany(ExamSession::class);
+    }
+
     public function label(): string
     {
         return "{$this->make} {$this->model} {$this->registration_number}";

@@ -19,6 +19,7 @@ use App\Models\ReportDefinition;
 use App\Models\ReportRun;
 use App\Models\User;
 use BackedEnum;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use InvalidArgumentException;
 
@@ -109,7 +110,7 @@ class RunReportDefinitionAction
      */
     private function lessonUtilizationSummary(array $filters): array
     {
-        $query = $this->applyCommonFilters(DrivingLesson::query()->select(['id', 'status', 'training_program_id', 'branch_id']), $filters);
+        $query = $this->applyCommonFilters(DrivingLesson::query()->select(['id', 'status', 'branch_id']), $filters);
 
         return [
             'row_count' => $this->applyCommonFilters(DrivingLesson::query(), $filters)->count(),
@@ -162,11 +163,11 @@ class RunReportDefinitionAction
     private function applyCommonFilters(Builder $query, array $filters): Builder
     {
         if (filled($filters['period_start'] ?? null)) {
-            $query->where('created_at', '>=', $filters['period_start']);
+            $query->where('created_at', '>=', Carbon::parse((string) $filters['period_start'])->startOfDay());
         }
 
         if (filled($filters['period_end'] ?? null)) {
-            $query->where('created_at', '<=', $filters['period_end']);
+            $query->where('created_at', '<=', Carbon::parse((string) $filters['period_end'])->endOfDay());
         }
 
         if (filled($filters['branch_id'] ?? null) && $this->modelHasColumn($query, 'branch_id')) {

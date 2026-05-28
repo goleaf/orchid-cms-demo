@@ -40,6 +40,12 @@ class PlatformProvider extends OrchidServiceProvider
                 ->title(tkey('menu.navigation'))
                 ->route(config('platform.index')),
 
+            Menu::make(tkey('menu.analytics.dashboard'))
+                ->icon('bs.graph-up-arrow')
+                ->route('platform.analytics.dashboard')
+                ->permission('analytics.dashboard.view')
+                ->title(tkey('menu.analytics')),
+
             Menu::make(tkey('menu.content.home'))
                 ->icon('bs.layout-text-window-reverse')
                 ->route('platform.content.home')
@@ -362,6 +368,16 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('platform.content.home', tkey('permissions.content.home'))
                 ->addPermission('platform.lms.programs', tkey('permissions.lms.programs'))
                 ->addPermission('platform.documents', tkey('permissions.documents')),
+
+            ItemPermission::group(tkey('permissions.groups.analytics'))
+                ->addPermission('analytics.dashboard.view', tkey('permissions.analytics.dashboard.view'))
+                ->addPermission('analytics.reports.manage', tkey('permissions.analytics.reports.manage'))
+                ->addPermission('analytics.reports.run', tkey('permissions.analytics.reports.run'))
+                ->addPermission('analytics.reports.export', tkey('permissions.analytics.reports.export'))
+                ->addPermission('analytics.kpis.manage', tkey('permissions.analytics.kpis.manage'))
+                ->addPermission('analytics.kpi_targets.manage', tkey('permissions.analytics.kpi_targets.manage'))
+                ->addPermission('analytics.preferences.manage', tkey('permissions.analytics.preferences.manage'))
+                ->addPermission('analytics.cache.view', tkey('permissions.analytics.cache.view')),
 
             ItemPermission::group(tkey('permissions.groups.website'))
                 ->addPermission('website.view', tkey('permissions.website.view'))

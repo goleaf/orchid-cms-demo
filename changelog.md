@@ -2,6 +2,19 @@
 
 ## 2026-05-28
 
+- Added a stronger exam management foundation with exam types, statuses, admission rules, participants, results, retakes, and checklist tracking
+- Added an owner analytics dashboard with key school metrics, report summaries, recent report runs, and performance snapshots
+- Improved seeded website pages with clearer multilingual content, search descriptions, sharing details, and legal page coverage
+- Expanded project documentation for analytics, exams, communications, and notifications
+- Added broader automated coverage for analytics, exam records, education groups, public website setup, and communication flows
+
+- Added normalized exam dictionaries, admission rules, participants, results, retakes, checklist items, and activity links for the local exam workflow
+- Expanded exam verification so translated labels, relationships, scopes, and seed data are checked automatically
+
+- Added the local owner dashboard foundation with report setup, report run tracking, export records, KPI metrics, targets, snapshots, analytics cache records, and personal dashboard preferences
+- Added analytics permissions, translated admin labels, validation rules, sample setup data, and automated checks for the new reporting foundation
+
+- Added the communication module foundation for internal notifications, reusable messages, reminders, delivery history, user preferences, student contact history, CRM lead contact history, and future messaging placeholders
 - Added the first analytics tools for tracking school performance, reports, targets, and dashboard preferences
 - Added communication management pages for channels, message templates, reminders, and delivery history
 - Improved validation around training groups, schedules, learning programs, and student group membership

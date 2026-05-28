@@ -16,13 +16,14 @@ class CreateTrainingGroupAction
     {
         $status = $this->status($data['status_id'] ?? null, $data['status'] ?? null);
         $groupNumber = $data['group_number'] ?? app(GenerateTrainingGroupNumberAction::class)->handle();
+        $legacyStatus = $this->legacyStatusValue($data['status'] ?? null, $status?->code);
 
         $data = [
             'uuid' => $data['uuid'] ?? null,
             'group_number' => $groupNumber,
             'code' => $data['code'] ?? $groupNumber,
             'status_id' => $status?->id,
-            'status' => $data['status'] ?? $this->legacyStatusFor($status?->code)->value,
+            'status' => $legacyStatus,
             'capacity' => (int) ($data['capacity'] ?? $data['capacity_total'] ?? 12),
             'capacity_total' => (int) ($data['capacity_total'] ?? $data['capacity'] ?? 12),
             'capacity_reserved' => (int) ($data['capacity_reserved'] ?? 0),
@@ -37,6 +38,7 @@ class CreateTrainingGroupAction
             ...$data,
         ];
 
+        $data['status'] = $legacyStatus;
         $data['name'] = $data['name'] ?? $this->fallbackName($data, $groupNumber);
 
         $group = TrainingGroup::query()->create($data);
@@ -76,6 +78,19 @@ class CreateTrainingGroupAction
             'cancelled' => GroupStatus::Cancelled,
             default => GroupStatus::Planned,
         };
+    }
+
+    private function legacyStatusValue(mixed $value, ?string $dictionaryCode): string
+    {
+        if ($value instanceof GroupStatus) {
+            return $value->value;
+        }
+
+        if (is_string($value) && in_array($value, array_column(GroupStatus::cases(), 'value'), true)) {
+            return $value;
+        }
+
+        return $this->legacyStatusFor($dictionaryCode)->value;
     }
 
     /**

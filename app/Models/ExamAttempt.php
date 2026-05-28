@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 class ExamAttempt extends Model
@@ -22,6 +23,7 @@ class ExamAttempt extends Model
         'exam_admission_id',
         'exam_session_id',
         'enrollment_id',
+        'student_id',
         'student_profile_id',
         'training_group_id',
         'training_program_id',
@@ -33,10 +35,13 @@ class ExamAttempt extends Model
         'exam_type',
         'provider',
         'status',
+        'status_id',
         'attempt_number',
+        'attempt_no',
         'score',
         'max_score',
         'passed',
+        'no_show',
         'result_payload',
         'started_at',
         'finished_at',
@@ -53,9 +58,11 @@ class ExamAttempt extends Model
         'exam_type' => ExamType::class,
         'status' => ExamAttemptStatus::class,
         'attempt_number' => 'integer',
+        'attempt_no' => 'integer',
         'score' => 'decimal:2',
         'max_score' => 'decimal:2',
         'passed' => 'boolean',
+        'no_show' => 'boolean',
         'result_payload' => 'array',
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
@@ -68,6 +75,22 @@ class ExamAttempt extends Model
         static::creating(function (self $attempt): void {
             if (blank($attempt->uuid)) {
                 $attempt->uuid = (string) Str::uuid();
+            }
+
+            if ($attempt->student_id === null && $attempt->student_profile_id !== null) {
+                $attempt->student_id = $attempt->student_profile_id;
+            }
+
+            if ($attempt->student_profile_id === null && $attempt->student_id !== null) {
+                $attempt->student_profile_id = $attempt->student_id;
+            }
+
+            if ($attempt->attempt_no === null && $attempt->attempt_number !== null) {
+                $attempt->attempt_no = $attempt->attempt_number;
+            }
+
+            if ($attempt->attempt_number === null && $attempt->attempt_no !== null) {
+                $attempt->attempt_number = $attempt->attempt_no;
             }
         });
     }
@@ -82,6 +105,11 @@ class ExamAttempt extends Model
         return $this->belongsTo(ExamSession::class, 'exam_session_id');
     }
 
+    public function statusRecord(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\ExamAttemptStatus::class, 'status_id');
+    }
+
     public function enrollment(): BelongsTo
     {
         return $this->belongsTo(StudentEnrollment::class, 'enrollment_id');
@@ -90,6 +118,11 @@ class ExamAttempt extends Model
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'student_profile_id');
+    }
+
+    public function studentAlias(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
     public function group(): BelongsTo
@@ -132,6 +165,21 @@ class ExamAttempt extends Model
         return $this->hasMany(self::class, 'retake_of_attempt_id');
     }
 
+    public function result(): HasOne
+    {
+        return $this->hasOne(ExamResult::class, 'attempt_id');
+    }
+
+    public function previousRetake(): HasOne
+    {
+        return $this->hasOne(ExamRetake::class, 'previous_attempt_id');
+    }
+
+    public function newRetake(): HasOne
+    {
+        return $this->hasOne(ExamRetake::class, 'new_attempt_id');
+    }
+
     public function activities(): HasMany
     {
         return $this->hasMany(ExamActivity::class);
@@ -145,5 +193,33 @@ class ExamAttempt extends Model
             ExamAttemptStatus::NoShow->value,
             ExamAttemptStatus::Cancelled->value,
         ]);
+    }
+
+    public function scopePassed(Builder $query): Builder
+    {
+        return $query->where('passed', true);
+    }
+
+    public function scopeFailed(Builder $query): Builder
+    {
+        return $query->where('status', ExamAttemptStatus::Failed->value);
+    }
+
+    public function scopeNoShow(Builder $query): Builder
+    {
+        return $query->where('no_show', true)
+            ->orWhere('status', ExamAttemptStatus::NoShow->value);
+    }
+
+    public function scopeInProgress(Builder $query): Builder
+    {
+        return $query->where('status', ExamAttemptStatus::InProgress->value);
+    }
+
+    public function displayStatus(?string $locale = null): string
+    {
+        return $this->statusRecord?->displayName($locale)
+            ?: tkey('exams.attempt_statuses.'.$this->status->value)
+            ?: $this->status->value;
     }
 }

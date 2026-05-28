@@ -16,8 +16,10 @@ class ExamActivity extends Model
         'exam_admission_id',
         'exam_session_id',
         'exam_attempt_id',
+        'attempt_id',
         'enrollment_id',
         'student_profile_id',
+        'student_id',
         'training_group_id',
         'user_id',
         'type',
@@ -47,6 +49,11 @@ class ExamActivity extends Model
         return $this->belongsTo(ExamAttempt::class, 'exam_attempt_id');
     }
 
+    public function attemptAlias(): BelongsTo
+    {
+        return $this->belongsTo(ExamAttempt::class, 'attempt_id');
+    }
+
     public function enrollment(): BelongsTo
     {
         return $this->belongsTo(StudentEnrollment::class, 'enrollment_id');
@@ -55,6 +62,11 @@ class ExamActivity extends Model
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'student_profile_id');
+    }
+
+    public function studentAlias(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
     public function group(): BelongsTo

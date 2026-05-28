@@ -22,19 +22,27 @@ class ExamSessionFactory extends Factory
     public function definition(): array
     {
         $type = $this->faker->randomElement(ExamType::cases());
+        $startsAt = now()->addDays($this->faker->numberBetween(3, 30))->setTime($this->faker->numberBetween(8, 16), 0);
 
         return [
             'uuid' => (string) Str::uuid(),
+            'exam_number' => 'EXM-'.$this->faker->unique()->numerify('######'),
+            'type_id' => null,
+            'status_id' => null,
             'branch_id' => Branch::factory(),
+            'group_id' => null,
             'training_program_id' => TrainingProgram::factory(),
             'training_group_id' => null,
             'instructor_id' => Instructor::factory(),
             'vehicle_id' => null,
+            'classroom_id' => null,
             'exam_type' => $type,
             'provider' => $type->provider(),
             'status' => ExamSessionStatus::Planned,
-            'starts_at' => now()->addDays($this->faker->numberBetween(3, 30))->setTime($this->faker->numberBetween(8, 16), 0),
-            'ends_at' => now()->addDays($this->faker->numberBetween(3, 30))->setTime($this->faker->numberBetween(10, 18), 0),
+            'scheduled_at' => $startsAt,
+            'examiner_id' => User::factory(),
+            'starts_at' => $startsAt,
+            'ends_at' => (clone $startsAt)->addHour(),
             'location' => $this->faker->randomElement(['Main classroom', 'Practice yard', 'State exam office']),
             'capacity' => $this->faker->numberBetween(1, 16),
             'seats_taken' => 0,
@@ -88,6 +96,7 @@ class ExamSessionFactory extends Factory
     {
         return $this->state(fn (): array => [
             'branch_id' => $group->branch_id,
+            'group_id' => $group->id,
             'training_program_id' => $group->training_program_id,
             'training_group_id' => $group->id,
             'instructor_id' => $group->instructor_id,

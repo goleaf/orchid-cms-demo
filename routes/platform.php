@@ -6,6 +6,7 @@ use App\Orchid\Screens\LandingPage\LandingPageEditScreen;
 use App\Orchid\Screens\PlatformScreen;
 use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
+use App\Orchid\Screens\School\AnalyticsDashboardScreen;
 use App\Orchid\Screens\School\BranchEditScreen;
 use App\Orchid\Screens\School\BranchListScreen;
 use App\Orchid\Screens\School\CampaignListScreen;
@@ -90,6 +91,12 @@ use Tabuna\Breadcrumbs\Trail;
 // Main
 Route::screen('/main', PlatformScreen::class)
     ->name('platform.main');
+
+Route::screen('analytics/dashboard', AnalyticsDashboardScreen::class)
+    ->name('platform.analytics.dashboard')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.analytics.dashboard'), route('platform.analytics.dashboard')));
 
 // Content > Homepage
 Route::screen('content/home', LandingPageEditScreen::class)
