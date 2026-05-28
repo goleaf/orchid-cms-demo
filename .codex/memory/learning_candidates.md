@@ -1846,3 +1846,25 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T03:01:44+00:00
+
+```json
+{
+  "ts": "2026-05-28T03:01:44+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6c7d-c234-7742-ab3d-95c04460b6b9",
+  "branch": "main",
+  "changed_file_count": 2,
+  "changed_file_groups": {
+    "code": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "docs/crm-leads.md",
+    "tests/Feature/CrmFinalHardeningTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
