@@ -2,9 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Enums\KpiMetricGroup;
+use App\Enums\KpiUnit;
 use App\Models\KpiMetric;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<KpiMetric>
@@ -12,6 +15,27 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class KpiMetricFactory extends Factory
 {
     protected $model = KpiMetric::class;
+
+    public function configure(): static
+    {
+        return $this->afterMaking(function (KpiMetric $metric): void {
+            if (filled($metric->category) && $metric->metric_group === KpiMetricGroup::Students->value) {
+                $metric->metric_group = $this->groupForLegacyCategory((string) $metric->category);
+            }
+
+            if (filled($metric->value_type)) {
+                $legacyUnit = $this->unitForLegacyValueType((string) $metric->value_type);
+
+                if (! in_array((string) $metric->unit, KpiUnit::values(), true) || ((string) $metric->unit === KpiUnit::Count->value && $legacyUnit !== KpiUnit::Count->value)) {
+                    $metric->unit = $legacyUnit;
+                }
+            }
+
+            if (blank($metric->calculation_type) && filled($metric->calculation)) {
+                $metric->calculation_type = (string) $metric->calculation;
+            }
+        });
+    }
 
     /**
      * @return array<string, mixed>
@@ -22,12 +46,15 @@ class KpiMetricFactory extends Factory
         $name = str($code)->replace('-', ' ')->title()->toString();
 
         return [
+            'uuid' => (string) Str::uuid(),
             'code' => $code,
             'name_translations' => $this->translations($name),
             'description_translations' => $this->translations($this->faker->sentence(10)),
-            'category' => $this->faker->randomElement(['operations', 'crm', 'education', 'finance', 'exams']),
-            'value_type' => 'number',
-            'unit' => null,
+            'metric_group' => KpiMetricGroup::Students->value,
+            'category' => KpiMetricGroup::Students->value,
+            'value_type' => KpiUnit::Count->value,
+            'unit' => KpiUnit::Count->value,
+            'calculation_type' => 'manual',
             'calculation' => null,
             'source' => null,
             'is_system' => false,
@@ -53,6 +80,34 @@ class KpiMetricFactory extends Factory
         return $this->state(fn (): array => ['is_active' => false]);
     }
 
+    public function group(KpiMetricGroup|string $group): static
+    {
+        $value = $group instanceof KpiMetricGroup ? $group->value : $group;
+
+        return $this->state(fn (): array => [
+            'metric_group' => $value,
+            'category' => $value,
+        ]);
+    }
+
+    public function unit(KpiUnit|string $unit): static
+    {
+        $value = $unit instanceof KpiUnit ? $unit->value : $unit;
+
+        return $this->state(fn (): array => [
+            'unit' => $value,
+            'value_type' => $value,
+        ]);
+    }
+
+    public function calculationType(string $type): static
+    {
+        return $this->state(fn (): array => [
+            'calculation_type' => $type,
+            'calculation' => $type,
+        ]);
+    }
+
     public function createdBy(User $user): static
     {
         return $this->state(fn (): array => [
@@ -72,5 +127,30 @@ class KpiMetricFactory extends Factory
             'lt' => $value,
             'pl' => $value,
         ];
+    }
+
+    private function groupForLegacyCategory(string $category): string
+    {
+        return match ($category) {
+            'crm', 'sales' => KpiMetricGroup::Sales->value,
+            'finance' => KpiMetricGroup::Finance->value,
+            'education' => KpiMetricGroup::Education->value,
+            'exams' => KpiMetricGroup::Exams->value,
+            'notifications' => KpiMetricGroup::Notifications->value,
+            'operations' => KpiMetricGroup::Lessons->value,
+            default => KpiMetricGroup::Staff->value,
+        };
+    }
+
+    private function unitForLegacyValueType(string $valueType): string
+    {
+        return match ($valueType) {
+            'percent', 'percentage' => KpiUnit::Percent->value,
+            'money', 'currency' => KpiUnit::Money->value,
+            'hours' => KpiUnit::Hours->value,
+            'days' => KpiUnit::Days->value,
+            'ratio' => KpiUnit::Ratio->value,
+            default => KpiUnit::Count->value,
+        };
     }
 }

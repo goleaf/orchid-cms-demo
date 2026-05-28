@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Analytics;
 
+use App\Enums\KpiMetricGroup;
+use App\Enums\KpiUnit;
 use App\Models\KpiMetric;
 use App\Rules\AnalyticsCodeRule;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -25,9 +27,11 @@ class KpiMetricRequest extends FormRequest
             'metric.code' => ['required', 'string', 'max:120', new AnalyticsCodeRule],
             'metric.name_translations' => ['required', 'array'],
             'metric.description_translations' => ['nullable', 'array'],
-            'metric.category' => ['required', 'string', 'max:80'],
-            'metric.value_type' => ['required', 'string', 'max:40'],
-            'metric.unit' => ['nullable', 'string', 'max:40'],
+            'metric.metric_group' => ['required_without:metric.category', Rule::enum(KpiMetricGroup::class)],
+            'metric.unit' => ['required_without:metric.value_type', Rule::enum(KpiUnit::class)],
+            'metric.calculation_type' => ['nullable', 'string', 'max:255'],
+            'metric.category' => ['nullable', 'string', 'max:80'],
+            'metric.value_type' => ['nullable', 'string', 'max:40'],
             'metric.calculation' => ['nullable', 'string', 'max:255'],
             'metric.source' => ['nullable', 'string', 'max:255'],
             'metric.settings' => ['nullable', 'array'],
@@ -55,6 +59,11 @@ class KpiMetricRequest extends FormRequest
         $data = $this->validated('metric');
         $data['is_active'] = (bool) ($data['is_active'] ?? true);
         $data['sort_order'] = (int) ($data['sort_order'] ?? 0);
+        $data['metric_group'] = $data['metric_group'] ?? ($data['category'] ?? null);
+        $data['unit'] = $data['unit'] ?? ($data['value_type'] ?? null);
+        $data['category'] = $data['category'] ?? $data['metric_group'];
+        $data['value_type'] = $data['value_type'] ?? $data['unit'];
+        $data['calculation'] = $data['calculation'] ?? ($data['calculation_type'] ?? null);
 
         return $data;
     }

@@ -2,6 +2,8 @@
 
 ## 2026-05-28
 
+- KPI setup now has a clearer local data model for metric definitions, targets, snapshots, translated labels, period ranges, thresholds, and branch or staff ownership
+
 - Added reusable exam sample builders and repeatable exam setup data for default types, statuses, admission rules, translations, and local demo records
 
 - Added a dashboard and widget data model for local analytics, including translated labels, default owner dashboard setup, user layout preferences, and automated checks

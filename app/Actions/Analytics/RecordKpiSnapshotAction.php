@@ -44,8 +44,12 @@ class RecordKpiSnapshotAction
             [
                 'kpi_metric_id' => $metric->id,
                 'period' => $period->value,
+                'period_type' => $period->value,
                 'snapshot_date' => $date,
+                'period_start' => $date,
+                'period_end' => $date,
                 'branch_id' => $target?->branch_id,
+                'user_id' => $target?->user_id,
                 'training_program_id' => $target?->training_program_id,
                 'training_group_id' => $target?->training_group_id,
             ],
@@ -54,6 +58,7 @@ class RecordKpiSnapshotAction
                 'target_value' => $target?->target_value,
                 'status' => $this->statusFor($value, $target),
                 'source_payload' => $sourcePayload,
+                'metadata' => $sourcePayload,
                 'calculated_at' => now(),
             ],
         );
@@ -63,12 +68,21 @@ class RecordKpiSnapshotAction
     {
         return KpiTarget::query()
             ->where('kpi_metric_id', $metric->id)
-            ->where('period', $period->value)
-            ->where('starts_on', '<=', $date)
+            ->where(function ($query) use ($period): void {
+                $query->where('period_type', $period->value)
+                    ->orWhere('period', $period->value);
+            })
             ->where(function ($query) use ($date): void {
-                $query->whereNull('ends_on')
+                $query->where('period_start', '<=', $date)
+                    ->orWhere('starts_on', '<=', $date);
+            })
+            ->where(function ($query) use ($date): void {
+                $query->whereNull('period_end')
+                    ->orWhere('period_end', '>=', $date)
+                    ->orWhereNull('ends_on')
                     ->orWhere('ends_on', '>=', $date);
             })
+            ->orderByDesc('period_start')
             ->orderByDesc('starts_on')
             ->first();
     }

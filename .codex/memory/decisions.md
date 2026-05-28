@@ -34,3 +34,7 @@
 - Block 12 dashboard definitions use analytics_dashboards linked to dashboard_widgets and user_dashboard_preferences for local role audiences only; dashboard data must not gain SaaS tenant, subscription, reseller, platform-owner, or multi-company dimensions.
   Evidence: Added additive dashboard schema, AnalyticsDashboard model, widget/preference relationships, factories, demo seed data, documentation, and AnalyticsDashboardDataModelTest.
   Added: 2026-05-28T14:00:00+03:00
+
+- Block 12 KPI metrics, targets, and snapshots use local analytics tables with metric groups, units, period ranges, thresholds, optional branch/user scope, translated metric labels, and snapshot metadata; they must not gain SaaS tenant, subscription, reseller, platform-owner, or multi-company dimensions.
+  Evidence: Added additive KPI schema, KPI enums, model relationships, factories, docs, and AnalyticsKpiDataModelTest.
+  Added: 2026-05-28T17:00:00+03:00
