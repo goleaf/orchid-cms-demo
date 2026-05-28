@@ -4,6 +4,8 @@
 
 - Analytics validation now checks report filters, export formats, KPI periods and targets, dashboard widget settings, cache keys, permissions, and optional module availability with translated messages
 
+- Added repeatable notification setup data for default channels, message templates, reminder rules, translations, and local demo communication history
+
 - Added exam administration pages for sessions, admissions, attempts, results, retakes, and exam settings with translated labels and area-specific permissions
 
 - Analytics now has core local calculation actions for owner dashboard summaries, widget data, report runs, exports, KPI snapshots, cache refreshes, date ranges, and filters

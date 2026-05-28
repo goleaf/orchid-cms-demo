@@ -57,6 +57,7 @@ class DatabaseSeeder extends Seeder
             StudentDictionarySeeder::class,
             StudentTranslationSeeder::class,
             CommunicationSeeder::class,
+            NotificationSeeder::class,
             EducationSeeder::class,
             ExamTranslationSeeder::class,
             ExamDictionarySeeder::class,

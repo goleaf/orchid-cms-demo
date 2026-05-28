@@ -37,6 +37,41 @@ class NotificationTemplateVersionFactory extends Factory
         ]);
     }
 
+    public function draft(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => NotificationTemplateVersion::STATUS_DRAFT,
+            'published_at' => null,
+            'published_by_id' => null,
+        ]);
+    }
+
+    public function archived(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => NotificationTemplateVersion::STATUS_ARCHIVED,
+            'published_at' => null,
+        ]);
+    }
+
+    public function translated(): static
+    {
+        return $this->state(fn (): array => [
+            'subject_translations' => [
+                'ru' => 'Тема уведомления',
+                'en' => 'Notification subject',
+                'lt' => 'Pranesimo tema',
+                'pl' => 'Temat powiadomienia',
+            ],
+            'body_translations' => [
+                'ru' => 'Текст уведомления для {{ student_name }}.',
+                'en' => 'Notification body for {{ student_name }}.',
+                'lt' => 'Pranesimo tekstas: {{ student_name }}.',
+                'pl' => 'Tresc powiadomienia dla {{ student_name }}.',
+            ],
+        ]);
+    }
+
     /**
      * @return array<string, string>
      */

@@ -29,6 +29,96 @@ class ReminderRuleFactory extends Factory
         ];
     }
 
+    public function lessonTomorrow(): static
+    {
+        return $this->reminderState(
+            'lesson_tomorrow',
+            'Lesson tomorrow',
+            ReminderRule::TRIGGER_BEFORE_LESSON,
+            'student',
+            -1440,
+        );
+    }
+
+    public function lessonOneHourBefore(): static
+    {
+        return $this->reminderState(
+            'lesson_one_hour_before',
+            'Lesson one hour before',
+            ReminderRule::TRIGGER_BEFORE_LESSON,
+            'student',
+            -60,
+        );
+    }
+
+    public function paymentDue(): static
+    {
+        return $this->reminderState(
+            'payment_due',
+            'Payment due',
+            ReminderRule::TRIGGER_BEFORE_PAYMENT_DUE,
+            'student',
+            -1440,
+        );
+    }
+
+    public function documentMissing(): static
+    {
+        return $this->reminderState(
+            'document_missing',
+            'Document missing',
+            ReminderRule::TRIGGER_MANUAL,
+            'student',
+            0,
+        );
+    }
+
+    public function examReminder(): static
+    {
+        return $this->reminderState(
+            'exam_reminder',
+            'Exam reminder',
+            ReminderRule::TRIGGER_BEFORE_EXAM,
+            'student',
+            -1440,
+        );
+    }
+
+    public function leadFollowUp(): static
+    {
+        return $this->reminderState(
+            'lead_follow_up',
+            'Lead follow-up',
+            ReminderRule::TRIGGER_AFTER_SIGNUP,
+            'lead',
+            1440,
+        );
+    }
+
+    public function active(): static
+    {
+        return $this->state(fn (): array => [
+            'is_active' => true,
+        ]);
+    }
+
+    private function reminderState(
+        string $code,
+        string $name,
+        string $triggerType,
+        string $targetType,
+        int $offsetMinutes,
+    ): static {
+        return $this->state(fn (): array => [
+            'code' => $code,
+            'name_translations' => $this->translations($name),
+            'trigger_type' => $triggerType,
+            'target_type' => $targetType,
+            'offset_minutes' => $offsetMinutes,
+            'is_active' => true,
+        ]);
+    }
+
     /**
      * @return array<string, string>
      */

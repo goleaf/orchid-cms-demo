@@ -63,6 +63,28 @@ Custom Rules cover active channels, published templates, safe template content, 
 
 Supported message priorities are `low`, `normal`, `high`, and `urgent`. Supported message statuses are `draft`, `scheduled`, `queued`, `sent`, `delivered`, `failed`, `cancelled`, and `archived`.
 
+## Factories And Seeders
+
+Block 11 includes repeatable factory states and seeders for notification setup data. The seeders are idempotent and keyed by stable codes, so they can be run repeatedly during local setup and automated tests.
+
+Factory states cover:
+
+- channels for internal, email, SMS placeholder, WhatsApp placeholder, Telegram placeholder, push placeholder, active, inactive, and translated records,
+- templates for appointment reminders, payment reminders, rejected documents, lessons, exams, lead follow-up, student welcome, generated contracts, active, system, and translated records,
+- messages for draft, scheduled, queued, sent, delivered, failed, cancelled, urgent, high, normal, and template-backed records,
+- deliveries for queued, sent, delivered, failed, retryable, and placeholder attempts,
+- reminder rules for lesson tomorrow, lesson one hour before, payment due, document missing, exam reminder, lead follow-up, and active records.
+
+Default seeders create:
+
+- channels: internal, email, SMS placeholder, WhatsApp placeholder, Telegram placeholder, and push placeholder,
+- templates: student welcome, lead follow-up, lesson reminder, driving lesson reminder, payment due, missing document, rejected document, exam reminder, and generated contract,
+- template variables and a published first version for each default template,
+- reminder rules for lessons, payments, documents, exams, and lead follow-up,
+- notification translation keys in Russian, English, Lithuanian, and Polish.
+
+The demo notification seeder only runs in local, demo, and test environments. It creates sample messages, preferences, reminder schedules, communication history, an attachment record, and activity records without sending real external messages.
+
 ## Internal Notifications
 
 Internal notifications are delivered through Laravel database notifications. Each internal send can also create a delivery log with the database notification identifier, sender, recipient, subject, body, and sent timestamp.
@@ -107,6 +129,7 @@ Local superadmin seeding enables these permissions. Other roles should receive o
 Run the focused notification and communication checks with:
 
 ```bash
+php artisan test --filter=NotificationFactoriesSeedersTest
 php artisan test --filter=NotificationActionsRulesTest
 php artisan test --filter=NotificationDatabaseModelsTest
 php artisan test --filter=CommunicationModuleFoundationTest
