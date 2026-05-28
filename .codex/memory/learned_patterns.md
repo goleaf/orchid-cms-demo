@@ -37,3 +37,7 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - Codex prompt context includes compact repository skill inventory on every prompt; use the local orchid-platform skill and mirrored docs before Orchid admin implementation.
   Evidence: Updated .codex/hooks/user_prompt_context.py, verified dummy UserPromptSubmit output includes orchid-platform, and repository skill discovery passes with two valid skills.
   Added: 2026-05-28T08:20:34+00:00
+
+- Analytics validation Rules should stay schema-flexible across the Block 12 legacy foundation and additive analytics tables, use Eloquent/Schema guards for optional modules, and return only seeded analytics.validation translation messages.
+  Evidence: Added ActiveReportDefinitionRule, ActiveKpiMetricRule, report/KPI/dashboard/cache/module Rules, AnalyticsTranslationSeeder keys, docs, and AnalyticsValidationRulesTest.
+  Added: 2026-05-28T20:00:00+03:00

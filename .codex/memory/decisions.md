@@ -62,3 +62,7 @@
 - Block 12 core analytics Actions calculate dashboard summaries, widget payloads, report runs, export records, KPI values, KPI snapshots, cache refreshes, date ranges, and filters through local Eloquent models while guarding optional module tables.
   Evidence: Added table-safe analytics Actions, export payload records, KPI comparison/snapshot calculation, docs, and AnalyticsCoreActionsTest.
   Added: 2026-05-28T19:30:00+03:00
+
+- Block 12 analytics validation Rules enforce active reports, active KPI metrics, report filters and columns, export formats, KPI periods and targets, widget configuration, date ranges, cache keys, permissions, and optional module availability through translated analytics validation messages only.
+  Evidence: Added analytics validation Rules, translation keys, docs, and AnalyticsValidationRulesTest.
+  Added: 2026-05-28T20:00:00+03:00

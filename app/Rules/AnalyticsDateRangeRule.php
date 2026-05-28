@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Throwable;
 
 class AnalyticsDateRangeRule implements DataAwareRule, ValidationRule
 {
@@ -29,8 +30,22 @@ class AnalyticsDateRangeRule implements DataAwareRule, ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $start = $this->date(data_get($this->data, $this->startKey));
-        $end = $this->date(data_get($this->data, $this->endKey));
+        $startValue = data_get($this->data, $this->startKey);
+        $endValue = data_get($this->data, $this->endKey);
+
+        if ($startValue === null && $endValue === null && is_array($value)) {
+            $startValue = $value['period_start'] ?? $value['starts_on'] ?? $value['start'] ?? null;
+            $endValue = $value['period_end'] ?? $value['ends_on'] ?? $value['end'] ?? null;
+        }
+
+        $start = $this->date($startValue);
+        $end = $this->date($endValue);
+
+        if ((filled($startValue) && $start === null) || (filled($endValue) && $end === null)) {
+            $fail(tkey('analytics.validation.invalid_date_range'));
+
+            return;
+        }
 
         if ($start === null || $end === null) {
             return;
@@ -43,12 +58,20 @@ class AnalyticsDateRangeRule implements DataAwareRule, ValidationRule
         }
 
         if ($start->diffInDays($end) > $this->maxDays) {
-            $fail(tkey('analytics.validation.date_range_too_large'));
+            $fail(tkey('analytics.validation.invalid_date_range'));
         }
     }
 
     private function date(mixed $value): ?Carbon
     {
-        return filled($value) ? Carbon::parse($value) : null;
+        if (! filled($value)) {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($value);
+        } catch (Throwable) {
+            return null;
+        }
     }
 }

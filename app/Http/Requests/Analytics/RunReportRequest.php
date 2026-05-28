@@ -40,7 +40,7 @@ class RunReportRequest extends FormRequest
     {
         return [
             'report_definition_id.required' => tkey('analytics.validation.report_required'),
-            'report_definition_id.exists' => tkey('analytics.validation.inactive_report'),
+            'report_definition_id.exists' => tkey('analytics.validation.report_not_active'),
         ];
     }
 
