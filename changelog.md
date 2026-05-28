@@ -2,6 +2,11 @@
 
 ## 2026-05-28
 
+- Added stronger validation for group publishing, archiving, status changes, student transfers, waitlists, and schedule pattern changes
+- Added permission checks around group and membership operations so only authorized staff can perform them
+- Added multilingual labels and messages for communication channels, templates, reminders, delivery logs, and related permissions
+- Updated internal project learning notes for future maintenance context
+
 - Added clearer changelog coverage for the newest module guides and recent project history
 - Clarified the operations foundation for branches, instructors, vehicles, lesson schedules, public instructor pages, and public vehicle pages
 - Clarified the document foundation for student documents, lead attachments, onboarding placeholders, exam readiness checks, and future review workflows

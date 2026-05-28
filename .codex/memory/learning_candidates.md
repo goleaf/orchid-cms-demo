@@ -2782,3 +2782,38 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T09:20:53+00:00
+
+```json
+{
+  "ts": "2026-05-28T09:20:53+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbc-5a94-7db1-88e6-13134264efa5",
+  "turn_id": "019e6dc1-0a8c-7bc3-9336-184ce6f20613",
+  "branch": "main",
+  "changed_file_count": 16,
+  "changed_file_groups": {
+    "code": 16
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "atabase/seeders/SystemTranslationSeeder.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
