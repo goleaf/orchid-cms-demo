@@ -2,6 +2,8 @@
 
 ## 2026-05-28
 
+- Analytics now validates dashboard, widget, report, export, KPI target, cache refresh, and dashboard preference forms with translated field names and local permission checks
+
 - Analytics validation now checks report filters, export formats, KPI periods and targets, dashboard widget settings, cache keys, permissions, and optional module availability with translated messages
 
 - Added repeatable notification setup data for default channels, message templates, reminder rules, translations, and local demo communication history

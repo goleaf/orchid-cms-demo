@@ -70,3 +70,7 @@
 - Block 12 analytics validation Rules enforce active reports, active KPI metrics, report filters and columns, export formats, KPI periods and targets, widget configuration, date ranges, cache keys, permissions, and optional module availability through translated analytics validation messages only.
   Evidence: Added analytics validation Rules, translation keys, docs, and AnalyticsValidationRulesTest.
   Added: 2026-05-28T20:00:00+03:00
+
+- Block 12 analytics Form Requests validate dashboard setup, widget setup, report runs, report exports, KPI targets, cache refreshes, and dashboard preferences with local Orchid permissions, analytics Rules, translated attributes, and no SaaS scope fields.
+  Evidence: Added analytics request classes, shared request validation helpers, translation attributes, docs, and AnalyticsFormRequestsTest.
+  Added: 2026-05-28T20:30:00+03:00

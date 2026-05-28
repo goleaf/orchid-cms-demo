@@ -20,7 +20,7 @@ Block 12 adds the foundation for local owner reporting and operational analytics
 
 The first admin surface is a read-only owner dashboard in Orchid. It shows live counters, seeded widget definitions, saved reports, recent runs, and KPI snapshots.
 
-Dashboard definitions, widget definitions, and per-user layout preferences are described in [`docs/analytics-dashboard.md`](analytics-dashboard.md). Core dashboard, report, export, KPI, cache, date-range, and filter Actions are described in [`docs/analytics-actions.md`](analytics-actions.md). Analytics validation Rules and translation keys are described in [`docs/analytics-validation.md`](analytics-validation.md).
+Dashboard definitions, widget definitions, and per-user layout preferences are described in [`docs/analytics-dashboard.md`](analytics-dashboard.md). Core dashboard, report, export, KPI, cache, date-range, and filter Actions are described in [`docs/analytics-actions.md`](analytics-actions.md). Analytics Form Requests are described in [`docs/analytics-requests.md`](analytics-requests.md). Analytics validation Rules and translation keys are described in [`docs/analytics-validation.md`](analytics-validation.md).
 
 ## Data Sources
 
@@ -94,6 +94,7 @@ Relevant verification:
 
 - `AnalyticsBlockFoundationTest`
 - `AnalyticsCoreActionsTest`
+- `AnalyticsFormRequestsTest`
 - `AnalyticsValidationRulesTest`
 - `DrivingSchoolPlatformTest`
 - `SystemLocalizationTest`

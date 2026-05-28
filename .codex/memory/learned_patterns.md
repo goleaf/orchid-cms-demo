@@ -41,3 +41,7 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - Analytics validation Rules should stay schema-flexible across the Block 12 legacy foundation and additive analytics tables, use Eloquent/Schema guards for optional modules, and return only seeded analytics.validation translation messages.
   Evidence: Added ActiveReportDefinitionRule, ActiveKpiMetricRule, report/KPI/dashboard/cache/module Rules, AnalyticsTranslationSeeder keys, docs, and AnalyticsValidationRulesTest.
   Added: 2026-05-28T20:00:00+03:00
+
+- Analytics Form Requests should centralize shared field labels, filter rules, and permission checks in a request concern, then keep dashboard, report, KPI, cache, and preference requests thin around module-specific data helpers.
+  Evidence: Added UsesAnalyticsRequestValidation, concrete analytics request classes, translation attributes, docs, and AnalyticsFormRequestsTest.
+  Added: 2026-05-28T20:30:00+03:00
