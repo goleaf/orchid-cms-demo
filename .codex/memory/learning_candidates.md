@@ -2455,3 +2455,24 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T08:47:58+00:00
+
+```json
+{
+  "ts": "2026-05-28T08:47:58+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbf-45b8-7d82-8894-aa09b2801bd0",
+  "turn_id": "019e6dbf-4c78-7e30-97c5-e25ef8cd616d",
+  "branch": "main",
+  "changed_file_count": 2,
+  "changed_file_groups": {
+    "code": 2
+  },
+  "changed_files_sample": [
+    "atabase/factories/CourseCategoryFactory.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

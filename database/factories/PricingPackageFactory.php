@@ -22,9 +22,13 @@ class PricingPackageFactory extends Factory
      */
     public function definition(): array
     {
-        $name = $this->faker->randomElement(['Standard', 'Premium', 'Intensive', 'Extra Lessons']);
-        $description = $this->faker->sentence(12);
-        $features = [$this->faker->sentence(6), $this->faker->sentence(6)];
+        $nameTranslations = $this->translations('Пакет обучения', 'Training package', 'Mokymo paketas', 'Pakiet szkoleniowy');
+        $descriptionTranslations = $this->translations(
+            'Пакет для страницы цен автошколы.',
+            'Package for the driving school pricing page.',
+            'Paketas vairavimo mokyklos kainu puslapiui.',
+            'Pakiet dla cennika szkoly jazdy.'
+        );
 
         return [
             'uuid' => (string) Str::uuid(),
@@ -32,9 +36,14 @@ class PricingPackageFactory extends Factory
             'course_category_id' => CourseCategory::factory(),
             'code' => strtoupper($this->faker->unique()->bothify('PRICE-####')),
             'slug' => $this->faker->unique()->slug(2),
-            'name_translations' => $this->translations($name),
-            'description_translations' => $this->translations($description),
-            'features_translations' => $this->translationLists($features),
+            'name_translations' => $nameTranslations,
+            'description_translations' => $descriptionTranslations,
+            'features_translations' => $this->translationLists(
+                ['Теория', 'Практика'],
+                ['Theory', 'Practice'],
+                ['Teorija', 'Praktika'],
+                ['Teoria', 'Praktyka']
+            ),
             'price' => $this->faker->randomFloat(2, 390, 1590),
             'old_price' => null,
             'currency' => 'EUR',
@@ -79,7 +88,7 @@ class PricingPackageFactory extends Factory
         return $this->state(fn (): array => [
             'code' => 'standard',
             'slug' => 'standard',
-            'name_translations' => $this->translations('Стандарт', 'Standard', 'Standartas', 'Standard'),
+            'name_translations' => $this->translations('Стандарт', 'Standard', 'Standartas', 'Pakiet standardowy'),
             'price' => 1290.00,
             'sort_order' => 10,
         ]);
@@ -90,7 +99,7 @@ class PricingPackageFactory extends Factory
         return $this->state(fn (): array => [
             'code' => 'premium',
             'slug' => 'premium',
-            'name_translations' => $this->translations('Премиум', 'Premium', 'Premium', 'Premium'),
+            'name_translations' => $this->translations('Премиум', 'Premium', 'Premium paketas', 'Pakiet premium'),
             'price' => 1490.00,
             'is_featured' => true,
             'sort_order' => 20,

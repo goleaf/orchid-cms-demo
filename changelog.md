@@ -2,6 +2,9 @@
 
 ## 2026-05-28
 
+- Improved sample course and pricing content so multilingual test data is more consistent
+- Updated training package examples to use clearer localized names and features
+
 - Added the education structure needed to connect learning programs, modules, topics, and training groups
 - Improved group assignment foundations so capacity, memberships, enrollment records, and activity history can stay aligned
 - Expanded multilingual website and admin seed content for Lithuanian and Polish operators

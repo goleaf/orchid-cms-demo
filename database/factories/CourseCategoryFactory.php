@@ -21,17 +21,17 @@ class CourseCategoryFactory extends Factory
     public function definition(): array
     {
         $code = $this->faker->unique()->slug(2);
-        $name = str($code)->replace('-', ' ')->title()->toString();
-        $description = $this->faker->paragraph();
-        $shortDescription = $this->faker->sentence(10);
+        $nameTranslations = $this->translations('Категория курса', 'Course category', 'Kurso kategorija', 'Kategoria kursu');
+        $descriptionTranslations = $this->translations('Категория публичных курсов автошколы.', 'Public driving school course category.', 'Vairavimo mokyklos kursu kategorija.', 'Kategoria kursow szkoly jazdy.');
+        $shortDescriptionTranslations = $this->translations('Курсы автошколы.', 'Driving school courses.', 'Vairavimo kursai.', 'Kursy jazdy.');
 
         return [
             'uuid' => (string) Str::uuid(),
             'code' => $code,
             'slug' => $code,
-            'name_translations' => $this->translations($name),
-            'description_translations' => $this->translations($description),
-            'short_description_translations' => $this->translations($shortDescription),
+            'name_translations' => $nameTranslations,
+            'description_translations' => $descriptionTranslations,
+            'short_description_translations' => $shortDescriptionTranslations,
             'seo_title_translations' => null,
             'seo_description_translations' => null,
             'image' => null,

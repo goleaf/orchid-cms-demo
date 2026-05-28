@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -25,29 +26,47 @@ class TrainingGroup extends Model
         'uuid',
         'group_number',
         'branch_id',
+        'course_id',
         'training_program_id',
         'course_category_id',
         'instructor_id',
         'name',
         'name_translations',
         'description_translations',
+        'public_description_translations',
         'schedule_summary_translations',
         'code',
         'status',
         'status_id',
+        'learning_program_id',
+        'manager_id',
+        'administrator_id',
+        'teacher_id',
         'capacity',
+        'capacity_total',
+        'capacity_reserved',
+        'capacity_taken',
+        'capacity_waitlist',
         'places_taken',
         'starts_on',
         'ends_on',
+        'start_date',
+        'planned_end_date',
+        'actual_end_date',
         'enrollment_closes_on',
         'meeting_days',
         'meeting_time',
         'end_time',
         'classroom',
+        'timezone',
+        'default_lesson_duration_minutes',
         'learning_notes',
         'schedule_notes',
+        'notes',
+        'internal_notes',
         'is_visible_on_site',
         'is_featured',
+        'is_accepting_applications',
         'sort_order',
         'created_by_id',
         'updated_by_id',
@@ -56,18 +75,28 @@ class TrainingGroup extends Model
     protected $casts = [
         'name_translations' => 'array',
         'description_translations' => 'array',
+        'public_description_translations' => 'array',
         'schedule_summary_translations' => 'array',
         'status' => GroupStatus::class,
         'capacity' => 'integer',
+        'capacity_total' => 'integer',
+        'capacity_reserved' => 'integer',
+        'capacity_taken' => 'integer',
+        'capacity_waitlist' => 'integer',
         'places_taken' => 'integer',
         'starts_on' => 'date',
         'ends_on' => 'date',
+        'start_date' => 'date',
+        'planned_end_date' => 'date',
+        'actual_end_date' => 'date',
         'enrollment_closes_on' => 'date',
         'meeting_days' => 'array',
         'meeting_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
+        'default_lesson_duration_minutes' => 'integer',
         'is_visible_on_site' => 'boolean',
         'is_featured' => 'boolean',
+        'is_accepting_applications' => 'boolean',
         'sort_order' => 'integer',
         'deleted_at' => 'datetime',
     ];
@@ -78,6 +107,12 @@ class TrainingGroup extends Model
             if (blank($group->uuid)) {
                 $group->uuid = (string) Str::uuid();
             }
+
+            $group->syncEducationAliases();
+        });
+
+        static::saving(function (self $group): void {
+            $group->syncEducationAliases();
         });
     }
 
@@ -93,12 +128,17 @@ class TrainingGroup extends Model
 
     public function learningProgram(): BelongsTo
     {
-        return $this->belongsTo(LearningProgram::class, 'training_program_id');
+        return $this->belongsTo(LearningProgram::class);
+    }
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(TrainingGroupStatus::class, 'status_id');
     }
 
     public function statusRecord(): BelongsTo
     {
-        return $this->belongsTo(TrainingGroupStatus::class, 'status_id');
+        return $this->status();
     }
 
     public function course(): BelongsTo
@@ -106,14 +146,34 @@ class TrainingGroup extends Model
         return $this->belongsTo(Course::class, 'training_program_id');
     }
 
-    public function category(): BelongsTo
+    public function courseCategory(): BelongsTo
     {
         return $this->belongsTo(CourseCategory::class, 'course_category_id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->courseCategory();
     }
 
     public function instructor(): BelongsTo
     {
         return $this->belongsTo(Instructor::class);
+    }
+
+    public function manager(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'manager_id');
+    }
+
+    public function administrator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'administrator_id');
+    }
+
+    public function teacher(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'teacher_id');
     }
 
     public function enrollments(): HasMany
@@ -131,6 +191,13 @@ class TrainingGroup extends Model
         return $this->memberships()->active();
     }
 
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class, 'training_group_memberships', 'training_group_id', 'student_profile_id')
+            ->withPivot(['enrollment_id', 'student_enrollment_id', 'status', 'joined_at', 'left_at'])
+            ->withTimestamps();
+    }
+
     public function schedulePatterns(): HasMany
     {
         return $this->hasMany(TrainingGroupSchedulePattern::class);
@@ -141,6 +208,16 @@ class TrainingGroup extends Model
         return $this->hasMany(TrainingGroupActivity::class);
     }
 
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
+    }
+
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by_id');
+    }
+
     public function leads(): HasMany
     {
         return $this->hasMany(Lead::class, 'training_group_id');
@@ -148,9 +225,10 @@ class TrainingGroup extends Model
 
     public function seatsAvailable(): int
     {
-        $taken = max((int) ($this->enrollments_count ?? 0), $this->places_taken);
+        $capacity = $this->capacity_total ?? $this->capacity;
+        $taken = max((int) ($this->enrollments_count ?? 0), (int) ($this->capacity_taken ?? $this->places_taken));
 
-        return max(0, $this->capacity - $taken);
+        return max(0, (int) $capacity - $taken - (int) ($this->capacity_reserved ?? 0));
     }
 
     public function displayName(?string $locale = null): string
@@ -181,7 +259,7 @@ class TrainingGroup extends Model
     public function acceptsEnrollment(): bool
     {
         if ($this->statusRecord !== null) {
-            return (bool) $this->statusRecord->accepts_enrollments;
+            return (bool) ($this->statusRecord->is_open_for_enrollment || $this->statusRecord->accepts_enrollments);
         }
 
         return in_array($this->status, [
@@ -209,7 +287,24 @@ class TrainingGroup extends Model
     {
         return $query
             ->visibleOnSite()
-            ->whereColumn('places_taken', '<', 'capacity');
+            ->where(function (Builder $query): void {
+                $query
+                    ->whereColumn('places_taken', '<', 'capacity')
+                    ->orWhereColumn('capacity_taken', '<', 'capacity_total');
+            });
+    }
+
+    public function scopeAcceptingApplications(Builder $query): Builder
+    {
+        return $query->where('is_accepting_applications', true);
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->whereIn('status', [
+            GroupStatus::Active->value,
+            GroupStatus::InProgress->value,
+        ]);
     }
 
     public function scopeRecruiting(Builder $query): Builder
@@ -227,7 +322,11 @@ class TrainingGroup extends Model
 
     public function scopeNotFull(Builder $query): Builder
     {
-        return $query->whereColumn('places_taken', '<', 'capacity');
+        return $query->where(function (Builder $query): void {
+            $query
+                ->whereColumn('places_taken', '<', 'capacity')
+                ->orWhereColumn('capacity_taken', '<', 'capacity_total');
+        });
     }
 
     public function scopeByStatus(Builder $query, GroupStatus|string|null $status): Builder
@@ -239,12 +338,23 @@ class TrainingGroup extends Model
 
     public function scopeStartsAfter(Builder $query, mixed $date): Builder
     {
-        return $query->where('starts_on', '>=', $date);
+        return $query->where(function (Builder $query) use ($date): void {
+            $query->where('start_date', '>=', $date)->orWhere('starts_on', '>=', $date);
+        });
     }
 
     public function scopeByCourse(Builder $query, mixed $course): Builder
     {
-        return $query->where('training_program_id', $course instanceof TrainingProgram ? $course->getKey() : $course);
+        $courseId = $course instanceof TrainingProgram ? $course->getKey() : $course;
+
+        return $query->where(function (Builder $query) use ($courseId): void {
+            $query->where('training_program_id', $courseId)->orWhere('course_id', $courseId);
+        });
+    }
+
+    public function scopeByCourseCategory(Builder $query, int|string|null $categoryId): Builder
+    {
+        return filled($categoryId) ? $query->where('course_category_id', $categoryId) : $query;
     }
 
     public function scopeByBranch(Builder $query, mixed $branch): Builder
@@ -257,6 +367,60 @@ class TrainingGroup extends Model
         return $query->orderBy('sort_order')->orderBy('starts_on')->orderBy('name');
     }
 
+    public function scopeScheduled(Builder $query): Builder
+    {
+        return $query->where('status', 'scheduled');
+    }
+
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->whereIn('status', [GroupStatus::Completed->value, GroupStatus::Finished->value]);
+    }
+
+    public function scopeCancelled(Builder $query): Builder
+    {
+        return $query->where('status', GroupStatus::Cancelled->value);
+    }
+
+    public function scopeByManager(Builder $query, int|string|null $managerId): Builder
+    {
+        return filled($managerId) ? $query->where('manager_id', $managerId) : $query;
+    }
+
+    public function scopeByTeacher(Builder $query, int|string|null $teacherId): Builder
+    {
+        return filled($teacherId) ? $query->where('teacher_id', $teacherId) : $query;
+    }
+
+    public function scopeStartsBefore(Builder $query, mixed $date): Builder
+    {
+        return $query->where(function (Builder $query) use ($date): void {
+            $query->where('start_date', '<=', $date)->orWhere('starts_on', '<=', $date);
+        });
+    }
+
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        if (blank($search)) {
+            return $query;
+        }
+
+        $search = (string) $search;
+
+        return $query->where(function (Builder $query) use ($search): void {
+            $query
+                ->where('uuid', 'like', '%'.$search.'%')
+                ->orWhere('group_number', 'like', '%'.$search.'%')
+                ->orWhere('code', 'like', '%'.$search.'%')
+                ->orWhere('name', 'like', '%'.$search.'%')
+                ->orWhere('name_translations', 'like', '%'.$search.'%');
+
+            if (is_numeric($search)) {
+                $query->orWhere('id', (int) $search);
+            }
+        });
+    }
+
     public function getAvailablePlacesAttribute(): int
     {
         return $this->seatsAvailable();
@@ -265,6 +429,40 @@ class TrainingGroup extends Model
     public function getIsFullAttribute(): bool
     {
         return $this->available_places <= 0;
+    }
+
+    public function getIsAlmostFullAttribute(): bool
+    {
+        return ! $this->is_full && $this->capacity_percent >= 80;
+    }
+
+    public function getIsOpenForEnrollmentAttribute(): bool
+    {
+        return $this->acceptsEnrollment() && ! $this->is_full;
+    }
+
+    public function getIsActiveAttribute(): bool
+    {
+        return in_array($this->status, [GroupStatus::Active, GroupStatus::InProgress], true)
+            || (bool) $this->statusRecord?->is_in_progress;
+    }
+
+    public function getIsVisiblePubliclyAttribute(): bool
+    {
+        return $this->is_visible_on_site && $this->is_open_for_enrollment;
+    }
+
+    public function getCapacityPercentAttribute(): int
+    {
+        $capacity = max(1, (int) ($this->capacity_total ?? $this->capacity));
+        $taken = (int) ($this->capacity_taken ?? $this->places_taken);
+
+        return min(100, (int) round(($taken / $capacity) * 100));
+    }
+
+    public function getDisplayCodeAttribute(): string
+    {
+        return $this->group_number ?: $this->code ?: (string) $this->getKey();
     }
 
     public function getDisplayNameAttribute(): string
@@ -282,31 +480,64 @@ class TrainingGroup extends Model
         return $query->select([
             'id',
             'branch_id',
+            'course_id',
             'training_program_id',
             'course_category_id',
             'instructor_id',
             'name',
             'name_translations',
             'description_translations',
+            'public_description_translations',
             'schedule_summary_translations',
             'code',
             'group_number',
             'status',
             'status_id',
+            'learning_program_id',
+            'manager_id',
+            'administrator_id',
+            'teacher_id',
             'capacity',
+            'capacity_total',
+            'capacity_reserved',
+            'capacity_taken',
+            'capacity_waitlist',
             'places_taken',
             'starts_on',
             'ends_on',
+            'start_date',
+            'planned_end_date',
+            'actual_end_date',
             'enrollment_closes_on',
             'meeting_days',
             'meeting_time',
             'end_time',
             'classroom',
+            'timezone',
+            'default_lesson_duration_minutes',
             'learning_notes',
             'schedule_notes',
+            'notes',
+            'internal_notes',
             'is_visible_on_site',
             'is_featured',
+            'is_accepting_applications',
             'sort_order',
         ]);
+    }
+
+    private function syncEducationAliases(): void
+    {
+        $this->course_id ??= $this->training_program_id;
+        $this->training_program_id ??= $this->course_id;
+        $this->capacity_total ??= $this->capacity;
+        $this->capacity ??= $this->capacity_total ?? 12;
+        $this->capacity_taken ??= $this->places_taken ?? 0;
+        $this->places_taken ??= $this->capacity_taken ?? 0;
+        $this->start_date ??= $this->starts_on;
+        $this->starts_on ??= $this->start_date;
+        $this->planned_end_date ??= $this->ends_on;
+        $this->ends_on ??= $this->planned_end_date;
+        $this->is_accepting_applications ??= $this->is_visible_on_site && $this->acceptsEnrollment();
     }
 }
