@@ -86,6 +86,14 @@ class SuperadminPermissions
             'students.view_marketing',
             'students.manage_statuses',
             'students.export',
+            'education.groups.view',
+            'education.groups.create',
+            'education.groups.update',
+            'education.manage_statuses',
+            'education.manage_memberships',
+            'education.manage_schedule_patterns',
+            'education.manage_topics',
+            'education.view_activities',
         ];
     }
 

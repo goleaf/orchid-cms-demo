@@ -8,6 +8,7 @@ use App\Models\MarketingLead;
 use App\Models\MarketingLeadTask;
 use App\Models\Student;
 use App\Models\StudentTask;
+use App\Models\TrainingGroup;
 use Orchid\Platform\Dashboard;
 use Orchid\Platform\ItemPermission;
 use Orchid\Platform\OrchidServiceProvider;
@@ -114,6 +115,28 @@ class PlatformProvider extends OrchidServiceProvider
                 ->icon('bs.mortarboard')
                 ->route('platform.lms.programs')
                 ->permission('platform.lms.programs'),
+
+            Menu::make(tkey('menu.education.groups'))
+                ->icon('bs.people-fill')
+                ->route('platform.education.groups')
+                ->permission('education.groups.view')
+                ->title(tkey('menu.education'))
+                ->badge(fn (): int => TrainingGroup::query()->notFull()->count()),
+
+            Menu::make(tkey('menu.education.group_statuses'))
+                ->icon('bs.ui-checks-grid')
+                ->route('platform.education.group-statuses')
+                ->permission('education.manage_statuses'),
+
+            Menu::make(tkey('menu.education.learning_topics'))
+                ->icon('bs.journal-text')
+                ->route('platform.education.learning-topics')
+                ->permission('education.manage_topics'),
+
+            Menu::make(tkey('menu.education.schedule_patterns'))
+                ->icon('bs.calendar2-week')
+                ->route('platform.education.schedule-patterns')
+                ->permission('education.manage_schedule_patterns'),
 
             Menu::make(tkey('menu.schedule.lessons'))
                 ->icon('bs.calendar-week')
@@ -342,6 +365,16 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('platform.fleet.vehicles', tkey('permissions.fleet.vehicles'))
                 ->addPermission('platform.exams', tkey('permissions.exams'))
                 ->addPermission('platform.finance.payments', tkey('permissions.finance.payments')),
+
+            ItemPermission::group(tkey('permissions.groups.education'))
+                ->addPermission('education.groups.view', tkey('permissions.education.groups.view'))
+                ->addPermission('education.groups.create', tkey('permissions.education.groups.create'))
+                ->addPermission('education.groups.update', tkey('permissions.education.groups.update'))
+                ->addPermission('education.manage_statuses', tkey('permissions.education.manage_statuses'))
+                ->addPermission('education.manage_memberships', tkey('permissions.education.manage_memberships'))
+                ->addPermission('education.manage_schedule_patterns', tkey('permissions.education.manage_schedule_patterns'))
+                ->addPermission('education.manage_topics', tkey('permissions.education.manage_topics'))
+                ->addPermission('education.view_activities', tkey('permissions.education.view_activities')),
 
             ItemPermission::group(tkey('permissions.groups.marketing'))
                 ->addPermission('platform.marketing.campaigns', tkey('permissions.marketing.campaigns'))

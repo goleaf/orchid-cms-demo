@@ -57,6 +57,7 @@ class DatabaseSeeder extends Seeder
             CrmDictionarySeeder::class,
             StudentDictionarySeeder::class,
             StudentTranslationSeeder::class,
+            EducationSeeder::class,
             SystemDesignVibecodingSeeder::class,
         ]);
 

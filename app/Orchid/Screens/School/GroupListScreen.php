@@ -40,7 +40,7 @@ class GroupListScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['platform.operations.groups', 'website.manage_groups'];
+        return ['platform.operations.groups', 'website.manage_groups', 'education.groups.view'];
     }
 
     public function commandBar(): iterable

@@ -15,6 +15,7 @@ use App\Orchid\Screens\School\FleetListScreen;
 use App\Orchid\Screens\School\GroupEditScreen;
 use App\Orchid\Screens\School\GroupListScreen;
 use App\Orchid\Screens\School\InstructorListScreen;
+use App\Orchid\Screens\School\LearningTopicListScreen;
 use App\Orchid\Screens\School\LeadDictionaryEditScreen;
 use App\Orchid\Screens\School\LeadDictionaryListScreen;
 use App\Orchid\Screens\School\LeadEditScreen;
@@ -40,6 +41,8 @@ use App\Orchid\Screens\School\StudentEnrollmentEditScreen;
 use App\Orchid\Screens\School\StudentListScreen;
 use App\Orchid\Screens\School\StudentStatusListScreen;
 use App\Orchid\Screens\School\StudentTaskListScreen;
+use App\Orchid\Screens\School\TrainingGroupSchedulePatternListScreen;
+use App\Orchid\Screens\School\TrainingGroupStatusListScreen;
 use App\Orchid\Screens\System\LanguageEditScreen;
 use App\Orchid\Screens\System\LanguageListScreen;
 use App\Orchid\Screens\System\TranslationEditScreen;
@@ -339,6 +342,31 @@ Route::screen('lms/programs', ProgramListScreen::class)
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
         ->push(tkey('menu.lms.programs'), route('platform.lms.programs')));
+
+// Education > Groups
+Route::screen('education/groups', GroupListScreen::class)
+    ->name('platform.education.groups')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.education.groups'), route('platform.education.groups')));
+
+Route::screen('education/group-statuses', TrainingGroupStatusListScreen::class)
+    ->name('platform.education.group-statuses')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.education.group_statuses'), route('platform.education.group-statuses')));
+
+Route::screen('education/learning-topics', LearningTopicListScreen::class)
+    ->name('platform.education.learning-topics')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.education.learning_topics'), route('platform.education.learning-topics')));
+
+Route::screen('education/schedule-patterns', TrainingGroupSchedulePatternListScreen::class)
+    ->name('platform.education.schedule-patterns')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.education.schedule_patterns'), route('platform.education.schedule-patterns')));
 
 // Operations > Schedule
 Route::screen('schedule/lessons', ScheduleListScreen::class)

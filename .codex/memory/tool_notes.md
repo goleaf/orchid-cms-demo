@@ -13,8 +13,8 @@ Do not assume these commands until the repository confirms them.
 
 ## Repository skill discovery
 
-- Last scan: 2026-05-27T16:45:51Z
-- Skills found: 1; valid: 1.
-- Discovered skills: `codebase-self-learning` (.agents/skills/codebase-self-learning).
+- Last scan: 2026-05-28T08:07:45Z
+- Skills found: 2; valid: 2.
+- Discovered skills: `codebase-self-learning` (.agents/skills/codebase-self-learning), `orchid-platform` (.agents/skills/orchid-platform).
 - Recommended fixes: none.
 - Manual command: `python3 .agents/skills/codebase-self-learning/scripts/discover_skills.py --json`.

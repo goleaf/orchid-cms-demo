@@ -2211,3 +2211,31 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T08:09:52+00:00
+
+```json
+{
+  "ts": "2026-05-28T08:09:52+00:00",
+  "event": "Stop",
+  "session_id": "019e6d9c-1446-78f3-b720-8f17cbb16ed9",
+  "turn_id": "019e6d9c-1c68-78e0-b20a-e0e4c33cfdaa",
+  "branch": "main",
+  "changed_file_count": 8,
+  "changed_file_groups": {
+    "code": 5,
+    "orchid": 3
+  },
+  "changed_files_sample": [
+    ".codex/memory/tool_notes.md",
+    "app/Orchid/PlatformProvider.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "codex/memory/skill_inventory.json",
+    "database/seeders/DatabaseSeeder.php",
+    "routes/platform.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
