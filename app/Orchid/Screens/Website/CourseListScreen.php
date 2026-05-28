@@ -74,7 +74,7 @@ class CourseListScreen extends Screen
             ->when(($this->filters['featured'] ?? '') !== '', fn (Builder $query) => $query->where('is_featured', (bool) $this->filters['featured']))
             ->when(filled($this->filters['format'] ?? null), fn (Builder $query) => $query->where('format', $this->filters['format']))
             ->ordered()
-            ->simplePaginate(15)
+            ->simplePaginate(50)
             ->withQueryString();
 
         $this->applyOrderControlState($courses, Course::class);

@@ -55,7 +55,7 @@ class SitePageListScreen extends Screen
             ->when(filled($this->filters['type'] ?? null), fn (Builder $query) => $query->where('type', $this->filters['type']))
             ->when(($this->filters['active'] ?? '') !== '', fn (Builder $query) => $query->where('is_active', (bool) $this->filters['active']))
             ->ordered()
-            ->simplePaginate(15)
+            ->simplePaginate(50)
             ->withQueryString();
 
         $this->applyOrderControlState($pages, SitePage::class);

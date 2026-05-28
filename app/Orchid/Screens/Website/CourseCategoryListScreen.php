@@ -31,7 +31,7 @@ class CourseCategoryListScreen extends Screen
                 'sort_order',
             ])
             ->ordered()
-            ->simplePaginate(15);
+            ->simplePaginate(50);
 
         $this->applyOrderControlState($categories, CourseCategory::class);
 

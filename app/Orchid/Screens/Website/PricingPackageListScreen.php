@@ -25,7 +25,7 @@ class PricingPackageListScreen extends Screen
                 'category:id,name_translations,code,slug',
             ])
             ->ordered()
-            ->simplePaginate(15);
+            ->simplePaginate(50);
 
         $this->applyOrderControlState($packages, PricingPackage::class);
 

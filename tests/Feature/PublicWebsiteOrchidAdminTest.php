@@ -160,12 +160,12 @@ class PublicWebsiteOrchidAdminTest extends TestCase
             ->assertDontSee('>12345<', false)
             ->assertDontSee('>23456<', false)
             ->assertDontSee('>34567<', false)
-            ->assertDontSee($baseUrl.'/moveUp?id='.$first->id, false)
-            ->assertSee($baseUrl.'/moveDown?id='.$first->id, false)
-            ->assertSee($baseUrl.'/moveUp?id='.$middle->id, false)
-            ->assertSee($baseUrl.'/moveDown?id='.$middle->id, false)
-            ->assertSee($baseUrl.'/moveUp?id='.$last->id, false)
-            ->assertDontSee($baseUrl.'/moveDown?id='.$last->id, false);
+            ->assertDontSee($this->orderActionFormUrl($baseUrl, 'moveUp', $first->id), false)
+            ->assertSee($this->orderActionFormUrl($baseUrl, 'moveDown', $first->id), false)
+            ->assertSee($this->orderActionFormUrl($baseUrl, 'moveUp', $middle->id), false)
+            ->assertSee($this->orderActionFormUrl($baseUrl, 'moveDown', $middle->id), false)
+            ->assertSee($this->orderActionFormUrl($baseUrl, 'moveUp', $last->id), false)
+            ->assertDontSee($this->orderActionFormUrl($baseUrl, 'moveDown', $last->id), false);
     }
 
     public function test_faq_order_actions_reorder_items_and_ignore_boundaries(): void
@@ -285,12 +285,12 @@ class PublicWebsiteOrchidAdminTest extends TestCase
             ->assertDontSee('>12345<', false)
             ->assertDontSee('>23456<', false)
             ->assertDontSee('>34567<', false)
-            ->assertDontSee($baseUrl.'/moveUp?id='.$first->id, false)
-            ->assertSee($baseUrl.'/moveDown?id='.$first->id, false)
-            ->assertSee($baseUrl.'/moveUp?id='.$middle->id, false)
-            ->assertSee($baseUrl.'/moveDown?id='.$middle->id, false)
-            ->assertSee($baseUrl.'/moveUp?id='.$last->id, false)
-            ->assertDontSee($baseUrl.'/moveDown?id='.$last->id, false);
+            ->assertDontSee($this->orderActionFormUrl($baseUrl, 'moveUp', $first->id), false)
+            ->assertSee($this->orderActionFormUrl($baseUrl, 'moveDown', $first->id), false)
+            ->assertSee($this->orderActionFormUrl($baseUrl, 'moveUp', $middle->id), false)
+            ->assertSee($this->orderActionFormUrl($baseUrl, 'moveDown', $middle->id), false)
+            ->assertSee($this->orderActionFormUrl($baseUrl, 'moveUp', $last->id), false)
+            ->assertDontSee($this->orderActionFormUrl($baseUrl, 'moveDown', $last->id), false);
     }
 
     public function test_pricing_order_actions_reorder_items_and_ignore_boundaries(): void
@@ -376,10 +376,10 @@ class PublicWebsiteOrchidAdminTest extends TestCase
             ->assertSee($last->displayName())
             ->assertSee(tkey('website.admin.fields.position', [], 'ru'))
             ->assertDontSee(tkey('website.admin.fields.sort_order', [], 'ru'))
-            ->assertDontSee($baseUrl.'/moveUp?id='.$first->id, false)
-            ->assertSee($baseUrl.'/moveDown?id='.$first->id, false)
-            ->assertSee($baseUrl.'/moveUp?id='.$last->id, false)
-            ->assertDontSee($baseUrl.'/moveDown?id='.$last->id, false);
+            ->assertDontSee($this->orderActionFormUrl($baseUrl, 'moveUp', $first->id), false)
+            ->assertSee($this->orderActionFormUrl($baseUrl, 'moveDown', $first->id), false)
+            ->assertSee($this->orderActionFormUrl($baseUrl, 'moveUp', $last->id), false)
+            ->assertDontSee($this->orderActionFormUrl($baseUrl, 'moveDown', $last->id), false);
     }
 
     public function test_branch_order_actions_reorder_items_and_ignore_boundaries(): void
@@ -457,10 +457,10 @@ class PublicWebsiteOrchidAdminTest extends TestCase
                 ->assertOk()
                 ->assertSee(tkey('website.admin.fields.position', [], 'ru'))
                 ->assertDontSee(tkey('website.admin.fields.sort_order', [], 'ru'))
-                ->assertDontSee($baseUrl.'/moveUp?id='.$first->id, false)
-                ->assertSee($baseUrl.'/moveDown?id='.$first->id, false)
-                ->assertSee($baseUrl.'/moveUp?id='.$last->id, false)
-                ->assertDontSee($baseUrl.'/moveDown?id='.$last->id, false);
+                ->assertDontSee($this->orderActionFormUrl($baseUrl, 'moveUp', $first->id), false)
+                ->assertSee($this->orderActionFormUrl($baseUrl, 'moveDown', $first->id), false)
+                ->assertSee($this->orderActionFormUrl($baseUrl, 'moveUp', $last->id), false)
+                ->assertDontSee($this->orderActionFormUrl($baseUrl, 'moveDown', $last->id), false);
         }
     }
 
@@ -756,6 +756,11 @@ class PublicWebsiteOrchidAdminTest extends TestCase
             ->ordered()
             ->pluck('id')
             ->all();
+    }
+
+    private function orderActionFormUrl(string $baseUrl, string $method, int $id): string
+    {
+        return 'formaction="'.$baseUrl.'/'.$method.'?id='.$id.'"';
     }
 
     /**

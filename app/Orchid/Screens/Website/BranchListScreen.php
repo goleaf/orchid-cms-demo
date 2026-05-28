@@ -21,7 +21,7 @@ class BranchListScreen extends Screen
         $branches = Branch::query()
             ->forAdminList()
             ->ordered()
-            ->simplePaginate(15);
+            ->simplePaginate(50);
 
         $this->applyOrderControlState($branches, Branch::class);
 

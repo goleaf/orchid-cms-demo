@@ -36,7 +36,7 @@ class TestimonialListScreen extends Screen
                 'branch:id,name,name_translations,slug',
             ])
             ->ordered()
-            ->simplePaginate(15);
+            ->simplePaginate(50);
 
         $this->applyOrderControlState($testimonials, Testimonial::class);
 
