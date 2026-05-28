@@ -44,7 +44,12 @@ class ConvertLeadToStudentAction
                 : Student::query()->findOrFail($existingStudentId);
 
             if ($existingStudentId !== null && $studentData !== []) {
-                $student = app(UpdateStudentAction::class)->handle($student, $studentData, $user, true);
+                $student = app(UpdateStudentAction::class)->handle(
+                    $student,
+                    array_filter($studentData, fn (mixed $value): bool => $value !== null),
+                    $user,
+                    true,
+                );
             }
 
             $enrollment = app(CreateStudentEnrollmentAction::class)->handle($student, $enrollmentData, $user, false);

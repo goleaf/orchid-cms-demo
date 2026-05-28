@@ -109,6 +109,10 @@ class StudentEnrollmentRequest extends FormRequest
             }
         }
 
+        if ($this->boolean('allow_overbooking')) {
+            $enrollment['allow_overbooking'] = true;
+        }
+
         return $enrollment;
     }
 

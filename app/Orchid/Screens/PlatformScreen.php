@@ -40,7 +40,7 @@ class PlatformScreen extends Screen
      */
     public function name(): ?string
     {
-        return 'Auto-school operations';
+        return tkey('operations.dashboard.title');
     }
 
     /**
@@ -48,7 +48,7 @@ class PlatformScreen extends Screen
      */
     public function description(): ?string
     {
-        return 'CRM, LMS, schedules, fleet, exams, payments, documents, and analytics.';
+        return tkey('operations.dashboard.description');
     }
 
     /**
@@ -59,16 +59,16 @@ class PlatformScreen extends Screen
     public function commandBar(): iterable
     {
         return [
-            Link::make('Website')
+            Link::make(tkey('operations.dashboard.actions.website'))
                 ->icon('bs.box-arrow-up-right')
                 ->route('site.home')
                 ->target('_blank'),
 
-            Link::make('Students')
+            Link::make(tkey('operations.dashboard.actions.students'))
                 ->icon('bs.people')
                 ->route('platform.crm.students'),
 
-            Link::make('Schedule')
+            Link::make(tkey('operations.dashboard.actions.schedule'))
                 ->icon('bs.calendar-week')
                 ->route('platform.schedule.lessons'),
         ];
@@ -83,29 +83,29 @@ class PlatformScreen extends Screen
     {
         return [
             Layout::metrics([
-                'Active students' => 'active_students',
-                'Active enrollments' => 'active_enrollments',
-                'Active groups' => 'active_groups',
-                'Open leads' => 'open_leads',
-                'Lessons today' => 'today_lessons',
-                'Scheduled exams' => 'scheduled_exams',
-                'Paid revenue' => 'paid_revenue',
+                tkey('operations.metrics.active_students') => 'active_students',
+                tkey('operations.metrics.active_enrollments') => 'active_enrollments',
+                tkey('operations.metrics.active_groups') => 'active_groups',
+                tkey('operations.metrics.open_leads') => 'open_leads',
+                tkey('operations.metrics.lessons_today') => 'today_lessons',
+                tkey('operations.metrics.scheduled_exams') => 'scheduled_exams',
+                tkey('operations.metrics.paid_revenue') => 'paid_revenue',
             ]),
 
             Layout::table('upcomingLessons', [
-                TD::make('starts_at', 'Start')
+                TD::make('starts_at', tkey('operations.columns.start'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->starts_at->format('Y-m-d H:i')),
-                TD::make('student', 'Student')
+                TD::make('student', tkey('operations.columns.student'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->enrollment->studentProfile->fullName()),
-                TD::make('program', 'Program')
+                TD::make('program', tkey('operations.columns.program'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->enrollment->trainingProgram->title),
-                TD::make('instructor', 'Instructor')
+                TD::make('instructor', tkey('operations.columns.instructor'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->instructor->name),
-                TD::make('vehicle', 'Vehicle')
+                TD::make('vehicle', tkey('operations.columns.vehicle'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->vehicle?->registration_number ?? '-'),
-                TD::make('topic', 'Topic')
+                TD::make('topic', tkey('operations.columns.topic'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->topic),
-            ])->title('Upcoming lessons'),
+            ])->title(tkey('operations.tables.upcoming_lessons')),
         ];
     }
 }

@@ -2108,3 +2108,53 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T07:52:09+00:00
+
+```json
+{
+  "ts": "2026-05-28T07:52:09+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6d79-0fe9-7220-a8f1-7b3670388f36",
+  "branch": "main",
+  "changed_file_count": 29,
+  "changed_file_groups": {
+    "code": 15,
+    "orchid": 11,
+    "tests": 3
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "app/Actions/AssignEnrollmentGroupAction.php",
+    "app/Actions/ConvertLeadToStudentAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Orchid/Screens/PlatformScreen.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Rules/EnrollmentCanJoinGroupRule.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Rules/LeadCanConvertToStudentRule.php",
+    "app/Rules/LeadNotAlreadyConvertedRule.php",
+    "app/Support/LocalizedLabel.php",
+    "docs/lead-to-student-conversion.md",
+    "docs/students.md",
+    "tests/Feature/StudentCrmIntegrationTest.php",
+    "tests/Feature/StudentFinalHardeningTest.php",
+    "tests/Feature/StudentOrchidAdminUiTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

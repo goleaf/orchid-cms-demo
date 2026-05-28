@@ -130,6 +130,14 @@ class StudentOrchidAdminUiTest extends TestCase
 
         $this->actingAs($this->userWithPermissions(['students.convert_from_lead']))
             ->get(route('platform.crm.leads.convert', $lead))
+            ->assertForbidden();
+
+        $this->actingAs($this->userWithPermissions(['crm.leads.convert']))
+            ->get(route('platform.crm.leads.convert', $lead))
+            ->assertForbidden();
+
+        $this->actingAs($this->userWithPermissions(['students.convert_from_lead', 'crm.leads.convert']))
+            ->get(route('platform.crm.leads.convert', $lead))
             ->assertOk()
             ->assertSee(tkey('students.conversion.title'));
     }

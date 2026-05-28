@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Orchid\Screens\School;
 
 use App\Models\MarketingCampaign;
+use App\Support\LocalizedLabel;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
 use Orchid\Support\Facades\Layout;
@@ -25,12 +26,12 @@ class CampaignListScreen extends Screen
 
     public function name(): ?string
     {
-        return 'Marketing campaigns';
+        return tkey('operations.marketing_campaigns.title');
     }
 
     public function description(): ?string
     {
-        return 'Acquisition channels, budgets, UTM tracking, and generated demand.';
+        return tkey('operations.marketing_campaigns.description');
     }
 
     public function permission(): iterable
@@ -47,23 +48,23 @@ class CampaignListScreen extends Screen
     {
         return [
             Layout::table('campaigns', [
-                TD::make('name', 'Campaign')
+                TD::make('name', tkey('operations.columns.campaign'))
                     ->render(fn (MarketingCampaign $campaign): string => $campaign->name),
-                TD::make('branch', 'Branch')
-                    ->render(fn (MarketingCampaign $campaign): string => $campaign->branch?->name ?? 'All branches'),
-                TD::make('channel', 'Channel')
-                    ->render(fn (MarketingCampaign $campaign): string => str($campaign->channel)->replace('_', ' ')->title()->toString()),
-                TD::make('budget_cents', 'Budget')
+                TD::make('branch', tkey('operations.columns.branch'))
+                    ->render(fn (MarketingCampaign $campaign): string => $campaign->branch?->name ?? tkey('operations.empty.all_branches')),
+                TD::make('channel', tkey('operations.columns.channel'))
+                    ->render(fn (MarketingCampaign $campaign): string => LocalizedLabel::for('operations.campaign_channels', $campaign->channel)),
+                TD::make('budget_cents', tkey('operations.columns.budget'))
                     ->render(fn (MarketingCampaign $campaign): string => $campaign->budgetForHumans()),
-                TD::make('leads_count', 'Leads')
+                TD::make('leads_count', tkey('operations.columns.leads'))
                     ->render(fn (MarketingCampaign $campaign): string => (string) $campaign->leads_count)
                     ->alignCenter(),
-                TD::make('starts_on', 'Starts')
+                TD::make('starts_on', tkey('operations.columns.starts'))
                     ->render(fn (MarketingCampaign $campaign): string => $campaign->starts_on?->toDateString() ?? '-'),
-                TD::make('ends_on', 'Ends')
+                TD::make('ends_on', tkey('operations.columns.ends'))
                     ->render(fn (MarketingCampaign $campaign): string => $campaign->ends_on?->toDateString() ?? '-'),
-                TD::make('status', 'Status')
-                    ->render(fn (MarketingCampaign $campaign): string => str($campaign->status->value)->replace('_', ' ')->title()->toString()),
+                TD::make('status', tkey('operations.columns.status'))
+                    ->render(fn (MarketingCampaign $campaign): string => LocalizedLabel::for('operations.statuses.campaigns', $campaign->status)),
             ]),
         ];
     }

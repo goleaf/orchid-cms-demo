@@ -58,6 +58,8 @@ class LeadConvertToStudentScreen extends Screen
 
     public function query(MarketingLead $lead): iterable
     {
+        abort_unless($this->canConvertFromLead(), 403);
+
         $this->lead = MarketingLead::query()
             ->with([
                 'branch:id,name,name_translations,city,city_translations',
@@ -135,7 +137,8 @@ class LeadConvertToStudentScreen extends Screen
 
             Button::make(tkey('students.conversion.actions.convert'))
                 ->icon('bs.person-plus')
-                ->method('convert'),
+                ->method('convert')
+                ->canSee($this->canConvertFromLead()),
         ];
     }
 
@@ -322,5 +325,11 @@ class LeadConvertToStudentScreen extends Screen
         return collect(['not_required', 'pending', 'partially_paid', 'paid', 'overdue'])
             ->mapWithKeys(fn (string $status): array => [$status => tkey('students.payment_statuses.'.$status)])
             ->all();
+    }
+
+    private function canConvertFromLead(): bool
+    {
+        return (request()->user()?->hasAccess('students.convert_from_lead') ?? false)
+            && (request()->user()?->hasAccess('crm.leads.convert') ?? false);
     }
 }

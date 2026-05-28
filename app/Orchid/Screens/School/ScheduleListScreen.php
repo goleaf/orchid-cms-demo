@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Orchid\Screens\School;
 
 use App\Models\DrivingLesson;
+use App\Support\LocalizedLabel;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
 use Orchid\Support\Facades\Layout;
@@ -31,12 +32,12 @@ class ScheduleListScreen extends Screen
 
     public function name(): ?string
     {
-        return 'Schedule';
+        return tkey('operations.schedule.title');
     }
 
     public function description(): ?string
     {
-        return 'Theory, practice, simulator, instructor, and fleet scheduling.';
+        return tkey('operations.schedule.description');
     }
 
     public function permission(): iterable
@@ -53,20 +54,20 @@ class ScheduleListScreen extends Screen
     {
         return [
             Layout::table('lessons', [
-                TD::make('starts_at', 'Start')
+                TD::make('starts_at', tkey('operations.columns.start'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->starts_at->format('Y-m-d H:i')),
-                TD::make('student', 'Student')
+                TD::make('student', tkey('operations.columns.student'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->enrollment->studentProfile->fullName()),
-                TD::make('program', 'Program')
+                TD::make('program', tkey('operations.columns.program'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->enrollment->trainingProgram->title),
-                TD::make('instructor', 'Instructor')
+                TD::make('instructor', tkey('operations.columns.instructor'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->instructor->name),
-                TD::make('vehicle', 'Vehicle')
+                TD::make('vehicle', tkey('operations.columns.vehicle'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->vehicle?->registration_number ?? '-'),
-                TD::make('topic', 'Topic')
+                TD::make('topic', tkey('operations.columns.topic'))
                     ->render(fn (DrivingLesson $lesson): string => $lesson->topic),
-                TD::make('status', 'Status')
-                    ->render(fn (DrivingLesson $lesson): string => str($lesson->status->value)->replace('_', ' ')->title()->toString()),
+                TD::make('status', tkey('operations.columns.status'))
+                    ->render(fn (DrivingLesson $lesson): string => LocalizedLabel::for('operations.statuses.lessons', $lesson->status)),
             ]),
         ];
     }

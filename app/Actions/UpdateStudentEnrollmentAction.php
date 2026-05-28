@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Enums\EnrollmentStatus as EnrollmentStatusEnum;
 use App\Models\StudentEnrollment;
+use App\Models\TrainingGroup;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
 
@@ -26,11 +27,12 @@ class UpdateStudentEnrollmentAction
             'training_program_id',
             'course_category_id',
             'branch_id',
-            'training_group_id',
             'status',
             'status_id',
         ]);
         $targetStatus = $data['status'] ?? null;
+        $hasGroupChange = array_key_exists('training_group_id', $data);
+        $targetGroupId = $data['training_group_id'] ?? null;
         $payload = $this->payload($data, $user);
         unset($payload['status']);
 
@@ -39,6 +41,10 @@ class UpdateStudentEnrollmentAction
 
         if (filled($targetStatus) && $this->scalar($targetStatus) !== $enrollment->status->value) {
             $enrollment = app(ChangeEnrollmentStatusAction::class)->handle($enrollment, $targetStatus, $user);
+        }
+
+        if ($hasGroupChange) {
+            $enrollment = $this->syncGroup($enrollment->refresh(), $targetGroupId, $user, (bool) ($data['allow_overbooking'] ?? false));
         }
 
         app(RecordStudentActivityAction::class)->handle(
@@ -71,7 +77,6 @@ class UpdateStudentEnrollmentAction
             'training_program_id',
             'course_category_id',
             'branch_id',
-            'training_group_id',
             'status_id',
             'manager_id',
             'administrator_id',
@@ -115,6 +120,48 @@ class UpdateStudentEnrollmentAction
         return $payload;
     }
 
+    private function syncGroup(StudentEnrollment $enrollment, mixed $targetGroupId, ?User $user, bool $allowOverbooking): StudentEnrollment
+    {
+        if (filled($targetGroupId)) {
+            return app(AddStudentToTrainingGroupAction::class)->handle($enrollment, (int) $targetGroupId, $user, $allowOverbooking);
+        }
+
+        if ($enrollment->training_group_id === null) {
+            return $enrollment;
+        }
+
+        $oldGroupId = (int) $enrollment->training_group_id;
+        $oldGroup = TrainingGroup::query()
+            ->select(['id', 'places_taken'])
+            ->whereKey($oldGroupId)
+            ->first();
+
+        if ($oldGroup !== null) {
+            $oldGroup->forceFill([
+                'places_taken' => max(0, ((int) $oldGroup->places_taken) - 1),
+            ])->save();
+        }
+
+        $enrollment->forceFill([
+            'training_group_id' => null,
+            'updated_by_id' => $user?->id ?? $enrollment->updated_by_id,
+        ])->save();
+
+        app(RecordStudentActivityAction::class)->handle(
+            $enrollment->student,
+            $user,
+            'group_changed',
+            tkey('students.activities.titles.group_changed'),
+            null,
+            (string) $oldGroupId,
+            null,
+            ['enrollment_id' => $enrollment->id],
+            $enrollment->refresh(),
+        );
+
+        return $enrollment->refresh();
+    }
+
     /**
      * @param  array<string, mixed>  $before
      */
@@ -124,7 +171,6 @@ class UpdateStudentEnrollmentAction
             'training_program_id' => 'course_changed',
             'course_category_id' => 'course_changed',
             'branch_id' => 'branch_changed',
-            'training_group_id' => 'group_changed',
             'status' => 'enrollment_status_changed',
             'status_id' => 'enrollment_status_changed',
         ];

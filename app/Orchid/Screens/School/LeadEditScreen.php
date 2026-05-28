@@ -352,6 +352,16 @@ class LeadEditScreen extends Screen
                 ->icon('bs.person-plus')
                 ->href($this->lead?->exists ? route('platform.crm.leads.convert', $this->lead) : '#')
                 ->canSee($this->lead?->exists && ! $this->lead?->is_converted && $this->canConvertToStudent()),
+
+            Link::make(tkey('crm.leads.fields.converted_student'))
+                ->icon('bs.person')
+                ->href($this->lead?->convertedStudentProfile !== null ? route('platform.students.edit', $this->lead->convertedStudentProfile) : '#')
+                ->canSee($this->lead?->exists && $this->lead?->is_converted && $this->lead?->convertedStudentProfile !== null),
+
+            Link::make(tkey('crm.leads.fields.converted_enrollment'))
+                ->icon('bs.card-checklist')
+                ->href($this->lead?->convertedEnrollment !== null ? route('platform.students.enrollments.edit', $this->lead->convertedEnrollment) : '#')
+                ->canSee($this->lead?->exists && $this->lead?->is_converted && $this->lead?->convertedEnrollment !== null),
         ];
     }
 
@@ -1299,7 +1309,8 @@ class LeadEditScreen extends Screen
 
     private function canConvertToStudent(): bool
     {
-        return request()->user()?->hasAnyAccess(['crm.leads.convert', 'students.convert_from_lead']) ?? false;
+        return (request()->user()?->hasAccess('crm.leads.convert') ?? false)
+            && (request()->user()?->hasAccess('students.convert_from_lead') ?? false);
     }
 
     private function hasCrmAccess(string $permission): bool

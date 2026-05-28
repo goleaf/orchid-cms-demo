@@ -111,7 +111,8 @@ class StudentEditScreen extends Screen
                     'administrator:id,name',
                     'creator:id,name',
                     'updater:id,name',
-                    'sourceLead:id,lead_number,first_name,last_name,phone,email,status,source,created_at,converted_at,utm_source,utm_medium,utm_campaign,utm_content,utm_term,referrer_url,landing_page,form_page,form_name,ip_address,user_agent',
+                    'sourceLead:id,lead_number,first_name,last_name,phone,email,status,source,responsible_manager_id,created_at,converted_at,utm_source,utm_medium,utm_campaign,utm_content,utm_term,referrer_url,landing_page,form_page,form_name,ip_address,user_agent',
+                    'sourceLead.responsibleManager:id,name',
                     'enrollments' => fn ($query) => $query
                         ->forAdminList()
                         ->with([
@@ -152,11 +153,14 @@ class StudentEditScreen extends Screen
             'student.source_lead_number' => $sourceLead?->lead_number,
             'student.source_lead_status' => $sourceLead?->status?->value,
             'student.source_lead_source' => $sourceLead?->source,
+            'student.source_lead_manager' => $sourceLead?->responsibleManager?->name,
             'student.source_lead_created_at' => $sourceLead?->created_at?->format('Y-m-d H:i'),
             'student.source_lead_converted_at' => $sourceLead?->converted_at?->format('Y-m-d H:i'),
             'student.source_lead_utm_source' => $sourceLead?->utm_source,
             'student.source_lead_utm_medium' => $sourceLead?->utm_medium,
             'student.source_lead_utm_campaign' => $sourceLead?->utm_campaign,
+            'student.source_lead_landing_page' => $sourceLead?->landing_page,
+            'student.source_lead_form_page' => $sourceLead?->form_page,
             'student.source_lead_form_name' => $sourceLead?->form_name,
         ];
     }
@@ -222,6 +226,11 @@ class StudentEditScreen extends Screen
                 ->icon('bs.plus-square')
                 ->modal('addEnrollmentModal')
                 ->canSee($this->student?->exists && $this->hasStudentAccess('students.manage_enrollments')),
+
+            Link::make(tkey('students.actions.open_source_lead'))
+                ->icon('bs.link-45deg')
+                ->href($this->student?->sourceLead !== null ? route('platform.crm.leads.edit', $this->student->sourceLead) : '#')
+                ->canSee($this->student?->exists && $this->student?->sourceLead !== null && $this->canViewCrmSource()),
 
             Button::make(tkey('students.actions.create_portal_access'))
                 ->icon('bs.person-gear')
@@ -361,6 +370,9 @@ class StudentEditScreen extends Screen
                 Input::make('student.source_lead_source')
                     ->title(tkey('crm.leads.fields.source'))
                     ->disabled(),
+                Input::make('student.source_lead_manager')
+                    ->title(tkey('crm.leads.fields.manager'))
+                    ->disabled(),
                 Input::make('student.source_lead_created_at')
                     ->title(tkey('crm.leads.fields.created_at'))
                     ->disabled(),
@@ -380,6 +392,12 @@ class StudentEditScreen extends Screen
                     ->disabled(),
                 Input::make('student.source_lead_utm_campaign')
                     ->title(tkey('crm.leads.fields.utm_campaign'))
+                    ->disabled(),
+                Input::make('student.source_lead_landing_page')
+                    ->title(tkey('crm.leads.fields.landing_page'))
+                    ->disabled(),
+                Input::make('student.source_lead_form_page')
+                    ->title(tkey('crm.leads.fields.form_page'))
                     ->disabled(),
                 Input::make('student.source_lead_form_name')
                     ->title(tkey('crm.leads.fields.form_name'))
@@ -810,7 +828,7 @@ class StudentEditScreen extends Screen
 
     private function canViewCrmSource(): bool
     {
-        return request()->user()?->hasAnyAccess(['students.view_crm_source', 'crm.leads.view']) ?? false;
+        return request()->user()?->hasAccess('students.view_crm_source') ?? false;
     }
 
     private function canViewMarketing(): bool

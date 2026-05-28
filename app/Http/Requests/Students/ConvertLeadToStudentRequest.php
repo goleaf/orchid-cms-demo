@@ -7,6 +7,7 @@ use App\Models\CourseCategory;
 use App\Models\Student;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
+use App\Rules\ExistingStudentCanBeUsedForConversionRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -15,7 +16,8 @@ class ConvertLeadToStudentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAnyAccess(['students.convert_from_lead', 'crm.leads.convert']) ?? false;
+        return ($this->user()?->hasAccess('students.convert_from_lead') ?? false)
+            && ($this->user()?->hasAccess('crm.leads.convert') ?? false);
     }
 
     /**
@@ -25,7 +27,7 @@ class ConvertLeadToStudentRequest extends FormRequest
     {
         return [
             'use_existing_student' => ['nullable', 'boolean'],
-            'existing_student_id' => ['nullable', 'integer', Rule::exists(Student::class, 'id')],
+            'existing_student_id' => ['nullable', 'integer', Rule::exists(Student::class, 'id'), new ExistingStudentCanBeUsedForConversionRule],
             'student.full_name' => ['nullable', 'string', 'max:240'],
             'student.first_name' => ['nullable', 'string', 'max:120'],
             'student.last_name' => ['nullable', 'string', 'max:120'],

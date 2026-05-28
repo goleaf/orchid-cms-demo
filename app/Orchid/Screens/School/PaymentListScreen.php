@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Orchid\Screens\School;
 
 use App\Models\Payment;
+use App\Support\LocalizedLabel;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
 use Orchid\Support\Facades\Layout;
@@ -28,12 +29,12 @@ class PaymentListScreen extends Screen
 
     public function name(): ?string
     {
-        return 'Payments';
+        return tkey('operations.payments.title');
     }
 
     public function description(): ?string
     {
-        return 'Student payments, payment methods, and finance status.';
+        return tkey('operations.payments.description');
     }
 
     public function permission(): iterable
@@ -50,19 +51,19 @@ class PaymentListScreen extends Screen
     {
         return [
             Layout::table('payments', [
-                TD::make('paid_at', 'Paid at')
+                TD::make('paid_at', tkey('operations.columns.paid_at'))
                     ->render(fn (Payment $payment): string => $payment->paid_at?->format('Y-m-d H:i') ?? '-'),
-                TD::make('student', 'Student')
+                TD::make('student', tkey('operations.columns.student'))
                     ->render(fn (Payment $payment): string => $payment->studentProfile->fullName()),
-                TD::make('program', 'Program')
+                TD::make('program', tkey('operations.columns.program'))
                     ->render(fn (Payment $payment): string => $payment->enrollment?->trainingProgram?->title ?? '-'),
-                TD::make('amount_cents', 'Amount')
+                TD::make('amount_cents', tkey('operations.columns.amount'))
                     ->render(fn (Payment $payment): string => $payment->amountForHumans()),
-                TD::make('method', 'Method')
-                    ->render(fn (Payment $payment): string => str($payment->method)->replace('_', ' ')->title()->toString()),
-                TD::make('status', 'Status')
-                    ->render(fn (Payment $payment): string => str($payment->status->value)->replace('_', ' ')->title()->toString()),
-                TD::make('reference', 'Reference')
+                TD::make('method', tkey('operations.columns.method'))
+                    ->render(fn (Payment $payment): string => LocalizedLabel::for('operations.payment_methods', $payment->method)),
+                TD::make('status', tkey('operations.columns.status'))
+                    ->render(fn (Payment $payment): string => LocalizedLabel::for('operations.statuses.payments', $payment->status)),
+                TD::make('reference', tkey('operations.columns.reference'))
                     ->render(fn (Payment $payment): string => $payment->reference ?? '-'),
             ]),
         ];

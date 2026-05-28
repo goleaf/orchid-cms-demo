@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Enums\GroupStatus;
 use App\Models\StudentEnrollment;
 use App\Models\TrainingGroup;
 use Closure;
@@ -28,7 +29,7 @@ class EnrollmentCanJoinGroupRule implements ValidationRule
             return;
         }
 
-        if (! $this->allowOverbooking && $group->is_full) {
+        if (! $this->allowOverbooking && (! $this->groupAcceptsEnrollment($group) || $group->is_full)) {
             $fail(tkey('students.validation.enrollment_cannot_join_group'));
 
             return;
@@ -37,5 +38,16 @@ class EnrollmentCanJoinGroupRule implements ValidationRule
         if ($this->enrollment !== null && $group->training_program_id !== null && (int) $this->enrollment->training_program_id !== (int) $group->training_program_id) {
             $fail(tkey('students.validation.enrollment_cannot_join_group'));
         }
+    }
+
+    private function groupAcceptsEnrollment(TrainingGroup $group): bool
+    {
+        return in_array($group->status, [
+            GroupStatus::Planned,
+            GroupStatus::Recruiting,
+            GroupStatus::Open,
+            GroupStatus::AlmostFull,
+            GroupStatus::Active,
+        ], true);
     }
 }

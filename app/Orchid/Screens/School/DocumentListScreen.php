@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Orchid\Screens\School;
 
 use App\Models\StudentDocument;
+use App\Support\LocalizedLabel;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
 use Orchid\Support\Facades\Layout;
@@ -28,12 +29,12 @@ class DocumentListScreen extends Screen
 
     public function name(): ?string
     {
-        return 'Documents';
+        return tkey('operations.documents.title');
     }
 
     public function description(): ?string
     {
-        return 'Identity, medical, contract, and exam document tracking.';
+        return tkey('operations.documents.description');
     }
 
     public function permission(): iterable
@@ -50,19 +51,19 @@ class DocumentListScreen extends Screen
     {
         return [
             Layout::table('documents', [
-                TD::make('student', 'Student')
+                TD::make('student', tkey('operations.columns.student'))
                     ->render(fn (StudentDocument $document): string => $document->studentProfile->fullName()),
-                TD::make('program', 'Program')
+                TD::make('program', tkey('operations.columns.program'))
                     ->render(fn (StudentDocument $document): string => $document->enrollment?->trainingProgram?->title ?? '-'),
-                TD::make('document_type', 'Type')
-                    ->render(fn (StudentDocument $document): string => str($document->document_type)->replace('_', ' ')->title()->toString()),
-                TD::make('title', 'Title')
+                TD::make('document_type', tkey('operations.columns.type'))
+                    ->render(fn (StudentDocument $document): string => LocalizedLabel::for('operations.document_types', $document->document_type)),
+                TD::make('title', tkey('operations.columns.title'))
                     ->render(fn (StudentDocument $document): string => $document->title),
-                TD::make('status', 'Status')
-                    ->render(fn (StudentDocument $document): string => str($document->status->value)->replace('_', ' ')->title()->toString()),
-                TD::make('issued_at', 'Issued')
+                TD::make('status', tkey('operations.columns.status'))
+                    ->render(fn (StudentDocument $document): string => LocalizedLabel::for('operations.statuses.documents', $document->status)),
+                TD::make('issued_at', tkey('operations.columns.issued'))
                     ->render(fn (StudentDocument $document): string => $document->issued_at?->toDateString() ?? '-'),
-                TD::make('expires_at', 'Expires')
+                TD::make('expires_at', tkey('operations.columns.expires'))
                     ->render(fn (StudentDocument $document): string => $document->expires_at?->toDateString() ?? '-'),
             ]),
         ];
