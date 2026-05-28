@@ -14,7 +14,7 @@ class NotificationChannelFactory extends Factory
 
     public function definition(): array
     {
-        $code = $this->faker->unique()->randomElement(NotificationChannel::codeValues());
+        $code = $this->faker->randomElement(NotificationChannel::codeValues());
 
         return [
             'code' => $code,

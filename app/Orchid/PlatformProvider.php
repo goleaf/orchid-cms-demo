@@ -6,6 +6,7 @@ namespace App\Orchid;
 
 use App\Models\MarketingLead;
 use App\Models\MarketingLeadTask;
+use App\Models\CommunicationReminder;
 use App\Models\Student;
 use App\Models\StudentTask;
 use App\Models\TrainingGroup;
@@ -275,6 +276,28 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.students.enrollment-statuses')
                 ->permission('students.manage_statuses'),
 
+            Menu::make(tkey('menu.communications.channels'))
+                ->icon('bs.bell')
+                ->route('platform.communications.channels')
+                ->permission('communications.channels.view')
+                ->title(tkey('menu.communications')),
+
+            Menu::make(tkey('menu.communications.templates'))
+                ->icon('bs.chat-square-text')
+                ->route('platform.communications.templates')
+                ->permission('communications.templates.view'),
+
+            Menu::make(tkey('menu.communications.reminders'))
+                ->icon('bs.alarm')
+                ->route('platform.communications.reminders')
+                ->permission('communications.reminders.view')
+                ->badge(fn (): int => CommunicationReminder::query()->due()->count()),
+
+            Menu::make(tkey('menu.communications.delivery_logs'))
+                ->icon('bs.list-check')
+                ->route('platform.communications.delivery-logs')
+                ->permission('communications.delivery_logs.view'),
+
             Menu::make(tkey('menu.marketing.campaigns'))
                 ->icon('bs.megaphone')
                 ->route('platform.marketing.campaigns')
@@ -422,6 +445,18 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('students.view_marketing', tkey('permissions.students.view_marketing'))
                 ->addPermission('students.manage_statuses', tkey('permissions.students.manage_statuses'))
                 ->addPermission('students.export', tkey('permissions.students.export')),
+
+            ItemPermission::group(tkey('permissions.groups.communications'))
+                ->addPermission('communications.channels.view', tkey('permissions.communications.channels.view'))
+                ->addPermission('communications.channels.manage', tkey('permissions.communications.channels.manage'))
+                ->addPermission('communications.templates.view', tkey('permissions.communications.templates.view'))
+                ->addPermission('communications.templates.manage', tkey('permissions.communications.templates.manage'))
+                ->addPermission('communications.reminders.view', tkey('permissions.communications.reminders.view'))
+                ->addPermission('communications.reminders.manage', tkey('permissions.communications.reminders.manage'))
+                ->addPermission('communications.delivery_logs.view', tkey('permissions.communications.delivery_logs.view'))
+                ->addPermission('communications.preferences.manage', tkey('permissions.communications.preferences.manage'))
+                ->addPermission('communications.student_history.manage', tkey('permissions.communications.student_history.manage'))
+                ->addPermission('communications.lead_history.view', tkey('permissions.communications.lead_history.view')),
 
             ItemPermission::group(tkey('permissions.groups.system'))
                 ->addPermission('platform.systems.roles', tkey('permissions.system.roles'))

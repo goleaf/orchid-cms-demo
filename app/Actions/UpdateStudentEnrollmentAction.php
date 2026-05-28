@@ -134,7 +134,7 @@ class UpdateStudentEnrollmentAction
 
         $oldGroupId = (int) $enrollment->training_group_id;
         $oldGroup = TrainingGroup::query()
-            ->select(['id', 'places_taken'])
+            ->forCapacityMutation()
             ->whereKey($oldGroupId)
             ->first();
 

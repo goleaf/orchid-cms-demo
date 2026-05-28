@@ -5,7 +5,10 @@ namespace App\Http\Requests\Education;
 use App\Models\StudentEnrollment;
 use App\Models\TrainingGroup;
 use App\Models\TrainingGroupMembership;
-use App\Rules\TrainingGroupCanAcceptEnrollmentRule;
+use App\Rules\StudentEnrollmentCanJoinGroupRule;
+use App\Rules\StudentEnrollmentNotAlreadyInActiveGroupRule;
+use App\Rules\TrainingGroupCapacityRule;
+use App\Rules\TrainingGroupOpenForEnrollmentRule;
 use App\Rules\TrainingGroupMembershipNotDuplicateRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,8 +31,8 @@ class TrainingGroupMembershipRequest extends FormRequest
 
         return [
             'membership.id' => ['nullable', 'integer', Rule::exists(TrainingGroupMembership::class, 'id')],
-            'membership.training_group_id' => ['required', 'integer', Rule::exists(TrainingGroup::class, 'id'), new TrainingGroupCanAcceptEnrollmentRule($allowOverbooking)],
-            'membership.enrollment_id' => ['required', 'integer', Rule::exists(StudentEnrollment::class, 'id'), new TrainingGroupMembershipNotDuplicateRule($membershipId)],
+            'membership.training_group_id' => ['required', 'integer', Rule::exists(TrainingGroup::class, 'id'), new TrainingGroupOpenForEnrollmentRule($allowOverbooking), new TrainingGroupCapacityRule(null, $allowOverbooking)],
+            'membership.enrollment_id' => ['required', 'integer', Rule::exists(StudentEnrollment::class, 'id'), new StudentEnrollmentCanJoinGroupRule($this->group()), new StudentEnrollmentNotAlreadyInActiveGroupRule($membershipId), new TrainingGroupMembershipNotDuplicateRule($membershipId)],
             'membership.allow_overbooking' => ['nullable', 'boolean'],
             'membership.notes' => ['nullable', 'string', 'max:2000'],
         ];
@@ -46,5 +49,12 @@ class TrainingGroupMembershipRequest extends FormRequest
         $data['allow_overbooking'] = (bool) ($data['allow_overbooking'] ?? false);
 
         return $data;
+    }
+
+    private function group(): ?TrainingGroup
+    {
+        $groupId = $this->input('membership.training_group_id');
+
+        return filled($groupId) ? TrainingGroup::query()->find((int) $groupId) : null;
     }
 }

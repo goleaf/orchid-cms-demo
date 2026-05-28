@@ -3,14 +3,59 @@
 namespace Tests\Feature;
 
 use App\Actions\AddStudentToTrainingGroupAction;
+use App\Actions\AddTrainingGroupNoteAction;
+use App\Actions\ArchiveTrainingGroupAction;
+use App\Actions\AssignLearningProgramToGroupAction;
+use App\Actions\ChangeTrainingGroupStatusAction;
+use App\Actions\CompleteTrainingGroupMembershipAction;
+use App\Actions\CreateLearningProgramAction;
+use App\Actions\CreateLearningProgramModuleAction;
+use App\Actions\CreateLearningTopicAction;
 use App\Actions\CreateOrUpdateTrainingGroupAction;
+use App\Actions\CreateTrainingGroupAction;
+use App\Actions\CreateTrainingGroupSchedulePatternAction;
+use App\Actions\DeleteTrainingGroupSchedulePatternAction;
+use App\Actions\GenerateTrainingGroupNumberAction;
+use App\Actions\HideTrainingGroupFromSiteAction;
+use App\Actions\PublishTrainingGroupOnSiteAction;
+use App\Actions\RecalculateTrainingGroupCapacityAction;
 use App\Actions\RemoveStudentFromTrainingGroupAction;
+use App\Actions\TransferStudentBetweenGroupsAction;
+use App\Actions\UpdateLearningProgramAction;
+use App\Actions\UpdateLearningProgramModuleAction;
+use App\Actions\UpdateLearningTopicAction;
+use App\Actions\UpdateTrainingGroupAction;
+use App\Actions\UpdateTrainingGroupSchedulePatternAction;
+use App\Actions\WaitlistStudentForTrainingGroupAction;
 use App\Enums\GroupStatus;
+use App\Http\Requests\Education\AddStudentToTrainingGroupRequest;
+use App\Http\Requests\Education\AddTrainingGroupNoteRequest;
+use App\Http\Requests\Education\ArchiveTrainingGroupRequest;
+use App\Http\Requests\Education\AssignLearningProgramToGroupRequest;
+use App\Http\Requests\Education\ChangeTrainingGroupStatusRequest;
+use App\Http\Requests\Education\CompleteTrainingGroupMembershipRequest;
+use App\Http\Requests\Education\DeleteTrainingGroupSchedulePatternRequest;
+use App\Http\Requests\Education\HideTrainingGroupRequest;
 use App\Http\Requests\Education\LearningTopicRequest;
+use App\Http\Requests\Education\PublishTrainingGroupRequest;
+use App\Http\Requests\Education\RemoveStudentFromTrainingGroupRequest;
+use App\Http\Requests\Education\StoreLearningProgramModuleRequest;
+use App\Http\Requests\Education\StoreLearningProgramRequest;
+use App\Http\Requests\Education\StoreLearningTopicRequest;
+use App\Http\Requests\Education\StoreTrainingGroupRequest;
+use App\Http\Requests\Education\StoreTrainingGroupSchedulePatternRequest;
 use App\Http\Requests\Education\TrainingGroupMembershipRequest;
 use App\Http\Requests\Education\TrainingGroupSchedulePatternRequest;
 use App\Http\Requests\Education\TrainingGroupStatusRequest;
+use App\Http\Requests\Education\TransferStudentBetweenGroupsRequest;
+use App\Http\Requests\Education\UpdateLearningProgramModuleRequest;
+use App\Http\Requests\Education\UpdateLearningProgramRequest;
+use App\Http\Requests\Education\UpdateLearningTopicRequest;
+use App\Http\Requests\Education\UpdateTrainingGroupRequest;
+use App\Http\Requests\Education\UpdateTrainingGroupSchedulePatternRequest;
+use App\Http\Requests\Education\WaitlistStudentForTrainingGroupRequest;
 use App\Http\Requests\TrainingGroupRequest;
+use App\Models\Branch;
 use App\Models\LearningProgram;
 use App\Models\LearningProgramModule;
 use App\Models\LearningTopic;
@@ -24,15 +69,50 @@ use App\Models\TrainingGroupStatus;
 use App\Models\TrainingProgram;
 use App\Models\TranslationString;
 use App\Models\User;
+use App\Orchid\Screens\School\GroupEditScreen;
+use App\Orchid\Screens\School\GroupListScreen;
+use App\Orchid\Screens\School\LearningTopicListScreen;
+use App\Orchid\Screens\School\TrainingGroupSchedulePatternListScreen;
+use App\Orchid\Screens\School\TrainingGroupStatusListScreen;
 use App\Rules\ActiveTrainingGroupStatusRule;
+use App\Rules\DuplicateSchedulePatternRule;
+use App\Rules\GroupCanBePublishedRule;
+use App\Rules\GroupMembershipCanBeRemovedRule;
+use App\Rules\GroupMembershipCanBeTransferredRule;
+use App\Rules\LearningProgramIsActiveRule;
+use App\Rules\SchedulePatternTimeRangeRule;
+use App\Rules\StudentEnrollmentCanJoinGroupRule;
+use App\Rules\StudentEnrollmentNotAlreadyInActiveGroupRule;
 use App\Rules\TrainingGroupCanAcceptEnrollmentRule;
+use App\Rules\TrainingGroupCanAcceptApplicationsRule;
+use App\Rules\TrainingGroupCanBeArchivedRule;
+use App\Rules\TrainingGroupCanBeUpdatedRule;
+use App\Rules\TrainingGroupCapacityRule;
+use App\Rules\TrainingGroupDateRangeRule;
 use App\Rules\TrainingGroupEnrollmentMatchesProgramRule;
 use App\Rules\TrainingGroupMembershipNotDuplicateRule;
+use App\Rules\TrainingGroupOpenForEnrollmentRule;
+use App\Rules\TranslatedGroupNameRequiredRule;
+use App\Rules\TranslatedLearningProgramNameRequiredRule;
+use App\Rules\ValidDayOfWeekRule;
+use App\Rules\ValidLearningProgramModuleTypeRule;
 use App\Rules\ValidLearningTopicTypeRule;
 use App\Rules\ValidScheduleDayRule;
+use App\Rules\ValidSchedulePatternTypeRule;
 use App\Rules\ValidSchedulePatternTimeRule;
+use App\Rules\ValidTrainingGroupCapacityValueRule;
 use App\Rules\ValidTrainingGroupStatusRule;
+use App\Rules\ValidTrainingGroupStatusTransitionRule;
 use App\Support\Access\SuperadminPermissions;
+use Database\Factories\LearningProgramFactory;
+use Database\Factories\LearningProgramModuleFactory;
+use Database\Factories\LearningTopicFactory;
+use Database\Factories\TrainingGroupActivityFactory;
+use Database\Factories\TrainingGroupMembershipFactory;
+use Database\Factories\TrainingGroupSchedulePatternFactory;
+use Database\Factories\TrainingGroupStatusFactory;
+use Database\Seeders\EducationGroupSeeder;
+use Database\Seeders\EducationSeeder;
 use Database\Seeders\EducationTranslationSeeder;
 use Database\Seeders\LanguageSeeder;
 use Database\Seeders\StudentDictionarySeeder;
@@ -280,9 +360,11 @@ class EducationGroupBlockTest extends TestCase
             'places_taken' => 0,
         ]);
 
-        $enrollment = app(AddStudentToTrainingGroupAction::class)->handle($enrollment, $group, $user);
+        $membership = app(AddStudentToTrainingGroupAction::class)->handle($enrollment, $group, $user);
+        $enrollment = $enrollment->refresh();
 
         $this->assertSame($group->id, $enrollment->training_group_id);
+        $this->assertSame($enrollment->id, $membership->enrollment_id);
         $this->assertSame(1, $group->refresh()->places_taken);
         $this->assertSame(1, $group->capacity_taken);
         $this->assertDatabaseHas('training_group_memberships', [
@@ -309,7 +391,7 @@ class EducationGroupBlockTest extends TestCase
         $this->assertSame(0, $group->refresh()->places_taken);
         $this->assertSame(0, $group->capacity_taken);
         $this->assertNull($enrollment->refresh()->training_group_id);
-        $this->assertSame('left', $membership->refresh()->status);
+        $this->assertSame('removed', $membership->refresh()->status);
         $this->assertDatabaseHas('training_group_activities', [
             'training_group_id' => $group->id,
             'type' => 'student_removed',
@@ -539,22 +621,22 @@ class EducationGroupBlockTest extends TestCase
             ValidLearningTopicTypeRule::class,
             ValidScheduleDayRule::class,
             ValidSchedulePatternTimeRule::class,
-            \Database\Factories\TrainingGroupStatusFactory::class,
-            \Database\Factories\TrainingGroupMembershipFactory::class,
-            \Database\Factories\LearningProgramFactory::class,
-            \Database\Factories\LearningProgramModuleFactory::class,
-            \Database\Factories\LearningTopicFactory::class,
-            \Database\Factories\TrainingGroupSchedulePatternFactory::class,
-            \Database\Factories\TrainingGroupActivityFactory::class,
-            \Database\Seeders\TrainingGroupStatusSeeder::class,
-            \Database\Seeders\EducationTranslationSeeder::class,
-            \Database\Seeders\EducationGroupSeeder::class,
-            \Database\Seeders\EducationSeeder::class,
-            \App\Orchid\Screens\School\GroupListScreen::class,
-            \App\Orchid\Screens\School\GroupEditScreen::class,
-            \App\Orchid\Screens\School\TrainingGroupStatusListScreen::class,
-            \App\Orchid\Screens\School\LearningTopicListScreen::class,
-            \App\Orchid\Screens\School\TrainingGroupSchedulePatternListScreen::class,
+            TrainingGroupStatusFactory::class,
+            TrainingGroupMembershipFactory::class,
+            LearningProgramFactory::class,
+            LearningProgramModuleFactory::class,
+            LearningTopicFactory::class,
+            TrainingGroupSchedulePatternFactory::class,
+            TrainingGroupActivityFactory::class,
+            TrainingGroupStatusSeeder::class,
+            EducationTranslationSeeder::class,
+            EducationGroupSeeder::class,
+            EducationSeeder::class,
+            GroupListScreen::class,
+            GroupEditScreen::class,
+            TrainingGroupStatusListScreen::class,
+            LearningTopicListScreen::class,
+            TrainingGroupSchedulePatternListScreen::class,
         ] as $class) {
             $this->assertTrue(class_exists($class), $class);
         }

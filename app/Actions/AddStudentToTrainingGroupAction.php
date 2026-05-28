@@ -49,7 +49,7 @@ class AddStudentToTrainingGroupAction
 
             if ($oldGroupId !== null) {
                 $oldGroup = TrainingGroup::query()
-                    ->select(['id', 'places_taken', 'capacity_taken', 'capacity_waitlist', 'capacity_total', 'capacity'])
+                    ->forCapacityMutation()
                     ->whereKey($oldGroupId)
                     ->first();
 

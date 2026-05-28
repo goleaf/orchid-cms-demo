@@ -27,15 +27,19 @@ class ExamAdmissionChecklistItemFactory extends Factory
             'practice_hours',
         ]);
 
+        $titleTranslations = [
+            'identity_document' => ['ru' => 'Документ личности', 'en' => 'Identity Document', 'lt' => 'Asmens dokumentas', 'pl' => 'Dokument tozsamosci'],
+            'medical_certificate' => ['ru' => 'Медицинская справка', 'en' => 'Medical Certificate', 'lt' => 'Medicinos pazyma', 'pl' => 'Zaswiadczenie lekarskie'],
+            'training_contract' => ['ru' => 'Договор обучения', 'en' => 'Training Contract', 'lt' => 'Mokymo sutartis', 'pl' => 'Umowa szkoleniowa'],
+            'payment_clearance' => ['ru' => 'Проверка оплаты', 'en' => 'Payment Clearance', 'lt' => 'Mokejimo patikra', 'pl' => 'Rozliczenie platnosci'],
+            'theory_hours' => ['ru' => 'Часы теории', 'en' => 'Theory Hours', 'lt' => 'Teorijos valandos', 'pl' => 'Godziny teorii'],
+            'practice_hours' => ['ru' => 'Часы практики', 'en' => 'Practice Hours', 'lt' => 'Praktikos valandos', 'pl' => 'Godziny praktyki'],
+        ];
+
         return [
             'exam_admission_id' => ExamAdmission::factory(),
             'code' => $code,
-            'title_translations' => [
-                'en' => str($code)->replace('_', ' ')->title()->toString(),
-                'ru' => str($code)->replace('_', ' ')->title()->toString(),
-                'lt' => str($code)->replace('_', ' ')->title()->toString(),
-                'pl' => str($code)->replace('_', ' ')->title()->toString(),
-            ],
+            'title_translations' => $titleTranslations[$code],
             'status' => ExamChecklistItemStatus::Pending,
             'source_type' => null,
             'source_id' => null,

@@ -2859,3 +2859,54 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T09:29:30+00:00
+
+```json
+{
+  "ts": "2026-05-28T09:29:30+00:00",
+  "event": "Stop",
+  "session_id": "019e6d9c-1446-78f3-b720-8f17cbb16ed9",
+  "turn_id": "019e6dcf-6ff3-72d0-bfe5-bc1663e4a9ad",
+  "branch": "main",
+  "changed_file_count": 51,
+  "changed_file_groups": {
+    "code": 43,
+    "orchid": 6,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    "app/Actions/Analytics/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/Analytics/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Orchid/PlatformProvider.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Rules/ActiveKpiMetricRule.php",
+    "app/Rules/ActiveReportDefinitionRule.php",
+    "app/Rules/AnalyticsCodeRule.php",
+    "app/Rules/AnalyticsDateRangeRule.php",
+    "app/Rules/DashboardWidgetCodeRule.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

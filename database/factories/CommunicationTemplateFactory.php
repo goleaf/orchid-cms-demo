@@ -16,7 +16,7 @@ class CommunicationTemplateFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => $this->faker->optional()->unique()->slug(3),
+            'code' => $this->faker->unique()->slug(3),
             'type' => $this->faker->randomElement(CommunicationTemplate::typeValues()),
             'notification_channel_id' => NotificationChannel::factory(),
             'channel' => null,

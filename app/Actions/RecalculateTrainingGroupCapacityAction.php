@@ -11,7 +11,10 @@ class RecalculateTrainingGroupCapacityAction
 {
     public function handle(TrainingGroup $group, ?User $user = null, bool $updateStatus = true): TrainingGroup
     {
-        $group = TrainingGroup::query()->whereKey($group->getKey())->firstOrFail();
+        $group = TrainingGroup::query()
+            ->forCapacityMutation()
+            ->whereKey($group->getKey())
+            ->firstOrFail();
 
         $old = [
             'capacity_taken' => (int) $group->capacity_taken,

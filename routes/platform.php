@@ -9,6 +9,9 @@ use App\Orchid\Screens\Role\RoleListScreen;
 use App\Orchid\Screens\School\BranchEditScreen;
 use App\Orchid\Screens\School\BranchListScreen;
 use App\Orchid\Screens\School\CampaignListScreen;
+use App\Orchid\Screens\School\CommunicationReminderListScreen;
+use App\Orchid\Screens\School\CommunicationTemplateEditScreen;
+use App\Orchid\Screens\School\CommunicationTemplateListScreen;
 use App\Orchid\Screens\School\DocumentListScreen;
 use App\Orchid\Screens\School\ExamListScreen;
 use App\Orchid\Screens\School\FleetListScreen;
@@ -30,6 +33,8 @@ use App\Orchid\Screens\School\EnrollmentStatusListScreen;
 use App\Orchid\Screens\School\LeadConvertToStudentScreen;
 use App\Orchid\Screens\School\MessageTemplateEditScreen;
 use App\Orchid\Screens\School\MessageTemplateListScreen;
+use App\Orchid\Screens\School\NotificationChannelListScreen;
+use App\Orchid\Screens\School\NotificationDeliveryLogListScreen;
 use App\Orchid\Screens\School\PaymentListScreen;
 use App\Orchid\Screens\School\PricingPackageEditScreen;
 use App\Orchid\Screens\School\PricingPackageListScreen;
@@ -550,6 +555,43 @@ Route::screen('marketing/message-templates', MessageTemplateListScreen::class)
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
         ->push(tkey('crm.message_templates.title'), route('platform.marketing.templates')));
+
+// Communications
+Route::screen('communications/channels', NotificationChannelListScreen::class)
+    ->name('platform.communications.channels')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('communication.channels.title'), route('platform.communications.channels')));
+
+Route::screen('communications/templates/create', CommunicationTemplateEditScreen::class)
+    ->name('platform.communications.templates.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.communications.templates')
+        ->push(tkey('communication.templates.create_title'), route('platform.communications.templates.create')));
+
+Route::screen('communications/templates/{communicationTemplate}/edit', CommunicationTemplateEditScreen::class)
+    ->name('platform.communications.templates.edit')
+    ->breadcrumbs(fn (Trail $trail, $communicationTemplate) => $trail
+        ->parent('platform.communications.templates')
+        ->push($communicationTemplate->displayName(), route('platform.communications.templates.edit', $communicationTemplate)));
+
+Route::screen('communications/templates', CommunicationTemplateListScreen::class)
+    ->name('platform.communications.templates')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('communication.templates.title'), route('platform.communications.templates')));
+
+Route::screen('communications/reminders', CommunicationReminderListScreen::class)
+    ->name('platform.communications.reminders')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('communication.reminders.title'), route('platform.communications.reminders')));
+
+Route::screen('communications/delivery-logs', NotificationDeliveryLogListScreen::class)
+    ->name('platform.communications.delivery-logs')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('communication.delivery_logs.title'), route('platform.communications.delivery-logs')));
 
 // System > Languages
 Route::screen('system/languages/create', LanguageEditScreen::class)

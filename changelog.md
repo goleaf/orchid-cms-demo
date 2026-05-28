@@ -2,6 +2,12 @@
 
 ## 2026-05-28
 
+- Added the first analytics tools for tracking school performance, reports, targets, and dashboard preferences
+- Added communication management pages for channels, message templates, reminders, and delivery history
+- Improved validation around training groups, schedules, learning programs, and student group membership
+- Expanded demo data and translations so analytics and communication areas are easier to try in a fresh setup
+- Added tests covering the communication foundation and updated education group behavior
+
 - Group capacity recalculation now uses the latest saved group data before updating totals
 - The sample Category B training program now uses clearer Vilnius-focused wording
 - Internal workflow notes were updated for future project learning review

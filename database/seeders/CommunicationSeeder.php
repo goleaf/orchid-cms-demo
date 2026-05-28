@@ -16,7 +16,7 @@ class CommunicationSeeder extends Seeder
                 $channel = $this->upsert(
                     new NotificationChannel,
                     ['code' => $state['code']],
-                    NotificationChannel::factory()->state($state)->make()->getAttributes(),
+                    NotificationChannel::factory()->state($state)->make()->attributesToArray(),
                 );
 
                 return [$channel->code => $channel];
@@ -26,7 +26,7 @@ class CommunicationSeeder extends Seeder
             $this->upsert(
                 new CommunicationTemplate,
                 ['code' => $state['code']],
-                CommunicationTemplate::factory()->state($state)->make()->getAttributes(),
+                CommunicationTemplate::factory()->state($state)->make()->attributesToArray(),
             );
         }
     }
@@ -51,7 +51,7 @@ class CommunicationSeeder extends Seeder
             ],
             [
                 'code' => NotificationChannel::CODE_EMAIL,
-                'name_translations' => $this->translations('Эл. почта', 'Email', 'El. pastas', 'Email'),
+                'name_translations' => $this->translations('Эл. почта', 'Email', 'El. pastas', 'E-mail'),
                 'description_translations' => $this->translations('Письма через текущую почтовую конфигурацию.', 'Email through the current mail configuration.', 'El. laiskai per dabartine pasto konfiguracija.', 'Email przez aktualna konfiguracje poczty.'),
                 'driver' => 'mail',
                 'provider' => 'laravel',
