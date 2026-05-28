@@ -1916,3 +1916,53 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T03:50:09+00:00
+
+```json
+{
+  "ts": "2026-05-28T03:50:09+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6c9e-4c1b-78e1-9480-e855dd390dd8",
+  "branch": "main",
+  "changed_file_count": 44,
+  "changed_file_groups": {
+    "code": 43,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "app/Actions/AddStudentNoteAction.php",
+    "app/Actions/ArchiveStudentAction.php",
+    "app/Actions/AssignEnrollmentGroupAction.php",
+    "app/Actions/AssignStudentManagerAction.php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ChangeStudentStatusAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "app/Actions/FindMatchingStudentsAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateStudentNumberAction.php",
+    "app/Actions/NormalizeStudentPhoneAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/RecordStudentActivityAction.php",
+    "app/Actions/UpdateStudentAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/Students/",
+    "app/Rules/ActiveEnrollmentStatusRule.php",
+    "app/Rules/ActiveStudentStatusRule.php",
+    "app/Rules/EnrollmentCanJoinGroupRule.php",
+    "app/Rules/EnrollmentNumberFormatRule.php",
+    "app/Rules/StudentCanBeArchivedRule.php",
+    "app/Rules/StudentCanBeUpdatedRule.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

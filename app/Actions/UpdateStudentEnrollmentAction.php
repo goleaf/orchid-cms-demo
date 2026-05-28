@@ -1,0 +1,168 @@
+<?php
+
+namespace App\Actions;
+
+use App\Enums\EnrollmentStatus as EnrollmentStatusEnum;
+use App\Models\StudentEnrollment;
+use App\Models\User;
+use Illuminate\Validation\ValidationException;
+
+class UpdateStudentEnrollmentAction
+{
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public function handle(StudentEnrollment $enrollment, array $data, ?User $user = null, bool $allowLockedUpdate = false): StudentEnrollment
+    {
+        if (($enrollment->is_completed || $enrollment->is_cancelled) && ! $this->canOverride($user, $allowLockedUpdate)) {
+            throw ValidationException::withMessages([
+                'enrollment' => $enrollment->is_completed
+                    ? tkey('students.validation.completed_enrollment_locked')
+                    : tkey('students.validation.cancelled_enrollment_locked'),
+            ]);
+        }
+
+        $before = $enrollment->only([
+            'training_program_id',
+            'course_category_id',
+            'branch_id',
+            'training_group_id',
+            'status',
+            'status_id',
+        ]);
+        $targetStatus = $data['status'] ?? null;
+        $payload = $this->payload($data, $user);
+        unset($payload['status']);
+
+        $enrollment->forceFill($payload)->save();
+        $enrollment = $enrollment->refresh();
+
+        if (filled($targetStatus) && $this->scalar($targetStatus) !== $enrollment->status->value) {
+            $enrollment = app(ChangeEnrollmentStatusAction::class)->handle($enrollment, $targetStatus, $user);
+        }
+
+        app(RecordStudentActivityAction::class)->handle(
+            $enrollment->student,
+            $user,
+            'enrollment_updated',
+            tkey('students.activities.titles.enrollment_updated'),
+            null,
+            null,
+            null,
+            ['enrollment_id' => $enrollment->id],
+            $enrollment,
+        );
+
+        $this->recordChangedFields($enrollment->refresh(), $before, $user);
+
+        return $enrollment->refresh();
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function payload(array $data, ?User $user): array
+    {
+        $payload = [];
+
+        foreach ([
+            'lead_id',
+            'training_program_id',
+            'course_category_id',
+            'branch_id',
+            'training_group_id',
+            'status_id',
+            'manager_id',
+            'administrator_id',
+            'instructor_id',
+            'teacher_id',
+            'started_at',
+            'start_date',
+            'planned_end_date',
+            'actual_end_date',
+            'completed_at',
+            'preferred_time',
+            'training_language',
+            'format',
+            'gearbox_type',
+            'contracted_price_cents',
+            'paid_cents',
+            'price',
+            'discount',
+            'currency',
+            'payment_status',
+            'theory_progress',
+            'practice_progress',
+            'total_theory_hours',
+            'completed_theory_hours',
+            'total_practice_hours',
+            'completed_practice_hours',
+            'notes',
+            'internal_notes',
+        ] as $field) {
+            if (array_key_exists($field, $data)) {
+                $payload[$field] = $data[$field];
+            }
+        }
+
+        if (array_key_exists('course_id', $data)) {
+            $payload['training_program_id'] = $data['course_id'];
+        }
+
+        $payload['updated_by_id'] = $data['updated_by_id'] ?? $user?->id;
+
+        return $payload;
+    }
+
+    /**
+     * @param  array<string, mixed>  $before
+     */
+    private function recordChangedFields(StudentEnrollment $enrollment, array $before, ?User $user): void
+    {
+        $types = [
+            'training_program_id' => 'course_changed',
+            'course_category_id' => 'course_changed',
+            'branch_id' => 'branch_changed',
+            'training_group_id' => 'group_changed',
+            'status' => 'enrollment_status_changed',
+            'status_id' => 'enrollment_status_changed',
+        ];
+
+        foreach ($types as $field => $type) {
+            if ($this->scalar($before[$field] ?? null) === $this->scalar($enrollment->getAttribute($field))) {
+                continue;
+            }
+
+            app(RecordStudentActivityAction::class)->handle(
+                $enrollment->student,
+                $user,
+                $type,
+                tkey('students.activities.titles.enrollment_updated'),
+                null,
+                $this->scalar($before[$field] ?? null),
+                $this->scalar($enrollment->getAttribute($field)),
+                ['field' => $field, 'enrollment_id' => $enrollment->id],
+                $enrollment,
+            );
+        }
+    }
+
+    private function canOverride(?User $user, bool $allowLockedUpdate): bool
+    {
+        return $allowLockedUpdate || ($user?->hasAccess('students.enrollments.update_locked') ?? false);
+    }
+
+    private function scalar(mixed $value): ?string
+    {
+        if (! filled($value)) {
+            return null;
+        }
+
+        if ($value instanceof EnrollmentStatusEnum) {
+            return $value->value;
+        }
+
+        return (string) $value;
+    }
+}
