@@ -67,7 +67,10 @@ class MarketingLeadTask extends Model
 
     public function scopeOpen(Builder $query): Builder
     {
-        return $query->where('status', LeadTaskStatus::Open->value);
+        return $query->whereIn('status', [
+            LeadTaskStatus::Open->value,
+            LeadTaskStatus::InProgress->value,
+        ]);
     }
 
     public function scopeOverdue(Builder $query): Builder
@@ -78,10 +81,16 @@ class MarketingLeadTask extends Model
             ->where('due_at', '<', now());
     }
 
+    public function scopeDueToday(Builder $query): Builder
+    {
+        return $query
+            ->open()
+            ->whereBetween('due_at', [now()->startOfDay(), now()->endOfDay()]);
+    }
+
     public function isOverdue(): bool
     {
-        return $this->status !== LeadTaskStatus::Done
-            && $this->status !== LeadTaskStatus::Cancelled
+        return in_array($this->status, [LeadTaskStatus::Open, LeadTaskStatus::InProgress], true)
             && $this->due_at !== null
             && $this->due_at->isPast();
     }

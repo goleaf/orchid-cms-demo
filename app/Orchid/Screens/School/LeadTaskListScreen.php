@@ -70,9 +70,7 @@ class LeadTaskListScreen extends Screen
             ->when($this->filters['segment'] === 'open', fn (Builder $query): Builder => $query
                 ->whereIn('status', [LeadTaskStatus::Open->value, LeadTaskStatus::InProgress->value]))
             ->when($this->filters['segment'] === 'overdue', fn (Builder $query): Builder => $query->overdue())
-            ->when($this->filters['segment'] === 'today', fn (Builder $query): Builder => $query
-                ->whereIn('status', [LeadTaskStatus::Open->value, LeadTaskStatus::InProgress->value])
-                ->whereDate('due_at', today()))
+            ->when($this->filters['segment'] === 'today', fn (Builder $query): Builder => $query->dueToday())
             ->when($this->filters['segment'] === 'done', fn (Builder $query): Builder => $query->where('status', LeadTaskStatus::Done->value))
             ->when($this->filters['segment'] === 'completed', fn (Builder $query): Builder => $query->where('status', LeadTaskStatus::Done->value))
             ->when($this->filters['segment'] === 'cancelled', fn (Builder $query): Builder => $query->where('status', LeadTaskStatus::Cancelled->value))

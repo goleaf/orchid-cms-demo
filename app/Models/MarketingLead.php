@@ -266,7 +266,10 @@ class MarketingLead extends Model
 
     public function openTasks(): HasMany
     {
-        return $this->tasks()->where('status', LeadTaskStatus::Open->value);
+        return $this->tasks()->whereIn('status', [
+            LeadTaskStatus::Open->value,
+            LeadTaskStatus::InProgress->value,
+        ]);
     }
 
     public function overdueTasks(): HasMany

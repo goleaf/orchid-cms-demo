@@ -133,10 +133,10 @@ class CreateLeadAction
             app(CreateLeadTaskAction::class)->handle(
                 $lead->refresh(),
                 $user,
-                tkey('crm.tasks.defaults.contact_new_website_lead'),
-                now()->addMinutes(max(1, (int) config('crm.leads.manual_first_task_due_minutes', 30))),
+                tkey('crm.tasks.defaults.contact_new_manual_lead'),
+                now()->addMinutes(max(1, (int) config('crm.leads.manual_first_task_due_minutes', 1440))),
                 LeadTaskPriority::Normal,
-                tkey('crm.tasks.system_notes.new_public_lead_reminder'),
+                tkey('crm.tasks.system_notes.new_manual_lead_reminder'),
             );
         }
 

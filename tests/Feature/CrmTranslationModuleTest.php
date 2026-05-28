@@ -341,6 +341,20 @@ class CrmTranslationModuleTest extends TestCase
                 'ready_to_pay',
                 'refused',
             ]),
+            ...$this->prefixed('crm.activities.fields.', [
+                'type',
+                'body',
+                'change',
+                'meta',
+            ]),
+            ...$this->prefixed('crm.activities.meta.', [
+                'communication_id',
+                'channel',
+                'direction',
+                'call_result',
+                'task_id',
+                'comment_id',
+            ]),
             ...$this->prefixed('crm.activities.types.', [
                 'created',
                 'created_from_website',

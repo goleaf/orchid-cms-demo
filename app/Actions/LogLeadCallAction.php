@@ -47,19 +47,30 @@ class LogLeadCallAction
             'no_answer' => LeadStatus::NoAnswer,
             'reached' => LeadStatus::Contacted,
             'ready_to_pay' => LeadStatus::WaitingPayment,
-            'refused' => LeadStatus::Lost,
             default => null,
         };
 
-        if ($targetStatus !== null) {
+        if ($result === 'refused' && filled($lostReasonCode)) {
+            app(MarkLeadLostAction::class)->handle(
+                $lead->refresh(),
+                (string) $lostReasonCode,
+                $comment,
+                $user,
+            );
+        } elseif ($targetStatus !== null) {
             app(ChangeLeadStatusAction::class)->handle(
                 $lead->refresh(),
                 $targetStatus,
                 $user,
                 $comment,
-                $targetStatus === LeadStatus::Lost ? $lostReasonCode : null,
                 allowOverride: true,
             );
+        }
+
+        if ($nextFollowUpAt !== null) {
+            $lead->refresh()
+                ->forceFill(['next_follow_up_at' => $nextFollowUpAt])
+                ->save();
         }
 
         return $communication->refresh();

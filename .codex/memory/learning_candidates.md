@@ -1750,3 +1750,35 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T02:16:02+00:00
+
+```json
+{
+  "ts": "2026-05-28T02:16:02+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6c52-06bd-7ed2-b6cb-f317f7675a16",
+  "branch": "main",
+  "changed_file_count": 10,
+  "changed_file_groups": {
+    "code": 4,
+    "models": 2,
+    "orchid": 2,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    "app/Actions/LogLeadCallAction.php",
+    "app/Models/MarketingLead.php",
+    "app/Models/MarketingLeadTask.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "config/crm.php",
+    "[REDACTED_SECRET].php",
+    "pp/Actions/CreateLeadAction.php",
+    "[REDACTED_SECRET].php",
+    "tests/Feature/CrmTranslationModuleTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

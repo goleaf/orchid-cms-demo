@@ -725,6 +725,8 @@ class LeadEditScreen extends Screen
                     ->render(fn (MarketingLeadActivity $activity): string => $activity->body ?? $activity->title ?? '-'),
                 TD::make('change', tkey('crm.activities.fields.change'))
                     ->render(fn (MarketingLeadActivity $activity): string => collect([$activity->old_value, $activity->new_value])->filter()->join(' -> ') ?: '-'),
+                TD::make('meta', tkey('crm.activities.fields.meta'))
+                    ->render(fn (MarketingLeadActivity $activity): string => $this->activityMeta($activity)),
             ])->title(tkey('crm.leads.sections.activity_timeline')),
 
             Layout::table('lead.duplicates', [
@@ -1233,6 +1235,23 @@ class LeadEditScreen extends Screen
                 'time' => $communication->callback_required_at?->format('Y-m-d H:i'),
             ]) : null,
         ])->filter()->join(' / ') ?: '-';
+    }
+
+    private function activityMeta(MarketingLeadActivity $activity): string
+    {
+        return collect($activity->meta ?? [])
+            ->filter(fn (mixed $value): bool => is_scalar($value) && filled((string) $value))
+            ->map(fn (mixed $value, string $key): string => tkey('crm.activities.meta.'.$key).': '.$this->metaValue($value))
+            ->join(' / ') ?: '-';
+    }
+
+    private function metaValue(mixed $value): string
+    {
+        if (is_bool($value)) {
+            return $value ? tkey('common.status.yes') : tkey('common.status.no');
+        }
+
+        return (string) $value;
     }
 
     private function persistLead(LeadCrmRequest $request, SaveMarketingLeadCrmAction $saveLead): MarketingLead
