@@ -11,8 +11,10 @@ class PrepareStudentPaymentPlaceholderAction
     public function handle(Student $student, ?User $user = null, ?StudentEnrollment $enrollment = null): Student
     {
         $enrollment ??= $student->current_enrollment;
+        $status = $enrollment?->payment_status ?: 'pending';
         $summary = [
-            'payment_status' => $enrollment?->payment_status ?: 'pending',
+            'status' => $status,
+            'payment_status' => $status,
             'expected_price' => $enrollment?->price,
             'currency' => $enrollment?->currency ?: 'EUR',
             'enrollment_id' => $enrollment?->id,
