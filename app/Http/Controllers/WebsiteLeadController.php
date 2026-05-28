@@ -7,11 +7,12 @@ use App\Actions\CreateWebsiteLeadAction;
 use App\Http\Requests\StoreCallbackLeadRequest;
 use App\Http\Requests\StoreContactLeadRequest;
 use App\Http\Requests\StoreWebsiteLeadRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 
 class WebsiteLeadController extends Controller
 {
-    public function store(StoreWebsiteLeadRequest $request, CreateWebsiteLeadAction $createLead): RedirectResponse
+    public function store(StoreWebsiteLeadRequest $request, CreateWebsiteLeadAction $createLead): RedirectResponse|JsonResponse
     {
         $createLead->handle(
             [
@@ -23,6 +24,13 @@ class WebsiteLeadController extends Controller
             $request,
             $request->file('documents', []),
         );
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => tkey('website.forms.messages.success'),
+                'redirect' => route('website.thank_you'),
+            ]);
+        }
 
         return redirect()
             ->route('website.thank_you')

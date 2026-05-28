@@ -27,7 +27,7 @@
                         <p class="kicker">{{ tkey('website.course.program.kicker') }}</p>
                         <h2>{{ tkey('website.course.program.title') }}</h2>
                     </div>
-                    <p class="lead">{{ $program->admission_requirements }}</p>
+                    <p class="lead">{{ $program->displayRequirements() }}</p>
                 </div>
 
                 <div class="grid three">
@@ -49,7 +49,7 @@
                     </article>
                     <article class="card">
                         <h3>{{ tkey('website.course.requirements.title') }}</h3>
-                        <p class="meta">{{ $program->admission_requirements }}</p>
+                        <p class="meta">{{ $program->displayRequirements() }}</p>
                     </article>
                 </div>
             </div>
@@ -138,7 +138,7 @@
                                 <tr>
                                     <td>{{ $group->code }}</td>
                                     <td>{{ $group->displayName() }}</td>
-                                    <td>{{ $group->branch->displayCity() }}</td>
+                                    <td>{{ $group->branch->displayCountry() }} · {{ $group->branch->displayCity() }}</td>
                                     <td>{{ $group->starts_on?->toDateString() ?? '-' }}</td>
                                     <td>{{ implode(', ', $group->meeting_days ?? []) }}</td>
                                     <td>{{ $group->meeting_time?->format('H:i') ?? '-' }}</td>
@@ -172,7 +172,7 @@
                 <div class="grid three">
                     @forelse ($branches as $branch)
                         <article class="card">
-                            <p class="kicker">{{ $branch->displayCity() }}</p>
+                            <p class="kicker">{{ $branch->displayCountry() }} · {{ $branch->displayCity() }}</p>
                             <h3>{{ $branch->displayName() }}</h3>
                             <p class="meta">{{ $branch->displayAddress() }}</p>
                             <span class="badge">{{ tkey('website.branches.groups_count', ['count' => $branch->groups_count]) }}</span>
@@ -187,7 +187,7 @@
                 <div class="grid two mt-18">
                     @foreach ($instructors as $instructor)
                         <article class="card">
-                            <p class="kicker">{{ $instructor->branch->displayCity() }}</p>
+                            <p class="kicker">{{ $instructor->branch->displayCountry() }} · {{ $instructor->branch->displayCity() }}</p>
                             <h3>{{ $instructor->name }}</h3>
                             <p class="meta">{{ $instructor->teaching_style }}</p>
                             <div class="badge-list">
@@ -199,7 +199,7 @@
 
                     @foreach ($vehicles as $vehicle)
                         <article class="card">
-                            <p class="kicker">{{ $vehicle->branch->displayCity() }}</p>
+                            <p class="kicker">{{ $vehicle->branch->displayCountry() }} · {{ $vehicle->branch->displayCity() }}</p>
                             <h3>{{ $vehicle->make }} {{ $vehicle->model }}</h3>
                             <p class="meta">{{ $vehicle->description }}</p>
                             <div class="badge-list">
@@ -303,9 +303,12 @@
 
                 @include('site.partials.lead-form', [
                     'programs' => collect([$program]),
-                    'branches' => $branches,
-                    'groups' => $program->groups,
+                    'branches' => ($selectedBranch ?? null) ? collect([$selectedBranch]) : $branches,
+                    'groups' => $applicationGroups ?? $program->groups,
                     'selectedProgram' => $program,
+                    'selectedBranch' => $selectedBranch ?? null,
+                    'lockProgram' => true,
+                    'lockBranch' => ($selectedBranch ?? null) !== null,
                     'formName' => 'course_detail_application',
                 ])
             </div>

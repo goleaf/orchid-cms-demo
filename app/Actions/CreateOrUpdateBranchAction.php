@@ -16,9 +16,10 @@ class CreateOrUpdateBranchAction
         $attributes = app(GenerateSeoMetadataAction::class)->handle(
             $attributes,
             ['name'],
-            ['description', 'address', 'city'],
+            ['description', 'address', 'country', 'city'],
         );
         $attributes['name'] ??= $this->fallbackScalar($attributes, 'name', tkey('website.branches.fields.name'));
+        $attributes['country'] ??= $this->fallbackScalar($attributes, 'country', 'Lithuania');
         $attributes['city'] ??= $this->fallbackScalar($attributes, 'city', '');
         $attributes['address'] ??= $this->fallbackScalar($attributes, 'address', '');
         $attributes['description'] ??= $this->fallbackScalar($attributes, 'description');

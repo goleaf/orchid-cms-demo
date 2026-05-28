@@ -12,11 +12,11 @@ class CourseController extends Controller
 {
     public function index(Request $request, GetCourseIndexPageAction $page): View
     {
-        return view('site.courses-index', $page->handle($request->query('category')));
+        return view('site.courses-index', $page->handle($request));
     }
 
-    public function show(TrainingProgram $trainingProgram, GetProgramCategoryPageAction $page): View
+    public function show(Request $request, TrainingProgram $trainingProgram, GetProgramCategoryPageAction $page): View
     {
-        return view('site.category', $page->handle($trainingProgram));
+        return view('site.category', $page->handle($trainingProgram, $request));
     }
 }

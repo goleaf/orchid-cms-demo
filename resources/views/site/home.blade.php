@@ -1,6 +1,12 @@
 @extends('site.layout')
 
 @section('content')
+    @php
+        $filters = $filters ?? ['country' => '', 'city' => '', 'category' => ''];
+        $filterOptions = $filterOptions ?? ['countries' => collect(), 'cities' => collect(), 'categories' => collect()];
+        $courseContextQuery = $courseContextQuery ?? [];
+    @endphp
+
     <header class="hero">
         <div class="hero-inner">
             <div class="hero-copy">
@@ -13,34 +19,29 @@
                     <a class="button" href="#application-form">{{ tkey('website.actions.apply') }}</a>
                     <a class="button secondary" href="#programs">{{ tkey('website.home.hero.secondary_action') }}</a>
                 </div>
+                <div class="hero-metrics">
+                    <div>
+                        <strong>{{ $stats['students'] }}</strong>
+                        <span>{{ tkey('website.home.stats.students') }}</span>
+                    </div>
+                    <div>
+                        <strong>{{ $stats['pass_rate'] }}%</strong>
+                        <span>{{ tkey('website.home.stats.pass_rate') }}</span>
+                    </div>
+                    <div>
+                        <strong>{{ $stats['instructors'] }}</strong>
+                        <span>{{ tkey('website.home.stats.instructors') }}</span>
+                    </div>
+                    <div>
+                        <strong>{{ $stats['vehicles'] }}</strong>
+                        <span>{{ tkey('website.home.stats.vehicles') }}</span>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
     <main>
-        <section class="section soft">
-            <div class="section-inner">
-                <div class="grid four">
-                    <div class="card stat">
-                        <strong>{{ $stats['students'] }}</strong>
-                        <span class="meta">{{ tkey('website.home.stats.students') }}</span>
-                    </div>
-                    <div class="card stat">
-                        <strong>{{ $stats['pass_rate'] }}%</strong>
-                        <span class="meta">{{ tkey('website.home.stats.pass_rate') }}</span>
-                    </div>
-                    <div class="card stat">
-                        <strong>{{ $stats['instructors'] }}</strong>
-                        <span class="meta">{{ tkey('website.home.stats.instructors') }}</span>
-                    </div>
-                    <div class="card stat">
-                        <strong>{{ $stats['vehicles'] }}</strong>
-                        <span class="meta">{{ tkey('website.home.stats.vehicles') }}</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section class="section">
             <div class="section-inner">
                 <div class="section-head">
@@ -62,44 +63,6 @@
                         <article class="card">
                             <h3>{{ tkey('website.home.empty.benefits_title') }}</h3>
                             <p class="meta">{{ tkey('website.home.empty.benefits_body') }}</p>
-                        </article>
-                    @endforelse
-                </div>
-            </div>
-        </section>
-
-        <section id="programs" class="section soft">
-            <div class="section-inner">
-                <div class="section-head">
-                    <div>
-                        <p class="kicker">{{ tkey('website.home.programs.kicker') }}</p>
-                        <h2>{{ tkey('website.home.programs.title') }}</h2>
-                    </div>
-                    <p class="lead">{{ tkey('website.home.programs.lead') }}</p>
-                </div>
-
-                <div class="grid three">
-                    @forelse ($programs as $program)
-                        <article class="card">
-                            <p class="kicker">{{ tkey('website.course.category_label', ['category' => $program->license_category]) }}</p>
-                            <h3>{{ $program->displayTitle() }}</h3>
-                            <p class="meta">{{ $program->displayShortDescription() }}</p>
-                            <div class="facts">
-                                <span class="fact">{{ tkey('website.course.duration_weeks', ['weeks' => $program->duration_weeks]) }}</span>
-                                <span class="fact">{{ tkey('website.course.theory_hours_short', ['hours' => $program->theory_hours]) }}</span>
-                                <span class="fact">{{ tkey('website.course.practice_hours_short', ['hours' => $program->practice_hours]) }}</span>
-                                <span class="fact">{{ tkey('website.courses.formats.'.$program->format) }}</span>
-                            </div>
-                            <p class="price">{{ $program->priceForHumans() }}</p>
-                            <div class="actions">
-                                <a class="button secondary" href="{{ route('website.courses.show', $program) }}">{{ tkey('website.actions.view_course') }}</a>
-                                <a class="button" href="#application-form">{{ tkey('website.actions.apply') }}</a>
-                            </div>
-                        </article>
-                    @empty
-                        <article class="card">
-                            <h3>{{ tkey('website.home.empty.programs_title') }}</h3>
-                            <p class="meta">{{ tkey('website.home.empty.programs_body') }}</p>
                         </article>
                     @endforelse
                 </div>
@@ -134,7 +97,7 @@
                                 <tr>
                                     <td>{{ $group->displayName() }}<br><span class="meta">{{ $group->code }}</span></td>
                                     <td>{{ $group->trainingProgram->displayTitle() }}</td>
-                                    <td>{{ $group->branch->displayCity() }}</td>
+                                    <td>{{ $group->branch->displayCountry() }} · {{ $group->branch->displayCity() }}</td>
                                     <td>{{ $group->starts_on?->toDateString() ?? '-' }}</td>
                                     <td>{{ $group->instructor?->name ?? '-' }}</td>
                                     <td>{{ tkey('website.groups.seats_value', ['available' => $group->seatsAvailable(), 'capacity' => $group->capacity]) }}</td>
@@ -149,6 +112,81 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="programs" class="section soft">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <p class="kicker">{{ tkey('website.home.programs.kicker') }}</p>
+                        <h2>{{ tkey('website.home.programs.title') }}</h2>
+                    </div>
+                    <p class="lead">{{ tkey('website.home.programs.lead') }}</p>
+                </div>
+
+                <form class="filter-panel" method="GET" action="{{ route('website.home') }}#programs" data-location-filter>
+                    <div class="filter-head">
+                        <div>
+                            <p class="kicker">{{ tkey('website.filters.kicker') }}</p>
+                            <h3>{{ tkey('website.filters.title') }}</h3>
+                        </div>
+                        <p class="meta">{{ tkey('website.filters.subtitle') }}</p>
+                    </div>
+
+                    <div class="filter-grid">
+                        @include('site.partials.location-filter-fields', compact('filters', 'filterOptions'))
+
+                        <label>
+                            {{ tkey('website.filters.category') }}
+                            <select name="category">
+                                <option value="">{{ tkey('website.filters.all_categories') }}</option>
+                                @forelse ($filterOptions['categories'] as $category)
+                                    <option value="{{ $category->slug }}" @selected(($filters['category'] ?? '') === $category->slug)>
+                                        {{ $category->displayName() }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </label>
+
+                        <div class="filter-actions">
+                            <button class="button" type="submit">{{ tkey('website.filters.apply') }}</button>
+                            <a class="button secondary" href="{{ route('website.home') }}#programs">{{ tkey('website.filters.reset') }}</a>
+                        </div>
+                    </div>
+
+                    @if ($hasActiveFilters ?? false)
+                        <p class="filter-note">{{ tkey('website.filters.active') }}</p>
+                    @endif
+                </form>
+
+                <div class="grid three">
+                    @forelse ($programs as $program)
+                        <article class="card">
+                            <p class="kicker">{{ tkey('website.course.category_label', ['category' => $program->license_category]) }}</p>
+                            <h3>{{ $program->displayTitle() }}</h3>
+                            <p class="meta">{{ $program->displayShortDescription() }}</p>
+                            <div class="facts">
+                                <span class="fact">{{ tkey('website.course.duration_weeks', ['weeks' => $program->duration_weeks]) }}</span>
+                                <span class="fact">{{ tkey('website.course.theory_hours_short', ['hours' => $program->theory_hours]) }}</span>
+                                <span class="fact">{{ tkey('website.course.practice_hours_short', ['hours' => $program->practice_hours]) }}</span>
+                                <span class="fact">{{ tkey('website.courses.formats.'.$program->format) }}</span>
+                            </div>
+                            <p class="price">{{ $program->priceForHumans() }}</p>
+                            <div class="actions">
+                                @php($courseLink = route('website.courses.show', $program).($courseContextQuery !== [] ? '?'.http_build_query($courseContextQuery) : ''))
+                                <a class="button secondary" href="{{ $courseLink }}">{{ tkey('website.actions.view_course') }}</a>
+                                <a class="button" href="#application-form">{{ tkey('website.actions.apply') }}</a>
+                            </div>
+                        </article>
+                    @empty
+                        <article class="card">
+                            <h3>{{ tkey('website.home.empty.programs_title') }}</h3>
+                            <p class="meta">{{ tkey('website.home.empty.programs_body') }}</p>
+                        </article>
+                    @endforelse
                 </div>
             </div>
         </section>
@@ -277,6 +315,7 @@
                     'programs' => $programs,
                     'branches' => $branches,
                     'groups' => $upcomingGroups,
+                    'selectedBranch' => $selectedBranch ?? null,
                     'formName' => 'homepage_application',
                 ])
             </div>
@@ -297,7 +336,7 @@
                         @forelse ($branches as $branch)
                             <article class="card">
                                 <h3>{{ $branch->displayName() }}</h3>
-                                <p class="meta">{{ $branch->displayCity() }}, {{ $branch->displayAddress() }}</p>
+                                <p class="meta">{{ $branch->displayCountry() }} · {{ $branch->displayCity() }}, {{ $branch->displayAddress() }}</p>
                                 @if ($branch->displayWorkingHours())
                                     <p class="meta">{{ $branch->displayWorkingHours() }}</p>
                                 @endif

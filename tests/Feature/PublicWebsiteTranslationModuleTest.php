@@ -54,7 +54,7 @@ class PublicWebsiteTranslationModuleTest extends TestCase
         $this->assertSame(tkey('website.validation.slug_already_exists'), $duplicateSlug->errors()->first('slug'));
     }
 
-    public function test_public_form_errors_use_translated_attributes(): void
+    public function test_public_form_errors_use_translated_custom_messages(): void
     {
         $this->seedWebsiteTranslations();
         $course = Course::factory()->create([
@@ -84,7 +84,7 @@ class PublicWebsiteTranslationModuleTest extends TestCase
 
         $message = session('errors')->first('email');
 
-        $this->assertStringContainsString(tkey('validation.attributes.website_lead.email', [], 'lt'), $message);
+        $this->assertSame(tkey('website.validation.email_invalid', [], 'lt'), $message);
     }
 
     public function test_translated_content_displays_current_locale(): void
@@ -94,6 +94,12 @@ class PublicWebsiteTranslationModuleTest extends TestCase
             'slug' => 'translated-locale-course',
             'title' => 'RU course',
             'title_translations' => [
+                'ru' => 'RU course',
+                'en' => 'EN course',
+                'lt' => 'LT mokymo kursas',
+                'pl' => 'PL course',
+            ],
+            'name_translations' => [
                 'ru' => 'RU course',
                 'en' => 'EN course',
                 'lt' => 'LT mokymo kursas',
@@ -122,6 +128,9 @@ class PublicWebsiteTranslationModuleTest extends TestCase
             'slug' => 'fallback-locale-course',
             'title' => 'RU fallback course',
             'title_translations' => [
+                'ru' => 'RU fallback course',
+            ],
+            'name_translations' => [
                 'ru' => 'RU fallback course',
             ],
             'description_translations' => [
@@ -240,6 +249,9 @@ class PublicWebsiteTranslationModuleTest extends TestCase
             'website.courses.formats.hybrid',
             'website.courses.formats.individual',
             'website.courses.formats.group',
+            'website.courses.formats.mixed',
+            'website.transmissions.manual',
+            'website.transmissions.automatic',
             'website.pricing.title',
             'website.pricing.subtitle',
             'website.pricing.fields.package',
@@ -253,9 +265,20 @@ class PublicWebsiteTranslationModuleTest extends TestCase
             'website.pricing.packages.premium',
             'website.pricing.packages.intensive',
             'website.pricing.packages.extra_lessons',
+            'website.prices.filters.kicker',
+            'website.prices.filters.title',
+            'website.prices.filters.subtitle',
+            'website.prices.filters.all_courses',
+            'website.prices.filters.all_formats',
+            'website.prices.filters.all_durations',
+            'website.prices.filters.duration_weeks',
+            'website.prices.filters.price_min',
+            'website.prices.filters.price_max',
+            'website.prices.filters.active',
             'website.branches.title',
             'website.branches.empty.no_branches',
             'website.branches.fields.name',
+            'website.branches.fields.country',
             'website.branches.fields.city',
             'website.branches.fields.address',
             'website.branches.fields.phone',
@@ -280,6 +303,18 @@ class PublicWebsiteTranslationModuleTest extends TestCase
             'website.groups.statuses.full',
             'website.groups.statuses.closed',
             'website.groups.statuses.scheduled',
+            'website.filters.kicker',
+            'website.filters.title',
+            'website.filters.subtitle',
+            'website.filters.country',
+            'website.filters.city',
+            'website.filters.category',
+            'website.filters.all_countries',
+            'website.filters.all_cities',
+            'website.filters.all_categories',
+            'website.filters.apply',
+            'website.filters.reset',
+            'website.filters.active',
             'website.forms.apply.title',
             'website.forms.apply.subtitle',
             'website.forms.callback.title',
@@ -296,10 +331,13 @@ class PublicWebsiteTranslationModuleTest extends TestCase
             'website.forms.fields.comment',
             'website.forms.fields.consent',
             'website.forms.fields.callback_time',
+            'website.forms.context.selected_course',
+            'website.forms.context.selected_branch',
             'website.forms.messages.success',
             'website.forms.messages.callback_success',
             'website.forms.messages.contact_success',
             'website.forms.messages.error',
+            'website.forms.messages.submitting',
             'website.forms.messages.thank_you_title',
             'website.forms.messages.thank_you_text',
             'website.faq.title',
@@ -322,6 +360,13 @@ class PublicWebsiteTranslationModuleTest extends TestCase
             'website.admin.pages.title',
             'website.admin.pages.create_title',
             'website.admin.pages.edit_title',
+            'website.admin.pages.types.home',
+            'website.admin.pages.types.pricing',
+            'website.admin.pages.types.contacts',
+            'website.admin.pages.types.thank_you',
+            'website.admin.pages.types.privacy_policy',
+            'website.admin.pages.types.terms',
+            'website.admin.pages.types.custom',
             'website.admin.courses.title',
             'website.admin.courses.create_title',
             'website.admin.courses.edit_title',
@@ -346,6 +391,14 @@ class PublicWebsiteTranslationModuleTest extends TestCase
             'website.validation.invalid_public_branch',
             'website.validation.invalid_public_group',
             'website.validation.group_is_full',
+            'website.validation.document_invalid',
+            'website.validation.email_invalid',
+            'website.validation.name_too_long',
+            'website.validation.contact_too_long',
+            'website.validation.text_too_long',
+            'website.validation.format_invalid',
+            'website.validation.language_invalid',
+            'website.validation.budget_range',
             'website.validation.default_translation_required',
             'website.validation.invalid_slug',
             'website.validation.slug_already_exists',

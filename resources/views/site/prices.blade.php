@@ -1,6 +1,30 @@
 @extends('site.layout')
 
 @section('content')
+    @php
+        $filters = $filters ?? [
+            'course' => '',
+            'category' => '',
+            'format' => '',
+            'duration' => '',
+            'theory_min' => '',
+            'practice_min' => '',
+            'price_min' => '',
+            'price_max' => '',
+            'country' => '',
+            'city' => '',
+        ];
+        $filterOptions = $filterOptions ?? [
+            'courses' => collect(),
+            'categories' => collect(),
+            'formats' => collect(),
+            'durations' => collect(),
+            'countries' => collect(),
+            'cities' => collect(),
+        ];
+        $courseContextQuery = $courseContextQuery ?? [];
+    @endphp
+
     <main>
         <section class="section dark">
             <div class="section-inner">
@@ -10,8 +34,103 @@
             </div>
         </section>
 
-        <section class="section">
+        <section class="section" id="pricing-results">
             <div class="section-inner">
+                <form class="filter-panel" method="GET" action="{{ route('website.pricing') }}#pricing-results" data-location-filter>
+                    <div class="filter-head">
+                        <div>
+                            <p class="kicker">{{ tkey('website.prices.filters.kicker') }}</p>
+                            <h2>{{ tkey('website.prices.filters.title') }}</h2>
+                        </div>
+                        <p class="meta">{{ tkey('website.prices.filters.subtitle') }}</p>
+                    </div>
+
+                    <div class="filter-grid">
+                        @include('site.partials.location-filter-fields', compact('filters', 'filterOptions'))
+
+                        <label>
+                            {{ tkey('website.pricing.fields.course') }}
+                            <select name="course">
+                                <option value="">{{ tkey('website.prices.filters.all_courses') }}</option>
+                                @forelse ($filterOptions['courses'] as $program)
+                                    <option value="{{ $program->slug }}" @selected(($filters['course'] ?? '') === $program->slug)>
+                                        {{ $program->displayTitle() }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </label>
+
+                        <label>
+                            {{ tkey('website.filters.category') }}
+                            <select name="category">
+                                <option value="">{{ tkey('website.filters.all_categories') }}</option>
+                                @forelse ($filterOptions['categories'] as $category)
+                                    <option value="{{ $category->slug }}" @selected(($filters['category'] ?? '') === $category->slug)>
+                                        {{ $category->displayName() }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </label>
+
+                        <label>
+                            {{ tkey('website.prices.columns.format') }}
+                            <select name="format">
+                                <option value="">{{ tkey('website.prices.filters.all_formats') }}</option>
+                                @forelse ($filterOptions['formats'] as $option)
+                                    <option value="{{ $option['value'] }}" @selected(($filters['format'] ?? '') === $option['value'])>
+                                        {{ $option['label'] }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </label>
+
+                        <label>
+                            {{ tkey('website.prices.columns.duration') }}
+                            <select name="duration">
+                                <option value="">{{ tkey('website.prices.filters.all_durations') }}</option>
+                                @forelse ($filterOptions['durations'] as $duration)
+                                    <option value="{{ $duration }}" @selected((string) ($filters['duration'] ?? '') === (string) $duration)>
+                                        {{ tkey('website.prices.filters.duration_weeks', ['weeks' => $duration]) }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </label>
+
+                        <label>
+                            {{ tkey('website.pricing.fields.theory_hours') }}
+                            <input type="number" min="0" step="1" name="theory_min" value="{{ $filters['theory_min'] ?? '' }}">
+                        </label>
+
+                        <label>
+                            {{ tkey('website.pricing.fields.practice_hours') }}
+                            <input type="number" min="0" step="1" name="practice_min" value="{{ $filters['practice_min'] ?? '' }}">
+                        </label>
+
+                        <label>
+                            {{ tkey('website.prices.filters.price_min') }}
+                            <input type="number" min="0" step="1" name="price_min" value="{{ $filters['price_min'] ?? '' }}">
+                        </label>
+
+                        <label>
+                            {{ tkey('website.prices.filters.price_max') }}
+                            <input type="number" min="0" step="1" name="price_max" value="{{ $filters['price_max'] ?? '' }}">
+                        </label>
+
+                        <div class="filter-actions">
+                            <button class="button" type="submit">{{ tkey('website.filters.apply') }}</button>
+                            <a class="button secondary" href="{{ route('website.pricing') }}#pricing-results">{{ tkey('website.filters.reset') }}</a>
+                        </div>
+                    </div>
+
+                    @if ($hasActiveFilters ?? false)
+                        <p class="filter-note">{{ tkey('website.prices.filters.active') }}</p>
+                    @endif
+                </form>
+
                 <div class="table-wrap">
                     <table>
                         <thead>
@@ -44,7 +163,8 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a class="button secondary" href="{{ route('website.courses.show', $program) }}">{{ tkey('website.actions.view_course') }}</a>
+                                        @php($courseLink = route('website.courses.show', $program).($courseContextQuery !== [] ? '?'.http_build_query($courseContextQuery) : ''))
+                                        <a class="button secondary" href="{{ $courseLink }}">{{ tkey('website.actions.view_course') }}</a>
                                         <a class="button" href="#application-form">{{ tkey('website.actions.apply') }}</a>
                                     </td>
                                 </tr>
@@ -97,7 +217,8 @@
                                     </td>
                                     <td>
                                         @if ($package->course)
-                                            <a href="{{ route('website.courses.show', $package->course) }}">{{ $package->course->displayTitle() }}</a>
+                                            @php($packageCourseLink = route('website.courses.show', $package->course).($courseContextQuery !== [] ? '?'.http_build_query($courseContextQuery) : ''))
+                                            <a href="{{ $packageCourseLink }}">{{ $package->course->displayTitle() }}</a>
                                         @else
                                             {{ $package->category?->displayName() ?? tkey('website.prices.packages.no_course') }}
                                         @endif
@@ -165,6 +286,7 @@
                     'programs' => $programs,
                     'branches' => $branches,
                     'groups' => $groups,
+                    'selectedProgram' => $selectedProgram ?? null,
                     'formName' => 'pricing_application',
                 ])
             </div>

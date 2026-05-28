@@ -11,6 +11,8 @@ use App\Models\SiteSetting;
 use App\Models\Testimonial;
 use App\Models\TrainingProgram;
 use App\Models\Vehicle;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GetProgramCategoryPageAction
@@ -18,8 +20,9 @@ class GetProgramCategoryPageAction
     /**
      * @return array<string, mixed>
      */
-    public function handle(TrainingProgram $program): array
+    public function handle(TrainingProgram $program, ?Request $request = null): array
     {
+        $request ??= request();
         $publicProgram = TrainingProgram::query()
             ->forAcademyList()
             ->addSelect(['course_category_id', 'duration_translations', 'price', 'old_price', 'currency', 'is_visible_on_site', 'is_indexable', 'is_featured'])
@@ -45,7 +48,7 @@ class GetProgramCategoryPageAction
                         'meeting_days',
                         'meeting_time',
                     ])
-                    ->with(['branch:id,name,name_translations,city,city_translations', 'instructor:id,name'])
+                    ->with(['branch:id,name,name_translations,country,country_translations,city,city_translations', 'instructor:id,name'])
                     ->withCount('enrollments')
                     ->openForEnrollment()
                     ->orderBy('starts_on')
@@ -58,15 +61,25 @@ class GetProgramCategoryPageAction
             throw new NotFoundHttpException;
         }
 
+        $branches = Branch::query()
+            ->forAdminList()
+            ->withCount('groups')
+            ->active()
+            ->visibleOnSite()
+            ->ordered()
+            ->get();
+        $selectedBranch = $this->selectedBranch($request, $branches, $publicProgram);
+        $applicationGroups = $selectedBranch === null
+            ? $publicProgram->groups
+            : $publicProgram->groups
+                ->filter(fn ($group): bool => (int) $group->branch_id === (int) $selectedBranch->id)
+                ->values();
+
         return [
             'program' => $publicProgram,
-            'branches' => Branch::query()
-                ->forAdminList()
-                ->withCount('groups')
-                ->active()
-                ->visibleOnSite()
-                ->ordered()
-                ->get(),
+            'branches' => $branches,
+            'selectedBranch' => $selectedBranch,
+            'applicationGroups' => $applicationGroups,
             'pricingPackages' => PricingPackage::query()
                 ->forPublicList()
                 ->where('course_id', $publicProgram->id)
@@ -83,7 +96,7 @@ class GetProgramCategoryPageAction
             'testimonials' => Testimonial::query()
                 ->forPublicList()
                 ->with([
-                    'branch:id,name,name_translations,city,city_translations',
+                    'branch:id,name,name_translations,country,country_translations,city,city_translations',
                 ])
                 ->where('training_program_id', $publicProgram->id)
                 ->published()
@@ -97,7 +110,7 @@ class GetProgramCategoryPageAction
                 ->all(),
             'instructors' => Instructor::query()
                 ->forPublicDirectory()
-                ->with('branch:id,name,name_translations,city,city_translations')
+                ->with('branch:id,name,name_translations,country,country_translations,city,city_translations')
                 ->where('status', 'active')
                 ->whereJsonContains('categories', $publicProgram->license_category)
                 ->orderByDesc('rating')
@@ -105,7 +118,7 @@ class GetProgramCategoryPageAction
                 ->get(),
             'vehicles' => Vehicle::query()
                 ->forFleetList()
-                ->with(['branch:id,name,name_translations,city,city_translations', 'instructor:id,name'])
+                ->with(['branch:id,name,name_translations,country,country_translations,city,city_translations', 'instructor:id,name'])
                 ->where('license_category', $publicProgram->license_category)
                 ->orderBy('make')
                 ->limit(8)
@@ -118,5 +131,41 @@ class GetProgramCategoryPageAction
             'ogImage' => $publicProgram->open_graph_image ?: $publicProgram->og_image,
             'isIndexable' => $publicProgram->is_indexable,
         ];
+    }
+
+    /**
+     * @param  Collection<int, Branch>  $branches
+     */
+    private function selectedBranch(Request $request, Collection $branches, TrainingProgram $program): ?Branch
+    {
+        $branchKey = trim((string) ($request->query('branch') ?: $request->query('branch_id', '')));
+
+        if ($branchKey !== '') {
+            $branch = $branches->first(fn (Branch $branch): bool => (string) $branch->id === $branchKey || $branch->slug === $branchKey);
+
+            if ($branch !== null && $this->programHasBranch($program, $branch)) {
+                return $branch;
+            }
+        }
+
+        $country = trim((string) $request->query('country', ''));
+        $city = trim((string) $request->query('city', ''));
+
+        if ($country !== '' || $city !== '') {
+            $branch = $branches->first(fn (Branch $branch): bool => ($country === '' || $branch->country === $country)
+                && ($city === '' || $branch->city === $city)
+                && $this->programHasBranch($program, $branch));
+
+            if ($branch !== null) {
+                return $branch;
+            }
+        }
+
+        return $program->groups->first()?->branch;
+    }
+
+    private function programHasBranch(TrainingProgram $program, Branch $branch): bool
+    {
+        return $program->groups->contains(fn ($group): bool => (int) $group->branch_id === (int) $branch->id);
     }
 }

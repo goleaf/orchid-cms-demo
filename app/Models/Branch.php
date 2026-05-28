@@ -26,6 +26,8 @@ class Branch extends Model
         'name',
         'name_translations',
         'slug',
+        'country',
+        'country_translations',
         'city',
         'city_translations',
         'address',
@@ -60,6 +62,7 @@ class Branch extends Model
 
     protected $casts = [
         'name_translations' => 'array',
+        'country_translations' => 'array',
         'city_translations' => 'array',
         'address_translations' => 'array',
         'description_translations' => 'array',
@@ -148,6 +151,8 @@ class Branch extends Model
             'name',
             'name_translations',
             'slug',
+            'country',
+            'country_translations',
             'city',
             'city_translations',
             'address',
@@ -223,6 +228,13 @@ class Branch extends Model
     {
         return $this->getTranslation('city', $locale)
             ?: $this->city
+            ?: '';
+    }
+
+    public function displayCountry(?string $locale = null): string
+    {
+        return $this->getTranslation('country', $locale)
+            ?: $this->country
             ?: '';
     }
 

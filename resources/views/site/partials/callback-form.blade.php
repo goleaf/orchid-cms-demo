@@ -44,7 +44,7 @@
             <option value="">{{ tkey('website.forms.manager_select_group') }}</option>
             @forelse ($branches as $branch)
                 <option value="{{ $branch->id }}" @selected((string) old('branch_id', $selectedBranchId) === (string) $branch->id)>
-                    {{ $branch->displayCity() }} · {{ $branch->displayName() }}
+                    {{ $branch->displayCountry() }} · {{ $branch->displayCity() }} · {{ $branch->displayName() }}
                 </option>
             @empty
             @endforelse

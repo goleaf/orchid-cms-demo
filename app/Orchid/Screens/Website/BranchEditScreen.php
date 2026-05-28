@@ -56,6 +56,7 @@ class BranchEditScreen extends Screen
             'is_indexable' => $branchModel->is_indexable,
             'sort_order' => $branchModel->sort_order,
             'name_translations' => $this->translations($branchModel, 'name', $branchModel->name),
+            'country_translations' => $this->translations($branchModel, 'country', $branchModel->country),
             'city_translations' => $this->translations($branchModel, 'city', $branchModel->city),
             'address_translations' => $this->translations($branchModel, 'address', $branchModel->address),
             'description_translations' => $this->translations($branchModel, 'description', $branchModel->description),
@@ -159,6 +160,10 @@ class BranchEditScreen extends Screen
                 'required' => true,
                 'maxlength' => 255,
             ]),
+            TranslatableFields::input('country', 'website.branches.fields.country', [
+                'title_key' => 'website.admin.sections.content',
+                'maxlength' => 255,
+            ]),
             TranslatableFields::input('city', 'website.branches.fields.city', [
                 'title_key' => 'website.admin.sections.content',
                 'maxlength' => 255,
@@ -188,6 +193,7 @@ class BranchEditScreen extends Screen
 
         $save->handle($branch, $this->validatedPayload($request, [
             'name',
+            'country',
             'city',
             'address',
             'description',

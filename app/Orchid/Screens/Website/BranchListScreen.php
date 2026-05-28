@@ -53,6 +53,8 @@ class BranchListScreen extends Screen
             Layout::table('branches', [
                 TD::make('name', tkey('website.branches.fields.name'))
                     ->render(fn (Branch $branch): string => $branch->displayName().' '.$this->seoWarning($branch->displaySeoTitle(), $branch->displaySeoDescription())),
+                TD::make('country', tkey('website.branches.fields.country'))
+                    ->render(fn (Branch $branch): string => $branch->displayCountry()),
                 TD::make('city', tkey('website.branches.fields.city'))
                     ->render(fn (Branch $branch): string => $branch->displayCity()),
                 TD::make('phone', tkey('website.branches.fields.phone'))

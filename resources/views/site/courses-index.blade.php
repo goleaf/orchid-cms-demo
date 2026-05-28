@@ -1,6 +1,12 @@
 @extends('site.layout')
 
 @section('content')
+    @php
+        $filters = $filters ?? ['country' => '', 'city' => '', 'category' => ''];
+        $filterOptions = $filterOptions ?? ['countries' => collect(), 'cities' => collect(), 'categories' => collect()];
+        $courseContextQuery = $courseContextQuery ?? [];
+    @endphp
+
     <main>
         <section class="section dark">
             <div class="section-inner">
@@ -20,10 +26,46 @@
                     <p class="lead">{{ tkey('website.home.programs.lead') }}</p>
                 </div>
 
+                <form class="filter-panel" method="GET" action="{{ route('website.courses.index') }}" data-location-filter>
+                    <div class="filter-head">
+                        <div>
+                            <p class="kicker">{{ tkey('website.filters.kicker') }}</p>
+                            <h2>{{ tkey('website.filters.title') }}</h2>
+                        </div>
+                        <p class="meta">{{ tkey('website.filters.subtitle') }}</p>
+                    </div>
+
+                    <div class="filter-grid">
+                        @include('site.partials.location-filter-fields', compact('filters', 'filterOptions'))
+
+                        <label>
+                            {{ tkey('website.filters.category') }}
+                            <select name="category">
+                                <option value="">{{ tkey('website.filters.all_categories') }}</option>
+                                @forelse ($filterOptions['categories'] as $category)
+                                    <option value="{{ $category->slug }}" @selected(($filters['category'] ?? '') === $category->slug)>
+                                        {{ $category->displayName() }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </label>
+
+                        <div class="filter-actions">
+                            <button class="button" type="submit">{{ tkey('website.filters.apply') }}</button>
+                            <a class="button secondary" href="{{ route('website.courses.index') }}">{{ tkey('website.filters.reset') }}</a>
+                        </div>
+                    </div>
+
+                    @if ($hasActiveFilters ?? false)
+                        <p class="filter-note">{{ tkey('website.filters.active') }}</p>
+                    @endif
+                </form>
+
                 <div class="badge-list">
-                    <a class="badge" href="{{ route('website.courses.index') }}">{{ tkey('crm.leads.filters.all_courses') }}</a>
+                    <a class="badge" href="{{ route('website.courses.index', $courseContextQuery) }}">{{ tkey('crm.leads.filters.all_courses') }}</a>
                     @forelse ($categories as $category)
-                        <a class="badge" href="{{ route('website.courses.index', ['category' => $category->slug]) }}">
+                        <a class="badge" href="{{ route('website.courses.index', [...$courseContextQuery, 'category' => $category->slug]) }}">
                             {{ $category->displayName() }} · {{ $category->courses_count }}
                         </a>
                     @empty
@@ -45,7 +87,8 @@
                             </div>
                             <p class="price">{{ $program->priceForHumans() }}</p>
                             <div class="actions">
-                                <a class="button secondary" href="{{ route('website.courses.show', $program) }}">{{ tkey('website.actions.view_course') }}</a>
+                                @php($courseLink = route('website.courses.show', $program).($courseContextQuery !== [] ? '?'.http_build_query($courseContextQuery) : ''))
+                                <a class="button secondary" href="{{ $courseLink }}">{{ tkey('website.actions.view_course') }}</a>
                                 <a class="button" href="#application-form">{{ tkey('website.actions.apply') }}</a>
                             </div>
                         </article>
@@ -85,7 +128,7 @@
                                 <tr>
                                     <td>{{ $group->displayName() }}</td>
                                     <td>{{ $group->trainingProgram?->displayTitle() }}</td>
-                                    <td>{{ $group->branch?->displayCity() }}</td>
+                                    <td>{{ $group->branch?->displayCountry() }} · {{ $group->branch?->displayCity() }}</td>
                                     <td>{{ $group->starts_on?->toDateString() ?? '-' }}</td>
                                     <td>{{ tkey('website.groups.seats_value', ['available' => $group->seatsAvailable(), 'capacity' => $group->capacity]) }}</td>
                                 </tr>

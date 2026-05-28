@@ -21,6 +21,7 @@ class BranchFactory extends Factory
     public function definition(): array
     {
         $name = 'DrivePro Academy Training Branch';
+        $country = 'Lithuania';
         $city = 'Vilnius';
         $address = 'Gedimino Ave. 1';
         $description = 'Driving school branch for consultations, theory lessons, and student support.';
@@ -31,6 +32,8 @@ class BranchFactory extends Factory
             'name' => $name,
             'name_translations' => $this->translations('Филиал DrivePro Academy', $name, 'DrivePro Academy filialas', 'Oddzial DrivePro Academy'),
             'slug' => $this->faker->unique()->slug(2),
+            'country' => $country,
+            'country_translations' => $this->translations('Литва', $country, 'Lietuva', 'Litwa'),
             'city' => $city,
             'city_translations' => $this->translations('Вильнюс', $city, 'Vilniaus miestas', 'Wilno'),
             'address' => $address,
@@ -88,6 +91,8 @@ class BranchFactory extends Factory
         return $this->state(fn (): array => [
             'name' => 'DrivePro Academy Vilnius',
             'name_translations' => $this->translations('DrivePro Academy Вильнюс', 'DrivePro Academy Vilnius', 'DrivePro Academy Vilniaus filialas', 'DrivePro Academy Wilno'),
+            'country' => 'Lithuania',
+            'country_translations' => $this->translations('Литва', 'Lithuania', 'Lietuva', 'Litwa'),
             'city' => 'Vilnius',
             'city_translations' => $this->translations('Вильнюс', 'Vilnius', 'Vilniaus miestas', 'Wilno'),
             'address_translations' => $this->translations('Gedimino pr. 1', 'Gedimino Ave. 1', 'Gedimino pr. 1', 'Gedimino pr. 1'),
@@ -124,6 +129,13 @@ class BranchFactory extends Factory
                 $translations['name_en'] ?? $translations['name'],
                 $translations['name_lt'] ?? $translations['name_en'] ?? $translations['name'],
                 $translations['name_pl'] ?? $translations['name_en'] ?? $translations['name'],
+            ),
+            'country' => $translations['country'] ?? 'Lithuania',
+            'country_translations' => $this->translations(
+                $translations['country'] ?? 'Литва',
+                $translations['country_en'] ?? $translations['country'] ?? 'Lithuania',
+                $translations['country_lt'] ?? $translations['country_en'] ?? $translations['country'] ?? 'Lietuva',
+                $translations['country_pl'] ?? $translations['country_en'] ?? $translations['country'] ?? 'Litwa',
             ),
             'city' => $translations['city'],
             'city_translations' => $this->translations(

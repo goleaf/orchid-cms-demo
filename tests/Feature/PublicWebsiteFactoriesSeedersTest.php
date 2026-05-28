@@ -142,8 +142,17 @@ class PublicWebsiteFactoriesSeedersTest extends TestCase
     {
         $this->seed(WebsiteBranchSeeder::class);
 
-        $this->assertGreaterThanOrEqual(2, Branch::query()->active()->visibleOnSite()->count());
+        $this->assertGreaterThanOrEqual(15, Branch::query()->active()->visibleOnSite()->count());
+        $this->assertGreaterThanOrEqual(5, Branch::query()->active()->visibleOnSite()->distinct('country')->count('country'));
         $this->assertTrue(Branch::query()->where('slug', 'vilnius-main')->active()->visibleOnSite()->exists());
+        $this->assertTrue(Branch::query()->where('slug', 'berlin-mitte')->active()->visibleOnSite()->exists());
+
+        Branch::query()
+            ->active()
+            ->visibleOnSite()
+            ->get(['country'])
+            ->groupBy('country')
+            ->each(fn ($branches, string $country) => $this->assertGreaterThanOrEqual(3, $branches->count(), $country));
     }
 
     public function test_website_faq_seeder_creates_common_faq_idempotently(): void
@@ -152,10 +161,26 @@ class PublicWebsiteFactoriesSeedersTest extends TestCase
         $this->seed(WebsiteFaqSeeder::class);
 
         $faq = Faq::query()->ordered()->firstOrFail();
+        $courseCount = Course::query()->active()->visibleOnSite()->count();
+        $branchCount = Branch::query()->active()->visibleOnSite()->count();
+        $pageCount = SitePage::query()->active()->published()->count();
+        $expectedFaqCount = 3 + ($courseCount * 4) + ($branchCount * 2) + ($pageCount * 2);
 
-        $this->assertSame(3, Faq::query()->active()->count());
+        $this->assertSame($expectedFaqCount, Faq::query()->active()->count());
         $this->assertArrayHasKey('en', $faq->question_translations);
         $this->assertArrayHasKey('ru', $faq->answer_translations);
+
+        Course::query()
+            ->active()
+            ->visibleOnSite()
+            ->get()
+            ->each(function (Course $course): void {
+                $this->assertSame(4, Faq::query()
+                    ->where('faqable_type', Course::class)
+                    ->where('faqable_id', $course->id)
+                    ->active()
+                    ->count(), $course->slug);
+            });
     }
 
     public function test_website_testimonial_seeder_creates_published_testimonials_idempotently(): void

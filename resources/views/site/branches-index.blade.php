@@ -1,6 +1,11 @@
 @extends('site.layout')
 
 @section('content')
+    @php
+        $filters = $filters ?? ['country' => '', 'city' => ''];
+        $filterOptions = $filterOptions ?? ['countries' => collect(), 'cities' => collect()];
+    @endphp
+
     <main>
         <section class="section dark">
             <div class="section-inner">
@@ -12,10 +17,33 @@
 
         <section class="section">
             <div class="section-inner">
+                <form class="filter-panel" method="GET" action="{{ route('website.branches.index') }}" data-location-filter>
+                    <div class="filter-head">
+                        <div>
+                            <p class="kicker">{{ tkey('website.filters.kicker') }}</p>
+                            <h2>{{ tkey('website.branches.title') }}</h2>
+                        </div>
+                        <p class="meta">{{ tkey('website.filters.subtitle') }}</p>
+                    </div>
+
+                    <div class="filter-grid">
+                        @include('site.partials.location-filter-fields', compact('filters', 'filterOptions'))
+
+                        <div class="filter-actions">
+                            <button class="button" type="submit">{{ tkey('website.filters.apply') }}</button>
+                            <a class="button secondary" href="{{ route('website.branches.index') }}">{{ tkey('website.filters.reset') }}</a>
+                        </div>
+                    </div>
+
+                    @if ($hasActiveFilters ?? false)
+                        <p class="filter-note">{{ tkey('website.filters.active') }}</p>
+                    @endif
+                </form>
+
                 <div class="grid two">
                     @forelse ($branches as $branch)
                         <article class="card">
-                            <p class="kicker">{{ $branch->displayCity() }}</p>
+                            <p class="kicker">{{ $branch->displayCountry() }} · {{ $branch->displayCity() }}</p>
                             <h2>{{ $branch->displayName() }}</h2>
                             <p>{{ $branch->displayAddress() }}</p>
                             @if ($branch->displayWorkingHours())
