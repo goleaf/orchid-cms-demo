@@ -349,5 +349,4 @@ Student and enrollment dictionary names use `name_translations` and fall back sa
 - Implement full documents module.
 - Implement full payments and invoices module.
 - Implement full student cabinet and user account lifecycle.
-- Integrate dedicated group membership records if a group membership table is introduced.
 - Add richer analytics after the operational workflow is stable.

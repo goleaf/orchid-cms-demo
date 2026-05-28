@@ -21,6 +21,7 @@ Project rules live in [`AGENTS.md`](AGENTS.md) and [`docs/project-specs.md`](doc
 - CRM Block 2: [`docs/crm-block-2.md`](docs/crm-block-2.md)
 - Students and enrollments: [`docs/students.md`](docs/students.md)
 - Lead to student conversion: [`docs/lead-to-student-conversion.md`](docs/lead-to-student-conversion.md)
+- Training groups and education structure: [`docs/training-groups.md`](docs/training-groups.md)
 - Orchid local documentation workflow: [`docs/orchid-local-documentation.md`](docs/orchid-local-documentation.md)
 - Codex automation: [`docs/codex-automation.md`](docs/codex-automation.md)
 - Human changelog: [`changelog.md`](changelog.md)

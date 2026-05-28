@@ -70,6 +70,7 @@ CODEX_AUTO_PUSH_DISABLED=1 bash .codex/hooks/auto-commit-push.sh
 - CRM leads reuse `marketing_leads`; `App\Models\Lead` is a compatibility model.
 - Students reuse `student_profiles`; `App\Models\Student` is a compatibility model.
 - Enrollments reuse `enrollments`; `App\Models\StudentEnrollment` is a compatibility model.
+- Training groups reuse `training_groups`; group membership history uses `training_group_memberships`.
 
 ## Eloquent And Performance
 

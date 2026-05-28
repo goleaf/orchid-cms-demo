@@ -23,11 +23,14 @@ class LearningTopic extends Model
         'uuid',
         'training_program_id',
         'course_module_id',
+        'learning_program_module_id',
         'code',
+        'name_translations',
         'title_translations',
         'description_translations',
         'topic_type',
         'duration_minutes',
+        'estimated_hours',
         'sort_order',
         'is_required',
         'is_active',
@@ -37,8 +40,10 @@ class LearningTopic extends Model
 
     protected $casts = [
         'title_translations' => 'array',
+        'name_translations' => 'array',
         'description_translations' => 'array',
         'duration_minutes' => 'integer',
+        'estimated_hours' => 'decimal:2',
         'sort_order' => 'integer',
         'is_required' => 'boolean',
         'is_active' => 'boolean',
@@ -66,7 +71,12 @@ class LearningTopic extends Model
 
     public function module(): BelongsTo
     {
-        return $this->belongsTo(LearningProgramModule::class, 'course_module_id');
+        return $this->belongsTo(LearningProgramModule::class, 'learning_program_module_id');
+    }
+
+    public function legacyModule(): BelongsTo
+    {
+        return $this->belongsTo(CourseModule::class, 'course_module_id');
     }
 
     public function creator(): BelongsTo
@@ -81,9 +91,20 @@ class LearningTopic extends Model
 
     public function displayTitle(?string $locale = null): string
     {
-        return $this->getTranslation('title', $locale)
+        return $this->displayName($locale);
+    }
+
+    public function displayName(?string $locale = null): string
+    {
+        return $this->getTranslation('name', $locale)
+            ?: $this->getTranslation('title', $locale)
             ?: $this->code
             ?: (string) $this->getKey();
+    }
+
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->displayName();
     }
 
     public function scopeActive(Builder $query): Builder
@@ -93,7 +114,9 @@ class LearningTopic extends Model
 
     public function scopeByProgram(Builder $query, int|string|null $programId): Builder
     {
-        return filled($programId) ? $query->where('training_program_id', $programId) : $query;
+        return filled($programId)
+            ? $query->whereHas('module', fn (Builder $query): Builder => $query->where('learning_program_id', $programId))
+            : $query;
     }
 
     public function scopeOrdered(Builder $query): Builder

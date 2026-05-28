@@ -57,6 +57,7 @@ Changelog entries must be plain human language for a project owner or operator. 
 - Testimonials reuse `student_reviews`.
 - Students reuse `student_profiles`.
 - Student enrollments reuse `enrollments`.
+- Training groups reuse `training_groups` and group memberships use `training_group_memberships`.
 - Superadmin permissions are centralized through `App\Support\Access\SuperadminPermissions`.
 
 ## Quality Rules

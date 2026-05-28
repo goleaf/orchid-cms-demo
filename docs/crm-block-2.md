@@ -6,9 +6,9 @@ This block implements CRM lead management for one local driving school company. 
 
 ## Scope
 
-The CRM receives website leads from the public enrollment and callback forms, lets managers process leads in Orchid, tracks communication, notes, tasks, statuses, duplicate links, UTM data, tags, and lost reasons, and prepares a lead for future conversion into a student.
+The CRM receives website leads from the public enrollment and callback forms, lets managers process leads in Orchid, tracks communication, notes, tasks, statuses, duplicate links, UTM data, tags, and lost reasons, and prepares a lead for conversion into a student.
 
-Student records, payments, invoices, lessons, exams, payroll, external SMS or telephony integrations, WhatsApp integrations, and AI scoring remain outside this block.
+Student records are handled by the student and conversion modules. Payments, invoices, lessons, exams, payroll, external SMS or telephony integrations, WhatsApp integrations, and AI scoring remain outside this block.
 
 ## Public Website Intake
 
@@ -167,7 +167,7 @@ Lead timeline and work tables use:
 - `marketing_lead_status_histories` for status movement history
 - `lead_tag_marketing_lead` for lead tags
 
-The requested CRM concepts are mapped onto existing local-driving-school columns where they already exist: `status` and `source` store dictionary codes, `responsible_manager_id` stores the manager, `lost_reason_code` stores the lost reason, `training_program_id` stores the course, `budget_cents` stores money safely, and `converted_student_profile_id` prepares future student conversion.
+The requested CRM concepts are mapped onto existing local-driving-school columns where they already exist: `status` and `source` store dictionary codes, `responsible_manager_id` stores the manager, `lost_reason_code` stores the lost reason, `training_program_id` stores the course, `budget_cents` stores money safely, and conversion fields link successful leads to students and enrollments.
 
 ### CRM Table Compatibility Map
 
@@ -271,7 +271,7 @@ Important groups:
 
 ## Conversion Boundary
 
-`ReadyToEnroll` is the handoff status for Block 3. Block 2 stores the CRM fields needed for conversion, but it does not create the full student module or financial/lesson records.
+`ReadyToEnroll` is the handoff status for the conversion workflow. Block 2 stores the CRM fields needed for conversion, while student records and enrollments are created by the student conversion module. Financial and lesson records are still outside this block.
 
 ## Verification
 

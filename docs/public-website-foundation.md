@@ -38,6 +38,7 @@ Orchid exposes website management under `platform.website.*` routes:
 - `platform.website.branches`: branch public content and SEO.
 - `platform.website.groups`: publicly visible training groups.
 - `platform.website.leads`: CRM lead list for website intake.
+- `platform.website.faq`: FAQ management with table-based move-up and move-down ordering.
 
 Access is controlled by `website.*` permissions and remains compatible with the existing local superadmin role.
 
@@ -65,6 +66,7 @@ Public content management actions:
 - `SavePricingPackageAction`
 - `CreateOrUpdateBranchAction`
 - `CreateOrUpdateFaqAction`
+- `MoveFaqOrderAction`
 - `CreateOrUpdateTestimonialAction`
 - `UpdateSiteSettingsAction`
 - `GenerateSeoMetadataAction`
@@ -110,6 +112,8 @@ New website-only tables:
 - `site_settings` for public website settings.
 
 Existing school tables are extended with UUIDs, multilingual website fields, site visibility flags, SEO/media references where practical, audit fields, and soft deletes where the public website needs lifecycle management.
+
+FAQ ordering is operator-friendly: new FAQ items are placed after the current last item, manual numeric sorting is hidden from the edit form, and the list screen exposes only translated up/down movement controls.
 
 ## Pricing Packages
 

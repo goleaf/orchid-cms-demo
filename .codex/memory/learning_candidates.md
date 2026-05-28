@@ -2415,3 +2415,43 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T08:46:54+00:00
+
+```json
+{
+  "ts": "2026-05-28T08:46:54+00:00",
+  "event": "Stop",
+  "session_id": "019e6d9c-1446-78f3-b720-8f17cbb16ed9",
+  "turn_id": "019e6db8-d1bf-7471-a425-a42c0882fdb8",
+  "branch": "main",
+  "changed_file_count": 19,
+  "changed_file_groups": {
+    "code": 15,
+    "models": 3,
+    "database": 1
+  },
+  "changed_files_sample": [
+    "GENTS.md",
+    "README.md",
+    "app/Models/LearningProgram.php",
+    "app/Models/LearningProgramModule.php",
+    "app/Models/LearningTopic.php",
+    "changelog.md",
+    "database/factories/BranchFactory.php",
+    "database/factories/LandingPageFactory.php",
+    "database/migrations/2026_05_28_050000_align_training_group_education_foundation.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "docs/crm-block-2.md",
+    "docs/crm-leads.md",
+    "docs/lead-to-student-conversion.md",
+    "docs/project-specs.md",
+    "docs/public-website-foundation.md",
+    "docs/public-website.md",
+    "docs/students.md",
+    "docs/training-groups.md"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

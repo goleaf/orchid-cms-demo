@@ -23,11 +23,17 @@ class TrainingGroupSchedulePattern extends Model
         'uuid',
         'training_group_id',
         'title_translations',
+        'type',
         'day_of_week',
+        'start_time',
+        'end_time',
         'starts_at',
         'ends_at',
         'lesson_type',
         'classroom',
+        'classroom_id',
+        'location_translations',
+        'notes_translations',
         'instructor_id',
         'is_active',
         'sort_order',
@@ -37,7 +43,11 @@ class TrainingGroupSchedulePattern extends Model
 
     protected $casts = [
         'title_translations' => 'array',
+        'location_translations' => 'array',
+        'notes_translations' => 'array',
         'day_of_week' => 'integer',
+        'start_time' => 'datetime:H:i',
+        'end_time' => 'datetime:H:i',
         'starts_at' => 'datetime:H:i',
         'ends_at' => 'datetime:H:i',
         'is_active' => 'boolean',
@@ -51,6 +61,12 @@ class TrainingGroupSchedulePattern extends Model
             if (blank($pattern->uuid)) {
                 $pattern->uuid = (string) Str::uuid();
             }
+
+            $pattern->syncAliases();
+        });
+
+        static::saving(function (self $pattern): void {
+            $pattern->syncAliases();
         });
     }
 
@@ -80,13 +96,50 @@ class TrainingGroupSchedulePattern extends Model
             ?: tkey('education.schedule_patterns.fallback_title');
     }
 
+    public function getDisplayDayAttribute(): string
+    {
+        return tkey('education.schedule_patterns.days.'.$this->day_of_week);
+    }
+
+    public function getDisplayTimeRangeAttribute(): string
+    {
+        $start = $this->start_time?->format('H:i') ?? $this->starts_at?->format('H:i');
+        $end = $this->end_time?->format('H:i') ?? $this->ends_at?->format('H:i');
+
+        return filled($start) && filled($end) ? $start.'-'.$end : '-';
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
 
+    public function scopeByDayOfWeek(Builder $query, int|string|null $day): Builder
+    {
+        return filled($day) ? $query->where('day_of_week', $day) : $query;
+    }
+
+    public function scopeByType(Builder $query, ?string $type): Builder
+    {
+        return filled($type)
+            ? $query->where(fn (Builder $query): Builder => $query
+                ->where('type', $type)
+                ->orWhere('lesson_type', $type))
+            : $query;
+    }
+
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('sort_order')->orderBy('day_of_week')->orderBy('starts_at');
+    }
+
+    private function syncAliases(): void
+    {
+        $this->type ??= $this->lesson_type ?? 'theory';
+        $this->lesson_type ??= $this->type ?? 'theory';
+        $this->start_time ??= $this->starts_at;
+        $this->starts_at ??= $this->start_time;
+        $this->end_time ??= $this->ends_at;
+        $this->ends_at ??= $this->end_time;
     }
 }

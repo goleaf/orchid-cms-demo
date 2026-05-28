@@ -8,6 +8,8 @@ Block 1 provides the public website foundation for one local driving school. It 
 
 The public website lets administrators manage public pages, course offers, prices, branches, public group visibility, FAQ, testimonials, SEO metadata, and site settings from Orchid. Public forms create structured CRM lead records instead of only sending email.
 
+FAQ management keeps manual numeric ordering out of the edit form. New FAQ records receive the next available position automatically, and the FAQ list provides translated move-up and move-down controls that reorder records from the table.
+
 ## Models
 
 - `SitePage`: managed public pages, page type, slug, translated content, SEO metadata, publication state, indexability.
@@ -55,6 +57,7 @@ Orchid/content management:
 - `CreateOrUpdatePricingPackageAction`
 - `CreateOrUpdateBranchAction`
 - `CreateOrUpdateFaqAction`
+- `MoveFaqOrderAction`
 - `CreateOrUpdateTestimonialAction`
 - `UpdateSiteSettingsAction`
 - `PublishSitePageAction`
@@ -288,7 +291,7 @@ Primary coverage:
 - `PublicWebsiteFactoriesSeedersTest`
 - `PublicWebsiteActionsRequestsRulesTest`
 - `PublicWebsiteTranslationsTest`
-- `PublicWebsiteOrchidAdminTest`
+- `PublicWebsiteOrchidAdminTest`, including FAQ order controls and automatic FAQ positioning
 - `PublicWebsiteFrontendTest`
 - `PublicWebsiteSeoTest`
 

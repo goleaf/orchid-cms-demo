@@ -168,7 +168,7 @@ When TrainingGroup exists and a group is selected:
 
 If the group changes later, the old group capacity is decremented and the new group capacity is incremented.
 
-If a dedicated group membership table is introduced later, `AddStudentToTrainingGroupAction` is the integration point to call the group membership Action.
+The group foundation includes dedicated membership records. Group assignment keeps the enrollment's group fields, group capacity, membership history, and group activity timeline synchronized through the group assignment Action.
 
 ## CRM Integration
 
@@ -294,7 +294,6 @@ php artisan test
 
 ## Known TODOs
 
-- Add real group membership integration if the group module introduces a membership table.
 - Implement full documents module.
 - Implement full payment and invoice module.
 - Implement full student cabinet and account lifecycle.

@@ -28,11 +28,13 @@ class TrainingGroupStatus extends Model
         'is_default',
         'is_active',
         'is_public',
+        'is_open_for_enrollment',
         'accepts_enrollments',
         'is_in_progress',
         'is_final',
         'is_success',
         'is_cancelled',
+        'is_archived',
     ];
 
     protected $casts = [
@@ -43,11 +45,13 @@ class TrainingGroupStatus extends Model
         'is_default' => 'boolean',
         'is_active' => 'boolean',
         'is_public' => 'boolean',
+        'is_open_for_enrollment' => 'boolean',
         'accepts_enrollments' => 'boolean',
         'is_in_progress' => 'boolean',
         'is_final' => 'boolean',
         'is_success' => 'boolean',
         'is_cancelled' => 'boolean',
+        'is_archived' => 'boolean',
     ];
 
     public function groups(): HasMany
@@ -58,5 +62,26 @@ class TrainingGroupStatus extends Model
     public function getDisplayNameAttribute(): string
     {
         return $this->displayName();
+    }
+
+    public function getIsOpenForEnrollmentAttribute(?bool $value): bool
+    {
+        return (bool) ($value ?? ($this->attributes['accepts_enrollments'] ?? false));
+    }
+
+    public function setIsOpenForEnrollmentAttribute(bool|int|string|null $value): void
+    {
+        $flag = (bool) $value;
+
+        $this->attributes['is_open_for_enrollment'] = $flag;
+        $this->attributes['accepts_enrollments'] = $flag;
+    }
+
+    public function setAcceptsEnrollmentsAttribute(bool|int|string|null $value): void
+    {
+        $flag = (bool) $value;
+
+        $this->attributes['accepts_enrollments'] = $flag;
+        $this->attributes['is_open_for_enrollment'] = $flag;
     }
 }

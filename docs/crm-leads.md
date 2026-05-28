@@ -2,7 +2,7 @@
 
 Project baseline: follow [`docs/project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). This module is Laravel + Orchid + Blade, uses Eloquent only, and must keep all visible admin/public text translatable.
 
-The CRM lead module manages requests for one local driving school company. It receives structured leads from the public website, lets managers process them in Orchid, tracks next actions and timeline history, and prepares qualified leads for the future Student module.
+The CRM lead module manages requests for one local driving school company. It receives structured leads from the public website, lets managers process them in Orchid, tracks next actions and timeline history, and hands qualified leads to the student conversion workflow.
 
 This module is not SaaS. It has no tenants, subscription billing, reseller logic, platform-owner dashboards, or multi-company isolation.
 
@@ -18,7 +18,7 @@ CRM leads are used for:
 - duplicate detection by normalized phone and email
 - UTM and source attribution
 - safe CSV export for managers and directors
-- future handoff to student conversion in Block 3
+- handoff to student conversion
 
 The canonical storage is `marketing_leads`. `App\Models\Lead` is a compatibility model over the same table, so website requests and CRM screens use the same lead records.
 
@@ -41,7 +41,7 @@ Default CRM statuses are seeded by `CrmStatusSeeder`.
 
 Status transitions are validated by `ValidLeadStatusTransitionRule` and executed through `ChangeLeadStatusAction` or `MoveLeadToStatusAction`. Closed, lost, spam, duplicate, and converted leads are not treated as active work.
 
-`PrepareLeadForStudentConversionAction` moves a convertible lead to the ready-to-enroll flow and returns a readiness result. It does not create Student records; that belongs to Block 3.
+`PrepareLeadForStudentConversionAction` moves a convertible lead to the ready-to-enroll flow and returns a readiness result. Actual student and enrollment creation is handled by the conversion workflow.
 
 ## Dictionaries
 
@@ -300,7 +300,6 @@ php artisan db:seed --class=CrmTranslationSeeder
 
 ## Known TODOs
 
-- Implement full lead-to-student conversion in Block 3.
 - Add full analytics dashboards later; current reporting helpers are only a foundation.
 - External SMS, WhatsApp, telephony, and AI scoring are intentionally out of scope.
 - Human review is still recommended for approximate `ru`, `en`, `lt`, and `pl` translation wording.

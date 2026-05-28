@@ -20,25 +20,30 @@ class BranchFactory extends Factory
      */
     public function definition(): array
     {
-        $name = $this->faker->company().' Driving School';
-        $city = $this->faker->city();
-        $address = $this->faker->streetAddress();
-        $description = $this->faker->paragraph();
+        $name = 'DrivePro Academy Training Branch';
+        $city = 'Vilnius';
+        $address = 'Gedimino Ave. 1';
+        $description = 'Driving school branch for consultations, theory lessons, and student support.';
 
         return [
             'uuid' => (string) Str::uuid(),
             'code' => strtoupper($this->faker->unique()->bothify('BR-####')),
             'name' => $name,
-            'name_translations' => $this->translations($name),
+            'name_translations' => $this->translations('Филиал DrivePro Academy', $name, 'DrivePro Academy filialas', 'Oddzial DrivePro Academy'),
             'slug' => $this->faker->unique()->slug(2),
             'city' => $city,
-            'city_translations' => $this->translations($city),
+            'city_translations' => $this->translations('Вильнюс', $city, 'Vilnius', 'Wilno'),
             'address' => $address,
-            'address_translations' => $this->translations($address),
+            'address_translations' => $this->translations('Gedimino pr. 1', $address, 'Gedimino pr. 1', 'Gedimino pr. 1'),
             'phone' => $this->faker->phoneNumber(),
             'email' => $this->faker->companyEmail(),
             'description' => $description,
-            'description_translations' => $this->translations($description),
+            'description_translations' => $this->translations(
+                'Филиал автошколы для консультаций, теории и поддержки учеников.',
+                $description,
+                'Vairavimo mokyklos filialas konsultacijoms, teorijai ir mokiniu pagalbai.',
+                'Oddzial szkoly jazdy do konsultacji, teorii i wsparcia uczniow.'
+            ),
             'working_hours' => 'Mon-Fri 09:00-18:00',
             'working_hours_translations' => $this->translations('Пн-Пт 09:00-18:00', 'Mon-Fri 09:00-18:00', 'Pr-Pn 09:00-18:00', 'Pn-Pt 09:00-18:00'),
             'latitude' => null,
@@ -114,40 +119,54 @@ class BranchFactory extends Factory
     {
         return $this->state(fn (): array => [
             'name' => $translations['name'],
-            'name_translations' => [
-                'ru' => $translations['name'],
-                'en' => $translations['name_en'] ?? $translations['name'],
-            ],
+            'name_translations' => $this->translations(
+                $translations['name'],
+                $translations['name_en'] ?? $translations['name'],
+                $translations['name_lt'] ?? $translations['name_en'] ?? $translations['name'],
+                $translations['name_pl'] ?? $translations['name_en'] ?? $translations['name'],
+            ),
             'city' => $translations['city'],
-            'city_translations' => [
-                'ru' => $translations['city'],
-                'en' => $translations['city_en'] ?? $translations['city'],
-            ],
+            'city_translations' => $this->translations(
+                $translations['city'],
+                $translations['city_en'] ?? $translations['city'],
+                $translations['city_lt'] ?? $translations['city_en'] ?? $translations['city'],
+                $translations['city_pl'] ?? $translations['city_en'] ?? $translations['city'],
+            ),
             'address' => $translations['address'],
-            'address_translations' => [
-                'ru' => $translations['address'],
-                'en' => $translations['address_en'] ?? $translations['address'],
-            ],
+            'address_translations' => $this->translations(
+                $translations['address'],
+                $translations['address_en'] ?? $translations['address'],
+                $translations['address_lt'] ?? $translations['address_en'] ?? $translations['address'],
+                $translations['address_pl'] ?? $translations['address_en'] ?? $translations['address'],
+            ),
             'description' => $translations['description'],
-            'description_translations' => [
-                'ru' => $translations['description'],
-                'en' => $translations['description_en'] ?? $translations['description'],
-            ],
+            'description_translations' => $this->translations(
+                $translations['description'],
+                $translations['description_en'] ?? $translations['description'],
+                $translations['description_lt'] ?? $translations['description_en'] ?? $translations['description'],
+                $translations['description_pl'] ?? $translations['description_en'] ?? $translations['description'],
+            ),
             'working_hours' => $translations['working_hours'] ?? 'Пн-Пт 09:00-18:00',
-            'working_hours_translations' => [
-                'ru' => $translations['working_hours'] ?? 'Пн-Пт 09:00-18:00',
-                'en' => $translations['working_hours_en'] ?? 'Mon-Fri 09:00-18:00',
-            ],
+            'working_hours_translations' => $this->translations(
+                $translations['working_hours'] ?? 'Пн-Пт 09:00-18:00',
+                $translations['working_hours_en'] ?? 'Mon-Fri 09:00-18:00',
+                $translations['working_hours_lt'] ?? 'Pr-Pn 09:00-18:00',
+                $translations['working_hours_pl'] ?? 'Pn-Pt 09:00-18:00',
+            ),
             'seo_title' => $translations['seo_title'] ?? $translations['name'],
-            'seo_title_translations' => [
-                'ru' => $translations['seo_title'] ?? $translations['name'],
-                'en' => $translations['seo_title_en'] ?? $translations['name_en'] ?? $translations['name'],
-            ],
+            'seo_title_translations' => $this->translations(
+                $translations['seo_title'] ?? $translations['name'],
+                $translations['seo_title_en'] ?? $translations['name_en'] ?? $translations['name'],
+                $translations['seo_title_lt'] ?? $translations['name_lt'] ?? $translations['name_en'] ?? $translations['name'],
+                $translations['seo_title_pl'] ?? $translations['name_pl'] ?? $translations['name_en'] ?? $translations['name'],
+            ),
             'seo_description' => $translations['seo_description'] ?? $translations['description'],
-            'seo_description_translations' => [
-                'ru' => $translations['seo_description'] ?? $translations['description'],
-                'en' => $translations['seo_description_en'] ?? $translations['description_en'] ?? $translations['description'],
-            ],
+            'seo_description_translations' => $this->translations(
+                $translations['seo_description'] ?? $translations['description'],
+                $translations['seo_description_en'] ?? $translations['description_en'] ?? $translations['description'],
+                $translations['seo_description_lt'] ?? $translations['description_lt'] ?? $translations['description_en'] ?? $translations['description'],
+                $translations['seo_description_pl'] ?? $translations['description_pl'] ?? $translations['description_en'] ?? $translations['description'],
+            ),
         ]);
     }
 

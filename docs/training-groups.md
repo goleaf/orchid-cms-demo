@@ -122,6 +122,8 @@ Routes:
 5. Group capacity updates through `places_taken`.
 6. `TrainingGroupActivity` records the group timeline.
 
+The same group assignment flow is used from student enrollment creation and lead conversion, so group capacity, active membership records, enrollment group fields, and student/group activity entries stay in sync.
+
 ## Translations
 
 Education UI labels, permission labels, dictionary labels, activity labels, and validation errors are seeded by `EducationTranslationSeeder`.
