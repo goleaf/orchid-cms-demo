@@ -42,3 +42,7 @@
 - Block 12 KPI metrics, targets, and snapshots use local analytics tables with metric groups, units, period ranges, thresholds, optional branch/user scope, translated metric labels, and snapshot metadata; they must not gain SaaS tenant, subscription, reseller, platform-owner, or multi-company dimensions.
   Evidence: Added additive KPI schema, KPI enums, model relationships, factories, docs, and AnalyticsKpiDataModelTest.
   Added: 2026-05-28T17:00:00+03:00
+
+- Block 12 analytics snapshots and cache entries store local owner dashboard and operational summary payloads with period ranges, optional branch/user scope, cache tags, and expiration handling; they must not store external telemetry or SaaS tenant, subscription, reseller, platform-owner, or multi-company dimensions.
+  Evidence: Added analytics snapshot/cache-entry schema, models, factories, Actions, cache key validation, docs, and AnalyticsSnapshotsCacheTest.
+  Added: 2026-05-28T19:00:00+03:00

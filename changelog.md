@@ -2,6 +2,8 @@
 
 ## 2026-05-28
 
+- Analytics now has local snapshot storage and action-based cache entries for owner dashboards, summaries, expiration handling, and tag-based clearing
+
 - Added multilingual exam labels and more precise local exam access controls for sessions, admissions, attempts, results, retakes, dictionaries, and exports
 
 - KPI setup now has a clearer local data model for metric definitions, targets, snapshots, translated labels, period ranges, thresholds, and branch or staff ownership

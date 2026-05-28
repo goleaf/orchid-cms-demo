@@ -68,6 +68,7 @@ class AnalyticsTranslationSeeder extends SystemTranslationSeeder
             $this->entry('analytics', 'analytics.columns.finished_at', ['ru' => 'Завершен', 'en' => 'Finished at', 'lt' => 'Baigta', 'pl' => 'Zakonczono']),
 
             $this->entry('analytics', 'analytics.validation.invalid_code', ['ru' => 'Код аналитики некорректен.', 'en' => 'Analytics code is invalid.', 'lt' => 'Analitikos kodas neteisingas.', 'pl' => 'Kod analityki jest nieprawidlowy.']),
+            $this->entry('analytics', 'analytics.validation.invalid_cache_key', ['ru' => 'Ключ кэша аналитики некорректен.', 'en' => 'Analytics cache key is invalid.', 'lt' => 'Analitikos talpyklos raktas neteisingas.', 'pl' => 'Klucz pamieci analityki jest nieprawidlowy.']),
             $this->entry('analytics', 'analytics.validation.code_required', ['ru' => 'Укажите код.', 'en' => 'Enter the code.', 'lt' => 'Iveskite koda.', 'pl' => 'Podaj kod.']),
             $this->entry('analytics', 'analytics.validation.name_required', ['ru' => 'Укажите название.', 'en' => 'Enter the name.', 'lt' => 'Iveskite pavadinima.', 'pl' => 'Podaj nazwe.']),
             $this->entry('analytics', 'analytics.validation.report_type_required', ['ru' => 'Выберите тип отчета.', 'en' => 'Select report type.', 'lt' => 'Pasirinkite ataskaitos tipa.', 'pl' => 'Wybierz typ raportu.']),
