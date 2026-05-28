@@ -29,6 +29,11 @@ class User extends Authenticatable
         'two_factor_placeholder_enabled',
     ];
 
+    protected $attributes = [
+        'is_active' => true,
+        'two_factor_placeholder_enabled' => false,
+    ];
+
     /**
      * The attributes excluded from the model's JSON form.
      *
