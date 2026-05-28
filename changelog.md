@@ -2,6 +2,12 @@
 
 ## 2026-05-28
 
+- Added a communications foundation for reminders, message templates, student contact history, notification channels, and delivery tracking
+- Added a dashboard and analytics foundation for key metrics, targets, saved reports, report runs, and exports
+- Improved training group management with waitlists, transfers, capacity updates, schedule patterns, status changes, publishing, and archiving
+- Expanded project documentation for operations, documents, payments, communications, analytics, and public website planning
+- Added test coverage for the new foundation so the main workflows can be checked automatically
+
 - Backfilled the changelog from the project history so earlier website, CRM, student, education, operations, and automation foundations are represented
 - Added missing module guides for operations, communications, documents, payments, and dashboard reporting
 - Updated the documentation index and website notes so current guides match the committed project surface
