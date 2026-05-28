@@ -1868,3 +1868,51 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T03:26:12+00:00
+
+```json
+{
+  "ts": "2026-05-28T03:26:12+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6c87-e838-7521-ad00-2922bdfb48e6",
+  "branch": "main",
+  "changed_file_count": 26,
+  "changed_file_groups": {
+    "code": 15,
+    "models": 9,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "app/Enums/EnrollmentStatus.php",
+    "app/Enums/StudentStatus.php",
+    "app/Models/Enrollment.php",
+    "app/Models/EnrollmentStatus.php",
+    "app/Models/MarketingLead.php",
+    "app/Models/Student.php",
+    "app/Models/StudentActivity.php",
+    "app/Models/StudentEnrollment.php",
+    "app/Models/StudentProfile.php",
+    "app/Models/StudentStatus.php",
+    "app/Models/StudentTask.php",
+    "codex/memory/decisions.md",
+    "database/factories/EnrollmentFactory.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "database/factories/StudentFactory.php",
+    "[REDACTED_SECRET].php",
+    "database/factories/StudentStatusFactory.php",
+    "database/factories/StudentTaskFactory.php",
+    "database/migrations/2026_05_28_010000_create_student_block_three_foundation.php",
+    "database/seeders/DatabaseSeeder.php",
+    "database/seeders/EnrollmentStatusSeeder.php",
+    "[REDACTED_SECRET].php",
+    "database/seeders/StudentStatusSeeder.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

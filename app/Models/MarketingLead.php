@@ -197,7 +197,7 @@ class MarketingLead extends Model
 
     public function convertedStudentProfile(): BelongsTo
     {
-        return $this->belongsTo(StudentProfile::class, 'converted_student_profile_id');
+        return $this->belongsTo(Student::class, 'converted_student_profile_id');
     }
 
     public function convertedStudent(): BelongsTo
@@ -207,7 +207,7 @@ class MarketingLead extends Model
 
     public function convertedEnrollment(): BelongsTo
     {
-        return $this->belongsTo(Enrollment::class, 'converted_enrollment_id');
+        return $this->belongsTo(StudentEnrollment::class, 'converted_enrollment_id');
     }
 
     public function duplicateOf(): BelongsTo
