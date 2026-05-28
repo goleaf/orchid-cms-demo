@@ -50,6 +50,66 @@ class TrainingGroupSchedulePatternFactory extends Factory
         return $this->state(fn (): array => ['type' => 'practice', 'lesson_type' => 'practice']);
     }
 
+    public function consultation(): static
+    {
+        return $this->state(fn (): array => ['type' => 'consultation', 'lesson_type' => 'consultation']);
+    }
+
+    public function examPreparation(): static
+    {
+        return $this->state(fn (): array => ['type' => 'exam_preparation', 'lesson_type' => 'exam_preparation']);
+    }
+
+    public function mondayEvening(): static
+    {
+        return $this->timeSlot(1, '18:00', '20:00');
+    }
+
+    public function wednesdayEvening(): static
+    {
+        return $this->timeSlot(3, '18:00', '20:00');
+    }
+
+    public function weekendMorning(): static
+    {
+        return $this->timeSlot(6, '10:00', '12:00');
+    }
+
+    public function weekdayMorning(): static
+    {
+        return $this->timeSlot(2, '09:00', '11:00');
+    }
+
+    public function active(): static
+    {
+        return $this->state(fn (): array => ['is_active' => true]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn (): array => ['is_active' => false]);
+    }
+
+    public function translated(): static
+    {
+        return $this->state(fn (): array => [
+            'title_translations' => $this->translations('Теория группы', 'Group theory', 'Grupes teorija', 'Teoria grupowa'),
+            'location_translations' => $this->translations('Учебный класс', 'Classroom', 'Klase', 'Sala lekcyjna'),
+            'notes_translations' => $this->translations('Базовый шаблон расписания.', 'Basic schedule pattern.', 'Bazinis tvarkarascio sablonas.', 'Podstawowy wzorzec harmonogramu.'),
+        ]);
+    }
+
+    private function timeSlot(int $day, string $start, string $end): static
+    {
+        return $this->state(fn (): array => [
+            'day_of_week' => $day,
+            'start_time' => $start,
+            'end_time' => $end,
+            'starts_at' => $start,
+            'ends_at' => $end,
+        ]);
+    }
+
     /**
      * @return array<string, string>
      */

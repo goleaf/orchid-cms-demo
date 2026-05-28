@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Exams;
 
 use App\Enums\ExamAttemptStatus;
+use App\Http\Requests\Exams\Concerns\UsesExamValidationMessages;
 use App\Models\DrivingLesson;
 use App\Models\ExamAdmission;
 use App\Models\ExamAttempt;
@@ -19,6 +20,8 @@ use Illuminate\Validation\Rule;
 
 class RecordExamAttemptRequest extends FormRequest
 {
+    use UsesExamValidationMessages;
+
     public function authorize(): bool
     {
         return $this->user()?->hasAnyAccess(['platform.exams', 'exams.record_results']) ?? false;

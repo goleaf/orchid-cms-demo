@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Exams;
 
 use App\Enums\ExamAdmissionStatus;
+use App\Http\Requests\Exams\Concerns\UsesExamValidationMessages;
 use App\Models\Branch;
 use App\Models\ExamAdmission;
 use App\Models\Instructor;
@@ -16,6 +17,8 @@ use Illuminate\Validation\Rule;
 
 class ExamAdmissionRequest extends FormRequest
 {
+    use UsesExamValidationMessages;
+
     public function authorize(): bool
     {
         return $this->user()?->hasAnyAccess(['platform.exams', 'exams.manage_admissions']) ?? false;

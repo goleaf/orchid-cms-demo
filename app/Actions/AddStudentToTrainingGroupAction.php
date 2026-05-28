@@ -21,7 +21,7 @@ class AddStudentToTrainingGroupAction
 
             if (! $allowOverbooking && (! $this->groupAcceptsEnrollment($group) || $group->is_full)) {
                 throw ValidationException::withMessages([
-                    'training_group_id' => tkey('education.groups.validation.enrollment_cannot_join_group'),
+                    'training_group_id' => tkey('students.validation.enrollment_cannot_join_group'),
                 ]);
             }
 
@@ -31,7 +31,7 @@ class AddStudentToTrainingGroupAction
                 && (int) $enrollment->training_program_id !== (int) $group->training_program_id
             ) {
                 throw ValidationException::withMessages([
-                    'training_group_id' => tkey('education.groups.validation.enrollment_cannot_join_group'),
+                    'training_group_id' => tkey('students.validation.enrollment_cannot_join_group'),
                 ]);
             }
 

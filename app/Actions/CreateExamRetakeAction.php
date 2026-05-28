@@ -5,8 +5,10 @@ namespace App\Actions;
 use App\Enums\ExamAdmissionStatus;
 use App\Enums\ExamAttemptStatus;
 use App\Models\ExamAttempt;
+use App\Models\ExamAttemptStatus as ExamAttemptStatusModel;
 use App\Models\ExamSession;
 use App\Models\User;
+use App\Services\Exams\ExamWorkflowService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -31,6 +33,7 @@ class CreateExamRetakeAction
                 'exam_admission_id' => $attempt->exam_admission_id,
                 'exam_session_id' => $session?->id,
                 'enrollment_id' => $attempt->enrollment_id,
+                'student_id' => $attempt->student_id ?? $attempt->student_profile_id,
                 'student_profile_id' => $attempt->student_profile_id,
                 'training_group_id' => $attempt->training_group_id,
                 'training_program_id' => $attempt->training_program_id,
@@ -42,7 +45,9 @@ class CreateExamRetakeAction
                 'exam_type' => $attempt->exam_type,
                 'provider' => $attempt->provider,
                 'status' => ExamAttemptStatus::Scheduled,
+                'status_id' => ExamAttemptStatusModel::query()->where('code', 'planned')->value('id'),
                 'attempt_number' => $data['attempt_number'] ?? $nextAttemptNumber,
+                'attempt_no' => $data['attempt_no'] ?? $data['attempt_number'] ?? $nextAttemptNumber,
                 'next_eligible_at' => $data['next_eligible_at'] ?? now(),
                 'notes' => $data['notes'] ?? null,
                 'internal_notes' => $data['internal_notes'] ?? null,
@@ -76,6 +81,13 @@ class CreateExamRetakeAction
                 (string) $retake->id,
                 ['retake_of_attempt_id' => $attempt->id],
             );
+
+            app(ExamWorkflowService::class)->createRetakeRecord($attempt, [
+                'new_attempt_id' => $retake->id,
+                'planned_at' => $data['planned_at'] ?? $data['next_eligible_at'] ?? now(),
+                'reason' => $data['reason'] ?? $data['notes'] ?? null,
+                'status' => 'scheduled',
+            ], $user);
 
             return $retake->refresh();
         });

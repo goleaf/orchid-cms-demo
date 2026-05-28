@@ -8,9 +8,10 @@ use App\Actions\Analytics\RecordKpiSnapshotAction;
 use App\Actions\Analytics\RefreshAnalyticsCacheAction;
 use App\Actions\Analytics\RunReportDefinitionAction;
 use App\Actions\Analytics\SaveUserDashboardPreferencesAction;
+use App\Enums\AnalyticsDashboardAudience;
 use App\Enums\AnalyticsReportType;
+use App\Enums\DashboardWidgetType;
 use App\Enums\DocumentStatus;
-use App\Enums\EnrollmentStatus;
 use App\Enums\KpiDirection;
 use App\Enums\KpiPeriod;
 use App\Enums\KpiSnapshotStatus;
@@ -25,6 +26,7 @@ use App\Http\Requests\Analytics\ReportDefinitionRequest;
 use App\Http\Requests\Analytics\ReportExportRequest;
 use App\Http\Requests\Analytics\RunReportRequest;
 use App\Models\AnalyticsCache;
+use App\Models\AnalyticsDashboard;
 use App\Models\DashboardWidget;
 use App\Models\DrivingLesson;
 use App\Models\KpiMetric;
@@ -41,6 +43,7 @@ use App\Models\StudentDocument;
 use App\Models\StudentEnrollment;
 use App\Models\User;
 use App\Models\UserDashboardPreference;
+use App\Rules\ActiveAnalyticsDashboardRule;
 use App\Rules\ActiveKpiMetricRule;
 use App\Rules\ActiveReportDefinitionRule;
 use App\Rules\AnalyticsCodeRule;
@@ -63,6 +66,7 @@ class AnalyticsBlockFoundationTest extends TestCase
     public function test_analytics_schema_models_factories_and_local_product_boundaries_exist(): void
     {
         $tables = [
+            'analytics_dashboards',
             'dashboard_widgets',
             'report_definitions',
             'report_runs',
@@ -83,7 +87,16 @@ class AnalyticsBlockFoundationTest extends TestCase
         }
 
         $user = User::factory()->create();
-        $widget = DashboardWidget::factory()->createdBy($user)->create(['code' => 'owner_open_leads']);
+        $dashboard = AnalyticsDashboard::factory()
+            ->createdBy($user)
+            ->default()
+            ->audience(AnalyticsDashboardAudience::Owner)
+            ->create(['code' => 'owner_overview']);
+        $widget = DashboardWidget::factory()
+            ->forDashboard($dashboard)
+            ->createdBy($user)
+            ->type(DashboardWidgetType::Counter)
+            ->create(['code' => 'owner_open_leads']);
         $definition = ReportDefinition::factory()->createdBy($user)->type(AnalyticsReportType::Sales)->create();
         $run = ReportRun::factory()->forDefinition($definition)->createdBy($user)->create();
         $export = ReportExport::factory()->forRun($run)->createdBy($user)->format(ReportExportFormat::Json)->create();
@@ -91,15 +104,21 @@ class AnalyticsBlockFoundationTest extends TestCase
         $target = KpiTarget::factory()->forMetric($metric)->assignedTo($user)->create();
         $snapshot = KpiSnapshot::factory()->forMetric($metric)->create();
         $cache = AnalyticsCache::factory()->createdBy($user)->create();
-        $preference = UserDashboardPreference::factory()->create(['user_id' => $user->id]);
+        $preference = UserDashboardPreference::factory()
+            ->forDashboard($dashboard)
+            ->create(['user_id' => $user->id]);
 
+        $this->assertTrue($dashboard->creator->is($user));
+        $this->assertTrue($dashboard->widgets->first()->is($widget));
         $this->assertTrue($widget->creator->is($user));
+        $this->assertTrue($widget->dashboard->is($dashboard));
         $this->assertTrue($definition->runs->first()->is($run));
         $this->assertTrue($run->exports->first()->is($export));
         $this->assertTrue($metric->targets->first()->is($target));
         $this->assertTrue($metric->snapshots->first()->is($snapshot));
         $this->assertTrue($cache->isFresh());
         $this->assertTrue($user->dashboardPreferences->first()->is($preference));
+        $this->assertTrue($preference->analyticsDashboard->is($dashboard));
     }
 
     public function test_owner_dashboard_report_export_kpi_cache_and_preference_actions_work(): void
@@ -178,6 +197,9 @@ class AnalyticsBlockFoundationTest extends TestCase
             'refresh_interval_seconds' => 120,
         ]);
         $this->assertSame(['open_leads'], $preference->visible_widget_codes);
+        $this->assertSame('owner_overview', $preference->dashboard);
+        $this->assertSame(['widgets' => [['code' => 'open_leads', 'sort_order' => 10]]], $preference->layout);
+        $this->assertNotNull($preference->analytics_dashboard_id);
         $this->assertSame(120, $preference->refresh_interval_seconds);
     }
 
@@ -212,6 +234,12 @@ class AnalyticsBlockFoundationTest extends TestCase
             'metric' => [new ActiveKpiMetricRule],
         ]);
         $this->assertTrue($metricValidator->fails());
+
+        $inactiveDashboard = AnalyticsDashboard::factory()->inactive()->create();
+        $dashboardValidator = Validator::make(['dashboard' => $inactiveDashboard->id], [
+            'dashboard' => [new ActiveAnalyticsDashboardRule],
+        ]);
+        $this->assertTrue($dashboardValidator->fails());
 
         $widgetValidator = Validator::make(['widget' => 'missing_widget'], [
             'widget' => [new DashboardWidgetCodeRule],
@@ -250,6 +278,10 @@ class AnalyticsBlockFoundationTest extends TestCase
     {
         $this->seed([LanguageSeeder::class, AnalyticsTranslationSeeder::class, AnalyticsDemoSeeder::class]);
 
+        $dashboard = AnalyticsDashboard::query()->where('code', 'owner_overview')->firstOrFail();
+        $this->assertTrue($dashboard->is_default);
+        $this->assertSame(AnalyticsDashboardAudience::Owner, $dashboard->audience);
+        $this->assertTrue($dashboard->widgets()->where('code', 'open_leads')->exists());
         $this->assertTrue(DashboardWidget::query()->where('code', 'open_leads')->exists());
         $this->assertTrue(ReportDefinition::query()->where('code', 'crm_lead_pipeline')->exists());
         $this->assertTrue(KpiMetric::query()->where('code', 'paid_revenue_eur')->exists());

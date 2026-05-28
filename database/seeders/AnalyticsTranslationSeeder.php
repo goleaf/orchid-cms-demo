@@ -56,7 +56,7 @@ class AnalyticsTranslationSeeder extends SystemTranslationSeeder
             $this->entry('analytics', 'analytics.columns.type', ['ru' => 'Тип', 'en' => 'Type', 'lt' => 'Tipas', 'pl' => 'Typ']),
             $this->entry('analytics', 'analytics.columns.metric', ['ru' => 'Метрика', 'en' => 'Metric', 'lt' => 'Metrika', 'pl' => 'Metryka']),
             $this->entry('analytics', 'analytics.columns.report', ['ru' => 'Отчет', 'en' => 'Report', 'lt' => 'Ataskaita', 'pl' => 'Raport']),
-            $this->entry('analytics', 'analytics.columns.status', ['ru' => 'Статус', 'en' => 'Status', 'lt' => 'Busena', 'pl' => 'Status']),
+            $this->entry('analytics', 'analytics.columns.status', ['ru' => 'Статус', 'en' => 'Status', 'lt' => 'Busena', 'pl' => 'Stan']),
             $this->entry('analytics', 'analytics.columns.period', ['ru' => 'Период', 'en' => 'Period', 'lt' => 'Laikotarpis', 'pl' => 'Okres']),
             $this->entry('analytics', 'analytics.columns.value', ['ru' => 'Значение', 'en' => 'Value', 'lt' => 'Reiksme', 'pl' => 'Wartosc']),
             $this->entry('analytics', 'analytics.columns.target', ['ru' => 'Цель', 'en' => 'Target', 'lt' => 'Tikslas', 'pl' => 'Cel']),
@@ -78,6 +78,7 @@ class AnalyticsTranslationSeeder extends SystemTranslationSeeder
             $this->entry('analytics', 'analytics.validation.date_range_too_large', ['ru' => 'Диапазон дат слишком большой.', 'en' => 'Date range is too large.', 'lt' => 'Datu intervalas per didelis.', 'pl' => 'Zakres dat jest za duzy.']),
             $this->entry('analytics', 'analytics.validation.inactive_report', ['ru' => 'Выбранный отчет недоступен.', 'en' => 'The selected report is unavailable.', 'lt' => 'Pasirinkta ataskaita nepasiekiama.', 'pl' => 'Wybrany raport jest niedostepny.']),
             $this->entry('analytics', 'analytics.validation.inactive_metric', ['ru' => 'Выбранная KPI-метрика недоступна.', 'en' => 'The selected KPI metric is unavailable.', 'lt' => 'Pasirinkta KPI metrika nepasiekiama.', 'pl' => 'Wybrana metryka KPI jest niedostepna.']),
+            $this->entry('analytics', 'analytics.validation.invalid_dashboard', ['ru' => 'Выбранная панель недоступна.', 'en' => 'The selected dashboard is unavailable.', 'lt' => 'Pasirinktas skydelis nepasiekiamas.', 'pl' => 'Wybrany panel jest niedostepny.']),
             $this->entry('analytics', 'analytics.validation.invalid_widget', ['ru' => 'Выбранный виджет недоступен.', 'en' => 'The selected widget is unavailable.', 'lt' => 'Pasirinktas valdiklis nepasiekiamas.', 'pl' => 'Wybrany widzet jest niedostepny.']),
         ];
     }

@@ -20,6 +20,8 @@ Block 12 adds the foundation for local owner reporting and operational analytics
 
 The first admin surface is a read-only owner dashboard in Orchid. It shows live counters, seeded widget definitions, saved reports, recent runs, and KPI snapshots.
 
+Dashboard definitions, widget definitions, and per-user layout preferences are described in [`docs/analytics-dashboard.md`](analytics-dashboard.md).
+
 ## Data Sources
 
 Dashboard and report data comes from existing local school modules:
@@ -95,6 +97,7 @@ Future analytics work should add focused tests for generated export files, sched
 ## Next Work
 
 - Add editable Orchid screens for managing report definitions, KPI metrics, and KPI targets.
+- Add editable Orchid screens for managing dashboard definitions and widget layouts.
 - Add authorized export file generation through Actions.
 - Add scheduled KPI snapshot refreshes.
 - Add instructor, vehicle, group capacity, and student progress reports.

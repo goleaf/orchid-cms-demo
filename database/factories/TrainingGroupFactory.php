@@ -5,9 +5,12 @@ namespace Database\Factories;
 use App\Enums\GroupStatus;
 use App\Models\Branch;
 use App\Models\Course;
+use App\Models\CourseCategory;
 use App\Models\Instructor;
 use App\Models\LearningProgram;
 use App\Models\TrainingGroup;
+use App\Models\TrainingGroupStatus;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -74,37 +77,74 @@ class TrainingGroupFactory extends Factory
 
     public function publicVisible(): static
     {
-        return $this->state(fn (): array => [
-            'status' => GroupStatus::Recruiting,
-            'is_visible_on_site' => true,
-        ]);
+        return $this->recruiting()->visibleOnSite()->acceptingApplications();
+    }
+
+    public function draft(): static
+    {
+        return $this->statusState('draft', GroupStatus::Planned, 'draft')
+            ->hiddenFromSite()
+            ->notAcceptingApplications();
     }
 
     public function recruiting(): static
     {
-        return $this->state(fn (): array => ['status' => GroupStatus::Recruiting]);
+        return $this->statusState('recruiting', GroupStatus::Recruiting, 'recruiting');
     }
 
     public function almostFull(): static
     {
-        return $this->state(fn (): array => [
-            'status' => GroupStatus::AlmostFull,
-            'capacity' => 12,
-            'places_taken' => 11,
-        ]);
+        return $this->statusState('almost_full', GroupStatus::AlmostFull, 'almostFull')
+            ->almostFullCapacity();
     }
 
     public function full(): static
     {
-        return $this->state(fn (): array => [
-            'capacity' => 12,
-            'places_taken' => 12,
-        ]);
+        return $this->statusState('full', GroupStatus::AlmostFull, 'full')
+            ->fullCapacity()
+            ->notAcceptingApplications();
+    }
+
+    public function closed(): static
+    {
+        return $this->statusState('closed', GroupStatus::Closed, 'closed')
+            ->notAcceptingApplications();
+    }
+
+    public function scheduled(): static
+    {
+        return $this->statusState('scheduled', GroupStatus::Planned, 'scheduled');
     }
 
     public function active(): static
     {
-        return $this->state(fn (): array => ['status' => GroupStatus::Active]);
+        return $this->statusState('active', GroupStatus::Active, 'active')
+            ->started();
+    }
+
+    public function paused(): static
+    {
+        return $this->statusState('paused', GroupStatus::Active, 'paused');
+    }
+
+    public function completed(): static
+    {
+        return $this->statusState('completed', GroupStatus::Completed, 'completed')
+            ->ended()
+            ->notAcceptingApplications();
+    }
+
+    public function cancelled(): static
+    {
+        return $this->statusState('cancelled', GroupStatus::Cancelled, 'cancelled')
+            ->ended()
+            ->hiddenFromSite();
+    }
+
+    public function archived(): static
+    {
+        return $this->statusState('archived', GroupStatus::Closed, 'archived')
+            ->hiddenFromSite();
     }
 
     public function visibleOnSite(): static
@@ -120,6 +160,24 @@ class TrainingGroupFactory extends Factory
         ]);
     }
 
+    public function acceptingApplications(): static
+    {
+        return $this->state(fn (): array => [
+            'is_visible_on_site' => true,
+            'is_accepting_applications' => true,
+        ]);
+    }
+
+    public function notAcceptingApplications(): static
+    {
+        return $this->state(fn (): array => ['is_accepting_applications' => false]);
+    }
+
+    public function featured(): static
+    {
+        return $this->state(fn (): array => ['is_featured' => true]);
+    }
+
     public function startingSoon(): static
     {
         return $this->state(fn (): array => [
@@ -130,6 +188,27 @@ class TrainingGroupFactory extends Factory
         ]);
     }
 
+    public function started(): static
+    {
+        return $this->state(fn (): array => [
+            'starts_on' => now()->subDays(14)->toDateString(),
+            'start_date' => now()->subDays(14)->toDateString(),
+            'ends_on' => now()->addMonths(3)->toDateString(),
+            'planned_end_date' => now()->addMonths(3)->toDateString(),
+        ]);
+    }
+
+    public function ended(): static
+    {
+        return $this->state(fn (): array => [
+            'starts_on' => now()->subMonths(4)->toDateString(),
+            'start_date' => now()->subMonths(4)->toDateString(),
+            'ends_on' => now()->subDay()->toDateString(),
+            'planned_end_date' => now()->subDay()->toDateString(),
+            'actual_end_date' => now()->subDay()->toDateString(),
+        ]);
+    }
+
     public function evening(): static
     {
         return $this->state(fn (): array => [
@@ -137,6 +216,16 @@ class TrainingGroupFactory extends Factory
             'meeting_time' => '18:00',
             'end_time' => '20:00',
             'schedule_summary_translations' => $this->translations('Вечером два раза в неделю.', 'Evenings twice per week.', 'Vakarais du kartus per savaite.', 'Wieczorami dwa razy w tygodniu.'),
+        ]);
+    }
+
+    public function morning(): static
+    {
+        return $this->state(fn (): array => [
+            'meeting_days' => ['tuesday', 'thursday'],
+            'meeting_time' => '09:00',
+            'end_time' => '11:00',
+            'schedule_summary_translations' => $this->translations('Утром два раза в неделю.', 'Mornings twice per week.', 'Rytais du kartus per savaite.', 'Poranki dwa razy w tygodniu.'),
         ]);
     }
 
@@ -162,6 +251,59 @@ class TrainingGroupFactory extends Factory
         ]);
     }
 
+    public function fullCapacity(): static
+    {
+        return $this->withCapacity(12, 12);
+    }
+
+    public function almostFullCapacity(): static
+    {
+        return $this->withCapacity(12, 10);
+    }
+
+    public function emptyCapacity(): static
+    {
+        return $this->withCapacity(12, 0);
+    }
+
+    public function withCourse(): static
+    {
+        return $this->state(fn (): array => [
+            'training_program_id' => Course::factory(),
+            'course_id' => null,
+        ]);
+    }
+
+    public function withCourseCategory(): static
+    {
+        return $this->state(fn (): array => ['course_category_id' => CourseCategory::factory()]);
+    }
+
+    public function withBranch(): static
+    {
+        return $this->state(fn (): array => ['branch_id' => Branch::factory()]);
+    }
+
+    public function withLearningProgram(): static
+    {
+        return $this->state(fn (): array => ['learning_program_id' => LearningProgram::factory()]);
+    }
+
+    public function withManager(): static
+    {
+        return $this->state(fn (): array => ['manager_id' => User::factory()]);
+    }
+
+    public function withAdministrator(): static
+    {
+        return $this->state(fn (): array => ['administrator_id' => User::factory()]);
+    }
+
+    public function withTeacher(): static
+    {
+        return $this->state(fn (): array => ['teacher_id' => User::factory()]);
+    }
+
     public function translated(): static
     {
         return $this->state(fn (): array => [
@@ -170,6 +312,20 @@ class TrainingGroupFactory extends Factory
             'description_translations' => $this->translations('Открытая группа для записи с сайта.', 'Open group for website enrollment.', 'Atvira grupe registracijai svetaineje.', 'Otwarta grupa do zapisow ze strony.'),
             'schedule_summary_translations' => $this->translations('Занятия вечером два раза в неделю.', 'Evening classes twice per week.', 'Vakariniai uzsiemimai du kartus per savaite.', 'Zajecia wieczorne dwa razy w tygodniu.'),
         ]);
+    }
+
+    private function statusState(string $code, GroupStatus $legacyStatus, string $statusFactoryState): static
+    {
+        return $this->state(function () use ($code, $legacyStatus, $statusFactoryState): array {
+            $statusId = TrainingGroupStatus::query()
+                ->where('code', $code)
+                ->value('id');
+
+            return [
+                'status' => $legacyStatus,
+                'status_id' => $statusId ?: TrainingGroupStatus::factory()->{$statusFactoryState}(),
+            ];
+        });
     }
 
     /**

@@ -26,3 +26,7 @@
 - Block 12 analytics foundation is local-driving-school reporting only: dashboard widgets, report definitions, report runs, report exports, KPI metrics, targets, snapshots, analytics cache, and user dashboard preferences are kept without tenant, subscription, reseller, platform-owner, or multi-company dimensions.
   Evidence: Implemented analytics foundation schema, models, Actions, Form Requests, validation Rules, factories, seeders, Orchid owner dashboard, documentation, and AnalyticsBlockFoundationTest.
   Added: 2026-05-28T13:00:00+03:00
+
+- Block 12 dashboard definitions use analytics_dashboards linked to dashboard_widgets and user_dashboard_preferences for local role audiences only; dashboard data must not gain SaaS tenant, subscription, reseller, platform-owner, or multi-company dimensions.
+  Evidence: Added additive dashboard schema, AnalyticsDashboard model, widget/preference relationships, factories, demo seed data, documentation, and AnalyticsDashboardDataModelTest.
+  Added: 2026-05-28T14:00:00+03:00

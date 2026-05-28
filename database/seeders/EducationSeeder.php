@@ -11,6 +11,8 @@ class EducationSeeder extends Seeder
         $this->call([
             EducationTranslationSeeder::class,
             TrainingGroupStatusSeeder::class,
+            LearningProgramSeeder::class,
+            LearningProgramModuleSeeder::class,
         ]);
     }
 }

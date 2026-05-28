@@ -113,6 +113,63 @@ class TrainingGroupStatusFactory extends Factory
         return $this->dictionaryState('archived', $this->translations('Архив', 'Archived', 'Archyvas', 'Archiwum'), '#334155', ['is_final' => true, 'is_archived' => true]);
     }
 
+    public function default(): static
+    {
+        return $this->state(fn (): array => ['is_default' => true]);
+    }
+
+    public function activeStatus(): static
+    {
+        return $this->state(fn (): array => ['is_active' => true]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn (): array => ['is_active' => false]);
+    }
+
+    public function public(): static
+    {
+        return $this->state(fn (): array => ['is_public' => true]);
+    }
+
+    public function openForEnrollment(): static
+    {
+        return $this->state(fn (): array => [
+            'is_open_for_enrollment' => true,
+            'accepts_enrollments' => true,
+        ]);
+    }
+
+    public function final(): static
+    {
+        return $this->state(fn (): array => ['is_final' => true]);
+    }
+
+    public function success(): static
+    {
+        return $this->state(fn (): array => [
+            'is_final' => true,
+            'is_success' => true,
+        ]);
+    }
+
+    public function cancelledStatus(): static
+    {
+        return $this->state(fn (): array => [
+            'is_final' => true,
+            'is_cancelled' => true,
+        ]);
+    }
+
+    public function archivedStatus(): static
+    {
+        return $this->state(fn (): array => [
+            'is_final' => true,
+            'is_archived' => true,
+        ]);
+    }
+
     public function translated(): static
     {
         return $this->recruiting();

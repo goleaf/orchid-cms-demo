@@ -3014,3 +3014,57 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T10:00:52+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:00:52+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6df7-d5ba-7a33-a4cf-5e8551af11bb",
+  "branch": "main",
+  "changed_file_count": 97,
+  "changed_file_groups": {
+    "code": 86,
+    "models": 4,
+    "orchid": 1,
+    "services": 1,
+    "database": 1,
+    "tests": 4
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php",
+    "app/Actions/RecordExamActivityAction.php",
+    "app/Actions/RecordExamResultAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ScheduleExamRetakeAction.php",
+    "app/Actions/StartExamAttemptAction.php",
+    "app/Actions/UpdateExamSessionAction.php",
+    "app/Enums/AnalyticsDashboardAudience.php",
+    "app/Enums/DashboardWidgetType.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

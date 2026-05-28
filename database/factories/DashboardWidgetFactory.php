@@ -2,9 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Enums\DashboardWidgetType;
+use App\Models\AnalyticsDashboard;
 use App\Models\DashboardWidget;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<DashboardWidget>
@@ -20,14 +23,22 @@ class DashboardWidgetFactory extends Factory
     {
         $code = $this->faker->unique()->slug(3);
         $name = str($code)->replace('-', ' ')->title()->toString();
+        $metricCode = str($code)->replace('-', '_')->toString();
 
         return [
+            'uuid' => (string) Str::uuid(),
+            'analytics_dashboard_id' => AnalyticsDashboard::factory(),
             'code' => $code,
+            'title_translations' => $this->translations($name),
             'name_translations' => $this->translations($name),
             'description_translations' => $this->translations($this->faker->sentence(8)),
-            'widget_type' => 'metric',
-            'metric_code' => str($code)->replace('-', '_')->toString(),
+            'widget_type' => DashboardWidgetType::Counter->value,
+            'metric_code' => $metricCode,
             'component' => null,
+            'config' => ['metric' => $metricCode],
+            'filters' => [],
+            'width' => 3,
+            'height' => 1,
             'is_system' => false,
             'is_active' => true,
             'sort_order' => $this->faker->numberBetween(1, 100),
@@ -43,6 +54,22 @@ class DashboardWidgetFactory extends Factory
             'is_system' => true,
             'created_by_id' => null,
             'updated_by_id' => null,
+        ]);
+    }
+
+    public function forDashboard(AnalyticsDashboard $dashboard): static
+    {
+        return $this->state(fn (): array => [
+            'analytics_dashboard_id' => $dashboard->id,
+        ]);
+    }
+
+    public function type(DashboardWidgetType|string $type): static
+    {
+        $value = $type instanceof DashboardWidgetType ? $type->value : $type;
+
+        return $this->state(fn (): array => [
+            'widget_type' => $value,
         ]);
     }
 

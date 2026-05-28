@@ -27,7 +27,7 @@
                         <p class="kicker">{{ tkey('website.course.program.kicker') }}</p>
                         <h2>{{ tkey('website.course.program.title') }}</h2>
                     </div>
-                    <p class="lead">{{ $program->admission_requirements }}</p>
+                    <p class="lead">{{ $program->displayRequirements() }}</p>
                 </div>
 
                 <div class="grid three">
@@ -49,7 +49,7 @@
                     </article>
                     <article class="card">
                         <h3>{{ tkey('website.course.requirements.title') }}</h3>
-                        <p class="meta">{{ $program->admission_requirements }}</p>
+                        <p class="meta">{{ $program->displayRequirements() }}</p>
                     </article>
                 </div>
             </div>

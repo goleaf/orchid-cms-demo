@@ -2,6 +2,13 @@
 
 ## 2026-05-28
 
+- Added a complete exam workflow for session planning, student admission checks, attempts, results, retakes, and activity history
+- Added stronger validation around exam readiness, session capacity, status changes, required documents, payments, and training progress
+- Added configurable analytics dashboards with role-based views, dashboard widgets, and saved user preferences
+- Expanded demo education data, training groups, learning programs, and public course seed data for a richer local setup
+- Updated analytics documentation and tests to cover the new dashboard data model, education seed data, and public website course data
+
+- Added a dashboard and widget data model for local analytics, including translated labels, default owner dashboard setup, user layout preferences, and automated checks
 - Added a stronger exam management foundation with exam types, statuses, admission rules, participants, results, retakes, and checklist tracking
 - Added an owner analytics dashboard with key school metrics, report summaries, recent report runs, and performance snapshots
 - Improved seeded website pages with clearer multilingual content, search descriptions, sharing details, and legal page coverage

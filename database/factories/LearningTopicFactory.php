@@ -52,6 +52,83 @@ class LearningTopicFactory extends Factory
         return $this->state(fn (): array => ['topic_type' => 'practice']);
     }
 
+    public function required(): static
+    {
+        return $this->state(fn (): array => ['is_required' => true]);
+    }
+
+    public function optional(): static
+    {
+        return $this->state(fn (): array => ['is_required' => false]);
+    }
+
+    public function active(): static
+    {
+        return $this->state(fn (): array => ['is_active' => true]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn (): array => ['is_active' => false]);
+    }
+
+    public function translated(): static
+    {
+        return $this->topic('learning_topic', 'Тема обучения', 'Learning topic', 'Mokymo tema', 'Temat nauki', 'theory');
+    }
+
+    public function trafficRules(): static
+    {
+        return $this->topic('traffic_rules', 'Правила дорожного движения', 'Traffic rules', 'Keliu eismo taisykles', 'Przepisy ruchu drogowego', 'theory');
+    }
+
+    public function roadSigns(): static
+    {
+        return $this->topic('road_signs', 'Дорожные знаки', 'Road signs', 'Kelio zenklai', 'Znaki drogowe', 'theory');
+    }
+
+    public function parking(): static
+    {
+        return $this->topic('parking', 'Парковка', 'Parking', 'Parkavimas', 'Parkowanie', 'practice');
+    }
+
+    public function cityDriving(): static
+    {
+        return $this->topic('city_driving', 'Городское вождение', 'City driving', 'Vairavimas mieste', 'Jazda miejska', 'practice');
+    }
+
+    public function highwayDriving(): static
+    {
+        return $this->topic('highway_driving', 'Вождение по шоссе', 'Highway driving', 'Vairavimas uzmiestyje', 'Jazda autostrada', 'practice');
+    }
+
+    public function examRoute(): static
+    {
+        return $this->topic('exam_route', 'Экзаменационный маршрут', 'Exam route preparation', 'Egzamino marsruto parengimas', 'Przygotowanie trasy egzaminacyjnej', 'exam_preparation');
+    }
+
+    public function firstDrive(): static
+    {
+        return $this->topic('first_drive', 'Первое вождение', 'First drive', 'Pirmas vairavimas', 'Pierwsza jazda', 'practice');
+    }
+
+    public function safety(): static
+    {
+        return $this->topic('road_safety', 'Безопасность движения', 'Road safety', 'Eismo saugumas', 'Bezpieczenstwo ruchu', 'theory');
+    }
+
+    private function topic(string $code, string $ru, string $en, string $lt, string $pl, string $type): static
+    {
+        $translations = $this->translations($ru, $en, $lt, $pl);
+
+        return $this->state(fn (): array => [
+            'code' => $code,
+            'name_translations' => $translations,
+            'title_translations' => $translations,
+            'topic_type' => $type,
+        ]);
+    }
+
     /**
      * @return array<string, string>
      */

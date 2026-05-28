@@ -2,10 +2,12 @@
 
 namespace App\Actions\Analytics;
 
+use App\Enums\AnalyticsDashboardAudience;
 use App\Enums\DocumentStatus;
 use App\Enums\EnrollmentStatus;
 use App\Enums\LessonStatus;
 use App\Enums\PaymentStatus;
+use App\Models\AnalyticsDashboard;
 use App\Models\DashboardWidget;
 use App\Models\DrivingLesson;
 use App\Models\Enrollment;
@@ -26,9 +28,18 @@ class GetOwnerDashboardAction
      */
     public function handle(): array
     {
+        $dashboard = AnalyticsDashboard::query()
+            ->active()
+            ->forAudience(AnalyticsDashboardAudience::Owner)
+            ->default()
+            ->ordered()
+            ->with(['widgets' => fn ($query) => $query->active()->ordered()])
+            ->first();
+
         return [
+            'dashboard' => $dashboard,
             'metrics' => $this->metrics(),
-            'widgets' => DashboardWidget::query()
+            'widgets' => $dashboard?->widgets ?? DashboardWidget::query()
                 ->active()
                 ->ordered()
                 ->limit(12)
