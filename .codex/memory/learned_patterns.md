@@ -29,3 +29,7 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - Public SEO uses GenerateSitemapAction and GenerateRobotsTxtAction; sitemap entries use website.* public routes and exclude inactive, hidden, or is_indexable=false site_pages, training_programs, and branches.
   Evidence: Implemented SEO/sitemap/robots/public visibility rules and full php artisan test passed with 100 tests and 2562 assertions.
   Added: 2026-05-27T21:40:30+00:00
+
+- CRM lead filtering is centralized in App\Actions\FilterLeadsAction; LeadListScreen and GetLeadPipelineAction should reuse it for consistent search, filters, and quick segments.
+  Evidence: Implemented advanced CRM filters and pipeline grouping; php artisan test passed with 146 tests and 7298 assertions.
+  Added: 2026-05-28T02:02:20+00:00

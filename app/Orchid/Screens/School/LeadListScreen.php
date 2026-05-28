@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\Orchid\Screens\School;
 
 use App\Actions\ExportLeadsCsvAction;
+use App\Actions\FilterLeadsAction;
 use App\Enums\LeadStatus;
 use App\Models\Branch;
+use App\Models\CourseCategory;
+use App\Models\LeadLostReason;
 use App\Models\LeadSource;
+use App\Models\LeadStatus as LeadStatusDictionary;
 use App\Models\LeadTag;
 use App\Models\MarketingLead;
 use App\Models\TrainingGroup;
@@ -56,12 +60,22 @@ class LeadListScreen extends Screen
     /**
      * @var array<int, string>
      */
+    private array $categories = [];
+
+    /**
+     * @var array<int, string>
+     */
     private array $groups = [];
 
     /**
      * @var array<int, string>
      */
     private array $tags = [];
+
+    /**
+     * @var array<string, string>
+     */
+    private array $lostReasons = [];
 
     public function query(Request $request): iterable
     {
@@ -87,6 +101,12 @@ class LeadListScreen extends Screen
             ->get()
             ->mapWithKeys(fn (TrainingProgram $program): array => [$program->id => $program->displayTitle()])
             ->all();
+        $this->categories = CourseCategory::query()
+            ->active()
+            ->ordered()
+            ->get(['id', 'code', 'slug', 'name_translations'])
+            ->mapWithKeys(fn (CourseCategory $category): array => [$category->id => $category->displayName()])
+            ->all();
         $this->groups = TrainingGroup::query()
             ->operationalList()
             ->orderBy('starts_on')
@@ -99,6 +119,7 @@ class LeadListScreen extends Screen
             ->get(['id', 'slug', 'name', 'name_translations'])
             ->mapWithKeys(fn (LeadTag $tag): array => [$tag->id => $tag->displayName()])
             ->all();
+        $this->lostReasons = LeadLostReason::translatedLabels();
 
         $leads = $this->leadQuery($request)
             ->orderByDesc('created_at')
@@ -194,6 +215,12 @@ class LeadListScreen extends Screen
                     ->options($this->programs)
                     ->value($this->filters['training_program_id'] ?? ''),
 
+                Select::make('course_category_id')
+                    ->title(tkey('crm.leads.filters.course_category'))
+                    ->empty(tkey('crm.leads.filters.all_categories'), '')
+                    ->options($this->categories)
+                    ->value($this->filters['course_category_id'] ?? ''),
+
                 Select::make('training_group_id')
                     ->title(tkey('crm.leads.filters.training_group'))
                     ->empty(tkey('crm.leads.filters.all_groups'), '')
@@ -205,6 +232,18 @@ class LeadListScreen extends Screen
                     ->empty(tkey('crm.leads.filters.all_tags'), '')
                     ->options($this->tags)
                     ->value($this->filters['tag_id'] ?? ''),
+
+                Select::make('lost_reason_code')
+                    ->title(tkey('crm.leads.filters.lost_reason'))
+                    ->empty(tkey('crm.leads.filters.all_lost_reasons'), '')
+                    ->options($this->lostReasons)
+                    ->value($this->filters['lost_reason_code'] ?? ''),
+
+                Select::make('priority')
+                    ->title(tkey('crm.leads.filters.priority'))
+                    ->empty(tkey('crm.leads.filters.all_priorities'), '')
+                    ->options($this->priorityOptions())
+                    ->value($this->filters['priority'] ?? ''),
 
                 Select::make('segment')
                     ->title(tkey('crm.leads.filters.segment'))
@@ -219,6 +258,12 @@ class LeadListScreen extends Screen
                         '1' => tkey('crm.leads.filters.only_overdue'),
                     ])
                     ->value($this->filters['overdue'] ?? ''),
+
+                Select::make('only_due_today')
+                    ->title(tkey('crm.leads.filters.only_due_today'))
+                    ->empty(tkey('common.status.no'), '')
+                    ->options(['1' => tkey('common.status.yes')])
+                    ->value($this->filters['only_due_today'] ?? ''),
 
                 Select::make('only_my')
                     ->title(tkey('crm.leads.filters.only_my'))
@@ -250,15 +295,36 @@ class LeadListScreen extends Screen
                     ->options(['1' => tkey('common.status.yes')])
                     ->value($this->filters['only_closed'] ?? ''),
 
+                Select::make('only_converted')
+                    ->title(tkey('crm.leads.filters.only_converted'))
+                    ->empty(tkey('common.status.no'), '')
+                    ->options(['1' => tkey('common.status.yes')])
+                    ->value($this->filters['only_converted'] ?? ''),
+
+                Select::make('only_not_converted')
+                    ->title(tkey('crm.leads.filters.only_not_converted'))
+                    ->empty(tkey('common.status.no'), '')
+                    ->options(['1' => tkey('common.status.yes')])
+                    ->value($this->filters['only_not_converted'] ?? ''),
+
                 Input::make('utm_source')
                     ->title(tkey('crm.leads.filters.utm_source'))
                     ->value($this->filters['utm_source'] ?? '')
+                    ->canSee($this->canViewMarketing()),
+
+                Input::make('utm_medium')
+                    ->title(tkey('crm.leads.filters.utm_medium'))
+                    ->value($this->filters['utm_medium'] ?? '')
                     ->canSee($this->canViewMarketing()),
 
                 Input::make('utm_campaign')
                     ->title(tkey('crm.leads.filters.utm_campaign'))
                     ->value($this->filters['utm_campaign'] ?? '')
                     ->canSee($this->canViewMarketing()),
+
+                Input::make('form_name')
+                    ->title(tkey('crm.leads.filters.form_name'))
+                    ->value($this->filters['form_name'] ?? ''),
 
                 Input::make('created_from')
                     ->type('date')
@@ -279,6 +345,16 @@ class LeadListScreen extends Screen
                     ->type('date')
                     ->title(tkey('crm.leads.filters.next_follow_up_to'))
                     ->value($this->filters['next_follow_up_to'] ?? ''),
+
+                Input::make('last_contacted_from')
+                    ->type('date')
+                    ->title(tkey('crm.leads.filters.last_contacted_from'))
+                    ->value($this->filters['last_contacted_from'] ?? ''),
+
+                Input::make('last_contacted_to')
+                    ->type('date')
+                    ->title(tkey('crm.leads.filters.last_contacted_to'))
+                    ->value($this->filters['last_contacted_to'] ?? ''),
 
                 Button::make(tkey('common.actions.search'))
                     ->icon('bs.search')
@@ -399,21 +475,31 @@ class LeadListScreen extends Screen
             'manager_id' => $request->input('manager_id'),
             'branch_id' => $request->input('branch_id'),
             'training_program_id' => $request->input('training_program_id'),
+            'course_category_id' => $request->input('course_category_id'),
             'training_group_id' => $request->input('training_group_id'),
             'tag_id' => $request->input('tag_id'),
+            'lost_reason_code' => $request->input('lost_reason_code'),
+            'priority' => $request->input('priority'),
             'segment' => $request->input('segment'),
             'utm_source' => $request->input('utm_source'),
+            'utm_medium' => $request->input('utm_medium'),
             'utm_campaign' => $request->input('utm_campaign'),
+            'form_name' => $request->input('form_name'),
             'created_from' => $request->input('created_from'),
             'created_to' => $request->input('created_to'),
             'next_follow_up_from' => $request->input('next_follow_up_from'),
             'next_follow_up_to' => $request->input('next_follow_up_to'),
+            'last_contacted_from' => $request->input('last_contacted_from'),
+            'last_contacted_to' => $request->input('last_contacted_to'),
             'overdue' => $request->input('overdue'),
+            'only_due_today' => $request->input('only_due_today'),
             'only_my' => $request->input('only_my'),
             'only_unassigned' => $request->input('only_unassigned'),
             'only_duplicates' => $request->input('only_duplicates'),
             'only_open' => $request->input('only_open'),
             'only_closed' => $request->input('only_closed'),
+            'only_converted' => $request->input('only_converted'),
+            'only_not_converted' => $request->input('only_not_converted'),
         ], fn (mixed $value): bool => filled($value)));
     }
 
@@ -431,11 +517,28 @@ class LeadListScreen extends Screen
      */
     private function leadStatusOptions(): array
     {
-        return collect(LeadStatus::cases())
-            ->mapWithKeys(fn (LeadStatus $status): array => [
-                $status->value => $status->label(),
-            ])
-            ->all();
+        $labels = LeadStatusDictionary::translatedLabels();
+
+        return $labels !== []
+            ? $labels
+            : collect(LeadStatus::cases())
+                ->mapWithKeys(fn (LeadStatus $status): array => [
+                    $status->value => $status->label(),
+                ])
+                ->all();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function priorityOptions(): array
+    {
+        return [
+            'low' => tkey('crm.leads.priorities.low'),
+            'normal' => tkey('crm.leads.priorities.normal'),
+            'high' => tkey('crm.leads.priorities.high'),
+            'urgent' => tkey('crm.leads.priorities.urgent'),
+        ];
     }
 
     private function leadQuery(Request $request): Builder
@@ -457,60 +560,7 @@ class LeadListScreen extends Screen
                 'tags:id,slug,name,name_translations',
             ])
             ->withCount(['comments', 'communications', 'documents', 'overdueTasks', 'duplicates'])
-            ->when($this->filters['search'] !== '', fn (Builder $query): Builder => $query->matchingSearch($this->filters['search']))
-            ->when($this->filters['status'] !== '', fn (Builder $query): Builder => $query->where('status', $this->filters['status']))
-            ->when($this->filters['source'] !== '', fn (Builder $query): Builder => $query->where('source', $this->filters['source']))
-            ->when($this->filters['manager_id'] !== '', fn (Builder $query): Builder => $query->where('responsible_manager_id', $this->filters['manager_id']))
-            ->when($this->filters['branch_id'] !== '', fn (Builder $query): Builder => $query->where('branch_id', $this->filters['branch_id']))
-            ->when($this->filters['training_program_id'] !== '', fn (Builder $query): Builder => $query->where('training_program_id', $this->filters['training_program_id']))
-            ->when($this->filters['training_group_id'] !== '', fn (Builder $query): Builder => $query->where('training_group_id', $this->filters['training_group_id']))
-            ->when($this->filters['tag_id'] !== '', fn (Builder $query): Builder => $query->whereHas('tags', fn (Builder $query): Builder => $query->whereKey($this->filters['tag_id'])))
-            ->when($this->filters['created_from'] !== '', fn (Builder $query): Builder => $query->whereDate('created_at', '>=', $this->filters['created_from']))
-            ->when($this->filters['created_to'] !== '', fn (Builder $query): Builder => $query->whereDate('created_at', '<=', $this->filters['created_to']))
-            ->when($this->filters['next_follow_up_from'] !== '', fn (Builder $query): Builder => $query->whereDate('next_follow_up_at', '>=', $this->filters['next_follow_up_from']))
-            ->when($this->filters['next_follow_up_to'] !== '', fn (Builder $query): Builder => $query->whereDate('next_follow_up_at', '<=', $this->filters['next_follow_up_to']))
-            ->when($this->canViewMarketing() && $this->filters['utm_source'] !== '', fn (Builder $query): Builder => $query->where('utm_source', $this->filters['utm_source']))
-            ->when($this->canViewMarketing() && $this->filters['utm_campaign'] !== '', fn (Builder $query): Builder => $query->where('utm_campaign', $this->filters['utm_campaign']))
-            ->when($this->filters['only_my'] === '1' && $request->user() !== null, fn (Builder $query): Builder => $query->assignedTo($request->user()->id))
-            ->when($this->filters['only_unassigned'] === '1', fn (Builder $query): Builder => $query->unassigned())
-            ->when($this->filters['only_duplicates'] === '1', fn (Builder $query): Builder => $query->duplicates())
-            ->when($this->filters['only_open'] === '1', fn (Builder $query): Builder => $query->open())
-            ->when($this->filters['only_closed'] === '1', fn (Builder $query): Builder => $query->closed())
-            ->when($this->filters['overdue'] === '1', fn (Builder $query): Builder => $query
-                ->where(function (Builder $query): void {
-                    $query
-                        ->where('next_follow_up_at', '<', now())
-                        ->orWhereHas('overdueTasks');
-                }))
-            ->when($this->filters['segment'] !== '', fn (Builder $query): Builder => $this->applySegment($query, $this->filters['segment'], $request));
-    }
-
-    private function applySegment(Builder $query, string $segment, Request $request): Builder
-    {
-        return match ($segment) {
-            'all' => $query,
-            'new' => $query->new(),
-            'my' => $request->user() === null ? $query : $query->where('responsible_manager_id', $request->user()->id),
-            'my_leads' => $request->user() === null ? $query : $query->where('responsible_manager_id', $request->user()->id),
-            'unassigned' => $query->whereNull('responsible_manager_id'),
-            'today' => $query->whereDate('next_follow_up_at', today()),
-            'call_today' => $query->dueToday(),
-            'overdue' => $query->where(function (Builder $query): void {
-                $query
-                    ->overdueFollowUp()
-                    ->orWhereHas('overdueTasks');
-            }),
-            'waiting_payment' => $query->where('status', LeadStatus::WaitingPayment->value),
-            'waiting_documents' => $query->where('status', LeadStatus::WaitingDocuments->value),
-            'hot' => $query->where('is_hot', true),
-            'duplicate', 'duplicates' => $query->duplicates(),
-            'lost' => $query->whereIn('status', [LeadStatus::Lost->value, LeadStatus::Rejected->value]),
-            'spam' => $query->where('status', LeadStatus::Spam->value),
-            'converted' => $query->converted(),
-            'open' => $query->whereIn('status', LeadStatus::openPipelineValues()),
-            'closed' => $query->whereNotNull('closed_at'),
-            default => $query,
-        };
+            ->tap(fn (Builder $query): Builder => app(FilterLeadsAction::class)->handle($query, $this->filters, $request->user(), $this->canViewMarketing()));
     }
 
     /**
@@ -535,8 +585,10 @@ class LeadListScreen extends Screen
             'lost' => tkey('crm.leads.segments.lost'),
             'spam' => tkey('crm.leads.segments.spam'),
             'converted' => tkey('crm.leads.segments.converted'),
+            'ready_to_enroll' => tkey('crm.leads.segments.ready_to_enroll'),
             'open' => tkey('crm.leads.segments.open'),
             'closed' => tkey('crm.leads.segments.closed'),
+            'not_converted' => tkey('crm.leads.segments.not_converted'),
         ];
     }
 
@@ -551,21 +603,31 @@ class LeadListScreen extends Screen
             'source' => trim((string) $request->query('source')),
             'manager_id' => trim((string) $request->query('manager_id')),
             'branch_id' => trim((string) $request->query('branch_id')),
-            'training_program_id' => trim((string) $request->query('training_program_id')),
+            'training_program_id' => trim((string) ($request->query('training_program_id') ?? $request->query('course_id'))),
+            'course_category_id' => trim((string) $request->query('course_category_id')),
             'training_group_id' => trim((string) $request->query('training_group_id')),
             'tag_id' => trim((string) $request->query('tag_id')),
+            'lost_reason_code' => trim((string) ($request->query('lost_reason_code') ?? $request->query('lost_reason'))),
+            'priority' => trim((string) $request->query('priority')),
             'created_from' => trim((string) $request->query('created_from')),
             'created_to' => trim((string) $request->query('created_to')),
             'next_follow_up_from' => trim((string) ($request->query('next_follow_up_from') ?? $request->query('follow_up_from'))),
             'next_follow_up_to' => trim((string) ($request->query('next_follow_up_to') ?? $request->query('follow_up_to'))),
+            'last_contacted_from' => trim((string) $request->query('last_contacted_from')),
+            'last_contacted_to' => trim((string) $request->query('last_contacted_to')),
             'utm_source' => trim((string) $request->query('utm_source')),
+            'utm_medium' => trim((string) $request->query('utm_medium')),
             'utm_campaign' => trim((string) $request->query('utm_campaign')),
+            'form_name' => trim((string) $request->query('form_name')),
             'overdue' => trim((string) $request->query('overdue')),
+            'only_due_today' => trim((string) ($request->query('only_due_today') ?? $request->query('due_today'))),
             'only_my' => trim((string) $request->query('only_my')),
             'only_unassigned' => trim((string) $request->query('only_unassigned')),
             'only_duplicates' => trim((string) $request->query('only_duplicates')),
             'only_open' => trim((string) $request->query('only_open')),
             'only_closed' => trim((string) $request->query('only_closed')),
+            'only_converted' => trim((string) $request->query('only_converted')),
+            'only_not_converted' => trim((string) $request->query('only_not_converted')),
             'segment' => trim((string) $request->query('segment')),
         ];
     }

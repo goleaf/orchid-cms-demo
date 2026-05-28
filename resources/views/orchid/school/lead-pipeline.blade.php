@@ -1,5 +1,5 @@
 @php
-    /** @var \Illuminate\Support\Collection<int, \App\Enums\LeadStatus> $statuses */
+    /** @var \Illuminate\Support\Collection<int, \App\Models\LeadStatus> $statuses */
     $pipelineRoute = request()->routeIs('platform.marketing.*') ? 'platform.marketing.pipeline' : 'platform.crm.pipeline';
     $leadEditRoute = request()->routeIs('platform.marketing.*') ? 'platform.marketing.leads.edit' : 'platform.crm.leads.edit';
 @endphp
@@ -40,11 +40,11 @@
             </select>
         </div>
         <div class="col-md-2">
-            <label class="form-label">{{ $labels['category'] }}</label>
-            <select class="form-select" name="license_category">
+            <label class="form-label">{{ $labels['course_category'] }}</label>
+            <select class="form-select" name="course_category_id">
                 <option value="">{{ $labels['all_categories'] }}</option>
-                @forelse ($filterOptions['categories'] as $value => $label)
-                    <option value="{{ $value }}" @selected((string) $filters['license_category'] === (string) $value)>{{ $label }}</option>
+                @forelse ($filterOptions['courseCategories'] as $value => $label)
+                    <option value="{{ $value }}" @selected((string) $filters['course_category_id'] === (string) $value)>{{ $label }}</option>
                 @empty
                     <option value="" disabled>{{ $labels['no_categories_found'] }}</option>
                 @endforelse
@@ -124,7 +124,7 @@
     <div class="d-flex flex-wrap gap-3 align-items-center">
         <strong>{{ $labels['status_report'] }}</strong>
         @forelse ($report['by_status'] as $item)
-            <span class="badge bg-light text-dark">{{ $statusLabels[$item['status']->value] ?? $item['status']->value }}: {{ $item['count'] }}</span>
+            <span class="badge bg-light text-dark">{{ $statusLabels[$item['status']] ?? $item['status'] }}: {{ $item['count'] }}</span>
         @empty
             <span class="text-muted small">{{ $labels['no_statuses_in_filter'] }}</span>
         @endforelse
@@ -148,30 +148,38 @@
 
 <div class="lead-pipeline-board">
     @forelse ($statuses as $status)
-        <section class="lead-pipeline-column" data-status="{{ $status->value }}">
+        <section class="lead-pipeline-column" data-status="{{ $status->code }}">
             <header class="lead-pipeline-column-head">
-                <strong>{{ $statusLabels[$status->value] ?? $status->value }}</strong>
-                <span>{{ $columns[$status->value]->count() }}</span>
+                <strong>{{ $statusLabels[$status->code] ?? $status->code }}</strong>
+                <span>{{ $columns[$status->code]->count() }}</span>
             </header>
 
-            <div class="lead-pipeline-dropzone" data-status="{{ $status->value }}">
-                @forelse ($columns[$status->value] as $lead)
+            <div class="lead-pipeline-dropzone" data-status="{{ $status->code }}">
+                @forelse ($columns[$status->code] as $lead)
                     <article class="lead-pipeline-card" draggable="true" data-lead-id="{{ $lead->id }}">
                         <div class="d-flex justify-content-between gap-2">
-                            <a href="{{ route($leadEditRoute, $lead) }}"><strong>{{ $lead->fullName() }}</strong></a>
+                            <a href="{{ route($leadEditRoute, $lead) }}"><strong>{{ $lead->lead_number ?? ('#'.$lead->id) }}</strong></a>
+                            <span class="text-muted small">{{ $lead->created_at?->format('Y-m-d') }}</span>
+                        </div>
+                        <div class="fw-semibold mt-1">{{ $lead->fullName() }}</div>
+                        <div class="text-muted small">{{ $lead->phone ?? $lead->email ?? $labels['no_contact'] }}</div>
+                        <div class="text-muted small">{{ $lead->trainingProgram?->displayTitle() ?? $labels['no_course'] }} · {{ $lead->branch?->displayName() ?? $labels['no_branch'] }}</div>
+                        <div class="d-flex flex-wrap gap-1 mt-2">
+                            <span class="badge bg-light text-dark">{{ $sourceLabels[$lead->source] ?? $lead->source }}</span>
+                            <span class="badge bg-light text-dark">{{ $lead->responsibleManager?->name ?? $labels['no_manager'] }}</span>
+                            <span class="badge bg-light text-dark">{{ $labels['priority'] }}: {{ tkey('crm.leads.priorities.'.($lead->priority ?: 'normal')) }}</span>
                             @if ($lead->is_hot)
                                 <span class="badge bg-danger">{{ $labels['hot'] }}</span>
                             @endif
-                        </div>
-                        <div class="text-muted small">{{ $lead->phone ?? $lead->email ?? $labels['no_contact'] }}</div>
-                        <div class="text-muted small">{{ $lead->trainingProgram?->title ?? $labels['no_course'] }} · {{ $lead->branch?->city ?? $labels['no_branch'] }}</div>
-                        <div class="d-flex flex-wrap gap-1 mt-2">
-                            <span class="badge bg-light text-dark">{{ $sourceLabels[$lead->source] ?? $lead->source }}</span>
-                            <span class="badge bg-light text-dark">{{ $lead->license_category ?? '-' }}</span>
-                            <span class="badge bg-light text-dark">{{ $lead->responsibleManager?->name ?? $labels['no_manager'] }}</span>
+                            @if ($lead->is_duplicate)
+                                <span class="badge bg-secondary">{{ $labels['duplicate'] }}</span>
+                            @endif
+                            @if ($lead->overdue_tasks_count > 0 || ($lead->next_follow_up_at && $lead->next_follow_up_at->isPast()))
+                                <span class="badge bg-warning text-dark">{{ $labels['overdue'] }}</span>
+                            @endif
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-3 small">
-                            <span>{{ $lead->budgetForHumans() }}</span>
+                            <span>{{ $labels['created_at'] }}: {{ $lead->created_at?->format('Y-m-d H:i') }}</span>
                             <span @class(['text-danger fw-bold' => $lead->overdue_tasks_count > 0 || ($lead->next_follow_up_at && $lead->next_follow_up_at->isPast())])>
                                 {{ $lead->next_follow_up_at?->format('Y-m-d H:i') ?? $labels['no_follow_up'] }}
                             </span>
@@ -182,6 +190,13 @@
                                 ':communications' => $lead->communications_count,
                                 ':comments' => $lead->comments_count,
                             ]) }}
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mt-3">
+                            <a class="btn btn-sm btn-outline-primary" href="{{ route($leadEditRoute, $lead) }}">{{ $labels['open_lead'] }}</a>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ route($leadEditRoute, $lead) }}">{{ $labels['change_status'] }}</a>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ route($leadEditRoute, $lead) }}">{{ $labels['add_note'] }}</a>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ route($leadEditRoute, $lead) }}">{{ $labels['log_call'] }}</a>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ route($leadEditRoute, $lead) }}">{{ $labels['create_task'] }}</a>
                         </div>
                     </article>
                 @empty

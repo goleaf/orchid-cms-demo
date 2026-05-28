@@ -26,6 +26,7 @@ class LeadPipelineScreen extends Screen
             'manager_id',
             'source',
             'training_program_id',
+            'course_category_id',
             'license_category',
             'branch_id',
             'only_my',

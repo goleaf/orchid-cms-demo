@@ -4,8 +4,10 @@ namespace App\Actions;
 
 use App\Enums\LeadStatus;
 use App\Models\Branch;
+use App\Models\CourseCategory;
 use App\Models\LeadLostReason;
 use App\Models\LeadSource;
+use App\Models\LeadStatus as LeadStatusDictionary;
 use App\Models\MarketingLead;
 use App\Models\TrainingProgram;
 use App\Models\User;
@@ -14,45 +16,52 @@ use Illuminate\Support\Collection;
 
 class GetLeadPipelineAction
 {
+    private const DEFAULT_LIMIT_PER_COLUMN = 20;
+
     /**
      * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
      */
     public function handle(array $filters): array
     {
+        $limitPerColumn = max(1, min(100, (int) ($filters['limit_per_column'] ?? self::DEFAULT_LIMIT_PER_COLUMN)));
+        $statuses = $this->activeStatuses();
         $baseQuery = MarketingLead::query()
             ->forLeadList()
             ->with([
                 'responsibleManager:id,name',
-                'branch:id,name,city',
-                'trainingProgram:id,title,license_category',
+                'branch:id,name,name_translations,city,city_translations',
+                'trainingProgram:id,title,title_translations,license_category',
+                'trainingGroup:id,name,name_translations,code',
+                'tags:id,slug,name,name_translations',
             ])
-            ->withCount(['comments', 'communications', 'documents', 'openTasks', 'overdueTasks'])
-            ->when(filled($filters['manager_id'] ?? null), fn (Builder $query) => $query->where('responsible_manager_id', $filters['manager_id']))
-            ->when(($filters['only_my'] ?? null) === '1' && filled($filters['current_user_id'] ?? null), fn (Builder $query) => $query
-                ->where('responsible_manager_id', $filters['current_user_id']))
-            ->when(filled($filters['source'] ?? null), fn (Builder $query) => $query->where('source', $filters['source']))
-            ->when(filled($filters['training_program_id'] ?? null), fn (Builder $query) => $query->where('training_program_id', $filters['training_program_id']))
-            ->when(filled($filters['license_category'] ?? null), fn (Builder $query) => $query->where('license_category', $filters['license_category']))
-            ->when(filled($filters['branch_id'] ?? null), fn (Builder $query) => $query->where('branch_id', $filters['branch_id']))
-            ->when(filled($filters['created_from'] ?? null), fn (Builder $query) => $query->whereDate('created_at', '>=', $filters['created_from']))
-            ->when(filled($filters['created_to'] ?? null), fn (Builder $query) => $query->whereDate('created_at', '<=', $filters['created_to']))
-            ->when(($filters['hot'] ?? null) === '1', fn (Builder $query) => $query->where('is_hot', true))
-            ->when(($filters['overdue'] ?? null) === '1', fn (Builder $query) => $query
-                ->where(function (Builder $inner): void {
-                    $inner
-                        ->where('next_follow_up_at', '<', now())
-                        ->orWhereHas('overdueTasks');
-                }));
+            ->withCount(['comments', 'communications', 'documents', 'openTasks', 'overdueTasks']);
 
-        $leads = $baseQuery
-            ->orderByDesc('is_hot')
-            ->orderBy('next_follow_up_at')
-            ->orderByDesc('created_at')
-            ->limit(240)
-            ->get();
+        $baseQuery = app(FilterLeadsAction::class)->handle(
+            $baseQuery,
+            [
+                ...$filters,
+                'course_id' => $filters['course_id'] ?? $filters['training_program_id'] ?? null,
+                'only_overdue' => $filters['only_overdue'] ?? $filters['overdue'] ?? null,
+            ],
+            filled($filters['current_user_id'] ?? null) ? User::query()->find((int) $filters['current_user_id']) : null,
+            true,
+        );
 
-        $statuses = collect(LeadStatus::cases());
+        $columns = $statuses->mapWithKeys(function (LeadStatusDictionary $status) use ($baseQuery, $limitPerColumn): array {
+            $leads = (clone $baseQuery)
+                ->where('status', $status->code)
+                ->orderByDesc('is_hot')
+                ->orderByDesc('lead_score')
+                ->orderBy('next_follow_up_at')
+                ->orderByDesc('created_at')
+                ->limit($limitPerColumn)
+                ->get();
+
+            return [$status->code => $leads];
+        });
+
+        $leads = $columns->flatten(1);
         $sourceLabels = LeadSource::translatedLabels(
             $leads
                 ->pluck('source')
@@ -73,22 +82,20 @@ class GetLeadPipelineAction
         return [
             'statuses' => $statuses,
             'statusLabels' => $statuses
-                ->mapWithKeys(fn (LeadStatus $status): array => [$status->value => $status->label()])
+                ->mapWithKeys(fn (LeadStatusDictionary $status): array => [$status->code => $status->displayName()])
                 ->all(),
-            'columns' => $statuses->mapWithKeys(fn (LeadStatus $status): array => [
-                $status->value => $leads
-                    ->filter(fn (MarketingLead $lead): bool => $lead->status === $status)
-                    ->values(),
-            ])->all(),
+            'columns' => $columns->all(),
+            'columnLimit' => $limitPerColumn,
             'filters' => [
                 'manager_id' => $filters['manager_id'] ?? null,
                 'source' => $filters['source'] ?? null,
-                'training_program_id' => $filters['training_program_id'] ?? null,
+                'training_program_id' => $filters['training_program_id'] ?? $filters['course_id'] ?? null,
+                'course_category_id' => $filters['course_category_id'] ?? null,
                 'license_category' => $filters['license_category'] ?? null,
                 'branch_id' => $filters['branch_id'] ?? null,
                 'only_my' => $filters['only_my'] ?? null,
                 'hot' => $filters['hot'] ?? null,
-                'overdue' => $filters['overdue'] ?? null,
+                'overdue' => $filters['overdue'] ?? $filters['only_overdue'] ?? null,
                 'created_from' => $filters['created_from'] ?? null,
                 'created_to' => $filters['created_to'] ?? null,
             ],
@@ -109,6 +116,13 @@ class GetLeadPipelineAction
                     ->get()
                     ->mapWithKeys(fn (TrainingProgram $program): array => [$program->id => $program->displayTitle()])
                     ->all(),
+                'courseCategories' => CourseCategory::query()
+                    ->active()
+                    ->ordered()
+                    ->limit(100)
+                    ->get(['id', 'code', 'slug', 'name_translations'])
+                    ->mapWithKeys(fn (CourseCategory $category): array => [$category->id => $category->displayName()])
+                    ->all(),
                 'branches' => Branch::query()
                     ->forAdminList()
                     ->orderBy('city')
@@ -120,6 +134,34 @@ class GetLeadPipelineAction
             'labels' => $this->labels(),
             'report' => $this->conversionReport($leads, $statuses),
         ];
+    }
+
+    /**
+     * @return Collection<int, LeadStatusDictionary>
+     */
+    private function activeStatuses(): Collection
+    {
+        $enumCodes = collect(LeadStatus::cases())
+            ->map(fn (LeadStatus $status): string => $status->value)
+            ->all();
+
+        $statuses = LeadStatusDictionary::query()
+            ->active()
+            ->ordered()
+            ->whereIn('code', $enumCodes)
+            ->get(['id', 'code', 'name', 'name_translations', 'sort_order']);
+
+        if ($statuses->isNotEmpty()) {
+            return $statuses;
+        }
+
+        return collect(LeadStatus::cases())
+            ->map(fn (LeadStatus $status): LeadStatusDictionary => new LeadStatusDictionary([
+                'code' => $status->value,
+                'name' => $status->label(),
+                'name_translations' => null,
+                'sort_order' => 0,
+            ]));
     }
 
     /**
@@ -140,7 +182,7 @@ class GetLeadPipelineAction
 
     /**
      * @param  Collection<int, MarketingLead>  $leads
-     * @param  Collection<int, LeadStatus>  $statuses
+     * @param  Collection<int, LeadStatusDictionary>  $statuses
      * @return array<string, mixed>
      */
     private function conversionReport(Collection $leads, Collection $statuses): array
@@ -167,10 +209,10 @@ class GetLeadPipelineAction
                 ->sortDesc()
                 ->take(5)
                 ->all(),
-            'by_status' => $statuses->map(fn (LeadStatus $status): array => [
-                'status' => $status,
+            'by_status' => $statuses->map(fn (LeadStatusDictionary $status): array => [
+                'status' => $status->code,
                 'count' => $leads
-                    ->filter(fn (MarketingLead $lead): bool => $lead->status === $status)
+                    ->filter(fn (MarketingLead $lead): bool => $lead->status->value === $status->code)
                     ->count(),
             ])->all(),
         ];
@@ -194,6 +236,7 @@ class GetLeadPipelineAction
             'category' => tkey('crm.leads.columns.category'),
             'all_categories' => tkey('crm.leads.filters.all_categories'),
             'no_categories_found' => tkey('crm.leads.empty.no_categories_found'),
+            'course_category' => tkey('crm.leads.filters.course_category'),
             'branch' => tkey('crm.leads.fields.branch'),
             'all_branches' => tkey('crm.leads.filters.all_branches'),
             'no_branches_found' => tkey('crm.leads.empty.no_branches_found'),
@@ -222,6 +265,16 @@ class GetLeadPipelineAction
             'no_leads' => tkey('crm.leads.empty.no_leads'),
             'no_statuses' => tkey('crm.pipeline.empty.no_statuses'),
             'no_pipeline_statuses' => tkey('crm.pipeline.empty.no_pipeline_statuses'),
+            'lead_number' => tkey('crm.leads.fields.lead_number'),
+            'created_at' => tkey('crm.leads.fields.created_at'),
+            'next_follow_up' => tkey('crm.leads.fields.next_follow_up_at'),
+            'duplicate' => tkey('crm.leads.statuses.duplicate'),
+            'priority' => tkey('crm.leads.fields.priority'),
+            'open_lead' => tkey('crm.pipeline.actions.open_lead'),
+            'change_status' => tkey('crm.pipeline.actions.change_status'),
+            'add_note' => tkey('crm.leads.actions.add_note'),
+            'log_call' => tkey('crm.leads.actions.log_call'),
+            'create_task' => tkey('crm.leads.actions.create_task'),
         ];
     }
 }
