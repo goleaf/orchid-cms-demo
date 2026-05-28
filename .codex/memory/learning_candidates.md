@@ -2158,3 +2158,56 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T08:07:42+00:00
+
+```json
+{
+  "ts": "2026-05-28T08:07:42+00:00",
+  "event": "Stop",
+  "session_id": "019e6d89-8b50-7700-9bf0-1b7bff5e9f2f",
+  "turn_id": "019e6d8a-7e3f-7521-93d2-15ea444c1213",
+  "branch": "main",
+  "changed_file_count": 49,
+  "changed_file_groups": {
+    "code": 36,
+    "models": 8,
+    "orchid": 3,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".agents/skills/orchid-platform/",
+    "EADME.md",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/SaveTrainingGroupAction.php",
+    "app/Http/Requests/Education/",
+    "app/Http/Requests/TrainingGroupRequest.php",
+    "app/Models/LearningProgram.php",
+    "app/Models/LearningProgramModule.php",
+    "app/Models/LearningTopic.php",
+    "app/Models/TrainingGroup.php",
+    "app/Models/TrainingGroupActivity.php",
+    "app/Models/TrainingGroupMembership.php",
+    "app/Models/TrainingGroupSchedulePattern.php",
+    "app/Models/TrainingGroupStatus.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Rules/ActiveTrainingGroupStatusRule.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

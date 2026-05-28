@@ -32,6 +32,13 @@ The seeder imports every Markdown file from that source directory into
 rewritten internal links, translated category labels, and public rendering
 through the existing `/blog` knowledge-base routes.
 
+### Orchid Local Documentation
+
+Official Orchid Platform docs are mirrored for local agent and developer use
+through the repo-local `orchid-platform` skill. See
+[`docs/orchid-local-documentation.md`](docs/orchid-local-documentation.md) for
+the refresh command, local search paths, and quality gate.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

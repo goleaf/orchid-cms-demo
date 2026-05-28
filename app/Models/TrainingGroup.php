@@ -34,14 +34,18 @@ class TrainingGroup extends Model
         'schedule_summary_translations',
         'code',
         'status',
+        'status_id',
         'capacity',
         'places_taken',
         'starts_on',
         'ends_on',
+        'enrollment_closes_on',
         'meeting_days',
         'meeting_time',
         'end_time',
         'classroom',
+        'learning_notes',
+        'schedule_notes',
         'is_visible_on_site',
         'is_featured',
         'sort_order',
@@ -58,6 +62,7 @@ class TrainingGroup extends Model
         'places_taken' => 'integer',
         'starts_on' => 'date',
         'ends_on' => 'date',
+        'enrollment_closes_on' => 'date',
         'meeting_days' => 'array',
         'meeting_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
@@ -86,6 +91,16 @@ class TrainingGroup extends Model
         return $this->belongsTo(TrainingProgram::class);
     }
 
+    public function learningProgram(): BelongsTo
+    {
+        return $this->belongsTo(LearningProgram::class, 'training_program_id');
+    }
+
+    public function statusRecord(): BelongsTo
+    {
+        return $this->belongsTo(TrainingGroupStatus::class, 'status_id');
+    }
+
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'training_program_id');
@@ -104,6 +119,26 @@ class TrainingGroup extends Model
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
+    }
+
+    public function memberships(): HasMany
+    {
+        return $this->hasMany(TrainingGroupMembership::class);
+    }
+
+    public function activeMemberships(): HasMany
+    {
+        return $this->memberships()->active();
+    }
+
+    public function schedulePatterns(): HasMany
+    {
+        return $this->hasMany(TrainingGroupSchedulePattern::class);
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(TrainingGroupActivity::class);
     }
 
     public function leads(): HasMany
@@ -140,12 +175,22 @@ class TrainingGroup extends Model
     public function acceptsPublicApplications(): bool
     {
         return $this->is_visible_on_site
-            && in_array($this->status, [
-                GroupStatus::Planned,
-                GroupStatus::Recruiting,
-                GroupStatus::Open,
-                GroupStatus::AlmostFull,
-            ], true);
+            && $this->acceptsEnrollment();
+    }
+
+    public function acceptsEnrollment(): bool
+    {
+        if ($this->statusRecord !== null) {
+            return (bool) $this->statusRecord->accepts_enrollments;
+        }
+
+        return in_array($this->status, [
+            GroupStatus::Planned,
+            GroupStatus::Recruiting,
+            GroupStatus::Open,
+            GroupStatus::AlmostFull,
+            GroupStatus::Active,
+        ], true);
     }
 
     public function scopeVisibleOnSite(Builder $query): Builder
@@ -170,6 +215,26 @@ class TrainingGroup extends Model
     public function scopeRecruiting(Builder $query): Builder
     {
         return $query->where('status', GroupStatus::Recruiting->value);
+    }
+
+    public function scopeInProgress(Builder $query): Builder
+    {
+        return $query->whereIn('status', [
+            GroupStatus::Active->value,
+            GroupStatus::InProgress->value,
+        ]);
+    }
+
+    public function scopeNotFull(Builder $query): Builder
+    {
+        return $query->whereColumn('places_taken', '<', 'capacity');
+    }
+
+    public function scopeByStatus(Builder $query, GroupStatus|string|null $status): Builder
+    {
+        return filled($status)
+            ? $query->where('status', $status instanceof GroupStatus ? $status->value : $status)
+            : $query;
     }
 
     public function scopeStartsAfter(Builder $query, mixed $date): Builder
@@ -227,14 +292,18 @@ class TrainingGroup extends Model
             'code',
             'group_number',
             'status',
+            'status_id',
             'capacity',
             'places_taken',
             'starts_on',
             'ends_on',
+            'enrollment_closes_on',
             'meeting_days',
             'meeting_time',
             'end_time',
             'classroom',
+            'learning_notes',
+            'schedule_notes',
             'is_visible_on_site',
             'is_featured',
             'sort_order',

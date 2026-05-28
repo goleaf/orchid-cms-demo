@@ -5,74 +5,107 @@ namespace App\Actions;
 use App\Enums\GroupStatus;
 use App\Models\StudentEnrollment;
 use App\Models\TrainingGroup;
+use App\Models\TrainingGroupMembership;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class AddStudentToTrainingGroupAction
 {
     public function handle(StudentEnrollment $enrollment, TrainingGroup|int $group, ?User $user = null, bool $allowOverbooking = false): StudentEnrollment
     {
-        $group = $group instanceof TrainingGroup
-            ? $group
-            : TrainingGroup::query()->findOrFail($group);
+        return DB::transaction(function () use ($enrollment, $group, $user, $allowOverbooking): StudentEnrollment {
+            $group = $group instanceof TrainingGroup
+                ? $group
+                : TrainingGroup::query()->findOrFail($group);
 
-        if (! $allowOverbooking && (! $this->groupAcceptsEnrollment($group) || $group->is_full)) {
-            throw ValidationException::withMessages([
-                'training_group_id' => tkey('students.validation.enrollment_cannot_join_group'),
-            ]);
-        }
-
-        if (
-            $enrollment->training_program_id !== null
-            && $group->training_program_id !== null
-            && (int) $enrollment->training_program_id !== (int) $group->training_program_id
-        ) {
-            throw ValidationException::withMessages([
-                'training_group_id' => tkey('students.validation.enrollment_cannot_join_group'),
-            ]);
-        }
-
-        $oldGroupId = filled($enrollment->training_group_id)
-            ? (int) $enrollment->training_group_id
-            : null;
-
-        if ($oldGroupId === (int) $group->id) {
-            return $this->syncEnrollmentGroupFields($enrollment, $group, $user)->refresh();
-        }
-
-        if ($oldGroupId !== null) {
-            $oldGroup = TrainingGroup::query()
-                ->select(['id', 'places_taken'])
-                ->whereKey($oldGroupId)
-                ->first();
-
-            if ($oldGroup !== null) {
-                $oldGroup->forceFill([
-                    'places_taken' => max(0, ((int) $oldGroup->places_taken) - 1),
-                ])->save();
+            if (! $allowOverbooking && (! $this->groupAcceptsEnrollment($group) || $group->is_full)) {
+                throw ValidationException::withMessages([
+                    'training_group_id' => tkey('students.validation.enrollment_cannot_join_group'),
+                ]);
             }
-        }
 
-        $group->forceFill([
-            'places_taken' => ((int) $group->places_taken) + 1,
-        ])->save();
+            if (
+                $enrollment->training_program_id !== null
+                && $group->training_program_id !== null
+                && (int) $enrollment->training_program_id !== (int) $group->training_program_id
+            ) {
+                throw ValidationException::withMessages([
+                    'training_group_id' => tkey('students.validation.enrollment_cannot_join_group'),
+                ]);
+            }
 
-        $type = $oldGroupId === null ? 'group_assigned' : 'group_changed';
-        $enrollment = $this->syncEnrollmentGroupFields($enrollment, $group, $user)->refresh();
+            $oldGroupId = filled($enrollment->training_group_id)
+                ? (int) $enrollment->training_group_id
+                : null;
 
-        app(RecordStudentActivityAction::class)->handle(
-            $enrollment->student,
-            $user,
-            $type,
-            tkey('students.activities.titles.'.$type),
-            null,
-            $oldGroupId !== null ? (string) $oldGroupId : null,
-            (string) $group->id,
-            ['enrollment_id' => $enrollment->id],
-            $enrollment,
-        );
+            if ($oldGroupId === (int) $group->id) {
+                $this->syncMembership($enrollment, $group, $user);
 
-        return $enrollment->refresh();
+                return $this->syncEnrollmentGroupFields($enrollment, $group, $user)->refresh();
+            }
+
+            if ($oldGroupId !== null) {
+                $oldGroup = TrainingGroup::query()
+                    ->select(['id', 'places_taken'])
+                    ->whereKey($oldGroupId)
+                    ->first();
+
+                $oldMembership = TrainingGroupMembership::query()
+                    ->active()
+                    ->where('enrollment_id', $enrollment->id)
+                    ->where('training_group_id', $oldGroupId)
+                    ->first();
+
+                if ($oldMembership !== null) {
+                    $oldMembership->forceFill([
+                        'status' => 'transferred',
+                        'left_at' => now(),
+                        'left_reason' => 'group_changed',
+                        'updated_by_id' => $user?->id ?? $oldMembership->updated_by_id,
+                    ])->save();
+                }
+
+                if ($oldGroup !== null) {
+                    $this->decrementCapacity($oldGroup);
+                }
+            }
+
+            $membership = $this->syncMembership($enrollment, $group, $user);
+            if ($membership->wasRecentlyCreated || $membership->wasChanged('left_at') || $membership->wasChanged('status')) {
+                $this->incrementCapacity($group);
+            }
+
+            $type = $oldGroupId === null ? 'group_assigned' : 'group_changed';
+            $enrollment = $this->syncEnrollmentGroupFields($enrollment, $group, $user)->refresh();
+
+            app(RecordStudentActivityAction::class)->handle(
+                $enrollment->student,
+                $user,
+                $type,
+                tkey('students.activities.titles.'.$type),
+                null,
+                $oldGroupId !== null ? (string) $oldGroupId : null,
+                (string) $group->id,
+                ['enrollment_id' => $enrollment->id],
+                $enrollment,
+            );
+
+            app(RecordTrainingGroupActivityAction::class)->handle(
+                $group->refresh(),
+                $user,
+                'student_added',
+                tkey('education.activities.titles.student_added'),
+                null,
+                $oldGroupId !== null ? (string) $oldGroupId : null,
+                (string) $enrollment->student_profile_id,
+                ['enrollment_id' => $enrollment->id],
+                $enrollment,
+                $membership,
+            );
+
+            return $enrollment->refresh();
+        });
     }
 
     private function syncEnrollmentGroupFields(StudentEnrollment $enrollment, TrainingGroup $group, ?User $user): StudentEnrollment
@@ -87,6 +120,39 @@ class AddStudentToTrainingGroupAction
         ])->save();
 
         return $enrollment;
+    }
+
+    private function syncMembership(StudentEnrollment $enrollment, TrainingGroup $group, ?User $user): TrainingGroupMembership
+    {
+        return TrainingGroupMembership::query()->updateOrCreate(
+            [
+                'training_group_id' => $group->id,
+                'enrollment_id' => $enrollment->id,
+            ],
+            [
+                'student_profile_id' => $enrollment->student_profile_id,
+                'status' => 'active',
+                'joined_at' => now(),
+                'left_at' => null,
+                'left_reason' => null,
+                'created_by_id' => $user?->id,
+                'updated_by_id' => $user?->id,
+            ],
+        );
+    }
+
+    private function incrementCapacity(TrainingGroup $group): void
+    {
+        $group->forceFill([
+            'places_taken' => ((int) $group->places_taken) + 1,
+        ])->save();
+    }
+
+    private function decrementCapacity(TrainingGroup $group): void
+    {
+        $group->forceFill([
+            'places_taken' => max(0, ((int) $group->places_taken) - 1),
+        ])->save();
     }
 
     private function groupAcceptsEnrollment(TrainingGroup $group): bool

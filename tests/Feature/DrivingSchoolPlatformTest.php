@@ -15,6 +15,7 @@ use App\Models\TrainingProgram;
 use App\Models\User;
 use App\Notifications\EnrollmentLeadAutoReplyNotification;
 use App\Notifications\EnrollmentLeadSubmittedNotification;
+use App\Services\LocaleManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -228,7 +229,7 @@ class DrivingSchoolPlatformTest extends TestCase
         $this->actingAs($admin)
             ->get(route('platform.main'))
             ->assertOk()
-            ->assertSee('Auto-school operations');
+            ->assertSee(tkey('operations.dashboard.title'));
 
         collect([
             'platform.website.courses' => tkey('website.admin.courses.title'),
@@ -238,26 +239,56 @@ class DrivingSchoolPlatformTest extends TestCase
             'platform.website.leads' => tkey('website.admin.leads.title'),
             'platform.website.settings' => tkey('website.admin.settings.title'),
             'platform.operations.branches' => tkey('website.admin.branches.title'),
-            'platform.operations.instructors' => 'Instructors',
+            'platform.operations.instructors' => tkey('operations.instructors.title'),
             'platform.operations.groups' => tkey('website.admin.groups.title'),
-            'platform.crm.students' => 'Student CRM',
+            'platform.crm.students' => tkey('students.title'),
             'platform.lms.programs' => tkey('website.admin.courses.title'),
-            'platform.schedule.lessons' => 'Schedule',
-            'platform.fleet.vehicles' => 'Fleet',
-            'platform.exams' => 'Exams',
-            'platform.finance.payments' => 'Payments',
-            'platform.documents' => 'Documents',
-            'platform.marketing.campaigns' => 'Marketing campaigns',
-            'platform.marketing.pipeline' => 'Воронка продаж',
-            'platform.marketing.leads' => 'Лиды',
-            'platform.crm.tasks' => 'Задачи',
-            'platform.marketing.templates' => 'Шаблоны сообщений',
+            'platform.schedule.lessons' => tkey('operations.schedule.title'),
+            'platform.fleet.vehicles' => tkey('operations.fleet.title'),
+            'platform.exams' => tkey('operations.exams.title'),
+            'platform.finance.payments' => tkey('operations.payments.title'),
+            'platform.documents' => tkey('operations.documents.title'),
+            'platform.marketing.campaigns' => tkey('operations.marketing_campaigns.title'),
+            'platform.marketing.pipeline' => tkey('crm.pipeline.title'),
+            'platform.marketing.leads' => tkey('crm.leads.title'),
+            'platform.crm.tasks' => tkey('crm.tasks.title'),
+            'platform.marketing.templates' => tkey('crm.message_templates.title'),
         ])->each(function (string $label, string $routeName) use ($admin): void {
             $this->actingAs($admin)
                 ->get(route($routeName))
                 ->assertOk()
                 ->assertSee($label);
         });
+    }
+
+    public function test_admin_dashboard_and_homepage_editor_follow_selected_locale(): void
+    {
+        $this->seed();
+
+        $admin = User::query()
+            ->where('email', 'admin@example.com')
+            ->firstOrFail();
+
+        $this->actingAs($admin)
+            ->withSession([LocaleManager::SESSION_KEY => 'en'])
+            ->get(route('platform.main'))
+            ->assertOk()
+            ->assertSee(tkey('operations.dashboard.title', [], 'en'))
+            ->assertSee(tkey('operations.metrics.active_students', [], 'en'));
+
+        $this->actingAs($admin)
+            ->withSession([LocaleManager::SESSION_KEY => 'en'])
+            ->get(route('platform.content.home'))
+            ->assertOk()
+            ->assertSee(tkey('website.admin.home.title', [], 'en'))
+            ->assertSee(tkey('website.admin.home.fields.title', [], 'en'))
+            ->assertDontSee(tkey('website.admin.home.fields.title', [], 'ru'));
+
+        $this->actingAs($admin)
+            ->withSession([LocaleManager::SESSION_KEY => 'ru'])
+            ->get(route('platform.main'))
+            ->assertOk()
+            ->assertSee(tkey('operations.dashboard.title', [], 'ru'));
     }
 
     public function test_admin_can_open_catalog_create_and_edit_screens(): void
