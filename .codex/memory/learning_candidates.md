@@ -1989,3 +1989,55 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T06:13:37+00:00
+
+```json
+{
+  "ts": "2026-05-28T06:13:37+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6d14-e2c8-7242-81e2-5c2713c13d94",
+  "branch": "main",
+  "changed_file_count": 35,
+  "changed_file_groups": {
+    "code": 24,
+    "models": 1,
+    "orchid": 9,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "app/Actions/ConvertLeadToStudentAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkLeadAsConvertedAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/RecordStudentActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Models/StudentProfile.php",
+    "app/Orchid/PlatformProvider.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

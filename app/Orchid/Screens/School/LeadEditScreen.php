@@ -348,10 +348,10 @@ class LeadEditScreen extends Screen
                 ->method('prepareConversion')
                 ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.convert')),
 
-            Button::make(tkey('crm.leads.actions.convert_to_student'))
+            Link::make(tkey('crm.leads.actions.convert_to_student'))
                 ->icon('bs.person-plus')
-                ->method('convertToStudent')
-                ->canSee($this->lead?->exists && $this->hasCrmAccess('crm.leads.convert')),
+                ->href($this->lead?->exists ? route('platform.crm.leads.convert', $this->lead) : '#')
+                ->canSee($this->lead?->exists && ! $this->lead?->is_converted && $this->canConvertToStudent()),
         ];
     }
 
@@ -1295,6 +1295,11 @@ class LeadEditScreen extends Screen
     private function canViewMarketing(): bool
     {
         return request()->user()?->hasAccess('crm.leads.view_marketing') ?? false;
+    }
+
+    private function canConvertToStudent(): bool
+    {
+        return request()->user()?->hasAnyAccess(['crm.leads.convert', 'students.convert_from_lead']) ?? false;
     }
 
     private function hasCrmAccess(string $permission): bool

@@ -127,7 +127,7 @@ class StudentProfile extends Model
     public function currentEnrollment(): HasOne
     {
         return $this->hasOne(StudentEnrollment::class, 'student_profile_id')
-            ->whereIn('status', [
+            ->whereIn('enrollments.status', [
                 EnrollmentStatus::Pending->value,
                 EnrollmentStatus::WaitingDocuments->value,
                 EnrollmentStatus::WaitingPayment->value,

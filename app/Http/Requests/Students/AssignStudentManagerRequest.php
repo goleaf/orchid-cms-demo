@@ -11,7 +11,7 @@ class AssignStudentManagerRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAnyAccess(['platform.crm.students', 'students.assign']) ?? false;
+        return $this->user()?->hasAnyAccess(['platform.crm.students', 'students.update', 'students.assign']) ?? false;
     }
 
     /**

@@ -25,6 +25,8 @@ use App\Orchid\Screens\School\LeadSourceListScreen;
 use App\Orchid\Screens\School\LeadStatusListScreen;
 use App\Orchid\Screens\School\LeadTagListScreen;
 use App\Orchid\Screens\School\LeadTaskListScreen;
+use App\Orchid\Screens\School\EnrollmentStatusListScreen;
+use App\Orchid\Screens\School\LeadConvertToStudentScreen;
 use App\Orchid\Screens\School\MessageTemplateEditScreen;
 use App\Orchid\Screens\School\MessageTemplateListScreen;
 use App\Orchid\Screens\School\PaymentListScreen;
@@ -33,7 +35,11 @@ use App\Orchid\Screens\School\PricingPackageListScreen;
 use App\Orchid\Screens\School\ProgramEditScreen;
 use App\Orchid\Screens\School\ProgramListScreen;
 use App\Orchid\Screens\School\ScheduleListScreen;
+use App\Orchid\Screens\School\StudentEditScreen;
+use App\Orchid\Screens\School\StudentEnrollmentEditScreen;
 use App\Orchid\Screens\School\StudentListScreen;
+use App\Orchid\Screens\School\StudentStatusListScreen;
+use App\Orchid\Screens\School\StudentTaskListScreen;
 use App\Orchid\Screens\System\LanguageEditScreen;
 use App\Orchid\Screens\System\LanguageListScreen;
 use App\Orchid\Screens\System\TranslationEditScreen;
@@ -271,12 +277,61 @@ Route::screen('operations/groups', GroupListScreen::class)
         ->parent('platform.index')
         ->push(tkey('menu.operations.groups'), route('platform.operations.groups')));
 
-// Operations > Student CRM
+// Students
+Route::screen('students/create', StudentEditScreen::class)
+    ->name('platform.students.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.students')
+        ->push(tkey('students.create_title'), route('platform.students.create')));
+
+Route::screen('students/enrollments/create', StudentEnrollmentEditScreen::class)
+    ->name('platform.students.enrollments.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.students')
+        ->push(tkey('students.enrollments.create_title'), route('platform.students.enrollments.create')));
+
+Route::screen('students/enrollments/{enrollment}/edit', StudentEnrollmentEditScreen::class)
+    ->name('platform.students.enrollments.edit')
+    ->breadcrumbs(fn (Trail $trail, $enrollment) => $trail
+        ->parent('platform.students')
+        ->push(tkey('students.enrollments.edit_title'), route('platform.students.enrollments.edit', $enrollment)));
+
+Route::screen('students/{student}/edit', StudentEditScreen::class)
+    ->name('platform.students.edit')
+    ->breadcrumbs(fn (Trail $trail, $student) => $trail
+        ->parent('platform.students')
+        ->push($student->display_name, route('platform.students.edit', $student)));
+
+Route::screen('students/tasks', StudentTaskListScreen::class)
+    ->name('platform.students.tasks')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.students')
+        ->push(tkey('menu.students.tasks'), route('platform.students.tasks')));
+
+Route::screen('students/statuses', StudentStatusListScreen::class)
+    ->name('platform.students.statuses')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.students')
+        ->push(tkey('menu.students.statuses'), route('platform.students.statuses')));
+
+Route::screen('students/enrollment-statuses', EnrollmentStatusListScreen::class)
+    ->name('platform.students.enrollment-statuses')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.students')
+        ->push(tkey('menu.students.enrollment_statuses'), route('platform.students.enrollment-statuses')));
+
+Route::screen('students', StudentListScreen::class)
+    ->name('platform.students')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.students.all'), route('platform.students')));
+
+// Legacy student CRM route kept for existing local bookmarks.
 Route::screen('crm/students', StudentListScreen::class)
     ->name('platform.crm.students')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
-        ->push(tkey('menu.crm.students'), route('platform.crm.students')));
+        ->push(tkey('menu.students.all'), route('platform.crm.students')));
 
 // Learning > Programs
 Route::screen('lms/programs', ProgramListScreen::class)
@@ -373,6 +428,12 @@ Route::screen('crm/leads/{lead}/edit', LeadEditScreen::class)
     ->breadcrumbs(fn (Trail $trail, $lead) => $trail
         ->parent('platform.crm.leads')
         ->push($lead->fullName(), route('platform.crm.leads.edit', $lead)));
+
+Route::screen('crm/leads/{lead}/convert', LeadConvertToStudentScreen::class)
+    ->name('platform.crm.leads.convert')
+    ->breadcrumbs(fn (Trail $trail, $lead) => $trail
+        ->parent('platform.crm.leads.edit', $lead)
+        ->push(tkey('students.conversion.title'), route('platform.crm.leads.convert', $lead)));
 
 Route::screen('crm/leads', LeadListScreen::class)
     ->name('platform.crm.leads')

@@ -29,6 +29,12 @@ class ArchiveStudentRequest extends FormRequest
     {
         $student = $this->route('student');
 
-        return $student instanceof Student ? $student : null;
+        if ($student instanceof Student) {
+            return $student;
+        }
+
+        $studentId = $this->input('student');
+
+        return filled($studentId) ? Student::query()->find($studentId) : null;
     }
 }

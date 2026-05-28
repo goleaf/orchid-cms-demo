@@ -28,7 +28,7 @@ class StudentEnrollmentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAnyAccess(['platform.crm.students', 'students.enrollments.create', 'students.enrollments.update']) ?? false;
+        return $this->user()?->hasAnyAccess(['platform.crm.students', 'students.manage_enrollments', 'students.enrollments.create', 'students.enrollments.update']) ?? false;
     }
 
     /**

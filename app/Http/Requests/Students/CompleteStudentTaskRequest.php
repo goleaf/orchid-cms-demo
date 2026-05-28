@@ -8,7 +8,7 @@ class CompleteStudentTaskRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAnyAccess(['platform.crm.students', 'students.tasks.manage']) ?? false;
+        return $this->user()?->hasAnyAccess(['platform.crm.students', 'students.manage_tasks', 'students.tasks.manage']) ?? false;
     }
 
     /**

@@ -6,6 +6,8 @@ namespace App\Orchid;
 
 use App\Models\MarketingLead;
 use App\Models\MarketingLeadTask;
+use App\Models\Student;
+use App\Models\StudentTask;
 use Orchid\Platform\Dashboard;
 use Orchid\Platform\ItemPermission;
 use Orchid\Platform\OrchidServiceProvider;
@@ -108,11 +110,6 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.operations.groups')
                 ->permission('platform.operations.groups'),
 
-            Menu::make(tkey('menu.crm.students'))
-                ->icon('bs.person-lines-fill')
-                ->route('platform.crm.students')
-                ->permission('platform.crm.students'),
-
             Menu::make(tkey('menu.lms.programs'))
                 ->icon('bs.mortarboard')
                 ->route('platform.lms.programs')
@@ -201,6 +198,59 @@ class PlatformProvider extends OrchidServiceProvider
                 ->icon('bs.tags')
                 ->route('platform.crm.tags')
                 ->permission(['crm.leads.manage_dictionaries', 'crm.leads.manage_tags']),
+
+            Menu::make(tkey('menu.students.all'))
+                ->icon('bs.person-lines-fill')
+                ->route('platform.students')
+                ->permission('students.view')
+                ->title(tkey('menu.students')),
+
+            Menu::make(tkey('menu.students.active'))
+                ->icon('bs.person-check')
+                ->route('platform.students', ['segment' => 'active'])
+                ->permission('students.view')
+                ->badge(fn (): int => Student::query()->active()->count()),
+
+            Menu::make(tkey('menu.students.waiting_documents'))
+                ->icon('bs.file-earmark-text')
+                ->route('platform.students', ['segment' => 'waiting_documents'])
+                ->permission('students.view'),
+
+            Menu::make(tkey('menu.students.waiting_payment'))
+                ->icon('bs.cash-coin')
+                ->route('platform.students', ['segment' => 'waiting_payment'])
+                ->permission('students.view'),
+
+            Menu::make(tkey('menu.students.waiting_start'))
+                ->icon('bs.calendar-event')
+                ->route('platform.students', ['segment' => 'waiting_start'])
+                ->permission('students.view'),
+
+            Menu::make(tkey('menu.students.without_group'))
+                ->icon('bs.people')
+                ->route('platform.students', ['segment' => 'without_group'])
+                ->permission('students.view'),
+
+            Menu::make(tkey('menu.students.archived'))
+                ->icon('bs.archive')
+                ->route('platform.students', ['segment' => 'archived'])
+                ->permission('students.view'),
+
+            Menu::make(tkey('menu.students.tasks'))
+                ->icon('bs.check2-square')
+                ->route('platform.students.tasks')
+                ->permission('students.manage_tasks')
+                ->badge(fn (): int => StudentTask::query()->overdue()->count()),
+
+            Menu::make(tkey('menu.students.statuses'))
+                ->icon('bs.ui-checks-grid')
+                ->route('platform.students.statuses')
+                ->permission('students.manage_statuses'),
+
+            Menu::make(tkey('menu.students.enrollment_statuses'))
+                ->icon('bs.list-check')
+                ->route('platform.students.enrollment-statuses')
+                ->permission('students.manage_statuses'),
 
             Menu::make(tkey('menu.marketing.campaigns'))
                 ->icon('bs.megaphone')
@@ -315,6 +365,24 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('crm.leads.convert', tkey('permissions.crm.leads.convert'))
                 ->addPermission('crm.leads.export', tkey('permissions.crm.leads.export'))
                 ->addPermission('crm.pipeline.view', tkey('permissions.crm.pipeline.view')),
+
+            ItemPermission::group(tkey('permissions.groups.students'))
+                ->addPermission('students.view', tkey('permissions.students.view'))
+                ->addPermission('students.create', tkey('permissions.students.create'))
+                ->addPermission('students.update', tkey('permissions.students.update'))
+                ->addPermission('students.archive', tkey('permissions.students.archive'))
+                ->addPermission('students.delete', tkey('permissions.students.delete'))
+                ->addPermission('students.change_status', tkey('permissions.students.change_status'))
+                ->addPermission('students.override_status_transition', tkey('permissions.students.override_status_transition'))
+                ->addPermission('students.convert_from_lead', tkey('permissions.students.convert_from_lead'))
+                ->addPermission('students.manage_enrollments', tkey('permissions.students.manage_enrollments'))
+                ->addPermission('students.enrollments.change_status', tkey('permissions.students.enrollments.change_status'))
+                ->addPermission('students.enrollments.override_status_transition', tkey('permissions.students.enrollments.override_status_transition'))
+                ->addPermission('students.manage_tasks', tkey('permissions.students.manage_tasks'))
+                ->addPermission('students.view_crm_source', tkey('permissions.students.view_crm_source'))
+                ->addPermission('students.view_marketing', tkey('permissions.students.view_marketing'))
+                ->addPermission('students.manage_statuses', tkey('permissions.students.manage_statuses'))
+                ->addPermission('students.export', tkey('permissions.students.export')),
 
             ItemPermission::group(tkey('permissions.groups.system'))
                 ->addPermission('platform.systems.roles', tkey('permissions.system.roles'))

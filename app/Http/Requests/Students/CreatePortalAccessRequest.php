@@ -8,7 +8,7 @@ class CreatePortalAccessRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAnyAccess(['platform.crm.students', 'students.portal.prepare']) ?? false;
+        return $this->user()?->hasAnyAccess(['platform.crm.students', 'students.update', 'students.portal.prepare']) ?? false;
     }
 
     /**

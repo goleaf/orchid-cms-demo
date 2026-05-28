@@ -70,6 +70,22 @@ class SuperadminPermissions
             'crm.leads.convert',
             'crm.leads.export',
             'crm.pipeline.view',
+            'students.view',
+            'students.create',
+            'students.update',
+            'students.archive',
+            'students.delete',
+            'students.change_status',
+            'students.override_status_transition',
+            'students.convert_from_lead',
+            'students.manage_enrollments',
+            'students.enrollments.change_status',
+            'students.enrollments.override_status_transition',
+            'students.manage_tasks',
+            'students.view_crm_source',
+            'students.view_marketing',
+            'students.manage_statuses',
+            'students.export',
         ];
     }
 

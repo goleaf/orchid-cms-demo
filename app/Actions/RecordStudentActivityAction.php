@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-use App\Models\Lead;
+use App\Models\MarketingLead;
 use App\Models\Student;
 use App\Models\StudentActivity;
 use App\Models\StudentEnrollment;
@@ -23,7 +23,7 @@ class RecordStudentActivityAction
         ?string $newValue = null,
         ?array $meta = null,
         ?StudentEnrollment $enrollment = null,
-        ?Lead $lead = null,
+        ?MarketingLead $lead = null,
     ): StudentActivity {
         return $student->activities()->create([
             'enrollment_id' => $enrollment?->id,
