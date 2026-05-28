@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Actions\CreateOrUpdateBranchAction;
 use App\Actions\CreateOrUpdateCourseAction;
 use App\Actions\CreateOrUpdateSitePageAction;
+use App\Enums\GroupStatus;
 use App\Models\Branch;
 use App\Models\Course;
 use App\Models\CourseCategory;
@@ -67,6 +68,63 @@ class PublicWebsiteOrchidAdminTest extends TestCase
                 ->assertOk()
                 ->assertSee($title);
         });
+    }
+
+    public function test_group_list_exposes_create_action(): void
+    {
+        $this->seed();
+
+        $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->get(route('platform.website.groups'))
+            ->assertOk()
+            ->assertSee(tkey('website.admin.groups.create_title', [], 'ru'))
+            ->assertSee(route('platform.website.groups.create'), false);
+    }
+
+    public function test_group_create_screen_creates_group_through_action(): void
+    {
+        $this->seed();
+
+        $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+        $course = Course::query()->firstOrFail();
+        $branch = Branch::query()->firstOrFail();
+
+        $this->actingAs($admin)
+            ->post(route('platform.website.groups.create', ['method' => 'save']), [
+                'group' => [
+                    'branch_id' => $branch->id,
+                    'training_program_id' => $course->id,
+                    'instructor_id' => null,
+                    'code' => 'WEB-CREATE-001',
+                    'status' => GroupStatus::Recruiting->value,
+                    'capacity' => 12,
+                    'places_taken' => 0,
+                    'starts_on' => now()->addMonth()->toDateString(),
+                    'ends_on' => now()->addMonths(4)->toDateString(),
+                    'meeting_days' => 'monday, wednesday',
+                    'meeting_time' => '18:00',
+                    'end_time' => '20:00',
+                    'classroom' => 'Class 1',
+                    'is_visible_on_site' => '1',
+                ],
+                'name_translations' => [
+                    'ru' => 'Новая группа сайта',
+                    'en' => 'New website group',
+                ],
+            ])
+            ->assertRedirect(route('platform.website.groups'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('training_groups', [
+            'code' => 'WEB-CREATE-001',
+            'branch_id' => $branch->id,
+            'training_program_id' => $course->id,
+            'name' => 'Новая группа сайта',
+            'capacity' => 12,
+            'is_visible_on_site' => true,
+        ]);
     }
 
     public function test_user_without_permission_cannot_access_website_screens(): void

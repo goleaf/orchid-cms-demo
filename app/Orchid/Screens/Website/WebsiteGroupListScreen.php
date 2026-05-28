@@ -48,6 +48,15 @@ class WebsiteGroupListScreen extends Screen
         return ['website.manage_groups'];
     }
 
+    public function commandBar(): iterable
+    {
+        return [
+            Link::make(tkey('website.admin.groups.create_title'))
+                ->icon('bs.plus-circle')
+                ->route('platform.website.groups.create'),
+        ];
+    }
+
     public function layout(): iterable
     {
         return [

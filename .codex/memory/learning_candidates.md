@@ -2341,3 +2341,49 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T08:34:30+00:00
+
+```json
+{
+  "ts": "2026-05-28T08:34:30+00:00",
+  "event": "Stop",
+  "session_id": "019e6d89-8b50-7700-9bf0-1b7bff5e9f2f",
+  "turn_id": "019e6da0-05d7-7520-8146-ee81a8e75996",
+  "branch": "main",
+  "changed_file_count": 2,
+  "changed_file_groups": {
+    "orchid": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T08:34:49+00:00
+
+```json
+{
+  "ts": "2026-05-28T08:34:49+00:00",
+  "event": "Stop",
+  "session_id": "019e6d9c-1446-78f3-b720-8f17cbb16ed9",
+  "turn_id": "019e6db4-eab1-7d13-866f-45d56da4b5b2",
+  "branch": "main",
+  "changed_file_count": 3,
+  "changed_file_groups": {
+    "code": 1,
+    "orchid": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learning_candidates.md",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

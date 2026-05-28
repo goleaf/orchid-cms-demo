@@ -2,6 +2,9 @@
 
 ## 2026-05-28
 
+- Website group managers can now start creating a new group directly from the group list
+- Added checks to confirm a new public website group can be created successfully from the admin area
+
 - Added the foundation for managing training groups, memberships, schedule patterns, and education activity history
 - Improved group enrollment rules so students are only added when the selected group can accept them
 - Expanded multilingual labels for student, education, CRM, and public website workflows
