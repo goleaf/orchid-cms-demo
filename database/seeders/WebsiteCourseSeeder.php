@@ -57,7 +57,7 @@ class WebsiteCourseSeeder extends Seeder
                 'code' => 'CATEGORY_B_MANUAL',
                 'sort_order' => 10,
                 'price' => 1290,
-                'title' => ['ru' => 'Категория B', 'en' => 'Category B', 'lt' => 'B kategorija', 'pl' => 'Kategoria B'],
+                'title' => ['ru' => 'Категория B в Вильнюсе', 'en' => 'Category B in Vilnius', 'lt' => 'B kategorija Vilniuje', 'pl' => 'Kategoria B w Wilnie'],
             ],
             'category-a-motorcycle' => [
                 'state' => 'categoryA',

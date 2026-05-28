@@ -2817,3 +2817,45 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T09:21:38+00:00
+
+```json
+{
+  "ts": "2026-05-28T09:21:38+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6de1-6bad-7ff0-81c8-10686b86547f",
+  "branch": "main",
+  "changed_file_count": 2,
+  "changed_file_groups": {
+    "code": 2
+  },
+  "changed_files_sample": [
+    "database/seeders/DatabaseSeeder.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T09:21:38+00:00
+
+```json
+{
+  "ts": "2026-05-28T09:21:38+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6de1-6bad-7ff0-81c8-10686b86547f",
+  "branch": "main",
+  "changed_file_count": 2,
+  "changed_file_groups": {
+    "code": 2
+  },
+  "changed_files_sample": [
+    "database/seeders/DatabaseSeeder.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

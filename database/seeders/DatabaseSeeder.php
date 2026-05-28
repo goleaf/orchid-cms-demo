@@ -103,7 +103,7 @@ class DatabaseSeeder extends Seeder
                 ...$this->programTranslations([
                     'title' => 'Category B Manual',
                     'duration_weeks' => 14,
-                    'title_translations' => $this->translations('Категория B механика', 'Category B Manual', 'B kategorija mechanine', 'Kategoria B manualna'),
+                    'title_translations' => $this->translations('Категория B в Вильнюсе', 'Category B in Vilnius', 'B kategorija Vilniuje', 'Kategoria B w Wilnie'),
                     'description_translations' => $this->translations(
                         'Полный курс категории B с теорией, практикой, экзаменами и документами.',
                         'Complete Category B training with theory, practice, exams, and document tracking.',

@@ -30,8 +30,8 @@ class DrivingSchoolPlatformTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('Категория B в Вильнюсе')
-            ->assertSee('Заявки сразу попадают в CRM')
+            ->assertSee('Права категории B с понятным расписанием')
+            ->assertSee('Заявки сразу в CRM')
             ->assertSee(tkey('website.home.programs.title', [], 'ru'))
             ->assertSee(tkey('website.home.groups.title', [], 'ru'));
     }

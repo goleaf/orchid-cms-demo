@@ -353,6 +353,30 @@ class TrainingGroup extends Model
         });
     }
 
+    public function scopeForCapacityMutation(Builder $query): Builder
+    {
+        return $query->select([
+            'id',
+            'course_id',
+            'training_program_id',
+            'capacity',
+            'capacity_total',
+            'capacity_reserved',
+            'capacity_taken',
+            'capacity_waitlist',
+            'places_taken',
+            'starts_on',
+            'ends_on',
+            'start_date',
+            'planned_end_date',
+            'is_visible_on_site',
+            'is_accepting_applications',
+            'status',
+            'status_id',
+            'updated_by_id',
+        ]);
+    }
+
     public function scopeByStatus(Builder $query, GroupStatus|string|null $status): Builder
     {
         if (blank($status)) {

@@ -2,6 +2,10 @@
 
 ## 2026-05-28
 
+- Group capacity recalculation now uses the latest saved group data before updating totals
+- The sample Category B training program now uses clearer Vilnius-focused wording
+- Internal workflow notes were updated for future project learning review
+
 - Added stronger validation for group publishing, archiving, status changes, student transfers, waitlists, and schedule pattern changes
 - Added permission checks around group and membership operations so only authorized staff can perform them
 - Added multilingual labels and messages for communication channels, templates, reminders, delivery logs, and related permissions
