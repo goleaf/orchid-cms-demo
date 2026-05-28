@@ -23,6 +23,10 @@
   Evidence: Added ExamTypeSeeder, ExamStatusSeeder, ExamAttemptStatusSeeder, ExamResultStatusSeeder, ExamAdmissionRuleSeeder, DemoExamSeeder, docs, and ExamFactoriesSeedersTest.
   Added: 2026-05-28T16:30:00+03:00
 
+- Block 10 exam UI and access labels use seeded Russian, English, Lithuanian, and Polish translation keys with granular local permissions for sessions, admissions, attempts, results, retakes, dictionaries, and exports while preserving broad compatibility permissions.
+  Evidence: Added exam translation keys, granular superadmin permissions, Orchid permission labels, docs, and ExamLocalizationPermissionsTest.
+  Added: 2026-05-28T17:10:00+03:00
+
 - Block 11 communications foundation uses notification channels, communication templates, reminders, delivery logs, user notification preferences, and student communication history while CRM lead history continues to reuse existing lead communication records.
   Evidence: Implemented foundation schema, Actions, Form Requests, validation Rules, factories, seeders, Orchid communication pages, notification placeholders, documentation, and CommunicationModuleFoundationTest.
   Added: 2026-05-28T12:31:35+03:00

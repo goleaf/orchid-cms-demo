@@ -127,7 +127,15 @@ Dictionary records are created through factories and are idempotent. The wrapper
 - `exams.schedule_retakes`
 - `exams.view_activities`
 
-Superadmin receives these permissions through the shared permission list.
+Granular permissions are also registered for session viewing, creation, updates, and cancellation; admission checks, approvals, and blocks; attempt viewing, creation, start, completion, and cancellation; result viewing, recording, and updates; retake viewing, creation, and scheduling; dictionary management; and CSV export.
+
+Superadmin receives the broad and granular exam permissions through the shared permission list. These permissions stay local to the driving school and do not introduce tenant, subscription, reseller, or platform-owner access layers.
+
+## Localization
+
+Exam navigation, screen titles, form fields, actions, type labels, session statuses, attempt statuses, result statuses, validation messages, and permission labels are seeded for Russian, English, Lithuanian, and Polish.
+
+Validation messages use `exams.validation.*` keys. The catalog keeps older compatibility keys and adds the granular keys used by the exam UI and permission foundation.
 
 ## Orchid
 
@@ -162,6 +170,12 @@ Future screens should keep admissions, sessions, attempts, results, and retakes 
 - Idempotent exam seeders and wrapper seeding.
 - Default internal and official placeholder exam dictionaries.
 - Seeded dictionary and interface translations for Russian, English, Lithuanian, and Polish.
+
+`ExamLocalizationPermissionsTest` verifies:
+
+- Requested exam menu, screen, field, action, status, validation, and permission labels are translated for all active locales.
+- Granular exam permissions are registered in the local superadmin permission list and the Orchid permission provider.
+- Existing broad exam permissions remain registered for compatibility with current requests and screens.
 
 ## TODOs
 

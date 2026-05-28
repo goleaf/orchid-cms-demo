@@ -411,6 +411,28 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('exams.view_activities', tkey('permissions.exams.view_activities'))
                 ->addPermission('platform.finance.payments', tkey('permissions.finance.payments')),
 
+            ItemPermission::group(tkey('permissions.groups.exams'))
+                ->addPermission('exams.sessions.view', tkey('permissions.exams.sessions.view'))
+                ->addPermission('exams.sessions.create', tkey('permissions.exams.sessions.create'))
+                ->addPermission('exams.sessions.update', tkey('permissions.exams.sessions.update'))
+                ->addPermission('exams.sessions.cancel', tkey('permissions.exams.sessions.cancel'))
+                ->addPermission('exams.admissions.check', tkey('permissions.exams.admissions.check'))
+                ->addPermission('exams.admissions.approve', tkey('permissions.exams.admissions.approve'))
+                ->addPermission('exams.admissions.block', tkey('permissions.exams.admissions.block'))
+                ->addPermission('exams.attempts.view', tkey('permissions.exams.attempts.view'))
+                ->addPermission('exams.attempts.create', tkey('permissions.exams.attempts.create'))
+                ->addPermission('exams.attempts.start', tkey('permissions.exams.attempts.start'))
+                ->addPermission('exams.attempts.complete', tkey('permissions.exams.attempts.complete'))
+                ->addPermission('exams.attempts.cancel', tkey('permissions.exams.attempts.cancel'))
+                ->addPermission('exams.results.view', tkey('permissions.exams.results.view'))
+                ->addPermission('exams.results.record', tkey('permissions.exams.results.record'))
+                ->addPermission('exams.results.update', tkey('permissions.exams.results.update'))
+                ->addPermission('exams.retakes.view', tkey('permissions.exams.retakes.view'))
+                ->addPermission('exams.retakes.create', tkey('permissions.exams.retakes.create'))
+                ->addPermission('exams.retakes.schedule', tkey('permissions.exams.retakes.schedule'))
+                ->addPermission('exams.dictionaries.manage', tkey('permissions.exams.dictionaries.manage'))
+                ->addPermission('exams.export', tkey('permissions.exams.export')),
+
             ItemPermission::group(tkey('permissions.groups.education'))
                 ->addPermission('education.groups.view', tkey('permissions.education.groups.view'))
                 ->addPermission('education.groups.create', tkey('permissions.education.groups.create'))

@@ -42,7 +42,7 @@ class ExamListScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['platform.exams', 'exams.view'];
+        return ['platform.exams', 'exams.view', 'exams.sessions.view'];
     }
 
     public function commandBar(): iterable
