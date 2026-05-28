@@ -2,6 +2,7 @@
 
 ## 2026-05-28
 
+- Added a dashboard and widget data model for local analytics, including translated labels, default owner dashboard setup, user layout preferences, and automated checks
 - Added a stronger exam management foundation with exam types, statuses, admission rules, participants, results, retakes, and checklist tracking
 - Added an owner analytics dashboard with key school metrics, report summaries, recent report runs, and performance snapshots
 - Improved seeded website pages with clearer multilingual content, search descriptions, sharing details, and legal page coverage

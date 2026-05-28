@@ -35,6 +35,7 @@ class AnalyticsDashboardScreen extends Screen
             'paid_revenue' => number_format(((int) $metrics['paid_revenue_cents']) / 100, 2).' EUR',
             'pending_documents' => number_format((int) $metrics['pending_documents']),
             'queued_notifications' => number_format((int) $metrics['queued_notifications']),
+            'analyticsDashboard' => $data['dashboard'],
             'dashboardWidgets' => $data['widgets'],
             'reportDefinitions' => $data['reportDefinitions'],
             'recentReportRuns' => $data['recentReportRuns'],
@@ -92,7 +93,7 @@ class AnalyticsDashboardScreen extends Screen
                 TD::make('widget_type', tkey('analytics.columns.type'))
                     ->render(fn (DashboardWidget $widget): string => $widget->widget_type),
                 TD::make('metric_code', tkey('analytics.columns.metric'))
-                    ->render(fn (DashboardWidget $widget): string => $widget->metric_code ?? '-'),
+                    ->render(fn (DashboardWidget $widget): string => $widget->metric_code ?? data_get($widget->config, 'metric', '-')),
             ])->title(tkey('analytics.tables.widgets')),
 
             Layout::table('reportDefinitions', [

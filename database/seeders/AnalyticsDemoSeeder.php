@@ -2,10 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Enums\AnalyticsDashboardAudience;
 use App\Enums\AnalyticsReportType;
+use App\Enums\DashboardWidgetType;
 use App\Enums\KpiDirection;
 use App\Enums\KpiPeriod;
 use App\Models\AnalyticsCache;
+use App\Models\AnalyticsDashboard;
 use App\Models\DashboardWidget;
 use App\Models\KpiMetric;
 use App\Models\KpiSnapshot;
@@ -19,23 +22,44 @@ class AnalyticsDemoSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->seedWidgets();
+        $dashboard = $this->seedDashboards();
+
+        $this->seedWidgets($dashboard);
         $this->seedReports();
         $metrics = $this->seedMetrics();
         $this->seedTargetsAndSnapshots($metrics);
         $this->seedCache();
-        $this->seedPreferences();
+        $this->seedPreferences($dashboard);
     }
 
-    private function seedWidgets(): void
+    private function seedDashboards(): AnalyticsDashboard
+    {
+        return AnalyticsDashboard::query()->updateOrCreate(
+            ['code' => 'owner_overview'],
+            AnalyticsDashboard::factory()
+                ->default()
+                ->audience(AnalyticsDashboardAudience::Owner)
+                ->make([
+                    'code' => 'owner_overview',
+                    'name_translations' => $this->translations('Owner overview'),
+                    'description_translations' => $this->translations('Local driving school owner dashboard.'),
+                    'sort_order' => 10,
+                ])
+                ->only((new AnalyticsDashboard)->getFillable()),
+        );
+    }
+
+    private function seedWidgets(AnalyticsDashboard $dashboard): void
     {
         foreach ($this->widgetDefinitions() as $index => $definition) {
             DashboardWidget::query()->updateOrCreate(
                 ['code' => $definition['code']],
                 DashboardWidget::factory()
+                    ->forDashboard($dashboard)
                     ->system()
                     ->make([
                         ...$definition,
+                        'analytics_dashboard_id' => $dashboard->id,
                         'sort_order' => ($index + 1) * 10,
                     ])
                     ->only((new DashboardWidget)->getFillable()),
@@ -137,7 +161,7 @@ class AnalyticsDemoSeeder extends Seeder
         );
     }
 
-    private function seedPreferences(): void
+    private function seedPreferences(AnalyticsDashboard $dashboard): void
     {
         $user = User::query()->first();
 
@@ -148,12 +172,25 @@ class AnalyticsDemoSeeder extends Seeder
         UserDashboardPreference::query()->updateOrCreate(
             [
                 'user_id' => $user->id,
-                'dashboard' => 'owner',
+                'dashboard' => $dashboard->code,
             ],
             UserDashboardPreference::factory()
+                ->forDashboard($dashboard)
                 ->make([
                     'user_id' => $user->id,
-                    'dashboard' => 'owner',
+                    'analytics_dashboard_id' => $dashboard->id,
+                    'dashboard' => $dashboard->code,
+                    'layout' => [
+                        'widgets' => collect($this->widgetDefinitions())
+                            ->map(fn (array $definition, int $index): array => [
+                                'code' => $definition['code'],
+                                'width' => $definition['width'],
+                                'height' => $definition['height'],
+                                'sort_order' => ($index + 1) * 10,
+                            ])
+                            ->values()
+                            ->all(),
+                    ],
                     'visible_widget_codes' => array_column($this->widgetDefinitions(), 'code'),
                     'widget_order' => array_column($this->widgetDefinitions(), 'code'),
                 ])
@@ -167,13 +204,34 @@ class AnalyticsDemoSeeder extends Seeder
     private function widgetDefinitions(): array
     {
         return [
-            ['code' => 'open_leads', 'name_translations' => $this->translations('Open leads'), 'metric_code' => 'open_leads'],
-            ['code' => 'active_students', 'name_translations' => $this->translations('Active students'), 'metric_code' => 'active_students'],
-            ['code' => 'active_enrollments', 'name_translations' => $this->translations('Active enrollments'), 'metric_code' => 'active_enrollments'],
-            ['code' => 'lessons_today', 'name_translations' => $this->translations('Lessons today'), 'metric_code' => 'lessons_today'],
-            ['code' => 'scheduled_exams', 'name_translations' => $this->translations('Scheduled exams'), 'metric_code' => 'scheduled_exams'],
-            ['code' => 'paid_revenue', 'name_translations' => $this->translations('Paid revenue'), 'metric_code' => 'paid_revenue_eur'],
-            ['code' => 'pending_documents', 'name_translations' => $this->translations('Pending documents'), 'metric_code' => 'pending_documents'],
+            $this->counterWidget('open_leads', 'Open leads', 'open_leads', 3, 1),
+            $this->counterWidget('active_students', 'Active students', 'active_students', 3, 1),
+            $this->counterWidget('active_enrollments', 'Active enrollments', 'active_enrollments', 3, 1),
+            $this->counterWidget('lessons_today', 'Lessons today', 'lessons_today', 3, 1),
+            $this->counterWidget('scheduled_exams', 'Scheduled exams', 'scheduled_exams', 3, 1),
+            $this->counterWidget('paid_revenue', 'Paid revenue', 'paid_revenue_eur', 6, 1),
+            $this->counterWidget('pending_documents', 'Pending documents', 'pending_documents', 3, 1),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function counterWidget(string $code, string $name, string $metricCode, int $width, int $height): array
+    {
+        $translations = $this->translations($name);
+
+        return [
+            'code' => $code,
+            'title_translations' => $translations,
+            'name_translations' => $translations,
+            'description_translations' => $translations,
+            'widget_type' => DashboardWidgetType::Counter->value,
+            'metric_code' => $metricCode,
+            'config' => ['metric' => $metricCode],
+            'filters' => [],
+            'width' => $width,
+            'height' => $height,
         ];
     }
 

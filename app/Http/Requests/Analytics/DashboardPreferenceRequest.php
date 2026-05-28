@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Analytics;
 
+use App\Rules\ActiveAnalyticsDashboardRule;
 use App\Rules\DashboardWidgetCodeRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -19,7 +20,14 @@ class DashboardPreferenceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'preferences.dashboard' => ['nullable', 'string', 'max:80'],
+            'preferences.analytics_dashboard_id' => ['nullable', new ActiveAnalyticsDashboardRule],
+            'preferences.dashboard' => ['nullable', 'string', 'max:80', new ActiveAnalyticsDashboardRule],
+            'preferences.layout' => ['nullable', 'array'],
+            'preferences.layout.widgets' => ['nullable', 'array'],
+            'preferences.layout.widgets.*.code' => ['required_with:preferences.layout.widgets', 'string', new DashboardWidgetCodeRule],
+            'preferences.layout.widgets.*.width' => ['nullable', 'integer', 'min:1', 'max:12'],
+            'preferences.layout.widgets.*.height' => ['nullable', 'integer', 'min:1', 'max:12'],
+            'preferences.layout.widgets.*.sort_order' => ['nullable', 'integer', 'min:0', 'max:10000'],
             'preferences.visible_widget_codes' => ['nullable', 'array'],
             'preferences.visible_widget_codes.*' => ['string', new DashboardWidgetCodeRule],
             'preferences.widget_order' => ['nullable', 'array'],

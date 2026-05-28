@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
-use App\Enums\DashboardWidgetType;
+use App\Enums\AnalyticsDashboardAudience;
 use App\Models\Concerns\HasTranslations;
-use Database\Factories\DashboardWidgetFactory;
+use Database\Factories\AnalyticsDashboardFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class DashboardWidget extends Model
+class AnalyticsDashboard extends Model
 {
-    /** @use HasFactory<DashboardWidgetFactory> */
+    /** @use HasFactory<AnalyticsDashboardFactory> */
     use HasFactory;
 
     use HasTranslations;
@@ -22,53 +23,44 @@ class DashboardWidget extends Model
 
     protected $fillable = [
         'uuid',
-        'analytics_dashboard_id',
         'code',
-        'title_translations',
         'name_translations',
         'description_translations',
-        'widget_type',
-        'metric_code',
-        'component',
-        'config',
-        'filters',
-        'width',
-        'height',
-        'is_system',
+        'audience',
         'is_active',
+        'is_default',
         'sort_order',
-        'settings',
         'created_by_id',
         'updated_by_id',
     ];
 
     protected $casts = [
-        'title_translations' => 'array',
         'name_translations' => 'array',
         'description_translations' => 'array',
-        'config' => 'array',
-        'filters' => 'array',
-        'width' => 'integer',
-        'height' => 'integer',
-        'is_system' => 'boolean',
+        'audience' => AnalyticsDashboardAudience::class,
         'is_active' => 'boolean',
+        'is_default' => 'boolean',
         'sort_order' => 'integer',
-        'settings' => 'array',
         'deleted_at' => 'datetime',
     ];
 
     protected static function booted(): void
     {
-        static::creating(function (self $widget): void {
-            if (blank($widget->uuid)) {
-                $widget->uuid = (string) Str::uuid();
+        static::creating(function (self $dashboard): void {
+            if (blank($dashboard->uuid)) {
+                $dashboard->uuid = (string) Str::uuid();
             }
         });
     }
 
-    public function dashboard(): BelongsTo
+    public function widgets(): HasMany
     {
-        return $this->belongsTo(AnalyticsDashboard::class, 'analytics_dashboard_id');
+        return $this->hasMany(DashboardWidget::class);
+    }
+
+    public function preferences(): HasMany
+    {
+        return $this->hasMany(UserDashboardPreference::class);
     }
 
     public function creator(): BelongsTo
@@ -83,13 +75,7 @@ class DashboardWidget extends Model
 
     public function displayName(?string $locale = null): string
     {
-        return $this->displayTitle($locale);
-    }
-
-    public function displayTitle(?string $locale = null): string
-    {
-        return $this->getTranslation('title', $locale)
-            ?: $this->getTranslation('name', $locale)
+        return $this->getTranslation('name', $locale)
             ?: str($this->code)->replace(['.', '_', '-'], ' ')->title()->toString();
     }
 
@@ -103,18 +89,16 @@ class DashboardWidget extends Model
         return $query->where('is_active', true);
     }
 
-    public function scopeForDashboard(Builder $query, AnalyticsDashboard|int $dashboard): Builder
+    public function scopeDefault(Builder $query): Builder
     {
-        $dashboardId = $dashboard instanceof AnalyticsDashboard ? $dashboard->getKey() : $dashboard;
-
-        return $query->where('analytics_dashboard_id', $dashboardId);
+        return $query->where('is_default', true);
     }
 
-    public function scopeOfType(Builder $query, DashboardWidgetType|string $type): Builder
+    public function scopeForAudience(Builder $query, AnalyticsDashboardAudience|string $audience): Builder
     {
-        $value = $type instanceof DashboardWidgetType ? $type->value : $type;
+        $value = $audience instanceof AnalyticsDashboardAudience ? $audience->value : $audience;
 
-        return $query->where('widget_type', $value);
+        return $query->where('audience', $value);
     }
 
     public function scopeOrdered(Builder $query): Builder

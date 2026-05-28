@@ -2,74 +2,62 @@
 
 namespace Database\Factories;
 
-use App\Enums\DashboardWidgetType;
+use App\Enums\AnalyticsDashboardAudience;
 use App\Models\AnalyticsDashboard;
-use App\Models\DashboardWidget;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends Factory<DashboardWidget>
+ * @extends Factory<AnalyticsDashboard>
  */
-class DashboardWidgetFactory extends Factory
+class AnalyticsDashboardFactory extends Factory
 {
-    protected $model = DashboardWidget::class;
+    protected $model = AnalyticsDashboard::class;
 
     /**
      * @return array<string, mixed>
      */
     public function definition(): array
     {
-        $code = $this->faker->unique()->slug(3);
-        $name = str($code)->replace('-', ' ')->title()->toString();
-        $metricCode = str($code)->replace('-', '_')->toString();
+        $audience = $this->faker->randomElement(AnalyticsDashboardAudience::values());
+        $code = $audience.'_'.Str::slug($this->faker->unique()->words(2, true), '_');
+        $name = str($code)->replace(['_', '-'], ' ')->title()->toString();
 
         return [
             'uuid' => (string) Str::uuid(),
-            'analytics_dashboard_id' => AnalyticsDashboard::factory(),
             'code' => $code,
-            'title_translations' => $this->translations($name),
             'name_translations' => $this->translations($name),
             'description_translations' => $this->translations($this->faker->sentence(8)),
-            'widget_type' => DashboardWidgetType::Counter->value,
-            'metric_code' => $metricCode,
-            'component' => null,
-            'config' => ['metric' => $metricCode],
-            'filters' => [],
-            'width' => 3,
-            'height' => 1,
-            'is_system' => false,
+            'audience' => $audience,
             'is_active' => true,
+            'is_default' => false,
             'sort_order' => $this->faker->numberBetween(1, 100),
-            'settings' => [],
             'created_by_id' => null,
             'updated_by_id' => null,
         ];
     }
 
-    public function system(): static
+    public function audience(AnalyticsDashboardAudience|string $audience): static
     {
+        $value = $audience instanceof AnalyticsDashboardAudience ? $audience->value : $audience;
+
         return $this->state(fn (): array => [
-            'is_system' => true,
-            'created_by_id' => null,
-            'updated_by_id' => null,
+            'audience' => $value,
         ]);
     }
 
-    public function forDashboard(AnalyticsDashboard $dashboard): static
+    public function default(): static
     {
         return $this->state(fn (): array => [
-            'analytics_dashboard_id' => $dashboard->id,
+            'is_default' => true,
         ]);
     }
 
-    public function type(DashboardWidgetType|string $type): static
+    public function inactive(): static
     {
-        $value = $type instanceof DashboardWidgetType ? $type->value : $type;
-
         return $this->state(fn (): array => [
-            'widget_type' => $value,
+            'is_active' => false,
         ]);
     }
 
