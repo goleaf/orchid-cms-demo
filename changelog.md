@@ -2,6 +2,8 @@
 
 ## 2026-05-28
 
+- Added exam administration pages for sessions, admissions, attempts, results, retakes, and exam settings with translated labels and area-specific permissions
+
 - Analytics now has core local calculation actions for owner dashboard summaries, widget data, report runs, exports, KPI snapshots, cache refreshes, date ranges, and filters
 
 - Analytics now has local snapshot storage and action-based cache entries for owner dashboards, summaries, expiration handling, and tag-based clearing

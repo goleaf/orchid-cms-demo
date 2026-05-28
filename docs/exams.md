@@ -139,13 +139,36 @@ Validation messages use `exams.validation.*` keys. The catalog keeps older compa
 
 ## Orchid
 
-The exam menu opens the exam sessions list. The list reads from normalized exam sessions, eager loads branch, program, group, instructor, and vehicle context, and shows attempt counts without per-row queries.
+The exam menu opens a full Block 10 workspace for local school staff:
 
-Current route:
+- Sessions: list, filter, create, edit, cancel, add students, check admissions, and export session rows.
+- Internal exams: filtered view of internal theory and practical sessions.
+- Official placeholders: filtered view of manually tracked official theory and practical placeholder sessions.
+- Admissions: readiness list with documents, payments, theory hours, practice hours, internal-exam checks, and manual approve or block actions.
+- Attempts: attempt list and edit page for start, completion, no-show, cancellation, result entry, pass/fail decisions, and retake creation.
+- Results: result list with filters by exam type, student, group, and pass/fail state.
+- Retakes: planned retake list linked back to previous and new attempts.
+- Settings: read-only dictionary lists for exam types, session statuses, attempt statuses, and result statuses.
+
+The screens prepare data in `query()` with eager-loaded relationships, use Orchid tables and modal actions, and delegate write operations to Actions. They do not implement a government registry integration, official API sync, online testing engine, AI scoring, payment provider, tenant layer, subscription layer, or reseller/platform-owner workflow.
+
+Current routes:
 
 - `platform.exams`
+- `platform.exams.sessions`
+- `platform.exams.sessions.create`
+- `platform.exams.sessions.edit`
+- `platform.exams.admissions`
+- `platform.exams.attempts`
+- `platform.exams.attempts.edit`
+- `platform.exams.results`
+- `platform.exams.retakes`
+- `platform.exams.types`
+- `platform.exams.statuses`
+- `platform.exams.attempt-statuses`
+- `platform.exams.result-statuses`
 
-Future screens should keep admissions, sessions, attempts, results, and retakes behind the same local-driving-school permissions.
+Session, admission, attempt, result, retake, dictionary, and export screens use granular local exam permissions. Broad compatibility permissions remain registered for older code paths, but new screen access is controlled by the specific Block 10 permissions.
 
 ## Tests
 
@@ -177,11 +200,14 @@ Future screens should keep admissions, sessions, attempts, results, and retakes 
 - Granular exam permissions are registered in the local superadmin permission list and the Orchid permission provider.
 - Existing broad exam permissions remain registered for compatibility with current requests and screens.
 
+`ExamOrchidScreensTest` verifies:
+
+- Main exam session, admission, attempt, result, retake, and dictionary screens render with matching permissions.
+- Session edit and attempt edit screens can open records with the required related data loaded.
+- Granular permissions block unrelated exam screens when a user only has access to one exam area.
+
 ## TODOs
 
-- Full admission edit screen.
-- Session edit screen.
-- Attempt/result entry screen.
 - Retake action from the student and exam views.
 - Exam analytics widgets.
 - Optional manual state exam reference management.

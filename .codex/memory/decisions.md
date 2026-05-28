@@ -27,6 +27,10 @@
   Evidence: Added exam translation keys, granular superadmin permissions, Orchid permission labels, docs, and ExamLocalizationPermissionsTest.
   Added: 2026-05-28T17:10:00+03:00
 
+- Block 10 exam Orchid UI uses thin local-driving-school screens for sessions, admissions, attempts, results, retakes, and dictionaries; screen writes call exam Actions, labels use translation keys, and access is checked with granular exam permissions instead of broad platform access.
+  Evidence: Added exam screens, menu entries, routes, docs, and ExamOrchidScreensTest.
+  Added: 2026-05-28T20:30:00+03:00
+
 - Block 11 communications foundation uses notification channels, communication templates, reminders, delivery logs, user notification preferences, and student communication history while CRM lead history continues to reuse existing lead communication records.
   Evidence: Implemented foundation schema, Actions, Form Requests, validation Rules, factories, seeders, Orchid communication pages, notification placeholders, documentation, and CommunicationModuleFoundationTest.
   Added: 2026-05-28T12:31:35+03:00

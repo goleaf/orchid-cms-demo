@@ -155,10 +155,63 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.fleet.vehicles')
                 ->permission('platform.fleet.vehicles'),
 
-            Menu::make(tkey('menu.exams'))
+            Menu::make(tkey('menu.exams.sessions'))
+                ->icon('bs.calendar-check')
+                ->route('platform.exams.sessions')
+                ->permission('exams.sessions.view')
+                ->title(tkey('menu.exams')),
+
+            Menu::make(tkey('menu.exams.internal'))
                 ->icon('bs.clipboard-check')
-                ->route('platform.exams')
-                ->permission(['platform.exams', 'exams.view']),
+                ->route('platform.exams.sessions', ['type_scope' => 'internal'])
+                ->permission('exams.sessions.view'),
+
+            Menu::make(tkey('menu.exams.official'))
+                ->icon('bs.building-check')
+                ->route('platform.exams.sessions', ['type_scope' => 'official'])
+                ->permission('exams.sessions.view'),
+
+            Menu::make(tkey('menu.exams.attempts'))
+                ->icon('bs.list-check')
+                ->route('platform.exams.attempts')
+                ->permission('exams.attempts.view'),
+
+            Menu::make(tkey('menu.exams.results'))
+                ->icon('bs.patch-check')
+                ->route('platform.exams.results')
+                ->permission('exams.results.view'),
+
+            Menu::make(tkey('menu.exams.retakes'))
+                ->icon('bs.arrow-counterclockwise')
+                ->route('platform.exams.retakes')
+                ->permission('exams.retakes.view'),
+
+            Menu::make(tkey('menu.exams.admissions'))
+                ->icon('bs.ui-checks')
+                ->route('platform.exams.admissions')
+                ->permission('exams.admissions.check'),
+
+            Menu::make(tkey('menu.exams.settings'))
+                ->icon('bs.sliders')
+                ->permission('exams.dictionaries.manage')
+                ->list([
+                    Menu::make(tkey('exams.dictionaries.types.title'))
+                        ->icon('bs.tags')
+                        ->route('platform.exams.types')
+                        ->permission('exams.dictionaries.manage'),
+                    Menu::make(tkey('exams.dictionaries.statuses.title'))
+                        ->icon('bs.ui-checks-grid')
+                        ->route('platform.exams.statuses')
+                        ->permission('exams.dictionaries.manage'),
+                    Menu::make(tkey('exams.dictionaries.attempt_statuses.title'))
+                        ->icon('bs.check2-square')
+                        ->route('platform.exams.attempt-statuses')
+                        ->permission('exams.dictionaries.manage'),
+                    Menu::make(tkey('exams.dictionaries.result_statuses.title'))
+                        ->icon('bs.clipboard2-data')
+                        ->route('platform.exams.result-statuses')
+                        ->permission('exams.dictionaries.manage'),
+                ]),
 
             Menu::make(tkey('menu.finance.payments'))
                 ->icon('bs.credit-card')

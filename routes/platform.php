@@ -14,7 +14,17 @@ use App\Orchid\Screens\School\CommunicationReminderListScreen;
 use App\Orchid\Screens\School\CommunicationTemplateEditScreen;
 use App\Orchid\Screens\School\CommunicationTemplateListScreen;
 use App\Orchid\Screens\School\DocumentListScreen;
-use App\Orchid\Screens\School\ExamListScreen;
+use App\Orchid\Screens\School\ExamAdmissionScreen;
+use App\Orchid\Screens\School\ExamAttemptEditScreen;
+use App\Orchid\Screens\School\ExamAttemptListScreen;
+use App\Orchid\Screens\School\ExamAttemptStatusListScreen;
+use App\Orchid\Screens\School\ExamResultListScreen;
+use App\Orchid\Screens\School\ExamResultStatusListScreen;
+use App\Orchid\Screens\School\ExamRetakeListScreen;
+use App\Orchid\Screens\School\ExamSessionEditScreen;
+use App\Orchid\Screens\School\ExamSessionListScreen;
+use App\Orchid\Screens\School\ExamStatusListScreen;
+use App\Orchid\Screens\School\ExamTypeListScreen;
 use App\Orchid\Screens\School\FleetListScreen;
 use App\Orchid\Screens\School\GroupEditScreen;
 use App\Orchid\Screens\School\GroupListScreen;
@@ -407,7 +417,79 @@ Route::screen('fleet/vehicles', FleetListScreen::class)
         ->push(tkey('menu.fleet.vehicles'), route('platform.fleet.vehicles')));
 
 // Operations > Exams
-Route::screen('exams', ExamListScreen::class)
+Route::screen('exams/sessions/create', ExamSessionEditScreen::class)
+    ->name('platform.exams.sessions.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.exams.sessions')
+        ->push(tkey('exams.sessions.create_title'), route('platform.exams.sessions.create')));
+
+Route::screen('exams/sessions/{examSession}/edit', ExamSessionEditScreen::class)
+    ->name('platform.exams.sessions.edit')
+    ->breadcrumbs(fn (Trail $trail, $examSession) => $trail
+        ->parent('platform.exams.sessions')
+        ->push(tkey('exams.sessions.edit_title'), route('platform.exams.sessions.edit', $examSession)));
+
+Route::screen('exams/sessions', ExamSessionListScreen::class)
+    ->name('platform.exams.sessions')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.exams.sessions'), route('platform.exams.sessions')));
+
+Route::screen('exams/admissions', ExamAdmissionScreen::class)
+    ->name('platform.exams.admissions')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.exams.admissions'), route('platform.exams.admissions')));
+
+Route::screen('exams/attempts/{examAttempt}/edit', ExamAttemptEditScreen::class)
+    ->name('platform.exams.attempts.edit')
+    ->breadcrumbs(fn (Trail $trail, $examAttempt) => $trail
+        ->parent('platform.exams.attempts')
+        ->push(tkey('exams.attempts.edit_title'), route('platform.exams.attempts.edit', $examAttempt)));
+
+Route::screen('exams/attempts', ExamAttemptListScreen::class)
+    ->name('platform.exams.attempts')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.exams.attempts'), route('platform.exams.attempts')));
+
+Route::screen('exams/results', ExamResultListScreen::class)
+    ->name('platform.exams.results')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.exams.results'), route('platform.exams.results')));
+
+Route::screen('exams/retakes', ExamRetakeListScreen::class)
+    ->name('platform.exams.retakes')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('menu.exams.retakes'), route('platform.exams.retakes')));
+
+Route::screen('exams/settings/types', ExamTypeListScreen::class)
+    ->name('platform.exams.types')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('exams.dictionaries.types.title'), route('platform.exams.types')));
+
+Route::screen('exams/settings/statuses', ExamStatusListScreen::class)
+    ->name('platform.exams.statuses')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('exams.dictionaries.statuses.title'), route('platform.exams.statuses')));
+
+Route::screen('exams/settings/attempt-statuses', ExamAttemptStatusListScreen::class)
+    ->name('platform.exams.attempt-statuses')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('exams.dictionaries.attempt_statuses.title'), route('platform.exams.attempt-statuses')));
+
+Route::screen('exams/settings/result-statuses', ExamResultStatusListScreen::class)
+    ->name('platform.exams.result-statuses')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(tkey('exams.dictionaries.result_statuses.title'), route('platform.exams.result-statuses')));
+
+Route::screen('exams', ExamSessionListScreen::class)
     ->name('platform.exams')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
