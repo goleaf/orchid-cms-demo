@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Payment;
 use App\Models\StudentProfile;
@@ -24,7 +25,7 @@ class PaymentFactory extends Factory
             'enrollment_id' => null,
             'amount_cents' => $this->faker->numberBetween(5000, 50000),
             'currency' => 'EUR',
-            'method' => $this->faker->randomElement(['cash', 'card', 'bank_transfer']),
+            'method' => $this->faker->randomElement(PaymentMethod::values()),
             'status' => PaymentStatus::Paid,
             'paid_at' => now()->subDays($this->faker->numberBetween(1, 30)),
             'reference' => 'PAY-'.$this->faker->unique()->numerify('######'),

@@ -5,6 +5,8 @@ namespace App\Orchid\Screens\Website;
 use App\Actions\CreateOrUpdateCourseAction;
 use App\Actions\HideCourseFromSiteAction;
 use App\Actions\PublishCourseOnSiteAction;
+use App\Enums\CourseFormat;
+use App\Enums\TransmissionType;
 use App\Http\Requests\StoreCourseRequest;
 use App\Models\Course;
 use App\Models\CourseCategory;
@@ -37,11 +39,11 @@ class CourseEditScreen extends Screen
             : new Course([
                 'slug' => '',
                 'license_category' => 'B',
-                'transmission' => 'manual',
+                'transmission' => TransmissionType::Manual->value,
                 'theory_hours' => 0,
                 'practice_hours' => 0,
                 'duration_weeks' => 8,
-                'format' => 'mixed',
+                'format' => CourseFormat::Mixed->value,
                 'price_cents' => 0,
                 'currency' => 'EUR',
                 'is_active' => true,
@@ -75,7 +77,7 @@ class CourseEditScreen extends Screen
             'theory_hours' => $courseModel->theory_hours,
             'practice_hours' => $courseModel->practice_hours,
             'duration_weeks' => $courseModel->duration_weeks,
-            'format' => $courseModel->format ?: 'mixed',
+            'format' => $courseModel->format ?: CourseFormat::Mixed->value,
             'image' => $courseModel->image_path,
             'icon' => $courseModel->icon,
             'og_image' => $courseModel->og_image,
@@ -161,14 +163,8 @@ class CourseEditScreen extends Screen
                     ->required(),
                 Select::make('transmission')
                     ->title(tkey('website.admin.courses.fields.transmission'))
-                    ->options([
-                        'manual' => tkey('website.transmissions.manual'),
-                        'automatic' => tkey('website.transmissions.automatic'),
-                    ])
+                    ->options($this->transmissionOptions())
                     ->required(),
-                Input::make('sort_order')
-                    ->type('number')
-                    ->title(tkey('website.admin.fields.sort_order')),
             ])->title(tkey('website.admin.sections.main')),
 
             TranslatableFields::input('name', 'website.courses.fields.name', [

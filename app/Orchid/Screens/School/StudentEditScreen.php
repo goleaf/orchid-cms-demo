@@ -16,8 +16,12 @@ use App\Actions\CreateStudentEnrollmentAction;
 use App\Actions\CreateStudentOnboardingTasksAction;
 use App\Actions\CreateStudentTaskAction;
 use App\Actions\UpdateStudentAction;
+use App\Enums\CourseFormat;
+use App\Enums\EnrollmentPaymentStatus;
 use App\Enums\EnrollmentStatus;
+use App\Enums\GearboxType;
 use App\Enums\StudentStatus;
+use App\Enums\StudentTaskPriority;
 use App\Http\Requests\Students\AddStudentNoteRequest;
 use App\Http\Requests\Students\ArchiveStudentRequest;
 use App\Http\Requests\Students\AssignStudentManagerRequest;
@@ -752,7 +756,7 @@ class StudentEditScreen extends Screen
      */
     private function taskPriorityOptions(): array
     {
-        return collect(['low', 'normal', 'high', 'urgent'])
+        return collect(StudentTaskPriority::values())
             ->mapWithKeys(fn (string $priority): array => [$priority => tkey('students.tasks.priorities.'.$priority)])
             ->all();
     }
@@ -785,7 +789,7 @@ class StudentEditScreen extends Screen
      */
     private function formatOptions(): array
     {
-        return collect(['offline', 'online', 'hybrid', 'individual', 'group'])
+        return collect(CourseFormat::values())
             ->mapWithKeys(fn (string $format): array => [$format => tkey('students.training_formats.'.$format)])
             ->all();
     }
@@ -795,7 +799,7 @@ class StudentEditScreen extends Screen
      */
     private function gearboxOptions(): array
     {
-        return collect(['manual', 'automatic', 'both', 'unknown'])
+        return collect(GearboxType::values())
             ->mapWithKeys(fn (string $type): array => [$type => tkey('students.gearbox.'.$type)])
             ->all();
     }
@@ -805,7 +809,7 @@ class StudentEditScreen extends Screen
      */
     private function paymentStatusOptions(): array
     {
-        return collect(['not_required', 'pending', 'partially_paid', 'paid', 'overdue'])
+        return collect(EnrollmentPaymentStatus::values())
             ->mapWithKeys(fn (string $status): array => [$status => tkey('students.payment_statuses.'.$status)])
             ->all();
     }

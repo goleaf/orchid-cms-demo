@@ -20,7 +20,7 @@ Block 12 adds the foundation for local owner reporting and operational analytics
 
 The first admin surface is a read-only owner dashboard in Orchid. It shows live counters, seeded widget definitions, saved reports, recent runs, and KPI snapshots.
 
-Dashboard definitions, widget definitions, and per-user layout preferences are described in [`docs/analytics-dashboard.md`](analytics-dashboard.md). Core dashboard, report, export, KPI, cache, date-range, and filter Actions are described in [`docs/analytics-actions.md`](analytics-actions.md). Analytics Form Requests are described in [`docs/analytics-requests.md`](analytics-requests.md). Analytics validation Rules and translation keys are described in [`docs/analytics-validation.md`](analytics-validation.md).
+Dashboard definitions, widget definitions, and per-user layout preferences are described in [`docs/analytics-dashboard.md`](analytics-dashboard.md). Report definitions, run history, and export records are described in [`docs/analytics-reports.md`](analytics-reports.md). Core dashboard, report, export, KPI, cache, date-range, and filter Actions are described in [`docs/analytics-actions.md`](analytics-actions.md). Analytics Form Requests are described in [`docs/analytics-requests.md`](analytics-requests.md). Analytics validation Rules and translation keys are described in [`docs/analytics-validation.md`](analytics-validation.md).
 
 ## Data Sources
 
@@ -39,9 +39,9 @@ The foundation intentionally reuses existing tables and relationships. It does n
 
 ## Reporting Model
 
-Report definitions describe reusable local reports such as lead pipeline, enrollment health, lesson utilization, payment summary, and exam readiness.
+Report definitions describe reusable local reports such as lead pipeline, enrollment health, lesson utilization, payment summary, and exam readiness. They now include a local report group, data source, filter schema, column schema, permissions, translated labels, active/system flags, and soft deletion.
 
-Report runs store the filters, period, status, summary, row count, start time, finish time, and result payload. Core Actions record completed or failed runs and create CSV, JSON, and spreadsheet-placeholder export records; later work can attach generated files behind the same Action boundary.
+Report runs store the user, filters, period, status, summary, row count, start time, finish time, result payload, error message, and metadata. Report exports store export format, disk, path, filename, MIME type, byte size, exporting user, export time, and metadata. The current foundation records exports and returns generated payloads; later work can attach generated files behind the same Action boundary.
 
 ## KPI Model
 
@@ -79,7 +79,7 @@ The foundation includes dedicated Form Requests and custom Rules for:
 - active reports,
 - active KPI metrics,
 - date ranges,
-- dashboard widget codes,
+- dashboard widget codes.
 - report filter schemas,
 - report export formats,
 - KPI target values and uniqueness,
@@ -96,6 +96,7 @@ Relevant verification:
 - `AnalyticsCoreActionsTest`
 - `AnalyticsFormRequestsTest`
 - `AnalyticsValidationRulesTest`
+- `AnalyticsReportDataModelTest`
 - `DrivingSchoolPlatformTest`
 - `SystemLocalizationTest`
 - `SuperadminRoleTest`

@@ -17,7 +17,7 @@ enum GroupStatus: string
 
     public function label(): string
     {
-        return tkey('training_groups.statuses.'.$this->value);
+        return tkey('education.groups.statuses.'.$this->value);
     }
 
     /**

@@ -2,9 +2,9 @@
 
 namespace App\Services\Exams;
 
-use App\Actions\CreateOrUpdateExamAdmissionAction;
 use App\Actions\RecordExamActivityAction;
 use App\Enums\DocumentStatus;
+use App\Enums\EnrollmentStatus as EnrollmentStatusEnum;
 use App\Enums\ExamAdmissionStatus;
 use App\Enums\ExamAttemptStatus as LegacyExamAttemptStatus;
 use App\Enums\ExamChecklistItemStatus;
@@ -13,8 +13,11 @@ use App\Enums\ExamRetakeStatus;
 use App\Enums\ExamSessionStatus as LegacyExamSessionStatus;
 use App\Enums\ExamType as LegacyExamType;
 use App\Enums\PaymentStatus;
+use App\Enums\StudentStatus as StudentStatusEnum;
+use App\Models\EnrollmentStatus;
 use App\Models\ExamActivity;
 use App\Models\ExamAdmission;
+use App\Models\ExamAdmissionChecklistItem;
 use App\Models\ExamAdmissionRule;
 use App\Models\ExamAttempt;
 use App\Models\ExamAttemptStatus as ExamAttemptStatusModel;
@@ -30,6 +33,7 @@ use App\Models\Payment;
 use App\Models\Student;
 use App\Models\StudentDocument;
 use App\Models\StudentEnrollment;
+use App\Models\StudentStatus;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -49,6 +53,24 @@ class ExamWorkflowService
         'completed' => ['archived'],
         'cancelled' => ['archived'],
         'archived' => [],
+    ];
+
+    private const REQUIRED_DOCUMENT_TYPES = [
+        'id_card',
+        'medical_certificate',
+        'training_contract',
+    ];
+
+    private const ADMISSION_CHECK_KEYS = [
+        'documents',
+        'payments',
+        'theory_hours',
+        'practice_hours',
+        'internal_theory',
+        'internal_practical',
+        'enrollment_status',
+        'student_status',
+        'manual_review',
     ];
 
     public function generateExamNumber(mixed $scheduledAt = null): string
@@ -268,6 +290,17 @@ class ExamWorkflowService
                 ]);
             }
 
+            $type = $session->typeRecord ?: $this->examType($session->type_id ?? $session->exam_type?->value ?? 'internal_theory');
+            $admissionResult = $this->checkAdmission($enrollment, $type, [
+                'exam_session_id' => $session->id,
+            ], $user);
+            $admissionAllowed = (bool) $admissionResult['allowed'];
+            $admissionBlockReason = $admissionResult['blocking_errors'][0] ?? null;
+            $participantAdmitted = $admitted && $admissionAllowed;
+            $participantBlockReason = $participantAdmitted
+                ? null
+                : ($blockReason ?? $admissionBlockReason);
+
             $participant = ExamParticipant::query()->updateOrCreate(
                 [
                     'exam_session_id' => $session->id,
@@ -275,9 +308,9 @@ class ExamWorkflowService
                     'enrollment_id' => $enrollment->id,
                 ],
                 [
-                    'status' => $admitted ? ExamParticipantStatus::Admitted->value : ExamParticipantStatus::Blocked->value,
-                    'admitted' => $admitted,
-                    'block_reason' => $blockReason,
+                    'status' => $participantAdmitted ? ExamParticipantStatus::Admitted->value : ExamParticipantStatus::Blocked->value,
+                    'admitted' => $participantAdmitted,
+                    'block_reason' => $participantBlockReason,
                     'registered_at' => now(),
                 ],
             );
@@ -327,74 +360,82 @@ class ExamWorkflowService
 
     /**
      * @param  array<string, mixed>  $data
+     * @return array{allowed: bool, blocking_errors: array<int, string>, warnings: array<int, string>, checklist: array<int, array<string, mixed>>, admission: ExamAdmission}
      */
-    public function checkAdmission(StudentEnrollment $enrollment, ExamType|int|string $type, array $data = [], ?User $user = null): ExamAdmission
+    public function checkAdmission(StudentEnrollment $enrollment, ExamType|int|string $type, array $data = [], ?User $user = null): array
     {
-        return DB::transaction(function () use ($enrollment, $type, $data, $user): ExamAdmission {
+        return DB::transaction(function () use ($enrollment, $type, $data, $user): array {
             $type = $this->examType($type);
-            $admission = app(CreateOrUpdateExamAdmissionAction::class)->handle($enrollment, [
-                'admission_type' => $this->legacyExamType($type)->value,
-                ...$data,
-            ], $user);
+            $rule = $this->admissionRule($enrollment, $type);
+            $admission = $this->upsertAdmissionForCheck($enrollment, $type, $rule, $data, $user);
+            $items = $this->evaluateAdmissionChecklist($admission, $enrollment, $type, $rule, $user);
+            $persistedItems = $this->syncAdmissionChecklist($admission, $items, $user);
 
-            $items = $this->buildAdmissionChecklist($admission, $type);
-            $open = $items->contains(fn (ExamChecklistItem $item): bool => $item->required && $item->status !== ExamChecklistItemStatus::Passed->value);
+            $session = filled($data['exam_session_id'] ?? null)
+                ? ExamSession::query()->find((int) $data['exam_session_id'])
+                : null;
+            $attempt = filled($data['attempt_id'] ?? null)
+                ? ExamAttempt::query()->find((int) $data['attempt_id'])
+                : null;
 
-            return $open
-                ? $this->blockAdmission($admission, tkey('exams.validation.enrollment_cannot_take_exam'), $user)
-                : $this->approveAdmission($admission, $user);
+            if ($session !== null || $attempt !== null) {
+                $this->syncSessionChecklist($enrollment, $items, $session, $attempt, $user);
+            }
+
+            $blockingErrors = $this->blockingAdmissionErrors($items);
+            $warnings = [];
+
+            if ($this->manualReviewPassed($items) && $blockingErrors !== []) {
+                $warnings = $blockingErrors;
+                $blockingErrors = [];
+            }
+
+            $allowed = $blockingErrors === [];
+            $this->syncAdmissionDecision($admission, $items, $allowed, $blockingErrors, $warnings, $user);
+
+            return [
+                'allowed' => $allowed,
+                'blocking_errors' => $blockingErrors,
+                'warnings' => $warnings,
+                'checklist' => $this->structuredChecklist($persistedItems),
+                'admission' => $admission->refresh(['checklistItems']),
+            ];
         });
     }
 
-    public function buildAdmissionChecklist(ExamAdmission|StudentEnrollment $subject, ExamType|int|string|null $type = null, ?ExamSession $session = null, ?ExamAttempt $attempt = null): Collection
-    {
-        $admission = $subject instanceof ExamAdmission ? $subject : null;
-        $enrollment = $subject instanceof StudentEnrollment ? $subject : $admission?->enrollment()->firstOrFail();
-        $type = $type === null && $admission !== null
-            ? $this->examType($admission->admission_type->value)
-            : $this->examType($type ?? 'internal_theory');
-        $rule = $this->admissionRule($enrollment, $type);
-        $studentId = $enrollment->student_profile_id;
+    public function buildAdmissionChecklist(
+        ExamAdmission|StudentEnrollment $subject,
+        ExamType|int|string|null $type = null,
+        ?ExamSession $session = null,
+        ?ExamAttempt $attempt = null,
+        ?User $user = null,
+    ): Collection {
+        return DB::transaction(function () use ($subject, $type, $session, $attempt, $user): Collection {
+            $admission = $subject instanceof ExamAdmission ? $subject : null;
+            $enrollment = $subject instanceof StudentEnrollment ? $subject : $admission?->enrollment()->firstOrFail();
+            $type = $type === null && $admission !== null
+                ? $this->examType($admission->admission_type->value)
+                : $this->examType($type ?? 'internal_theory');
+            $rule = $this->admissionRule($enrollment, $type);
+            $admission ??= $this->upsertAdmissionForCheck($enrollment, $type, $rule, [], $user);
+            $items = $this->evaluateAdmissionChecklist($admission, $enrollment, $type, $rule, $user);
+            $persistedItems = $this->syncAdmissionChecklist($admission, $items, $user);
 
-        $items = [
-            'identity_document' => $this->documentAccepted($enrollment, ['id_card']),
-            'medical_certificate' => $this->documentAccepted($enrollment, ['medical_certificate']),
-            'training_contract' => $this->documentAccepted($enrollment, ['training_contract', 'contract']),
-            'payment_clearance' => $this->paymentsCompleted($enrollment, $rule),
-            'theory_hours' => $this->theoryHoursMet($enrollment, $rule?->required_theory_hours),
-        ];
+            if ($session !== null || $attempt !== null) {
+                $this->syncSessionChecklist($enrollment, $items, $session, $attempt, $user);
+            }
 
-        if ((float) ($rule?->required_practice_hours ?? 0) > 0.0 || $type->is_practical) {
-            $items['practice_hours'] = $this->practiceHoursMet($enrollment, $rule?->required_practice_hours);
-        }
-
-        if ($rule?->require_internal_exam_passed) {
-            $items['internal_exam_passed'] = $this->internalExamPassed($enrollment, $type);
-        }
-
-        return collect($items)->map(function (bool $passed, string $key) use ($session, $attempt, $studentId, $enrollment): ExamChecklistItem {
-            return ExamChecklistItem::query()->updateOrCreate(
-                [
-                    'exam_session_id' => $session?->id,
-                    'attempt_id' => $attempt?->id,
-                    'student_id' => $studentId,
-                    'enrollment_id' => $enrollment->id,
-                    'key' => $key,
-                ],
-                [
-                    'title_translations' => null,
-                    'status' => $passed ? ExamChecklistItemStatus::Passed->value : ExamChecklistItemStatus::Pending->value,
-                    'required' => true,
-                ],
-            );
-        })->values();
+            return $persistedItems;
+        });
     }
 
     public function approveAdmission(ExamAdmission $admission, ?User $user = null): ExamAdmission
     {
+        $this->syncManualReview($admission, true, null, $user);
+
         $admission->forceFill([
             'status' => ExamAdmissionStatus::Ready,
-            'checklist_status' => 'passed',
+            'checklist_status' => ExamChecklistItemStatus::Passed->value,
             'admitted_at' => $admission->admitted_at ?? now(),
             'rejected_at' => null,
             'updated_by_id' => $user?->id ?? $admission->updated_by_id,
@@ -414,9 +455,11 @@ class ExamWorkflowService
 
     public function blockAdmission(ExamAdmission $admission, ?string $reason = null, ?User $user = null): ExamAdmission
     {
+        $this->syncManualReview($admission, false, $reason, $user);
+
         $admission->forceFill([
             'status' => ExamAdmissionStatus::Blocked,
-            'checklist_status' => 'failed',
+            'checklist_status' => ExamChecklistItemStatus::Failed->value,
             'rejected_at' => now(),
             'internal_notes' => $reason ?? $admission->internal_notes,
             'updated_by_id' => $user?->id ?? $admission->updated_by_id,
@@ -433,6 +476,54 @@ class ExamWorkflowService
         );
 
         return $admission->refresh();
+    }
+
+    /**
+     * @return Collection<int, array{participant: ExamParticipant, admission: ?ExamAdmission, allowed: bool, blocking_errors: array<int, string>, warnings: array<int, string>}>
+     */
+    public function recheckSessionAdmissions(ExamSession $session, ?User $user = null): Collection
+    {
+        return DB::transaction(function () use ($session, $user): Collection {
+            $session->loadMissing(['participants.enrollment', 'typeRecord']);
+            $type = $session->typeRecord ?: $this->examType($session->type_id ?? $session->exam_type?->value ?? 'internal_theory');
+
+            return $session->participants->map(function (ExamParticipant $participant) use ($session, $type, $user): array {
+                if ($participant->enrollment === null) {
+                    $participant->forceFill([
+                        'status' => ExamParticipantStatus::Blocked->value,
+                        'admitted' => false,
+                        'block_reason' => 'exams.validation.enrollment_cannot_take_exam',
+                    ])->save();
+
+                    return [
+                        'participant' => $participant->refresh(),
+                        'admission' => null,
+                        'allowed' => false,
+                        'blocking_errors' => ['exams.validation.enrollment_cannot_take_exam'],
+                        'warnings' => [],
+                    ];
+                }
+
+                $result = $this->checkAdmission($participant->enrollment, $type, [
+                    'exam_session_id' => $session->id,
+                ], $user);
+                $allowed = (bool) $result['allowed'];
+
+                $participant->forceFill([
+                    'status' => $allowed ? ExamParticipantStatus::Admitted->value : ExamParticipantStatus::Blocked->value,
+                    'admitted' => $allowed,
+                    'block_reason' => $allowed ? null : ($result['blocking_errors'][0] ?? 'exams.validation.enrollment_cannot_take_exam'),
+                ])->save();
+
+                return [
+                    'participant' => $participant->refresh(),
+                    'admission' => $result['admission'],
+                    'allowed' => $allowed,
+                    'blocking_errors' => $result['blocking_errors'],
+                    'warnings' => $result['warnings'],
+                ];
+            })->values();
+        });
     }
 
     /**
@@ -453,8 +544,14 @@ class ExamWorkflowService
                 ->first();
 
             if ($participant === null) {
-                $this->addStudentToSession($session, $student, $enrollment, $user, (bool) ($data['allow_overbooking'] ?? false));
+                $participant = $this->addStudentToSession($session, $student, $enrollment, $user, (bool) ($data['allow_overbooking'] ?? false));
                 $session = $session->refresh();
+            }
+
+            if (! (bool) $participant->admitted) {
+                throw ValidationException::withMessages([
+                    'enrollment_id' => tkey('exams.validation.enrollment_cannot_take_exam'),
+                ]);
             }
 
             $status = $this->attemptStatus($data['status_id'] ?? $data['status'] ?? 'allowed');
@@ -778,6 +875,420 @@ class ExamWorkflowService
         ]);
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function upsertAdmissionForCheck(
+        StudentEnrollment $enrollment,
+        ExamType $type,
+        ?ExamAdmissionRule $rule,
+        array $data,
+        ?User $user,
+    ): ExamAdmission {
+        $legacyType = $this->legacyExamType($type);
+        $student = $enrollment->student()->firstOrFail();
+        $requiredTheoryHours = $rule?->required_theory_hours ?? $enrollment->total_theory_hours;
+        $requiredPracticeHours = $rule?->required_practice_hours ?? ($type->is_practical ? $enrollment->total_practice_hours : 0);
+
+        return ExamAdmission::query()->updateOrCreate(
+            [
+                'enrollment_id' => $enrollment->id,
+                'admission_type' => $legacyType->value,
+            ],
+            [
+                'student_profile_id' => $student->id,
+                'training_group_id' => $data['training_group_id'] ?? $enrollment->training_group_id,
+                'training_program_id' => $data['training_program_id'] ?? $enrollment->training_program_id,
+                'branch_id' => $data['branch_id'] ?? $enrollment->branch_id,
+                'instructor_id' => $data['instructor_id'] ?? $enrollment->instructor_id,
+                'status' => ExamAdmissionStatus::Checking,
+                'required_theory_hours' => $requiredTheoryHours,
+                'completed_theory_hours' => $enrollment->completed_theory_hours,
+                'required_practice_hours' => $requiredPracticeHours,
+                'completed_practice_hours' => $enrollment->completed_practice_hours,
+                'documents_status' => ExamChecklistItemStatus::Pending->value,
+                'payment_status' => ExamChecklistItemStatus::Pending->value,
+                'checklist_status' => ExamChecklistItemStatus::Pending->value,
+                'expires_at' => $data['expires_at'] ?? null,
+                'notes' => $data['notes'] ?? null,
+                'internal_notes' => $data['internal_notes'] ?? null,
+                'created_by_id' => $data['created_by_id'] ?? $user?->id,
+                'updated_by_id' => $user?->id,
+            ],
+        )->refresh();
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function evaluateAdmissionChecklist(
+        ExamAdmission $admission,
+        StudentEnrollment $enrollment,
+        ExamType $type,
+        ?ExamAdmissionRule $rule,
+        ?User $user,
+    ): array {
+        $requiredTheoryHours = (float) ($rule?->required_theory_hours ?? $enrollment->total_theory_hours ?? 0);
+        $requiredPracticeHours = (float) ($rule?->required_practice_hours ?? ($type->is_practical ? $enrollment->total_practice_hours : 0) ?? 0);
+        $documentsRequired = $rule?->require_documents ?? true;
+        $paymentsRequired = $rule?->require_no_debt ?? true;
+        $theoryRequired = $requiredTheoryHours > 0.0;
+        $practiceRequired = $requiredPracticeHours > 0.0;
+        $internalTheoryRequired = $this->internalTheoryRequired($type, $rule);
+        $internalPracticalRequired = $this->internalPracticalRequired($type, $rule);
+
+        return [
+            $this->automaticChecklistItem(
+                'documents',
+                $documentsRequired,
+                $this->documentsAccepted($enrollment, $rule),
+                'exams.admissions.checks.documents_passed',
+                'exams.validation.documents_required',
+                [
+                    'required_document_types' => self::REQUIRED_DOCUMENT_TYPES,
+                    'missing_document_types' => $this->missingDocumentTypes($enrollment),
+                ],
+                $user,
+            ),
+            $this->automaticChecklistItem(
+                'payments',
+                $paymentsRequired,
+                $this->paymentsCompleted($enrollment, $rule),
+                'exams.admissions.checks.payments_passed',
+                'exams.validation.payment_required',
+                [
+                    'payment_status' => $enrollment->payment_status,
+                    'contracted_price_cents' => $enrollment->contracted_price_cents,
+                    'paid_cents' => $enrollment->paid_cents,
+                    'balance_cents' => $enrollment->balanceCents(),
+                ],
+                $user,
+            ),
+            $this->automaticChecklistItem(
+                'theory_hours',
+                $theoryRequired,
+                $this->theoryHoursMet($enrollment, $requiredTheoryHours),
+                'exams.admissions.checks.theory_hours_passed',
+                'exams.validation.theory_hours_required',
+                [
+                    'required' => $requiredTheoryHours,
+                    'completed' => (float) $enrollment->completed_theory_hours,
+                ],
+                $user,
+            ),
+            $this->automaticChecklistItem(
+                'practice_hours',
+                $practiceRequired,
+                $this->practiceHoursMet($enrollment, $requiredPracticeHours),
+                'exams.admissions.checks.practice_hours_passed',
+                'exams.validation.practice_hours_required',
+                [
+                    'required' => $requiredPracticeHours,
+                    'completed' => (float) $enrollment->completed_practice_hours,
+                ],
+                $user,
+            ),
+            $this->automaticChecklistItem(
+                'internal_theory',
+                $internalTheoryRequired,
+                $this->internalTheoryExamPassed($enrollment),
+                'exams.admissions.checks.internal_theory_passed',
+                'exams.validation.internal_exam_required',
+                ['exam_type' => $type->code],
+                $user,
+            ),
+            $this->automaticChecklistItem(
+                'internal_practical',
+                $internalPracticalRequired,
+                $this->internalPracticalExamPassed($enrollment),
+                'exams.admissions.checks.internal_practical_passed',
+                'exams.validation.internal_exam_required',
+                ['exam_type' => $type->code],
+                $user,
+            ),
+            $this->automaticChecklistItem(
+                'enrollment_status',
+                true,
+                $this->enrollmentActiveForExam($enrollment),
+                'exams.admissions.checks.enrollment_active',
+                'exams.validation.enrollment_inactive',
+                ['status' => $enrollment->status?->value ?? (string) $enrollment->status],
+                $user,
+            ),
+            $this->automaticChecklistItem(
+                'student_status',
+                true,
+                $this->studentActiveForExam($enrollment),
+                'exams.admissions.checks.student_active',
+                'exams.validation.student_inactive',
+                ['student_id' => $enrollment->student_profile_id],
+                $user,
+            ),
+            $this->manualReviewChecklistItem($admission, $user),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $meta
+     * @return array<string, mixed>
+     */
+    private function automaticChecklistItem(
+        string $key,
+        bool $required,
+        bool $passed,
+        string $passedMessageKey,
+        string $failedMessageKey,
+        array $meta,
+        ?User $user,
+    ): array {
+        $status = ! $required
+            ? ExamChecklistItemStatus::Waived->value
+            : ($passed ? ExamChecklistItemStatus::Passed->value : ExamChecklistItemStatus::Failed->value);
+
+        return [
+            'key' => $key,
+            'required' => $required,
+            'passed' => ! $required || $passed,
+            'status' => $status,
+            'message_key' => ! $required
+                ? 'exams.admissions.checks.'.$key.'_not_required'
+                : ($passed ? $passedMessageKey : $failedMessageKey),
+            'checked_at' => now(),
+            'checked_by' => $user?->id,
+            'meta' => $meta,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function manualReviewChecklistItem(ExamAdmission $admission, ?User $user): array
+    {
+        $item = $admission->checklistItems()
+            ->where(function ($query): void {
+                $query->where('code', 'manual_review')
+                    ->orWhere('key', 'manual_review');
+            })
+            ->first();
+
+        if ($item?->status === ExamChecklistItemStatus::Passed) {
+            return [
+                'key' => 'manual_review',
+                'required' => false,
+                'passed' => true,
+                'status' => ExamChecklistItemStatus::Passed->value,
+                'message_key' => 'exams.admissions.checks.manual_approved',
+                'checked_at' => $item->checked_at ?? now(),
+                'checked_by' => $item->checked_by ?? $item->checked_by_id ?? $user?->id,
+                'meta' => ['override' => true],
+            ];
+        }
+
+        if ($item?->status === ExamChecklistItemStatus::Failed) {
+            return [
+                'key' => 'manual_review',
+                'required' => true,
+                'passed' => false,
+                'status' => ExamChecklistItemStatus::Failed->value,
+                'message_key' => $item->message_key ?: 'exams.validation.manual_blocked',
+                'checked_at' => $item->checked_at ?? now(),
+                'checked_by' => $item->checked_by ?? $item->checked_by_id ?? $user?->id,
+                'meta' => ['override' => true],
+            ];
+        }
+
+        return [
+            'key' => 'manual_review',
+            'required' => false,
+            'passed' => false,
+            'status' => ExamChecklistItemStatus::Pending->value,
+            'message_key' => 'exams.admissions.checks.manual_review_pending',
+            'checked_at' => now(),
+            'checked_by' => $user?->id,
+            'meta' => ['override' => false],
+        ];
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $items
+     * @return Collection<int, ExamAdmissionChecklistItem>
+     */
+    private function syncAdmissionChecklist(ExamAdmission $admission, array $items, ?User $user): Collection
+    {
+        $keys = collect($items)->pluck('key')->filter()->values()->all();
+
+        $admission->checklistItems()
+            ->whereNotIn('code', $keys)
+            ->delete();
+
+        foreach ($items as $item) {
+            ExamAdmissionChecklistItem::query()->updateOrCreate(
+                [
+                    'exam_admission_id' => $admission->id,
+                    'code' => (string) $item['key'],
+                ],
+                [
+                    'key' => (string) $item['key'],
+                    'title_translations' => null,
+                    'required' => (bool) ($item['required'] ?? true),
+                    'passed' => (bool) ($item['passed'] ?? false),
+                    'status' => $item['status'] ?? ExamChecklistItemStatus::Pending->value,
+                    'message_key' => $item['message_key'] ?? null,
+                    'checked_at' => $item['checked_at'] ?? now(),
+                    'checked_by_id' => $item['checked_by'] ?? $user?->id,
+                    'checked_by' => $item['checked_by'] ?? $user?->id,
+                    'notes' => $item['notes'] ?? null,
+                    'meta' => $item['meta'] ?? null,
+                ],
+            );
+        }
+
+        return $admission->checklistItems()
+            ->whereIn('code', $keys)
+            ->get()
+            ->sortBy(fn (ExamAdmissionChecklistItem $item): int => array_search($item->code, self::ADMISSION_CHECK_KEYS, true) ?: 0)
+            ->values();
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $items
+     */
+    private function syncSessionChecklist(
+        StudentEnrollment $enrollment,
+        array $items,
+        ?ExamSession $session,
+        ?ExamAttempt $attempt,
+        ?User $user,
+    ): void {
+        foreach ($items as $item) {
+            ExamChecklistItem::query()->updateOrCreate(
+                [
+                    'exam_session_id' => $session?->id,
+                    'attempt_id' => $attempt?->id,
+                    'student_id' => $enrollment->student_profile_id,
+                    'enrollment_id' => $enrollment->id,
+                    'key' => (string) $item['key'],
+                ],
+                [
+                    'title_translations' => null,
+                    'status' => $item['status'] ?? ExamChecklistItemStatus::Pending->value,
+                    'required' => (bool) ($item['required'] ?? true),
+                    'passed' => (bool) ($item['passed'] ?? false),
+                    'message_key' => $item['message_key'] ?? null,
+                    'checked_at' => $item['checked_at'] ?? now(),
+                    'checked_by' => $item['checked_by'] ?? $user?->id,
+                ],
+            );
+        }
+    }
+
+    private function syncManualReview(ExamAdmission $admission, bool $approved, ?string $reason, ?User $user): void
+    {
+        $messageKey = $approved
+            ? 'exams.admissions.checks.manual_approved'
+            : (str_starts_with((string) $reason, 'exams.') ? (string) $reason : 'exams.validation.manual_blocked');
+
+        ExamAdmissionChecklistItem::query()->updateOrCreate(
+            [
+                'exam_admission_id' => $admission->id,
+                'code' => 'manual_review',
+            ],
+            [
+                'key' => 'manual_review',
+                'title_translations' => null,
+                'required' => ! $approved,
+                'passed' => $approved,
+                'status' => $approved ? ExamChecklistItemStatus::Passed->value : ExamChecklistItemStatus::Failed->value,
+                'message_key' => $messageKey,
+                'checked_at' => now(),
+                'checked_by_id' => $user?->id,
+                'checked_by' => $user?->id,
+                'notes' => $approved || str_starts_with((string) $reason, 'exams.') ? null : $reason,
+                'meta' => ['override' => true],
+            ],
+        );
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $items
+     * @param  array<int, string>  $blockingErrors
+     * @param  array<int, string>  $warnings
+     */
+    private function syncAdmissionDecision(
+        ExamAdmission $admission,
+        array $items,
+        bool $allowed,
+        array $blockingErrors,
+        array $warnings,
+        ?User $user,
+    ): void {
+        $itemsByKey = collect($items)->keyBy('key');
+
+        $admission->forceFill([
+            'status' => $allowed ? ExamAdmissionStatus::Ready : ExamAdmissionStatus::Blocked,
+            'documents_status' => data_get($itemsByKey->get('documents'), 'status', ExamChecklistItemStatus::Pending->value),
+            'payment_status' => data_get($itemsByKey->get('payments'), 'status', ExamChecklistItemStatus::Pending->value),
+            'checklist_status' => $allowed ? ExamChecklistItemStatus::Passed->value : ExamChecklistItemStatus::Failed->value,
+            'admitted_at' => $allowed ? ($admission->admitted_at ?? now()) : null,
+            'rejected_at' => $allowed ? null : now(),
+            'internal_notes' => $allowed ? $admission->internal_notes : ($blockingErrors[0] ?? $admission->internal_notes),
+            'meta' => [
+                ...(is_array($admission->meta) ? $admission->meta : []),
+                'admission_check' => [
+                    'allowed' => $allowed,
+                    'blocking_errors' => $blockingErrors,
+                    'warnings' => $warnings,
+                    'checked_at' => now()->toISOString(),
+                ],
+            ],
+            'updated_by_id' => $user?->id ?? $admission->updated_by_id,
+        ])->save();
+    }
+
+    /**
+     * @param  Collection<int, ExamAdmissionChecklistItem>  $items
+     * @return array<int, array<string, mixed>>
+     */
+    private function structuredChecklist(Collection $items): array
+    {
+        return $items->map(fn (ExamAdmissionChecklistItem $item): array => [
+            'key' => $item->key ?: $item->code,
+            'required' => (bool) $item->required,
+            'passed' => (bool) $item->passed,
+            'status' => $item->status->value,
+            'message_key' => $item->message_key,
+            'checked_at' => $item->checked_at?->toISOString(),
+            'checked_by' => $item->checked_by ?? $item->checked_by_id,
+        ])->values()->all();
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $items
+     * @return array<int, string>
+     */
+    private function blockingAdmissionErrors(array $items): array
+    {
+        return collect($items)
+            ->filter(fn (array $item): bool => (bool) ($item['required'] ?? true) && ! (bool) ($item['passed'] ?? false))
+            ->pluck('message_key')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $items
+     */
+    private function manualReviewPassed(array $items): bool
+    {
+        $manual = collect($items)->firstWhere('key', 'manual_review');
+
+        return is_array($manual)
+            && ($manual['status'] ?? null) === ExamChecklistItemStatus::Passed->value
+            && (bool) ($manual['passed'] ?? false);
+    }
+
     public function examType(ExamType|int|string|null $type): ExamType
     {
         if ($type instanceof ExamType) {
@@ -902,13 +1413,76 @@ class ExamWorkflowService
     {
         $type = $this->examType($type ?? 'internal_theory');
         $rule = $this->admissionRule($enrollment, $type);
+        $requiredPracticeHours = $rule?->required_practice_hours ?? ($type->is_practical ? $enrollment->total_practice_hours : 0);
 
-        return ! in_array($enrollment->status?->value ?? (string) $enrollment->status, ['cancelled', 'archived'], true)
+        return $this->enrollmentActiveForExam($enrollment)
+            && $this->studentActiveForExam($enrollment)
             && $this->documentsAccepted($enrollment, $rule)
             && $this->paymentsCompleted($enrollment, $rule)
             && $this->theoryHoursMet($enrollment, $rule?->required_theory_hours)
-            && $this->practiceHoursMet($enrollment, $rule?->required_practice_hours)
+            && $this->practiceHoursMet($enrollment, $requiredPracticeHours)
             && $this->internalExamPassed($enrollment, $type);
+    }
+
+    public function enrollmentActiveForExam(StudentEnrollment $enrollment): bool
+    {
+        if (method_exists($enrollment, 'trashed') && $enrollment->trashed()) {
+            return false;
+        }
+
+        if ($enrollment->status_id !== null) {
+            $status = EnrollmentStatus::query()->whereKey($enrollment->status_id)->first();
+
+            if ($status !== null) {
+                return $status->is_active && ! $status->is_cancelled;
+            }
+        }
+
+        $status = $enrollment->status;
+
+        if ($status instanceof EnrollmentStatusEnum) {
+            return $status->isActiveWorkflow();
+        }
+
+        return ! in_array((string) $status, [
+            EnrollmentStatusEnum::Draft->value,
+            EnrollmentStatusEnum::Cancelled->value,
+            EnrollmentStatusEnum::Expelled->value,
+            EnrollmentStatusEnum::Archived->value,
+        ], true);
+    }
+
+    public function studentActiveForExam(Student|StudentEnrollment $subject): bool
+    {
+        $student = $subject instanceof StudentEnrollment ? $subject->student()->first() : $subject;
+
+        if ($student === null) {
+            return false;
+        }
+
+        if (method_exists($student, 'trashed') && $student->trashed()) {
+            return false;
+        }
+
+        if ($student->status_id !== null) {
+            $status = StudentStatus::query()->whereKey($student->status_id)->first();
+
+            if ($status !== null) {
+                return $status->is_active && ! $status->is_blocked && ! $status->is_archived;
+            }
+        }
+
+        $status = $student->status;
+
+        if ($status instanceof StudentStatusEnum) {
+            return $status->isActiveWorkflow() && ! $status->isBlocked() && ! $status->isArchived();
+        }
+
+        return ! in_array((string) $status, [
+            StudentStatusEnum::Inactive->value,
+            StudentStatusEnum::Blocked->value,
+            StudentStatusEnum::Archived->value,
+        ], true);
     }
 
     public function documentsAccepted(StudentEnrollment $enrollment, ?ExamAdmissionRule $rule = null): bool
@@ -929,6 +1503,10 @@ class ExamWorkflowService
         }
 
         if (in_array((string) $enrollment->payment_status, ['paid', 'completed', 'settled'], true)) {
+            return true;
+        }
+
+        if ((int) $enrollment->contracted_price_cents <= 0) {
             return true;
         }
 
@@ -962,16 +1540,33 @@ class ExamWorkflowService
     public function internalExamPassed(StudentEnrollment $enrollment, ExamType|int|string|null $type = null): bool
     {
         $type = $this->examType($type ?? 'state_theory');
+        $rule = $this->admissionRule($enrollment, $type);
 
-        if (! $type->is_official) {
+        if (! $this->internalTheoryRequired($type, $rule) && ! $this->internalPracticalRequired($type, $rule)) {
             return true;
         }
 
-        $requiredType = $type->is_practical ? LegacyExamType::InternalPractical : LegacyExamType::InternalTheory;
+        if ($this->internalTheoryRequired($type, $rule) && ! $this->internalTheoryExamPassed($enrollment)) {
+            return false;
+        }
 
+        return ! $this->internalPracticalRequired($type, $rule) || $this->internalPracticalExamPassed($enrollment);
+    }
+
+    public function internalTheoryExamPassed(StudentEnrollment $enrollment): bool
+    {
         return ExamAttempt::query()
             ->where('enrollment_id', $enrollment->id)
-            ->where('exam_type', $requiredType->value)
+            ->where('exam_type', LegacyExamType::InternalTheory->value)
+            ->where('passed', true)
+            ->exists();
+    }
+
+    public function internalPracticalExamPassed(StudentEnrollment $enrollment): bool
+    {
+        return ExamAttempt::query()
+            ->where('enrollment_id', $enrollment->id)
+            ->where('exam_type', LegacyExamType::InternalPractical->value)
             ->where('passed', true)
             ->exists();
     }
@@ -1148,6 +1743,33 @@ class ExamWorkflowService
             })
             ->where('status', DocumentStatus::Verified->value)
             ->exists();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function missingDocumentTypes(StudentEnrollment $enrollment): array
+    {
+        return collect(self::REQUIRED_DOCUMENT_TYPES)
+            ->reject(fn (string $type): bool => $this->documentAccepted($enrollment, [$type]))
+            ->values()
+            ->all();
+    }
+
+    private function internalTheoryRequired(ExamType $type, ?ExamAdmissionRule $rule): bool
+    {
+        if (! (bool) ($rule?->require_internal_exam_passed ?? false)) {
+            return false;
+        }
+
+        return $type->is_practical || ($type->is_official && $type->is_theory);
+    }
+
+    private function internalPracticalRequired(ExamType $type, ?ExamAdmissionRule $rule): bool
+    {
+        return (bool) ($rule?->require_internal_exam_passed ?? false)
+            && $type->is_official
+            && $type->is_practical;
     }
 
     private function legacyExamType(ExamType $type): LegacyExamType

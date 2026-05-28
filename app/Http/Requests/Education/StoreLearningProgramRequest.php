@@ -15,7 +15,11 @@ class StoreLearningProgramRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('education.manage_topics') ?? false;
+        return $this->user()?->hasAnyAccess([
+            'education.programs.create',
+            'education.programs.update',
+            'education.manage_topics',
+        ]) ?? false;
     }
 
     /**
@@ -23,10 +27,13 @@ class StoreLearningProgramRequest extends FormRequest
      */
     public function rules(): array
     {
+        $programId = $this->integer('program.id') ?: null;
+
         return [
+            'program.id' => ['nullable', 'integer', Rule::exists(LearningProgram::class, 'id')],
             'program.course_id' => ['nullable', 'integer', Rule::exists(Course::class, 'id')],
             'program.course_category_id' => ['nullable', 'integer', Rule::exists(CourseCategory::class, 'id')],
-            'program.code' => ['nullable', 'string', 'max:120', new DictionaryCodeRule, Rule::unique(LearningProgram::class, 'code')],
+            'program.code' => ['nullable', 'string', 'max:120', new DictionaryCodeRule, Rule::unique(LearningProgram::class, 'code')->ignore($programId)],
             'program.name_translations' => ['required', 'array', new TranslatedLearningProgramNameRequiredRule],
             'program.name_translations.*' => ['nullable', 'string', 'max:255'],
             'program.description_translations' => ['nullable', 'array'],
@@ -43,6 +50,7 @@ class StoreLearningProgramRequest extends FormRequest
     public function programData(): array
     {
         $data = $this->validated('program');
+        unset($data['id']);
 
         foreach (['course_id', 'course_category_id'] as $field) {
             $data[$field] = filled($data[$field] ?? null) ? (int) $data[$field] : null;

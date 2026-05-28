@@ -12,7 +12,10 @@ class RemoveStudentFromTrainingGroupRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('education.manage_memberships') ?? false;
+        return $this->user()?->hasAnyAccess([
+            'education.groups.manage_students',
+            'education.manage_memberships',
+        ]) ?? false;
     }
 
     /**

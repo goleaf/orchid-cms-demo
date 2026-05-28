@@ -47,9 +47,13 @@ class TrainingGroupStatusListScreen extends Screen
                     'is_default',
                     'is_active',
                     'is_public',
+                    'is_open_for_enrollment',
                     'accepts_enrollments',
                     'is_in_progress',
                     'is_final',
+                    'is_success',
+                    'is_cancelled',
+                    'is_archived',
                 ])
                 ->ordered()
                 ->simplePaginate(20)
@@ -72,7 +76,7 @@ class TrainingGroupStatusListScreen extends Screen
 
     public function permission(): iterable
     {
-        return ['education.manage_statuses'];
+        return ['education.groups.manage_statuses', 'education.manage_statuses'];
     }
 
     public function commandBar(): iterable
@@ -119,6 +123,9 @@ class TrainingGroupStatusListScreen extends Screen
                 Switcher::make('status.is_public')
                     ->sendTrueOrFalse()
                     ->title(tkey('education.statuses.fields.is_public')),
+                Switcher::make('status.is_open_for_enrollment')
+                    ->sendTrueOrFalse()
+                    ->title(tkey('education.statuses.fields.is_open_for_enrollment')),
                 Switcher::make('status.accepts_enrollments')
                     ->sendTrueOrFalse()
                     ->title(tkey('education.statuses.fields.accepts_enrollments')),
@@ -128,6 +135,15 @@ class TrainingGroupStatusListScreen extends Screen
                 Switcher::make('status.is_final')
                     ->sendTrueOrFalse()
                     ->title(tkey('crm.dictionaries.fields.is_final')),
+                Switcher::make('status.is_success')
+                    ->sendTrueOrFalse()
+                    ->title(tkey('crm.dictionaries.fields.is_success')),
+                Switcher::make('status.is_cancelled')
+                    ->sendTrueOrFalse()
+                    ->title(tkey('education.statuses.fields.is_cancelled')),
+                Switcher::make('status.is_archived')
+                    ->sendTrueOrFalse()
+                    ->title(tkey('education.statuses.fields.is_archived')),
             ])->title($this->status?->exists ? tkey('crm.dictionaries.edit_title') : tkey('crm.dictionaries.create_title')),
 
             TranslatableFields::input('status.name', 'crm.dictionaries.fields.name_translations', [
@@ -150,6 +166,8 @@ class TrainingGroupStatusListScreen extends Screen
                     ->render(fn (TrainingGroupStatus $status): string => $status->is_default ? tkey('common.status.yes') : tkey('common.status.no')),
                 TD::make('accepts_enrollments', tkey('education.statuses.fields.accepts_enrollments'))
                     ->render(fn (TrainingGroupStatus $status): string => $status->accepts_enrollments ? tkey('common.status.yes') : tkey('common.status.no')),
+                TD::make('is_open_for_enrollment', tkey('education.statuses.fields.is_open_for_enrollment'))
+                    ->render(fn (TrainingGroupStatus $status): string => $status->is_open_for_enrollment ? tkey('common.status.yes') : tkey('common.status.no')),
                 TD::make('is_active', tkey('crm.dictionaries.fields.is_active'))
                     ->render(fn (TrainingGroupStatus $status): string => $status->is_active ? tkey('common.status.active') : tkey('common.status.inactive')),
                 TD::make('sort_order', tkey('crm.dictionaries.fields.sort_order'))
@@ -184,7 +202,7 @@ class TrainingGroupStatusListScreen extends Screen
 
     public function delete(Request $request, DeleteTrainingGroupStatusAction $deleteStatus): RedirectResponse
     {
-        abort_unless($request->user()?->hasAccess('education.manage_statuses'), 403);
+        abort_unless($request->user()?->hasAnyAccess(['education.groups.manage_statuses', 'education.manage_statuses']), 403);
 
         $deleteStatus->handle((int) $request->input('record'));
 

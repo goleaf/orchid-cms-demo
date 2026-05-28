@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\CourseFormat;
+use App\Enums\TransmissionType;
 use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\TrainingProgram;
 use App\Services\TranslatableContentManager;
@@ -34,11 +36,11 @@ class TrainingProgramRequest extends FormRequest
                 Rule::unique('training_programs', 'slug')->ignore($programId),
             ],
             'program.license_category' => ['required', 'string', 'max:40'],
-            'program.transmission' => ['required', 'string', 'max:40'],
+            'program.transmission' => ['required', 'string', 'max:40', Rule::enum(TransmissionType::class)],
             'program.theory_hours' => ['required', 'integer', 'min:0', 'max:1000'],
             'program.practice_hours' => ['required', 'integer', 'min:0', 'max:1000'],
             'program.duration_weeks' => ['required', 'integer', 'min:1', 'max:200'],
-            'program.format' => ['required', Rule::in(['offline', 'online', 'mixed'])],
+            'program.format' => ['required', Rule::enum(CourseFormat::class)],
             'program.price_eur' => ['required', 'numeric', 'min:0', 'max:100000'],
             'program.old_price_eur' => ['nullable', 'numeric', 'min:0', 'max:100000'],
             'program.image_path' => ['nullable', 'string', 'max:255'],

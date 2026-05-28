@@ -2,8 +2,11 @@
 
 namespace App\Orchid\Screens\Website;
 
+use App\Actions\MoveSortableOrderAction;
 use App\Models\PricingPackage;
 use App\Orchid\Screens\Website\Concerns\BuildsWebsiteScreenPayloads;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
@@ -15,15 +18,19 @@ class PricingPackageListScreen extends Screen
 
     public function query(): iterable
     {
+        $packages = PricingPackage::query()
+            ->forAdminList()
+            ->with([
+                'course:id,title,title_translations,name_translations,slug',
+                'category:id,name_translations,code,slug',
+            ])
+            ->ordered()
+            ->simplePaginate(15);
+
+        $this->applyOrderControlState($packages, PricingPackage::class);
+
         return [
-            'packages' => PricingPackage::query()
-                ->forAdminList()
-                ->with([
-                    'course:id,title,title_translations,name_translations,slug',
-                    'category:id,name_translations,code,slug',
-                ])
-                ->ordered()
-                ->simplePaginate(15),
+            'packages' => $packages,
         ];
     }
 
@@ -72,9 +79,9 @@ class PricingPackageListScreen extends Screen
                 TD::make('is_featured', tkey('website.admin.fields.is_featured'))
                     ->alignCenter()
                     ->render(fn (PricingPackage $package): string => $this->booleanBadge($package->is_featured)),
-                TD::make('sort_order', tkey('website.admin.fields.sort_order'))
+                TD::make('order_controls', tkey('website.admin.fields.position'))
                     ->alignCenter()
-                    ->render(fn (PricingPackage $package): string => (string) $package->sort_order),
+                    ->render(fn (PricingPackage $package): string => $this->orderControls($package)),
                 TD::make('actions', tkey('crm.leads.columns.actions'))
                     ->alignRight()
                     ->render(fn (PricingPackage $package): string => (string) Link::make(tkey('common.actions.edit'))
@@ -82,5 +89,15 @@ class PricingPackageListScreen extends Screen
                         ->route('platform.website.pricing.edit', $package)),
             ]),
         ];
+    }
+
+    public function moveUp(Request $request, MoveSortableOrderAction $move): RedirectResponse
+    {
+        return $this->moveSortable($request, PricingPackage::class, 'platform.website.pricing', $move, MoveSortableOrderAction::UP);
+    }
+
+    public function moveDown(Request $request, MoveSortableOrderAction $move): RedirectResponse
+    {
+        return $this->moveSortable($request, PricingPackage::class, 'platform.website.pricing', $move, MoveSortableOrderAction::DOWN);
     }
 }

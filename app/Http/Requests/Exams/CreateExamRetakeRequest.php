@@ -2,13 +2,16 @@
 
 namespace App\Http\Requests\Exams;
 
+use App\Http\Requests\Exams\Concerns\UsesExamValidationMessages;
 use App\Models\DrivingLesson;
 use App\Models\ExamAttempt;
+use App\Models\ExamRetake;
 use App\Models\ExamSession;
 use App\Models\Instructor;
 use App\Models\Payment;
 use App\Models\StudentDocument;
 use App\Rules\ExamAttemptCanBeRetakenRule;
+use App\Rules\ExamRetakeAllowedRule;
 use App\Rules\ExamSessionCanAcceptAttemptRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -16,6 +19,8 @@ use Illuminate\Validation\Rule;
 
 class CreateExamRetakeRequest extends FormRequest
 {
+    use UsesExamValidationMessages;
+
     public function authorize(): bool
     {
         return $this->user()?->hasAnyAccess(['platform.exams', 'exams.schedule_retakes']) ?? false;
@@ -27,7 +32,14 @@ class CreateExamRetakeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'attempt.id' => ['required', 'integer', Rule::exists(ExamAttempt::class, 'id'), new ExamAttemptCanBeRetakenRule],
+            'previous_attempt_id' => ['nullable', 'required_without:attempt.id', 'integer', Rule::exists(ExamAttempt::class, 'id'), new ExamRetakeAllowedRule],
+            'new_attempt_id' => ['nullable', 'integer', Rule::exists(ExamAttempt::class, 'id')],
+            'exam_session_id' => ['nullable', 'integer', Rule::exists(ExamSession::class, 'id'), new ExamSessionCanAcceptAttemptRule($this->boolean('allow_full_session'))],
+            'planned_at' => ['nullable', 'date'],
+            'reason' => ['nullable', 'string', 'max:2000'],
+            'status' => ['nullable', 'string', 'max:40'],
+            'retake_id' => ['nullable', 'integer', Rule::exists(ExamRetake::class, 'id')],
+            'attempt.id' => ['nullable', 'required_without:previous_attempt_id', 'integer', Rule::exists(ExamAttempt::class, 'id'), new ExamAttemptCanBeRetakenRule],
             'retake.exam_session_id' => ['nullable', 'integer', Rule::exists(ExamSession::class, 'id'), new ExamSessionCanAcceptAttemptRule($this->boolean('allow_full_session'))],
             'retake.instructor_id' => ['nullable', 'integer', Rule::exists(Instructor::class, 'id')],
             'retake.driving_lesson_id' => ['nullable', 'integer', Rule::exists(DrivingLesson::class, 'id')],
@@ -45,6 +57,19 @@ class CreateExamRetakeRequest extends FormRequest
      */
     public function retakeData(): array
     {
-        return $this->validated('retake') ?? [];
+        $nested = $this->validated('retake') ?? [];
+
+        return [
+            ...collect($this->safe()->only([
+                'previous_attempt_id',
+                'new_attempt_id',
+                'exam_session_id',
+                'planned_at',
+                'reason',
+                'status',
+                'retake_id',
+            ]))->filter(fn (mixed $value): bool => $value !== null)->all(),
+            ...$nested,
+        ];
     }
 }

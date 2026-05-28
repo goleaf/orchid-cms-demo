@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\CourseFormat;
 use App\Enums\LeadStatus;
+use App\Enums\LeadTaskPriority;
 use App\Models\Branch;
 use App\Models\CourseCategory;
 use App\Models\MarketingCampaign;
@@ -54,13 +56,13 @@ class MarketingLeadFactory extends Factory
             'source' => $this->faker->randomElement(['website', 'facebook', 'google_ads', 'referral']),
             'status' => LeadStatus::New,
             'license_category' => 'B',
-            'preferred_format' => 'mixed',
+            'preferred_format' => CourseFormat::Mixed->value,
             'preferred_language' => 'English',
             'preferred_time' => 'Evenings',
             'desired_start_date' => null,
             'preferred_gearbox' => null,
             'budget_cents' => $this->faker->optional()->numberBetween(50_000, 180_000),
-            'priority' => 'normal',
+            'priority' => LeadTaskPriority::Normal->value,
             'lead_score' => 50,
             'privacy_accepted_at' => now(),
             'consent_accepted' => true,

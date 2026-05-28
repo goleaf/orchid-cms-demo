@@ -21,6 +21,7 @@ use App\Actions\PrepareLeadForStudentConversionAction;
 use App\Actions\ReopenLeadAction;
 use App\Actions\SaveMarketingLeadCrmAction;
 use App\Enums\LeadStatus;
+use App\Enums\LeadTaskPriority;
 use App\Http\Requests\Marketing\AddLeadNoteRequest;
 use App\Http\Requests\Marketing\AssignLeadManagerRequest;
 use App\Http\Requests\Marketing\CancelLeadTaskRequest;
@@ -28,11 +29,8 @@ use App\Http\Requests\Marketing\ChangeLeadStatusRequest;
 use App\Http\Requests\Marketing\LeadCommentRequest;
 use App\Http\Requests\Marketing\LeadCommunicationRequest;
 use App\Http\Requests\Marketing\LeadCrmRequest;
-use App\Http\Requests\Marketing\LeadDuplicateRequest;
-use App\Http\Requests\Marketing\LeadLostRequest;
 use App\Http\Requests\Marketing\LeadStatusActionRequest;
 use App\Http\Requests\Marketing\LeadTaskCompletionRequest;
-use App\Http\Requests\Marketing\LeadTaskRequest;
 use App\Http\Requests\Marketing\LogLeadCallRequest;
 use App\Http\Requests\Marketing\MarkLeadDuplicateRequest;
 use App\Http\Requests\Marketing\MarkLeadLostRequest;
@@ -189,7 +187,7 @@ class LeadEditScreen extends Screen
             : new MarketingLead([
                 'status' => LeadStatus::New,
                 'source' => 'phone',
-                'priority' => 'normal',
+                'priority' => LeadTaskPriority::Normal->value,
                 'lead_score' => 0,
                 'consent_accepted' => false,
             ]);

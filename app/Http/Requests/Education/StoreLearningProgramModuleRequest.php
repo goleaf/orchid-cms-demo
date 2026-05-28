@@ -16,7 +16,10 @@ class StoreLearningProgramModuleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('education.manage_topics') ?? false;
+        return $this->user()?->hasAnyAccess([
+            'education.programs.manage_modules',
+            'education.manage_topics',
+        ]) ?? false;
     }
 
     /**

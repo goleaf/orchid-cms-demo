@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\CommunicationDirection;
 use App\Models\CommunicationTemplate;
 use App\Models\NotificationChannel;
 use App\Models\Student;
@@ -29,7 +30,10 @@ class StudentCommunicationFactory extends Factory
             'communication_template_id' => CommunicationTemplate::factory(),
             'communication_reminder_id' => null,
             'channel' => $channel,
-            'direction' => $this->faker->randomElement(['inbound', 'outbound']),
+            'direction' => $this->faker->randomElement([
+                CommunicationDirection::Inbound->value,
+                CommunicationDirection::Outbound->value,
+            ]),
             'subject' => $this->faker->optional()->sentence(4),
             'body' => $this->faker->paragraph(),
             'communicated_at' => now()->subHour(),

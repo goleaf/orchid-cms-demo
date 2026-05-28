@@ -37,7 +37,7 @@ class StoreNotificationTemplateRequest extends FormRequest
             'template.template_group' => ['required', 'string', 'max:120'],
             'template.is_active' => ['nullable', 'boolean'],
             'template.is_system' => ['nullable', 'boolean'],
-            'version.status' => ['required', Rule::in([NotificationTemplateVersion::STATUS_DRAFT, NotificationTemplateVersion::STATUS_PUBLISHED, NotificationTemplateVersion::STATUS_ARCHIVED])],
+            'version.status' => ['required', Rule::in(NotificationTemplateVersion::statusValues())],
             'version.subject_translations' => ['nullable', 'array', new SafeNotificationTemplateContentRule],
             'version.subject_translations.*' => ['nullable', 'string', 'max:255'],
             'version.body_translations' => ['required', 'array', new TranslatedCommunicationFieldRequiredRule('notifications.validation.default_translation_required'), new SafeNotificationTemplateContentRule],

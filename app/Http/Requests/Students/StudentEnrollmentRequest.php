@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Students;
 
+use App\Enums\EnrollmentPaymentStatus;
 use App\Enums\EnrollmentStatus;
 use App\Models\Branch;
 use App\Models\CourseCategory;
@@ -71,7 +72,7 @@ class StudentEnrollmentRequest extends FormRequest
             'enrollment.price' => ['nullable', 'numeric', 'min:0', 'max:100000'],
             'enrollment.discount' => ['nullable', 'numeric', 'min:0', 'max:100000'],
             'enrollment.currency' => ['nullable', 'string', 'size:3'],
-            'enrollment.payment_status' => ['nullable', 'string', 'max:60'],
+            'enrollment.payment_status' => ['nullable', 'string', 'max:60', Rule::in(EnrollmentPaymentStatus::values())],
             'enrollment.notes' => ['nullable', 'string', 'max:2000'],
             'enrollment.internal_notes' => ['nullable', 'string', 'max:2000'],
             'create_onboarding_tasks' => ['nullable', 'boolean'],

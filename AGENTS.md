@@ -19,8 +19,10 @@ The local docs system is connected by default for Codex sessions started in this
 
 - Session and prompt hooks load compact project memory and repository skill inventory.
 - The `orchid-platform` skill is discovered from `.agents/skills/orchid-platform`.
+- The `driving-school-design` skill is discovered from `.agents/skills/driving-school-design`.
 - Official Orchid docs are mirrored locally in `.agents/skills/orchid-platform/references/docs`.
 - Context7 fallback library id is `/orchidsoftware/platform`.
+- Design-related MCP servers are project-connected through `.codex/config.toml`: Chrome DevTools MCP, Laravel Boost MCP, plus global Playwright and Context7 MCP when available.
 
 Default connection means the skill inventory is available automatically. It does not dump the full Orchid documentation into every prompt. Before editing Orchid code, search the local docs and vendor source:
 
@@ -34,6 +36,14 @@ Refresh the local docs and skill inventory with:
 ```bash
 .agents/skills/orchid-platform/scripts/sync_orchid_docs.sh
 python3 .agents/skills/codebase-self-learning/scripts/discover_skills.py --json
+```
+
+For design work, use the local design skill first and verify in a real browser:
+
+```bash
+python3 .agents/skills/codebase-self-learning/scripts/discover_skills.py --json --no-write
+codex mcp list
+npm run build
 ```
 
 ## Automatic Changelog And Commits

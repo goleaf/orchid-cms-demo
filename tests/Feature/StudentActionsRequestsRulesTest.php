@@ -304,4 +304,27 @@ class StudentActionsRequestsRulesTest extends TestCase
         $this->assertTrue($validator->fails());
         $this->assertSame('A student with these contacts already exists.', $validator->errors()->first('student'));
     }
+
+    public function test_student_enum_translation_keys_resolve_for_active_languages(): void
+    {
+        foreach ($this->studentEnumTranslationKeys() as $key) {
+            foreach (['ru', 'en', 'lt', 'pl'] as $locale) {
+                $this->assertNotSame($key, tkey($key, [], $locale), $key.' '.$locale);
+                $this->assertNotSame('', tkey($key, [], $locale), $key.' '.$locale);
+            }
+        }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function studentEnumTranslationKeys(): array
+    {
+        return [
+            ...array_map(fn (string $value): string => 'students.training_formats.'.$value, ['offline', 'online', 'hybrid', 'individual', 'group', 'mixed']),
+            ...array_map(fn (string $value): string => 'students.gearbox.'.$value, ['manual', 'automatic', 'both', 'unknown']),
+            ...array_map(fn (string $value): string => 'students.payment_statuses.'.$value, ['not_required', 'pending', 'waiting', 'partial', 'partially_paid', 'paid', 'overdue']),
+            ...array_map(fn (string $value): string => 'students.enrollments.payment_statuses.'.$value, ['not_required', 'pending', 'waiting', 'partial', 'partially_paid', 'paid', 'overdue']),
+        ];
+    }
 }

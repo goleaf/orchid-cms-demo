@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ExamChecklistItemStatus;
 use App\Models\Concerns\HasTranslations;
 use Database\Factories\ExamChecklistItemFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,11 +26,17 @@ class ExamChecklistItem extends Model
         'title_translations',
         'status',
         'required',
+        'passed',
+        'message_key',
+        'checked_at',
+        'checked_by',
     ];
 
     protected $casts = [
         'title_translations' => 'array',
         'required' => 'boolean',
+        'passed' => 'boolean',
+        'checked_at' => 'datetime',
     ];
 
     public function session(): BelongsTo
@@ -52,6 +59,11 @@ class ExamChecklistItem extends Model
         return $this->belongsTo(StudentEnrollment::class, 'enrollment_id');
     }
 
+    public function checkedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'checked_by');
+    }
+
     public function displayTitle(?string $locale = null): string
     {
         return $this->getTranslation('title', $locale)
@@ -71,12 +83,12 @@ class ExamChecklistItem extends Model
 
     public function scopePassed(Builder $query): Builder
     {
-        return $query->where('status', 'passed');
+        return $query->where('status', ExamChecklistItemStatus::Passed->value);
     }
 
     public function scopePending(Builder $query): Builder
     {
-        return $query->where('status', 'pending');
+        return $query->where('status', ExamChecklistItemStatus::Pending->value);
     }
 
     public function getDisplayTitleAttribute(): string

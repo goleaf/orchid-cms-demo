@@ -8,6 +8,7 @@ use App\Actions\ConvertLeadToStudentAction;
 use App\Actions\FindStudentMatchesForLeadAction;
 use App\Actions\PrepareLeadConversionDataAction;
 use App\Actions\ValidateLeadForStudentConversionAction;
+use App\Enums\EnrollmentPaymentStatus;
 use App\Http\Requests\Students\ConvertLeadToStudentRequest;
 use App\Models\Branch;
 use App\Models\MarketingLead;
@@ -322,7 +323,7 @@ class LeadConvertToStudentScreen extends Screen
      */
     private function paymentStatusOptions(): array
     {
-        return collect(['not_required', 'pending', 'partially_paid', 'paid', 'overdue'])
+        return collect(EnrollmentPaymentStatus::values())
             ->mapWithKeys(fn (string $status): array => [$status => tkey('students.payment_statuses.'.$status)])
             ->all();
     }

@@ -142,11 +142,14 @@ return [
      | Within the 'vite' associative array, specify input files to be parsed by
      | Vite by providing specific paths to JS and CSS assets. Here is an example:
      |
-     | Example: ['resources/css/app.css', 'resources/js/app.js']
+     | Example: ['resources/scss/app.scss', 'resources/js/app.js']
      |
      */
 
-    'vite' => [],
+    'vite' => [
+        'resources/scss/orchid/lead-pipeline.scss',
+        'resources/js/orchid/lead-pipeline.js',
+    ],
 
     /*
      |--------------------------------------------------------------------------
@@ -297,7 +300,7 @@ return [
     |
     */
 
-    'workspace' => 'platform::workspace.compact',
+    'workspace' => 'platform::workspace.full',
 
     /*
     |--------------------------------------------------------------------------

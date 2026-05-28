@@ -2,12 +2,16 @@
 
 namespace App\Http\Requests\Students;
 
+use App\Enums\EnrollmentPaymentStatus;
 use App\Models\Branch;
 use App\Models\CourseCategory;
+use App\Models\EnrollmentStatus;
 use App\Models\Student;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
 use App\Rules\ExistingStudentCanBeUsedForConversionRule;
+use App\Rules\ValidGearboxTypeRule;
+use App\Rules\ValidTrainingFormatRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -43,15 +47,15 @@ class ConvertLeadToStudentRequest extends FormRequest
             'enrollment.course_category_id' => ['nullable', 'integer', Rule::exists(CourseCategory::class, 'id')],
             'enrollment.branch_id' => ['nullable', 'integer', Rule::exists(Branch::class, 'id')],
             'enrollment.training_group_id' => ['nullable', 'integer', Rule::exists(TrainingGroup::class, 'id')],
-            'enrollment.status_id' => ['nullable', 'integer', Rule::exists(\App\Models\EnrollmentStatus::class, 'id')],
+            'enrollment.status_id' => ['nullable', 'integer', Rule::exists(EnrollmentStatus::class, 'id')],
             'enrollment.start_date' => ['nullable', 'date'],
             'enrollment.planned_end_date' => ['nullable', 'date'],
             'enrollment.preferred_time' => ['nullable', 'string', 'max:120'],
             'enrollment.training_language' => ['nullable', 'string', 'max:10'],
-            'enrollment.format' => ['nullable', 'string', 'max:40'],
-            'enrollment.gearbox_type' => ['nullable', 'string', 'max:40'],
+            'enrollment.format' => ['nullable', 'string', 'max:40', new ValidTrainingFormatRule],
+            'enrollment.gearbox_type' => ['nullable', 'string', 'max:40', new ValidGearboxTypeRule],
             'enrollment.price' => ['nullable', 'numeric', 'min:0', 'max:100000'],
-            'enrollment.payment_status' => ['nullable', 'string', 'max:60'],
+            'enrollment.payment_status' => ['nullable', 'string', 'max:60', Rule::in(EnrollmentPaymentStatus::values())],
             'create_onboarding_tasks' => ['nullable', 'boolean'],
             'create_document_placeholders' => ['nullable', 'boolean'],
             'create_payment_placeholder' => ['nullable', 'boolean'],

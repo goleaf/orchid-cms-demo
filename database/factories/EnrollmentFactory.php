@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\EnrollmentPaymentStatus;
 use App\Enums\EnrollmentStatus;
 use App\Models\Enrollment;
 use App\Models\EnrollmentStatus as EnrollmentStatusModel;
@@ -41,7 +42,7 @@ class EnrollmentFactory extends Factory
             'price' => 1200.00,
             'discount' => 0,
             'currency' => 'EUR',
-            'payment_status' => 'partial',
+            'payment_status' => EnrollmentPaymentStatus::Partial->value,
         ];
     }
 

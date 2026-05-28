@@ -8,6 +8,8 @@ Block 10 adds the exam foundation for one local driving school. It does not add 
 
 The exam module connects student readiness, documents, payments, lessons, groups, and exam outcomes. It gives the school a structured place to track internal theory exams, internal practical exams, state exam placeholders, admissions, sessions, attempts, results, retakes, and activity history.
 
+See [`docs/exam-admissions.md`](exam-admissions.md) for the detailed admission checklist rules and participant recheck behavior.
+
 ## Storage
 
 - `exam_types`: translatable exam type dictionary for internal theory, internal practical, official theory placeholders, and official practical placeholders.
@@ -16,7 +18,7 @@ The exam module connects student readiness, documents, payments, lessons, groups
 - `exam_result_statuses`: translatable result lifecycle dictionary for pending, passed, failed, needs-retake, and cancelled outcomes.
 - `exam_admission_rules`: reusable readiness rules by exam type, course, and course category.
 - `exam_admissions`: readiness record for an enrollment and exam type.
-- `exam_admission_checklist_items`: readiness checklist items for documents, payment, and training hours.
+- `exam_admission_checklist_items`: readiness checklist items for documents, payments, hours, internal prerequisites, enrollment status, student status, and manual review.
 - `exam_sessions`: planned or completed internal sessions and official/state placeholders with normalized type and status links.
 - `exam_participants`: students registered into an exam session with admission and block-state tracking.
 - `exam_attempts`: scheduled attempts, results, failures, passes, no-shows, cancellations, and retakes with normalized attempt status links.
@@ -47,13 +49,14 @@ Official exams are placeholders only. They can store references and payloads for
 ## Workflow
 
 1. Create or update an exam admission for a student enrollment.
-2. Build the readiness checklist from verified documents, paid payments, and completed hours.
-3. Mark the admission ready when all blocking checklist items pass or are waived.
-4. Schedule an exam session for an internal or official-placeholder exam.
-5. Record an attempt result against the admission and optional session.
-6. Mark the admission passed or requiring a retake.
-7. Schedule retakes as child attempts of the failed, no-show, or cancelled attempt.
-8. Record exam activity entries for audit history.
+2. Build the readiness checklist from verified documents, payment status, completed hours, internal prerequisites, enrollment status, student status, and manual review state.
+3. Approve the admission when all blocking checklist items pass, or block it with a translated validation reason. Manual approval keeps failed automatic checks as warnings.
+4. Create and update exam sessions with normalized exam type and session status records.
+5. Add or remove students from sessions while respecting capacity and enrollment readiness.
+6. Create, start, complete, cancel, or mark no-show attempt records.
+7. Record results, mark pass or fail decisions, and preserve examiner comments and mistake summaries.
+8. Create retake records and link them to new attempts when the next attempt is scheduled.
+9. Record exam activity entries for audit history.
 
 ## Actions
 
@@ -62,6 +65,29 @@ Official exams are placeholders only. They can store references and payloads for
 - `RecordExamAttemptResultAction`
 - `CreateExamRetakeAction`
 - `RecordExamActivityAction`
+- `GenerateExamNumberAction`
+- `GenerateExamAttemptNumberAction`
+- `CreateExamSessionAction`
+- `UpdateExamSessionAction`
+- `ChangeExamSessionStatusAction`
+- `CancelExamSessionAction`
+- `AddStudentToExamSessionAction`
+- `RemoveStudentFromExamSessionAction`
+- `CheckExamAdmissionAction`
+- `BuildExamAdmissionChecklistAction`
+- `ApproveExamAdmissionAction`
+- `BlockExamAdmissionAction`
+- `RecheckExamSessionAdmissionsAction`
+- `CreateExamAttemptAction`
+- `StartExamAttemptAction`
+- `CompleteExamAttemptAction`
+- `MarkExamAttemptNoShowAction`
+- `CancelExamAttemptAction`
+- `RecordExamResultAction`
+- `MarkExamPassedAction`
+- `MarkExamFailedAction`
+- `ScheduleExamRetakeAction`
+- `AddExamActivityAction`
 
 Screens and future controllers should call Actions instead of embedding exam business rules directly.
 
@@ -71,6 +97,14 @@ Screens and future controllers should call Actions instead of embedding exam bus
 - `ExamSessionRequest`
 - `RecordExamAttemptRequest`
 - `CreateExamRetakeRequest`
+- `StoreExamSessionRequest`
+- `UpdateExamSessionRequest`
+- `ChangeExamSessionStatusRequest`
+- `AddStudentToExamSessionRequest`
+- `CheckExamAdmissionRequest`
+- `CreateExamAttemptRequest`
+- `CompleteExamAttemptRequest`
+- `RecordExamResultRequest`
 
 Requests authorize through platform exam permissions and return translated validation errors.
 
@@ -80,8 +114,27 @@ Requests authorize through platform exam permissions and return translated valid
 - `ExamAdmissionReadyRule`
 - `ExamSessionCanAcceptAttemptRule`
 - `ExamAttemptCanBeRetakenRule`
+- `ActiveExamTypeRule`
+- `ActiveExamStatusRule`
+- `ValidExamSessionStatusTransitionRule`
+- `ExamSessionCapacityRule`
+- `StudentCanJoinExamSessionRule`
+- `EnrollmentCanTakeExamRule`
+- `RequiredDocumentsAcceptedRule`
+- `RequiredPaymentsCompletedRule`
+- `RequiredTheoryHoursRule`
+- `RequiredPracticeHoursRule`
+- `InternalExamPassedRule`
+- `EnrollmentActiveForExamRule`
+- `StudentActiveForExamRule`
+- `ExamAttemptCanStartRule`
+- `ExamAttemptCanCompleteRule`
+- `ExamResultScoreRule`
+- `ExamRetakeAllowedRule`
 
 Rule failures use exam translation keys under `exams.validation.*`.
+
+Admission checks return `allowed`, `blocking_errors`, `warnings`, `checklist`, and `admission`. Session participant admission uses the same result so blocked students carry the first blocking translation key as the participant block reason.
 
 ## Factories and Seeders
 
@@ -186,6 +239,20 @@ Session, admission, attempt, result, retake, dictionary, and export screens use 
 - Model creation and relationships for types, statuses, admission rules, sessions, participants, attempts, results, retakes, checklist items, and activities.
 - Translated display helpers and query scopes.
 - Dictionary seed records for local internal exams and official placeholders.
+
+`ExamActionsValidationTest` verifies:
+
+- Exam number generation, session lifecycle, admission checks, participant changes, attempt lifecycle, result decisions, retakes, and activity logging through Actions.
+- Custom rules for active dictionaries, status transitions, capacity, enrollment readiness, documents, payments, hours, internal exams, attempts, scores, and retakes.
+- Required exam FormRequests authorize through local exam permissions and map built-in validation failures to `exams.validation.*` translation keys.
+
+`ExamAdmissionChecklistTest` verifies:
+
+- Passing admissions with stored checklist rows.
+- Missing documents, incomplete payments, theory-hour gaps, and practice-hour gaps as blocking errors.
+- Configured internal theory and internal practical prerequisites.
+- Manual approval converting automatic failures into warnings.
+- Manual blocks and session participant rechecks.
 
 `ExamFactoriesSeedersTest` verifies:
 

@@ -10,7 +10,10 @@ class AddTrainingGroupNoteRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('education.groups.update') ?? false;
+        return $this->user()?->hasAnyAccess([
+            'education.groups.update',
+            'education.view_activities',
+        ]) ?? false;
     }
 
     /**

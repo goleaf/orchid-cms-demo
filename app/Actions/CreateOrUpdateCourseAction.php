@@ -2,18 +2,23 @@
 
 namespace App\Actions;
 
+use App\Actions\Concerns\AssignsSortablePosition;
+use App\Enums\TransmissionType;
 use App\Models\Course;
 use App\Models\TrainingProgram;
 use App\Services\TranslatableContentManager;
 
 class CreateOrUpdateCourseAction
 {
+    use AssignsSortablePosition;
+
     /**
      * @param  array<string, mixed>  $attributes
      */
     public function handle(Course|TrainingProgram|null $course, array $attributes): TrainingProgram
     {
         $course ??= new Course;
+        $attributes = $this->assignSortablePosition($course, $attributes);
         $attributes = $this->normalizeAttributes($attributes);
         $attributes = app(GenerateSeoMetadataAction::class)->handle(
             $attributes,
@@ -66,7 +71,7 @@ class CreateOrUpdateCourseAction
             ?? $this->fallbackScalar($attributes, 'extra_costs');
         $attributes['currency'] ??= 'EUR';
         $attributes['license_category'] = filled($attributes['license_category'] ?? null) ? $attributes['license_category'] : 'B';
-        $attributes['transmission'] = filled($attributes['transmission'] ?? null) ? $attributes['transmission'] : 'manual';
+        $attributes['transmission'] = filled($attributes['transmission'] ?? null) ? $attributes['transmission'] : TransmissionType::Manual->value;
         $attributes['theory_hours'] = filled($attributes['theory_hours'] ?? null) ? $attributes['theory_hours'] : 0;
         $attributes['practice_hours'] = filled($attributes['practice_hours'] ?? null) ? $attributes['practice_hours'] : 0;
         $attributes['duration_weeks'] = filled($attributes['duration_weeks'] ?? null) ? $attributes['duration_weeks'] : 8;

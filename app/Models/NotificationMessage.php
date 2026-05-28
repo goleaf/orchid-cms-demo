@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\NotificationMessageStatus;
+use App\Enums\NotificationPriority;
 use Database\Factories\NotificationMessageFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -136,12 +138,7 @@ class NotificationMessage extends Model
      */
     public static function priorityValues(): array
     {
-        return [
-            self::PRIORITY_LOW,
-            self::PRIORITY_NORMAL,
-            self::PRIORITY_HIGH,
-            self::PRIORITY_URGENT,
-        ];
+        return NotificationPriority::values();
     }
 
     /**
@@ -149,15 +146,6 @@ class NotificationMessage extends Model
      */
     public static function statusValues(): array
     {
-        return [
-            self::STATUS_DRAFT,
-            self::STATUS_SCHEDULED,
-            self::STATUS_QUEUED,
-            self::STATUS_SENT,
-            self::STATUS_DELIVERED,
-            self::STATUS_FAILED,
-            self::STATUS_CANCELLED,
-            self::STATUS_ARCHIVED,
-        ];
+        return NotificationMessageStatus::values();
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\StudentTaskPriority;
+use App\Enums\StudentTaskStatus;
 use App\Models\Student;
 use App\Models\StudentEnrollment;
 use App\Models\StudentTask;
@@ -29,8 +31,8 @@ class StudentTaskFactory extends Factory
             'description_translations' => null,
             'assigned_to_id' => User::factory(),
             'created_by_id' => User::factory(),
-            'priority' => 'normal',
-            'status' => 'open',
+            'priority' => StudentTaskPriority::Normal->value,
+            'status' => StudentTaskStatus::Open->value,
             'due_at' => now()->addDay(),
             'completed_at' => null,
             'cancelled_at' => null,
@@ -40,7 +42,7 @@ class StudentTaskFactory extends Factory
     public function open(): static
     {
         return $this->state(fn (): array => [
-            'status' => 'open',
+            'status' => StudentTaskStatus::Open->value,
             'completed_at' => null,
             'cancelled_at' => null,
         ]);
@@ -48,13 +50,13 @@ class StudentTaskFactory extends Factory
 
     public function inProgress(): static
     {
-        return $this->state(fn (): array => ['status' => 'in_progress']);
+        return $this->state(fn (): array => ['status' => StudentTaskStatus::InProgress->value]);
     }
 
     public function done(): static
     {
         return $this->state(fn (): array => [
-            'status' => 'done',
+            'status' => StudentTaskStatus::Done->value,
             'completed_at' => now(),
         ]);
     }
@@ -62,7 +64,7 @@ class StudentTaskFactory extends Factory
     public function cancelled(): static
     {
         return $this->state(fn (): array => [
-            'status' => 'cancelled',
+            'status' => StudentTaskStatus::Cancelled->value,
             'cancelled_at' => now(),
         ]);
     }
@@ -70,7 +72,7 @@ class StudentTaskFactory extends Factory
     public function overdue(): static
     {
         return $this->state(fn (): array => [
-            'status' => 'open',
+            'status' => StudentTaskStatus::Open->value,
             'due_at' => now()->subHour(),
         ]);
     }
@@ -78,7 +80,7 @@ class StudentTaskFactory extends Factory
     public function dueToday(): static
     {
         return $this->state(fn (): array => [
-            'status' => 'open',
+            'status' => StudentTaskStatus::Open->value,
             'due_at' => now()->addHours(2),
         ]);
     }
@@ -97,12 +99,12 @@ class StudentTaskFactory extends Factory
 
     public function urgent(): static
     {
-        return $this->state(fn (): array => ['priority' => 'urgent']);
+        return $this->state(fn (): array => ['priority' => StudentTaskPriority::Urgent->value]);
     }
 
     public function high(): static
     {
-        return $this->state(fn (): array => ['priority' => 'high']);
+        return $this->state(fn (): array => ['priority' => StudentTaskPriority::High->value]);
     }
 
     public function forEnrollment(): static

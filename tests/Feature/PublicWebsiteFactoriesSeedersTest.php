@@ -95,7 +95,9 @@ class PublicWebsiteFactoriesSeedersTest extends TestCase
         $this->assertTrue($page->is_active);
         $this->assertCompleteSitePage($page);
         $this->assertSame('Категория B', $category->displayName('ru'));
+        $this->assertCompleteCourseCategory($category);
         $this->assertTrue($course->is_featured);
+        $this->assertCompleteCourse($course);
         $this->assertTrue($package->is_visible_on_site);
         $this->assertNotNull($branch->latitude);
         $this->assertSame(8, $group->available_places);
@@ -128,6 +130,16 @@ class PublicWebsiteFactoriesSeedersTest extends TestCase
         $this->assertGreaterThanOrEqual(5, CourseCategory::query()->active()->visibleOnSite()->count());
         $this->assertGreaterThanOrEqual(5, Course::query()->active()->visibleOnSite()->count());
         $this->assertTrue(Course::query()->where('slug', 'category-b-manual')->visibleOnSite()->exists());
+
+        CourseCategory::query()
+            ->get()
+            ->each(fn (CourseCategory $category): bool => $this->assertCompleteCourseCategory($category));
+
+        Course::query()
+            ->active()
+            ->visibleOnSite()
+            ->get()
+            ->each(fn (Course $course): bool => $this->assertCompleteCourse($course));
     }
 
     public function test_website_pricing_seeder_creates_pricing_packages(): void
@@ -262,6 +274,62 @@ class PublicWebsiteFactoriesSeedersTest extends TestCase
         return true;
     }
 
+    private function assertCompleteCourse(Course $course): bool
+    {
+        foreach ($this->courseTranslationFields() as $field) {
+            $translations = $course->getTranslations($field);
+
+            foreach (['ru', 'en', 'lt', 'pl'] as $locale) {
+                $this->assertArrayHasKey($locale, $translations, $course->slug.' '.$field.' '.$locale);
+                $this->assertNotSame('', trim((string) $translations[$locale]), $course->slug.' '.$field.' '.$locale);
+            }
+        }
+
+        $this->assertNotEmpty($course->code);
+        $this->assertNotEmpty($course->license_category);
+        $this->assertNotEmpty($course->transmission);
+        $this->assertGreaterThan(0, $course->theory_hours);
+        $this->assertGreaterThan(0, $course->practice_hours);
+        $this->assertGreaterThan(0, $course->duration_weeks);
+        $this->assertNotEmpty($course->format);
+        $this->assertEqualsCanonicalizing(['ru', 'en', 'lt', 'pl'], $course->available_languages);
+        $this->assertNotEmpty($course->required_documents);
+        $this->assertGreaterThan(0, $course->price_cents);
+        $this->assertGreaterThan(0, $course->old_price_cents);
+        $this->assertSame('EUR', $course->currency);
+        $this->assertNotEmpty($course->canonical_url);
+        $this->assertNotEmpty($course->open_graph_image);
+        $this->assertNotEmpty($course->og_image);
+        $this->assertNotEmpty($course->image_path);
+        $this->assertNotEmpty($course->icon);
+        $this->assertNotEmpty($course->structured_data);
+        $this->assertNotNull($course->course_category_id);
+
+        return true;
+    }
+
+    private function assertCompleteCourseCategory(CourseCategory $category): bool
+    {
+        foreach ($this->courseCategoryTranslationFields() as $field) {
+            $translations = $category->getTranslations($field);
+
+            foreach (['ru', 'en', 'lt', 'pl'] as $locale) {
+                $this->assertArrayHasKey($locale, $translations, $category->slug.' '.$field.' '.$locale);
+                $this->assertNotSame('', trim((string) $translations[$locale]), $category->slug.' '.$field.' '.$locale);
+            }
+        }
+
+        $this->assertNotEmpty($category->code);
+        $this->assertNotEmpty($category->slug);
+        $this->assertNotEmpty($category->image);
+        $this->assertNotEmpty($category->icon);
+        $this->assertNotNull($category->is_active);
+        $this->assertNotNull($category->is_visible_on_site);
+        $this->assertNotNull($category->sort_order);
+
+        return true;
+    }
+
     /**
      * @return array<int, string>
      */
@@ -276,6 +344,46 @@ class PublicWebsiteFactoriesSeedersTest extends TestCase
             'seo_description',
             'og_title',
             'og_description',
+        ];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function courseTranslationFields(): array
+    {
+        return [
+            'name',
+            'title',
+            'short_description',
+            'description',
+            'program_summary',
+            'duration',
+            'requirements',
+            'included_items',
+            'includes',
+            'extra_costs',
+            'excludes',
+            'theory_program',
+            'practice_program',
+            'seo_title',
+            'seo_description',
+            'og_title',
+            'og_description',
+        ];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function courseCategoryTranslationFields(): array
+    {
+        return [
+            'name',
+            'short_description',
+            'description',
+            'seo_title',
+            'seo_description',
         ];
     }
 }

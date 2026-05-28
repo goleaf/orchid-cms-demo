@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\CommunicationDirection;
 use App\Models\MarketingLead;
 use App\Models\MarketingLeadCommunication;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,7 +24,10 @@ class MarketingLeadCommunicationFactory extends Factory
             'user_id' => null,
             'marketing_message_template_id' => null,
             'channel' => $this->faker->randomElement(['phone', 'sms', 'email', 'whatsapp', 'telegram', 'viber']),
-            'direction' => $this->faker->randomElement(['inbound', 'outbound']),
+            'direction' => $this->faker->randomElement([
+                CommunicationDirection::Inbound->value,
+                CommunicationDirection::Outbound->value,
+            ]),
             'subject' => $this->faker->optional()->sentence(4),
             'body' => $this->faker->sentence(16),
             'communicated_at' => now()->subHours($this->faker->numberBetween(1, 72)),

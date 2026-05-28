@@ -62,6 +62,63 @@ class GetDrivingSchoolDashboardAction
                 ->upcoming()
                 ->limit(8)
                 ->get(),
+            'recentOpenLeads' => MarketingLead::query()
+                ->forLeadList()
+                ->with([
+                    'responsibleManager:id,name',
+                    'trainingProgram:id,title,title_translations,name_translations,license_category',
+                    'trainingGroup:id,name,name_translations,group_number,code',
+                ])
+                ->open()
+                ->orderByDesc('is_hot')
+                ->orderByDesc('lead_score')
+                ->orderBy('next_follow_up_at')
+                ->orderByDesc('id')
+                ->limit(8)
+                ->get(),
+            'activeTrainingGroups' => TrainingGroup::query()
+                ->select([
+                    'id',
+                    'branch_id',
+                    'training_program_id',
+                    'instructor_id',
+                    'name',
+                    'name_translations',
+                    'group_number',
+                    'code',
+                    'status',
+                    'capacity',
+                    'capacity_total',
+                    'capacity_reserved',
+                    'capacity_taken',
+                    'places_taken',
+                    'starts_on',
+                    'start_date',
+                ])
+                ->with([
+                    'branch:id,name,city',
+                    'trainingProgram:id,title,title_translations,name_translations,license_category',
+                    'instructor:id,name',
+                ])
+                ->withCount('enrollments')
+                ->whereIn('status', [GroupStatus::Recruiting->value, GroupStatus::Active->value])
+                ->orderBy('starts_on')
+                ->orderBy('id')
+                ->limit(8)
+                ->get(),
+            'activeEnrollments' => Enrollment::query()
+                ->forAdminList()
+                ->with([
+                    'studentProfile:id,first_name,middle_name,last_name,full_name,phone,email',
+                    'trainingProgram:id,title,title_translations,name_translations,license_category',
+                    'trainingGroup:id,name,name_translations,group_number,code',
+                    'branch:id,name,city',
+                ])
+                ->active()
+                ->orderByDesc('start_date')
+                ->orderByDesc('id')
+                ->limit(8)
+                ->get(),
         ];
     }
 }

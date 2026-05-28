@@ -10,7 +10,10 @@ class DeleteTrainingGroupSchedulePatternRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('education.manage_schedule_patterns') ?? false;
+        return $this->user()?->hasAnyAccess([
+            'education.groups.manage_schedule_patterns',
+            'education.manage_schedule_patterns',
+        ]) ?? false;
     }
 
     public function rules(): array

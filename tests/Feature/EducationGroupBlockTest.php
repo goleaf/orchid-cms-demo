@@ -83,8 +83,8 @@ use App\Rules\LearningProgramIsActiveRule;
 use App\Rules\SchedulePatternTimeRangeRule;
 use App\Rules\StudentEnrollmentCanJoinGroupRule;
 use App\Rules\StudentEnrollmentNotAlreadyInActiveGroupRule;
-use App\Rules\TrainingGroupCanAcceptEnrollmentRule;
 use App\Rules\TrainingGroupCanAcceptApplicationsRule;
+use App\Rules\TrainingGroupCanAcceptEnrollmentRule;
 use App\Rules\TrainingGroupCanBeArchivedRule;
 use App\Rules\TrainingGroupCanBeUpdatedRule;
 use App\Rules\TrainingGroupCapacityRule;
@@ -98,8 +98,8 @@ use App\Rules\ValidDayOfWeekRule;
 use App\Rules\ValidLearningProgramModuleTypeRule;
 use App\Rules\ValidLearningTopicTypeRule;
 use App\Rules\ValidScheduleDayRule;
-use App\Rules\ValidSchedulePatternTypeRule;
 use App\Rules\ValidSchedulePatternTimeRule;
+use App\Rules\ValidSchedulePatternTypeRule;
 use App\Rules\ValidTrainingGroupCapacityValueRule;
 use App\Rules\ValidTrainingGroupStatusRule;
 use App\Rules\ValidTrainingGroupStatusTransitionRule;
@@ -925,7 +925,11 @@ class EducationGroupBlockTest extends TestCase
             $this->assertTrue(Route::has($routeName), $routeName);
         }
 
-        $group = TrainingGroup::factory()->create(['code' => 'EDU-ROUTE-GROUP']);
+        $group = TrainingGroup::factory()->create([
+            'code' => 'EDU-ROUTE-GROUP',
+            'starts_on' => now()->subDay()->toDateString(),
+            'start_date' => now()->subDay()->toDateString(),
+        ]);
         LearningTopic::factory()->create(['code' => 'EDU-TOPIC']);
         TrainingGroupSchedulePattern::factory()->create(['training_group_id' => $group->id]);
 

@@ -21,6 +21,7 @@ use App\Models\User;
 use BackedEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 
 class RunReportDefinitionAction
@@ -39,6 +40,7 @@ class RunReportDefinitionAction
 
         return ReportRun::query()->create([
             'report_definition_id' => $definition->id,
+            'user_id' => $user?->id,
             'status' => AnalyticsRunStatus::Completed,
             'period_start' => $filters['period_start'] ?? null,
             'period_end' => $filters['period_end'] ?? null,
@@ -48,6 +50,7 @@ class RunReportDefinitionAction
             'filters' => $filters,
             'summary' => $summary,
             'result_payload' => ['summary' => $summary],
+            'metadata' => ['data_source' => $definition->dataSource()],
             'created_by_id' => $user?->id,
         ]);
     }
@@ -156,9 +159,9 @@ class RunReportDefinitionAction
     }
 
     /**
-     * @param  Builder<\Illuminate\Database\Eloquent\Model>  $query
+     * @param  Builder<Model>  $query
      * @param  array<string, mixed>  $filters
-     * @return Builder<\Illuminate\Database\Eloquent\Model>
+     * @return Builder<Model>
      */
     private function applyCommonFilters(Builder $query, array $filters): Builder
     {
@@ -182,7 +185,7 @@ class RunReportDefinitionAction
     }
 
     /**
-     * @param  Builder<\Illuminate\Database\Eloquent\Model>  $query
+     * @param  Builder<Model>  $query
      * @return array<string, int>
      */
     private function countByAttribute(Builder $query, string $attribute): array
@@ -204,7 +207,7 @@ class RunReportDefinitionAction
     }
 
     /**
-     * @param  Builder<\Illuminate\Database\Eloquent\Model>  $query
+     * @param  Builder<Model>  $query
      */
     private function modelHasColumn(Builder $query, string $column): bool
     {

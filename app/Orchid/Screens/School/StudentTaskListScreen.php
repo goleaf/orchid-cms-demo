@@ -6,6 +6,8 @@ namespace App\Orchid\Screens\School;
 
 use App\Actions\CancelStudentTaskAction;
 use App\Actions\CompleteStudentTaskAction;
+use App\Enums\StudentTaskPriority;
+use App\Enums\StudentTaskStatus;
 use App\Http\Requests\Students\CancelStudentTaskRequest;
 use App\Http\Requests\Students\CompleteStudentTaskRequest;
 use App\Models\StudentTask;
@@ -218,7 +220,7 @@ class StudentTaskListScreen extends Screen
      */
     private function priorityOptions(): array
     {
-        return collect(['low', 'normal', 'high', 'urgent'])
+        return collect(StudentTaskPriority::values())
             ->mapWithKeys(fn (string $priority): array => [$priority => tkey('students.tasks.priorities.'.$priority)])
             ->all();
     }
@@ -228,7 +230,7 @@ class StudentTaskListScreen extends Screen
      */
     private function statusOptions(): array
     {
-        return collect(['open', 'in_progress', 'done', 'cancelled'])
+        return collect(StudentTaskStatus::values())
             ->mapWithKeys(fn (string $status): array => [$status => tkey('students.tasks.statuses.'.$status)])
             ->all();
     }

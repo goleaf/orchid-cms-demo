@@ -72,7 +72,7 @@ class CreateCallbackLeadAction
             'preferred_time' => $data['preferred_time'] ?? $data['callback_time'] ?? null,
             'budget_cents' => null,
             'is_hot' => false,
-            'priority' => 'high',
+            'priority' => LeadTaskPriority::High->value,
             'lead_score' => 60,
             'next_follow_up_at' => $followUpAt,
             'last_status_changed_at' => now(),

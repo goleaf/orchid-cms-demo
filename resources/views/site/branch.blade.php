@@ -3,7 +3,7 @@
 @section('content')
     <header class="section dark">
         <div class="section-inner">
-            <p class="kicker">{{ $branch->displayCity() }}</p>
+            <p class="kicker">{{ $branch->displayCountry() }} · {{ $branch->displayCity() }}</p>
             <h1>{{ $branch->displayName() }}</h1>
             <p class="lead">{{ $branch->displayDescription() ?: tkey('website.branches.detail.lead', ['city' => $branch->displayCity()]) }}</p>
             <div class="facts">

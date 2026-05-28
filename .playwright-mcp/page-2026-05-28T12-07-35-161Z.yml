@@ -1,0 +1,407 @@
+- generic [active] [ref=e1]:
+  - navigation "Основная навигация" [ref=e2]:
+    - generic [ref=e3]:
+      - link "DrivePro Academy" [ref=e4] [cursor=pointer]:
+        - /url: http://127.0.0.1:8027
+      - generic [ref=e5]:
+        - link "Главная" [ref=e6] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027
+        - link "Курсы" [ref=e7] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/courses
+        - link "Цены" [ref=e8] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/pricing
+        - link "Филиалы" [ref=e9] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/branches
+        - link "Записаться" [ref=e10] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027#application-form
+        - link "Инструкторы" [ref=e11] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/instructors
+        - link "Автопарк" [ref=e12] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/fleet
+        - link "Отзывы" [ref=e13] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/reviews
+        - link "База знаний" [ref=e14] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/blog
+        - link "Контакты" [ref=e15] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/contacts
+        - generic [ref=e16]:
+          - generic [ref=e17]:
+            - generic [ref=e18]: Язык
+            - combobox "Язык" [ref=e19]:
+              - option "Русский" [selected]
+              - option "English"
+              - option "Lietuvių"
+              - option "Polski"
+          - button "Сменить" [ref=e20] [cursor=pointer]
+        - link "Админ-панель" [ref=e21] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/admin
+  - main [ref=e22]:
+    - generic [ref=e24]:
+      - paragraph [ref=e25]: Филиалы
+      - heading "Филиалы" [level=1] [ref=e26]
+      - paragraph [ref=e27]: Адреса, телефоны, график работы и форма обратного звонка.
+    - generic [ref=e29]:
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - paragraph [ref=e33]: Подбор курса
+            - heading "Филиалы" [level=2] [ref=e34]
+          - paragraph [ref=e35]: Выберите страну, город и категорию, чтобы увидеть подходящие курсы и ближайшие группы.
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - text: Страна
+            - combobox "Страна" [ref=e38]:
+              - option "Все страны"
+              - option "Германия"
+              - option "Латвия"
+              - option "Литва" [selected]
+              - option "Польша"
+              - option "Эстония"
+          - generic [ref=e39]:
+            - text: Город
+            - combobox "Город" [ref=e40]:
+              - option "Все города" [selected]
+              - option "Вильнюс"
+              - option "Каунас"
+              - option "Клайпеда"
+          - generic [ref=e41]:
+            - button "Показать" [ref=e42] [cursor=pointer]
+            - link "Сбросить" [ref=e43] [cursor=pointer]:
+              - /url: http://127.0.0.1:8027/branches
+        - paragraph [ref=e44]: Показаны курсы, группы и филиалы по выбранному фильтру.
+      - generic [ref=e45]:
+        - article [ref=e46]:
+          - paragraph [ref=e47]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e48]
+          - paragraph [ref=e49]: Gedimino pr. 1
+          - paragraph [ref=e50]: Пн-Пт 09:00-18:00
+          - generic [ref=e51]:
+            - generic [ref=e52]: (551) 224-3320
+            - generic [ref=e53]: ykuhic@johnson.net
+            - generic [ref=e54]: 0 групп
+          - link "Открыть" [ref=e56] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/id-ut
+        - article [ref=e57]:
+          - paragraph [ref=e58]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e59]
+          - paragraph [ref=e60]: Gedimino pr. 1
+          - paragraph [ref=e61]: Пн-Пт 09:00-18:00
+          - generic [ref=e62]:
+            - generic [ref=e63]: 262-527-3563
+            - generic [ref=e64]: zbeahan@harris.com
+            - generic [ref=e65]: 0 групп
+          - link "Открыть" [ref=e67] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/atque-quis-commodi
+        - article [ref=e68]:
+          - paragraph [ref=e69]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e70]
+          - paragraph [ref=e71]: Gedimino pr. 1
+          - paragraph [ref=e72]: Пн-Пт 09:00-18:00
+          - generic [ref=e73]:
+            - generic [ref=e74]: 352.968.8876
+            - generic [ref=e75]: xrenner@huel.com
+            - generic [ref=e76]: 0 групп
+          - link "Открыть" [ref=e78] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/magnam-voluptatem-voluptas
+        - article [ref=e79]:
+          - paragraph [ref=e80]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e81]
+          - paragraph [ref=e82]: Gedimino pr. 1
+          - paragraph [ref=e83]: Пн-Пт 09:00-18:00
+          - generic [ref=e84]:
+            - generic [ref=e85]: 906.793.2663
+            - generic [ref=e86]: qhowe@oconnell.com
+            - generic [ref=e87]: 0 групп
+          - link "Открыть" [ref=e89] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/voluptatem-omnis-earum
+        - article [ref=e90]:
+          - paragraph [ref=e91]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e92]
+          - paragraph [ref=e93]: Gedimino pr. 1
+          - paragraph [ref=e94]: Пн-Пт 09:00-18:00
+          - generic [ref=e95]:
+            - generic [ref=e96]: +1-732-750-8618
+            - generic [ref=e97]: tremblay.lura@medhurst.info
+            - generic [ref=e98]: 0 групп
+          - link "Открыть" [ref=e100] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/in-sint
+        - article [ref=e101]:
+          - paragraph [ref=e102]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e103]
+          - paragraph [ref=e104]: Gedimino pr. 1
+          - paragraph [ref=e105]: Пн-Пт 09:00-18:00
+          - generic [ref=e106]:
+            - generic [ref=e107]: (413) 654-9016
+            - generic [ref=e108]: kayley61@schaefer.biz
+            - generic [ref=e109]: 0 групп
+          - link "Открыть" [ref=e111] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/quam-et-sunt
+        - article [ref=e112]:
+          - paragraph [ref=e113]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e114]
+          - paragraph [ref=e115]: Gedimino pr. 1
+          - paragraph [ref=e116]: Пн-Пт 09:00-18:00
+          - generic [ref=e117]:
+            - generic [ref=e118]: +1-678-575-8169
+            - generic [ref=e119]: silas.smith@gulgowski.biz
+            - generic [ref=e120]: 0 групп
+          - link "Открыть" [ref=e122] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/eum-non
+        - article [ref=e123]:
+          - paragraph [ref=e124]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e125]
+          - paragraph [ref=e126]: Gedimino pr. 1
+          - paragraph [ref=e127]: Пн-Пт 09:00-18:00
+          - generic [ref=e128]:
+            - generic [ref=e129]: (585) 736-7678
+            - generic [ref=e130]: nathanial21@wiza.net
+            - generic [ref=e131]: 0 групп
+          - link "Открыть" [ref=e133] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/mollitia-assumenda
+        - article [ref=e134]:
+          - paragraph [ref=e135]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e136]
+          - paragraph [ref=e137]: Gedimino pr. 1
+          - paragraph [ref=e138]: Пн-Пт 09:00-18:00
+          - generic [ref=e139]:
+            - generic [ref=e140]: +1-283-724-2170
+            - generic [ref=e141]: liam63@bernhard.com
+            - generic [ref=e142]: 0 групп
+          - link "Открыть" [ref=e144] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/veritatis-harum-error
+        - article [ref=e145]:
+          - paragraph [ref=e146]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e147]
+          - paragraph [ref=e148]: Gedimino pr. 1
+          - paragraph [ref=e149]: Пн-Пт 09:00-18:00
+          - generic [ref=e150]:
+            - generic [ref=e151]: +1-850-696-6220
+            - generic [ref=e152]: shanel.wisozk@hoppe.info
+            - generic [ref=e153]: 0 групп
+          - link "Открыть" [ref=e155] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/unde-ut
+        - article [ref=e156]:
+          - paragraph [ref=e157]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e158]
+          - paragraph [ref=e159]: Gedimino pr. 1
+          - paragraph [ref=e160]: Пн-Пт 09:00-18:00
+          - generic [ref=e161]:
+            - generic [ref=e162]: (385) 582-2205
+            - generic [ref=e163]: isabel56@emard.biz
+            - generic [ref=e164]: 0 групп
+          - link "Открыть" [ref=e166] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/magni-laborum
+        - article [ref=e167]:
+          - paragraph [ref=e168]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e169]
+          - paragraph [ref=e170]: Gedimino pr. 1
+          - paragraph [ref=e171]: Пн-Пт 09:00-18:00
+          - generic [ref=e172]:
+            - generic [ref=e173]: "+19599174725"
+            - generic [ref=e174]: larkin.reinhold@davis.com
+            - generic [ref=e175]: 0 групп
+          - link "Открыть" [ref=e177] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/voluptas-facere-rerum
+        - article [ref=e178]:
+          - paragraph [ref=e179]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e180]
+          - paragraph [ref=e181]: Gedimino pr. 1
+          - paragraph [ref=e182]: Пн-Пт 09:00-18:00
+          - generic [ref=e183]:
+            - generic [ref=e184]: +1 (843) 833-6331
+            - generic [ref=e185]: elliott.kling@grady.biz
+            - generic [ref=e186]: 0 групп
+          - link "Открыть" [ref=e188] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/exercitationem-dolorum-modi
+        - article [ref=e189]:
+          - paragraph [ref=e190]: Литва · Вильнюс
+          - heading "Филиал DrivePro Academy" [level=2] [ref=e191]
+          - paragraph [ref=e192]: Gedimino pr. 1
+          - paragraph [ref=e193]: Пн-Пт 09:00-18:00
+          - generic [ref=e194]:
+            - generic [ref=e195]: 681.955.0201
+            - generic [ref=e196]: jleffler@hansen.com
+            - generic [ref=e197]: 0 групп
+          - link "Открыть" [ref=e199] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/sint-sit-aliquid
+        - article [ref=e200]:
+          - paragraph [ref=e201]: Литва · Вильнюс
+          - heading "DrivePro Academy Вильнюс" [level=2] [ref=e202]
+          - paragraph [ref=e203]: Gedimino pr. 1
+          - paragraph [ref=e204]: Пн-Пт 09:00-18:00
+          - generic [ref=e205]:
+            - generic [ref=e206]: +370 600 00000
+            - generic [ref=e207]: vilnius@drivepro.test
+            - generic [ref=e208]: 1 групп
+          - link "Открыть" [ref=e210] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/vilnius-main
+        - article [ref=e211]:
+          - paragraph [ref=e212]: Литва · Каунас
+          - heading "DrivePro Academy Каунас" [level=2] [ref=e213]
+          - paragraph [ref=e214]: Laisves al. 10
+          - paragraph [ref=e215]: Пн-Пт 09:00-18:00
+          - generic [ref=e216]:
+            - generic [ref=e217]: +370 600 00010
+            - generic [ref=e218]: kaunas@drivepro.test
+            - generic [ref=e219]: 1 групп
+          - link "Открыть" [ref=e221] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/kaunas-center
+        - article [ref=e222]:
+          - paragraph [ref=e223]: Литва · Клайпеда
+          - heading "DrivePro Academy Клайпеда" [level=2] [ref=e224]
+          - paragraph [ref=e225]: Taikos pr. 24
+          - paragraph [ref=e226]: Пн-Пт 09:00-18:00
+          - generic [ref=e227]:
+            - generic [ref=e228]: +370 600 00020
+            - generic [ref=e229]: klaipeda@drivepro.test
+            - generic [ref=e230]: 0 групп
+          - link "Открыть" [ref=e232] [cursor=pointer]:
+            - /url: http://127.0.0.1:8027/branches/klaipeda-harbor
+    - generic [ref=e234]:
+      - generic [ref=e235]:
+        - generic [ref=e236]:
+          - paragraph [ref=e237]: Расписание
+          - heading "Группы" [level=2] [ref=e238]
+        - paragraph [ref=e239]: Группы показывают филиал, дату старта, дни занятий, время, инструктора и места.
+      - generic [ref=e240]:
+        - article [ref=e241]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e242]
+          - paragraph [ref=e243]: Нет опубликованных групп для этого филиала.
+        - article [ref=e244]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e245]
+          - paragraph [ref=e246]: Нет опубликованных групп для этого филиала.
+        - article [ref=e247]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e248]
+          - paragraph [ref=e249]: Нет опубликованных групп для этого филиала.
+        - article [ref=e250]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e251]
+          - paragraph [ref=e252]: Нет опубликованных групп для этого филиала.
+        - article [ref=e253]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e254]
+          - paragraph [ref=e255]: Нет опубликованных групп для этого филиала.
+        - article [ref=e256]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e257]
+          - paragraph [ref=e258]: Нет опубликованных групп для этого филиала.
+        - article [ref=e259]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e260]
+          - paragraph [ref=e261]: Нет опубликованных групп для этого филиала.
+        - article [ref=e262]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e263]
+          - paragraph [ref=e264]: Нет опубликованных групп для этого филиала.
+        - article [ref=e265]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e266]
+          - paragraph [ref=e267]: Нет опубликованных групп для этого филиала.
+        - article [ref=e268]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e269]
+          - paragraph [ref=e270]: Нет опубликованных групп для этого филиала.
+        - article [ref=e271]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e272]
+          - paragraph [ref=e273]: Нет опубликованных групп для этого филиала.
+        - article [ref=e274]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e275]
+          - paragraph [ref=e276]: Нет опубликованных групп для этого филиала.
+        - article [ref=e277]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e278]
+          - paragraph [ref=e279]: Нет опубликованных групп для этого филиала.
+        - article [ref=e280]:
+          - heading "Филиал DrivePro Academy" [level=3] [ref=e281]
+          - paragraph [ref=e282]: Нет опубликованных групп для этого филиала.
+        - article [ref=e283]:
+          - heading "DrivePro Academy Вильнюс" [level=3] [ref=e284]
+          - paragraph [ref=e285]: Вечерняя группа категории B · Категория B · 2026-06-04
+        - article [ref=e286]:
+          - heading "DrivePro Academy Каунас" [level=3] [ref=e287]
+          - paragraph [ref=e288]: Группа категории A выходного дня · Категория A · 2026-06-04
+        - article [ref=e289]:
+          - heading "DrivePro Academy Клайпеда" [level=3] [ref=e290]
+          - paragraph [ref=e291]: Нет опубликованных групп для этого филиала.
+    - generic [ref=e293]:
+      - generic [ref=e294]:
+        - generic [ref=e295]:
+          - paragraph [ref=e296]: Онлайн-запись
+          - heading "Заявка на обучение" [level=2] [ref=e297]
+        - paragraph [ref=e298]: Выберите курс, филиал и оставьте контакты.
+      - generic [ref=e299]:
+        - generic [ref=e300]:
+          - generic [ref=e301]:
+            - text: Курс
+            - combobox "Курс" [ref=e302]:
+              - option "Категория B" [selected]
+              - option "Категория B"
+              - option "Категория B"
+              - option "Категория B"
+              - option "Категория B"
+              - option "Категория B"
+              - option "Категория B"
+              - option "Категория BE прицеп"
+              - option "Категория C грузовик"
+              - option "Категория D автобус"
+              - option "Корпоративное обучение водителей"
+              - option "Курс для начинающих"
+              - option "Подготовка к пересдаче экзамена"
+              - option "Интенсив категории B"
+              - option "Восстановление навыков вождения"
+              - option "Категория B"
+              - option "Категория A"
+              - option "Индивидуальные уроки вождения"
+              - option "Подготовка к экзамену"
+              - option "Восстановление навыков"
+          - generic [ref=e303]:
+            - text: Филиал
+            - combobox "Филиал" [ref=e304]:
+              - option "Литва · Вильнюс · Филиал DrivePro Academy" [selected]
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · Филиал DrivePro Academy"
+              - option "Литва · Вильнюс · DrivePro Academy Вильнюс"
+              - option "Литва · Каунас · DrivePro Academy Каунас"
+              - option "Литва · Клайпеда · DrivePro Academy Клайпеда"
+          - generic [ref=e305]:
+            - text: Учебная группа
+            - combobox "Учебная группа" [ref=e306]:
+              - option "Подобрать с менеджером" [selected]
+              - option "Вечерняя группа категории B · Категория B · Литва · Вильнюс"
+              - option "Группа категории A выходного дня · Категория A · Литва · Каунас"
+          - generic [ref=e307]:
+            - text: Имя и фамилия
+            - textbox "Имя и фамилия" [ref=e308]
+          - generic [ref=e309]:
+            - text: Телефон
+            - textbox "Телефон" [ref=e310]
+          - generic [ref=e311]:
+            - text: Эл. почта
+            - textbox "Эл. почта" [ref=e312]
+          - generic [ref=e313]:
+            - text: Удобное время
+            - textbox "Удобное время" [ref=e314]:
+              - /placeholder: Вечером, утром или по выходным
+          - generic [ref=e315]:
+            - text: Мессенджер
+            - textbox "Мессенджер" [ref=e316]:
+              - /placeholder: Например WhatsApp, Telegram или Viber
+          - generic [ref=e317]:
+            - text: Комментарий
+            - textbox "Комментарий" [ref=e318]
+          - generic [ref=e320]:
+            - checkbox "Согласие на обработку данных" [ref=e321]
+            - text: Согласие на обработку данных
+        - button "Отправить заявку" [ref=e323] [cursor=pointer]
+  - contentinfo [ref=e324]:
+    - generic [ref=e325]:
+      - strong [ref=e326]: DrivePro Academy
+      - paragraph [ref=e327]: Публичный сайт, онлайн-запись, карта филиалов, CRM заявок и рабочая админ-панель.
+  - generic "Быстрые способы связи" [ref=e328]:
+    - link "Онлайн-чат" [ref=e329] [cursor=pointer]:
+      - /url: http://127.0.0.1:8027#application-form
+    - link "Обратный звонок" [ref=e330] [cursor=pointer]:
+      - /url: http://127.0.0.1:8027/contacts#callback

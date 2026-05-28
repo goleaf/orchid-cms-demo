@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Marketing;
 
+use App\Enums\CommunicationDirection;
 use App\Models\MarketingLeadCommunication;
 use App\Models\MarketingMessageTemplate;
 use App\Rules\ActiveMessageTemplateForChannel;
@@ -31,7 +32,10 @@ class LeadCommunicationRequest extends FormRequest
                 'integer',
                 new ActiveMessageTemplateForChannel($this->input('communication.channel')),
             ],
-            'communication.direction' => ['required', Rule::in(['inbound', 'outbound'])],
+            'communication.direction' => ['required', Rule::in([
+                CommunicationDirection::Inbound->value,
+                CommunicationDirection::Outbound->value,
+            ])],
             'communication.subject' => ['nullable', 'string', 'max:190'],
             'communication.body' => [
                 'nullable',

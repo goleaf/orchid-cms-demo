@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Orchid\Screens\School;
 
 use App\Actions\SaveTrainingProgramAction;
+use App\Enums\CourseFormat;
+use App\Enums\TransmissionType;
 use App\Http\Requests\TrainingProgramRequest;
 use App\Models\TrainingProgram;
 use App\Orchid\Support\TranslatableFields;
@@ -32,11 +34,11 @@ class ProgramEditScreen extends Screen
             : new TrainingProgram([
                 'slug' => '',
                 'license_category' => 'B',
-                'transmission' => 'manual',
+                'transmission' => TransmissionType::Manual->value,
                 'theory_hours' => 40,
                 'practice_hours' => 30,
                 'duration_weeks' => 8,
-                'format' => 'mixed',
+                'format' => CourseFormat::Mixed->value,
                 'price_cents' => 0,
                 'sort_order' => 0,
                 'is_active' => true,
@@ -106,18 +108,11 @@ class ProgramEditScreen extends Screen
                     ->required(),
                 Select::make('program.transmission')
                     ->title(tkey('website.admin.courses.fields.transmission'))
-                    ->options([
-                        'manual' => tkey('website.transmissions.manual'),
-                        'automatic' => tkey('website.transmissions.automatic'),
-                    ])
+                    ->options($this->transmissionOptions())
                     ->required(),
                 Select::make('program.format')
                     ->title(tkey('crm.leads.fields.preferred_format'))
-                    ->options([
-                        'offline' => tkey('website.courses.formats.offline'),
-                        'online' => tkey('website.courses.formats.online'),
-                        'mixed' => tkey('website.courses.formats.mixed'),
-                    ])
+                    ->options($this->courseFormatOptions())
                     ->required(),
                 Input::make('program.duration_weeks')
                     ->type('number')
@@ -222,5 +217,25 @@ class ProgramEditScreen extends Screen
     private function translations(TrainingProgram $program, string $field, mixed $fallback): array
     {
         return $program->getTranslations($field) ?: ['ru' => $fallback];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function transmissionOptions(): array
+    {
+        return collect(TransmissionType::values())
+            ->mapWithKeys(fn (string $transmission): array => [$transmission => tkey('website.transmissions.'.$transmission)])
+            ->all();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function courseFormatOptions(): array
+    {
+        return collect(CourseFormat::values())
+            ->mapWithKeys(fn (string $format): array => [$format => tkey('website.courses.formats.'.$format)])
+            ->all();
     }
 }

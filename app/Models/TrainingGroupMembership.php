@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TrainingGroupMembershipStatus;
 use Database\Factories\TrainingGroupMembershipFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,24 @@ class TrainingGroupMembership extends Model
     use HasFactory;
 
     use SoftDeletes;
+
+    public const STATUS_INVITED = 'invited';
+
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_ACTIVE = 'active';
+
+    public const STATUS_LEFT = 'left';
+
+    public const STATUS_WAITLISTED = 'waitlisted';
+
+    public const STATUS_TRANSFERRED = 'transferred';
+
+    public const STATUS_COMPLETED = 'completed';
+
+    public const STATUS_REMOVED = 'removed';
+
+    public const STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
         'uuid',
@@ -108,22 +127,22 @@ class TrainingGroupMembership extends Model
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', 'active')->whereNull('left_at');
+        return $query->where('status', self::STATUS_ACTIVE)->whereNull('left_at');
     }
 
     public function scopeWaitlisted(Builder $query): Builder
     {
-        return $query->where('status', 'waitlisted');
+        return $query->where('status', self::STATUS_WAITLISTED);
     }
 
     public function scopeTransferred(Builder $query): Builder
     {
-        return $query->where('status', 'transferred');
+        return $query->where('status', self::STATUS_TRANSFERRED);
     }
 
     public function scopeCompleted(Builder $query): Builder
     {
-        return $query->where('status', 'completed');
+        return $query->where('status', self::STATUS_COMPLETED);
     }
 
     public function scopeByGroup(Builder $query, int|string|null $groupId): Builder
@@ -151,17 +170,30 @@ class TrainingGroupMembership extends Model
 
     public function getIsActiveAttribute(): bool
     {
-        return $this->status === 'active' && $this->left_at === null;
+        return $this->status === self::STATUS_ACTIVE && $this->left_at === null;
     }
 
     public function getIsWaitlistedAttribute(): bool
     {
-        return $this->status === 'waitlisted';
+        return $this->status === self::STATUS_WAITLISTED;
     }
 
     public function getIsTransferredAttribute(): bool
     {
-        return $this->status === 'transferred';
+        return $this->status === self::STATUS_TRANSFERRED;
+    }
+
+    public function statusLabel(): string
+    {
+        return tkey('education.groups.memberships.statuses.'.$this->status);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function statusValues(): array
+    {
+        return TrainingGroupMembershipStatus::values();
     }
 
     private function syncAliases(): void

@@ -63,12 +63,12 @@ class LearningTopicListScreen extends Screen
 
     public function name(): ?string
     {
-        return tkey('education.learning_topics.title');
+        return tkey('education.programs.topics.title');
     }
 
     public function description(): ?string
     {
-        return tkey('education.learning_topics.description');
+        return tkey('education.programs.empty.no_topics');
     }
 
     public function permission(): iterable
@@ -94,11 +94,11 @@ class LearningTopicListScreen extends Screen
             Layout::rows([
                 Input::make('topic.id')->type('hidden'),
                 Select::make('topic.training_program_id')
-                    ->title(tkey('website.groups.fields.course'))
+                    ->title(tkey('education.programs.fields.course'))
                     ->options($this->programs)
                     ->required(),
                 Input::make('topic.code')
-                    ->title(tkey('crm.dictionaries.fields.code')),
+                    ->title(tkey('education.programs.topics.fields.code')),
                 Select::make('topic.topic_type')
                     ->title(tkey('education.learning_topics.fields.topic_type'))
                     ->options($this->topicTypeOptions())
@@ -108,32 +108,32 @@ class LearningTopicListScreen extends Screen
                     ->title(tkey('education.learning_topics.fields.duration_minutes')),
                 Input::make('topic.sort_order')
                     ->type('number')
-                    ->title(tkey('crm.dictionaries.fields.sort_order')),
+                    ->title(tkey('education.programs.topics.fields.sort_order')),
                 Switcher::make('topic.is_required')
                     ->sendTrueOrFalse()
-                    ->title(tkey('education.learning_topics.fields.is_required')),
+                    ->title(tkey('education.programs.topics.fields.is_required')),
                 Switcher::make('topic.is_active')
                     ->sendTrueOrFalse()
-                    ->title(tkey('crm.dictionaries.fields.is_active')),
-            ])->title(tkey('education.learning_topics.title')),
+                    ->title(tkey('education.programs.topics.fields.is_active')),
+            ])->title(tkey('education.programs.topics.title')),
 
-            TranslatableFields::input('topic.title', 'crm.dictionaries.fields.name_translations', [
+            TranslatableFields::input('topic.title', 'education.programs.topics.fields.name', [
                 'maxlength' => 255,
                 'required' => true,
             ]),
 
-            TranslatableFields::textarea('topic.description', 'crm.dictionaries.fields.description_translations', [
+            TranslatableFields::textarea('topic.description', 'education.programs.topics.fields.description', [
                 'rows' => 3,
                 'maxlength' => 2000,
             ]),
 
             Layout::table('topics', [
-                TD::make('code', tkey('crm.dictionaries.fields.code'))
+                TD::make('code', tkey('education.programs.topics.fields.code'))
                     ->render(fn (LearningTopic $topic): string => (string) Link::make($topic->code ?: (string) $topic->id)
                         ->route('platform.education.learning-topics', ['topic_id' => $topic->id])),
-                TD::make('title', tkey('crm.dictionaries.fields.name'))
+                TD::make('title', tkey('education.programs.topics.fields.name'))
                     ->render(fn (LearningTopic $topic): string => $topic->displayTitle()),
-                TD::make('program', tkey('website.groups.fields.course'))
+                TD::make('program', tkey('education.programs.fields.course'))
                     ->render(fn (LearningTopic $topic): string => $topic->trainingProgram?->displayTitle() ?? '-'),
                 TD::make('topic_type', tkey('education.learning_topics.fields.topic_type'))
                     ->render(fn (LearningTopic $topic): string => tkey('education.learning_topics.types.'.$topic->topic_type)),

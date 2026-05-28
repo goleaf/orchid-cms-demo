@@ -174,9 +174,6 @@ class TestimonialEditScreen extends Screen
                 Input::make('published_at')
                     ->type('datetime-local')
                     ->title(tkey('website.admin.fields.published_at')),
-                Input::make('sort_order')
-                    ->type('number')
-                    ->title(tkey('website.admin.fields.sort_order')),
             ])->title(tkey('website.admin.sections.main')),
 
             TranslatableFields::input('name', 'website.testimonials.fields.name', [

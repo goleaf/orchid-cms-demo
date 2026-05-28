@@ -11,7 +11,7 @@ class PublishTrainingGroupRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('education.groups.update') ?? false;
+        return $this->user()?->hasAccess('education.groups.manage_public_visibility') ?? false;
     }
 
     public function rules(): array

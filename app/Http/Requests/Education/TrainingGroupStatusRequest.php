@@ -13,7 +13,10 @@ class TrainingGroupStatusRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('education.manage_statuses') ?? false;
+        return $this->user()?->hasAnyAccess([
+            'education.groups.manage_statuses',
+            'education.manage_statuses',
+        ]) ?? false;
     }
 
     /**
@@ -36,11 +39,13 @@ class TrainingGroupStatusRequest extends FormRequest
             'status.is_default' => ['nullable', 'boolean'],
             'status.is_active' => ['nullable', 'boolean'],
             'status.is_public' => ['nullable', 'boolean'],
+            'status.is_open_for_enrollment' => ['nullable', 'boolean'],
             'status.accepts_enrollments' => ['nullable', 'boolean'],
             'status.is_in_progress' => ['nullable', 'boolean'],
             'status.is_final' => ['nullable', 'boolean'],
             'status.is_success' => ['nullable', 'boolean'],
             'status.is_cancelled' => ['nullable', 'boolean'],
+            'status.is_archived' => ['nullable', 'boolean'],
         ];
     }
 
@@ -52,7 +57,7 @@ class TrainingGroupStatusRequest extends FormRequest
         $data = $this->validated('status');
         unset($data['id']);
 
-        foreach (['is_default', 'is_active', 'is_public', 'accepts_enrollments', 'is_in_progress', 'is_final', 'is_success', 'is_cancelled'] as $field) {
+        foreach (['is_default', 'is_active', 'is_public', 'is_open_for_enrollment', 'accepts_enrollments', 'is_in_progress', 'is_final', 'is_success', 'is_cancelled', 'is_archived'] as $field) {
             $data[$field] = (bool) ($data[$field] ?? false);
         }
 

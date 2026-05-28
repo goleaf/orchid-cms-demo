@@ -5,20 +5,28 @@ namespace App\Orchid\Screens\School;
 use App\Actions\AddStudentToExamSessionAction;
 use App\Actions\CancelExamSessionAction;
 use App\Actions\ChangeExamSessionStatusAction;
-use App\Actions\CheckExamAdmissionAction;
 use App\Actions\CreateExamSessionAction;
+use App\Actions\RecheckExamSessionAdmissionsAction;
 use App\Actions\UpdateExamSessionAction;
+use App\Models\Branch;
 use App\Models\ExamActivity;
 use App\Models\ExamAttempt;
 use App\Models\ExamChecklistItem;
 use App\Models\ExamParticipant;
 use App\Models\ExamResult;
 use App\Models\ExamSession;
+use App\Models\ExamStatus;
+use App\Models\ExamType;
+use App\Models\Student;
 use App\Models\StudentEnrollment;
+use App\Models\TrainingGroup;
+use App\Models\User;
+use App\Models\Vehicle;
 use App\Orchid\Screens\School\Concerns\InteractsWithExamScreens;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
@@ -417,7 +425,7 @@ class ExamSessionEditScreen extends Screen
 
         $data = $request->validate([
             'exam_session_id' => ['required', 'integer', Rule::exists(ExamSession::class, 'id')],
-            'status_id' => ['required', 'integer', Rule::exists(\App\Models\ExamStatus::class, 'id')],
+            'status_id' => ['required', 'integer', Rule::exists(ExamStatus::class, 'id')],
         ], $this->validationMessages());
 
         $session = ExamSession::query()->findOrFail($data['exam_session_id']);
@@ -434,7 +442,7 @@ class ExamSessionEditScreen extends Screen
 
         $data = $request->validate([
             'exam_session_id' => ['required', 'integer', Rule::exists(ExamSession::class, 'id')],
-            'student_id' => ['nullable', 'integer', Rule::exists(\App\Models\Student::class, 'id')],
+            'student_id' => ['nullable', 'integer', Rule::exists(Student::class, 'id')],
             'enrollment_id' => ['required', 'integer', Rule::exists(StudentEnrollment::class, 'id')],
             'admitted' => ['nullable', 'boolean'],
             'allow_overbooking' => ['nullable', 'boolean'],
@@ -460,19 +468,12 @@ class ExamSessionEditScreen extends Screen
         return redirect()->route('platform.exams.sessions.edit', $session);
     }
 
-    public function checkAdmissions(Request $request, CheckExamAdmissionAction $checkAdmission): RedirectResponse
+    public function checkAdmissions(Request $request, RecheckExamSessionAdmissionsAction $recheckAdmissions): RedirectResponse
     {
         abort_unless($request->user()?->hasAccess('exams.admissions.check'), 403);
 
-        $session = ExamSession::query()
-            ->with(['participants.enrollment', 'typeRecord'])
-            ->findOrFail($request->integer('id'));
-
-        foreach ($session->participants as $participant) {
-            if ($participant->enrollment !== null && $session->typeRecord !== null) {
-                $checkAdmission->handle($participant->enrollment, $session->typeRecord, [], $request->user());
-            }
-        }
+        $session = ExamSession::query()->findOrFail($request->integer('id'));
+        $recheckAdmissions->handle($session, $request->user());
 
         Toast::info(tkey('exams.messages.admissions_checked'));
 
@@ -498,14 +499,14 @@ class ExamSessionEditScreen extends Screen
     {
         $rules = [
             'id' => [$creating ? 'nullable' : 'required', 'integer', Rule::exists(ExamSession::class, 'id')],
-            'type_id' => ['required', 'integer', Rule::exists(\App\Models\ExamType::class, 'id')],
-            'status_id' => ['required', 'integer', Rule::exists(\App\Models\ExamStatus::class, 'id')],
-            'branch_id' => ['nullable', 'integer', Rule::exists(\App\Models\Branch::class, 'id')],
-            'group_id' => ['nullable', 'integer', Rule::exists(\App\Models\TrainingGroup::class, 'id')],
+            'type_id' => ['required', 'integer', Rule::exists(ExamType::class, 'id')],
+            'status_id' => ['required', 'integer', Rule::exists(ExamStatus::class, 'id')],
+            'branch_id' => ['nullable', 'integer', Rule::exists(Branch::class, 'id')],
+            'group_id' => ['nullable', 'integer', Rule::exists(TrainingGroup::class, 'id')],
             'scheduled_at' => ['required', 'date'],
             'location' => ['nullable', 'string', 'max:255'],
-            'examiner_id' => ['nullable', 'integer', Rule::exists(\App\Models\User::class, 'id')],
-            'vehicle_id' => ['nullable', 'integer', Rule::exists(\App\Models\Vehicle::class, 'id')],
+            'examiner_id' => ['nullable', 'integer', Rule::exists(User::class, 'id')],
+            'vehicle_id' => ['nullable', 'integer', Rule::exists(Vehicle::class, 'id')],
             'classroom_id' => ['nullable', 'integer', 'min:1'],
             'capacity' => ['required', 'integer', 'min:1', 'max:500'],
             'notes' => ['nullable', 'string', 'max:2000'],
@@ -556,6 +557,6 @@ class ExamSessionEditScreen extends Screen
 
     private function fieldDateTime(mixed $value): ?string
     {
-        return $value === null ? null : \Illuminate\Support\Carbon::parse($value)->format('Y-m-d\TH:i');
+        return $value === null ? null : Carbon::parse($value)->format('Y-m-d\TH:i');
     }
 }

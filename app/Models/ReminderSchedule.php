@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ReminderScheduleStatus;
 use Database\Factories\ReminderScheduleFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -71,12 +72,6 @@ class ReminderSchedule extends Model
      */
     public static function statusValues(): array
     {
-        return [
-            self::STATUS_SCHEDULED,
-            self::STATUS_QUEUED,
-            self::STATUS_SENT,
-            self::STATUS_CANCELLED,
-            self::STATUS_FAILED,
-        ];
+        return ReminderScheduleStatus::values();
     }
 }

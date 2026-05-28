@@ -112,6 +112,14 @@ class StudentFactory extends Factory
         ]);
     }
 
+    public function withConsent(): static
+    {
+        return $this->state(fn (): array => [
+            'consent_accepted' => true,
+            'consent_accepted_at' => now(),
+        ]);
+    }
+
     public function withoutConsent(): static
     {
         return $this->state(fn (): array => [

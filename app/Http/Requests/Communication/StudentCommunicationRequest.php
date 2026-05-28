@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Communication;
 
+use App\Enums\CommunicationDirection;
 use App\Models\CommunicationTemplate;
 use App\Models\NotificationChannel;
 use App\Models\StudentEnrollment;
@@ -29,7 +30,10 @@ class StudentCommunicationRequest extends FormRequest
             'communication.student_enrollment_id' => ['nullable', 'integer', Rule::exists(StudentEnrollment::class, 'id')],
             'communication.notification_channel_id' => ['required', 'integer', Rule::exists(NotificationChannel::class, 'id'), new ActiveNotificationChannelRule],
             'communication.communication_template_id' => ['nullable', 'integer', Rule::exists(CommunicationTemplate::class, 'id'), new ActiveCommunicationTemplateForChannelRule($this->input('communication.notification_channel_id'))],
-            'communication.direction' => ['required', Rule::in(['inbound', 'outbound'])],
+            'communication.direction' => ['required', Rule::in([
+                CommunicationDirection::Inbound->value,
+                CommunicationDirection::Outbound->value,
+            ])],
             'communication.subject' => ['nullable', 'string', 'max:255'],
             'communication.body' => ['nullable', 'required_without:communication.communication_template_id', 'string', 'max:5000'],
             'communication.client_replied_at' => ['nullable', 'date'],

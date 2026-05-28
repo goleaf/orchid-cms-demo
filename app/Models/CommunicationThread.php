@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CommunicationThreadStatus;
 use Database\Factories\CommunicationThreadFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -79,6 +80,14 @@ class CommunicationThread extends Model
     public function scopeOpen(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_OPEN);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function statusValues(): array
+    {
+        return CommunicationThreadStatus::values();
     }
 
     public function scopeForStudent(Builder $query, Student|StudentProfile|int $student): Builder

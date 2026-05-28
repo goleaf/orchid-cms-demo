@@ -160,9 +160,6 @@ class PricingPackageEditScreen extends Screen
                 Select::make('is_featured')
                     ->title(tkey('website.admin.fields.is_featured'))
                     ->options($this->booleanOptions()),
-                Input::make('sort_order')
-                    ->type('number')
-                    ->title(tkey('website.admin.fields.sort_order')),
             ])->title(tkey('website.admin.sections.main')),
 
             TranslatableFields::input('name', 'website.pricing.fields.package', [

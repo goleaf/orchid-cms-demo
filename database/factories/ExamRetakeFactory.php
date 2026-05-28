@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ExamRetakeStatus;
 use App\Models\ExamAttempt;
 use App\Models\ExamRetake;
 use App\Models\Student;
@@ -22,7 +23,7 @@ class ExamRetakeFactory extends Factory
             'new_attempt_id' => null,
             'reason' => 'Retake after failed attempt.',
             'planned_at' => now()->addWeek(),
-            'status' => 'planned',
+            'status' => ExamRetakeStatus::Planned->value,
         ];
     }
 
@@ -30,7 +31,7 @@ class ExamRetakeFactory extends Factory
     {
         return $this->state(fn (): array => [
             'new_attempt_id' => $newAttempt->id,
-            'status' => 'scheduled',
+            'status' => ExamRetakeStatus::Scheduled->value,
         ]);
     }
 }

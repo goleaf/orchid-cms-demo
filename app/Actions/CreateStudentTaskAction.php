@@ -2,6 +2,8 @@
 
 namespace App\Actions;
 
+use App\Enums\StudentTaskPriority;
+use App\Enums\StudentTaskStatus;
 use App\Models\Student;
 use App\Models\StudentEnrollment;
 use App\Models\StudentTask;
@@ -19,7 +21,7 @@ class CreateStudentTaskAction
         array|string $title,
         ?User $createdBy = null,
         ?Carbon $dueAt = null,
-        string $priority = 'normal',
+        string $priority = StudentTaskPriority::Normal->value,
         array|string|null $description = null,
         ?int $assignedToId = null,
         ?StudentEnrollment $enrollment = null,
@@ -31,7 +33,7 @@ class CreateStudentTaskAction
             'assigned_to_id' => $assignedToId ?? $student->manager_id,
             'created_by_id' => $createdBy?->id,
             'priority' => $priority,
-            'status' => 'open',
+            'status' => StudentTaskStatus::Open->value,
             'due_at' => $dueAt,
             'completed_at' => null,
             'cancelled_at' => null,

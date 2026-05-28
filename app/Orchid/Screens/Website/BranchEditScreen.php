@@ -150,9 +150,6 @@ class BranchEditScreen extends Screen
                 Select::make('is_indexable')
                     ->title(tkey('website.seo.fields.is_indexable'))
                     ->options($this->booleanOptions()),
-                Input::make('sort_order')
-                    ->type('number')
-                    ->title(tkey('website.admin.fields.sort_order')),
             ])->title(tkey('website.admin.sections.main')),
 
             TranslatableFields::input('name', 'website.branches.fields.name', [

@@ -31,7 +31,7 @@
                     <div class="grid">
                         @forelse ($branches as $branch)
                             <article class="card">
-                                <p class="kicker">{{ $branch->displayCity() }}</p>
+                                <p class="kicker">{{ $branch->displayCountry() }} · {{ $branch->displayCity() }}</p>
                                 <h3>{{ $branch->displayName() }}</h3>
                                 <p>{{ $branch->displayAddress() }}</p>
                                 <p class="meta">{{ $branch->phone }} · {{ $branch->email }}</p>

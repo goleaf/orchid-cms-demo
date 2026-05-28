@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\CourseFormat;
 use App\Enums\LeadStatus;
+use App\Enums\LeadTaskPriority;
 use App\Models\Branch;
 use App\Models\Course;
 use App\Models\CourseCategory;
@@ -58,14 +60,14 @@ class LeadFactory extends Factory
             'source' => 'website',
             'status' => LeadStatus::New,
             'license_category' => 'B',
-            'preferred_format' => 'hybrid',
+            'preferred_format' => CourseFormat::Hybrid->value,
             'preferred_language' => 'ru',
             'preferred_time' => 'Evenings',
             'desired_start_date' => null,
             'preferred_gearbox' => null,
             'budget_cents' => $this->faker->numberBetween(50_000, 180_000),
             'is_hot' => false,
-            'priority' => 'normal',
+            'priority' => LeadTaskPriority::Normal->value,
             'lead_score' => 0,
             'next_follow_up_at' => null,
             'last_status_changed_at' => null,
@@ -225,7 +227,7 @@ class LeadFactory extends Factory
             'source' => 'callback',
             'form_name' => 'callback',
             'preferred_time' => 'Tomorrow morning',
-            'priority' => 'high',
+            'priority' => LeadTaskPriority::High->value,
         ]);
     }
 
@@ -411,19 +413,19 @@ class LeadFactory extends Factory
 
     public function highPriority(): static
     {
-        return $this->state(fn (): array => ['priority' => 'high']);
+        return $this->state(fn (): array => ['priority' => LeadTaskPriority::High->value]);
     }
 
     public function urgent(): static
     {
-        return $this->state(fn (): array => ['priority' => 'urgent']);
+        return $this->state(fn (): array => ['priority' => LeadTaskPriority::Urgent->value]);
     }
 
     public function hot(): static
     {
         return $this->state(fn (): array => [
             'is_hot' => true,
-            'priority' => 'high',
+            'priority' => LeadTaskPriority::High->value,
             'lead_score' => 85,
         ])->withTags(['hot']);
     }

@@ -2,20 +2,20 @@
 
 namespace App\Actions;
 
+use App\Actions\Concerns\AssignsSortablePosition;
 use App\Models\Faq;
 
 class CreateOrUpdateFaqAction
 {
+    use AssignsSortablePosition;
+
     /**
      * @param  array<string, mixed>  $attributes
      */
     public function handle(?Faq $faq, array $attributes): Faq
     {
         $faq ??= new Faq;
-
-        if (! $faq->exists && ! array_key_exists('sort_order', $attributes)) {
-            $attributes['sort_order'] = ((int) Faq::query()->max('sort_order')) + 10;
-        }
+        $attributes = $this->assignSortablePosition($faq, $attributes);
 
         $faq->fill($attributes);
         $faq->save();

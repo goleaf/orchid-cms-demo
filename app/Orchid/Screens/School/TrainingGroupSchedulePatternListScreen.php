@@ -94,7 +94,7 @@ class TrainingGroupSchedulePatternListScreen extends Screen
             Layout::rows([
                 Input::make('pattern.id')->type('hidden'),
                 Select::make('pattern.training_group_id')
-                    ->title(tkey('website.groups.fields.name'))
+                    ->title(tkey('education.groups.fields.name'))
                     ->options($this->groups)
                     ->required(),
                 Input::make('pattern.day_of_week')
@@ -103,18 +103,18 @@ class TrainingGroupSchedulePatternListScreen extends Screen
                     ->required(),
                 Input::make('pattern.starts_at')
                     ->type('time')
-                    ->title(tkey('education.schedule_patterns.fields.starts_at'))
+                    ->title(tkey('education.schedule_patterns.fields.start_time'))
                     ->required(),
                 Input::make('pattern.ends_at')
                     ->type('time')
-                    ->title(tkey('education.schedule_patterns.fields.ends_at'))
+                    ->title(tkey('education.schedule_patterns.fields.end_time'))
                     ->required(),
                 Select::make('pattern.lesson_type')
-                    ->title(tkey('education.schedule_patterns.fields.lesson_type'))
+                    ->title(tkey('education.schedule_patterns.fields.type'))
                     ->options($this->lessonTypeOptions())
                     ->required(),
                 Input::make('pattern.classroom')
-                    ->title(tkey('website.admin.groups.fields.classroom')),
+                    ->title(tkey('education.schedule_patterns.fields.classroom')),
                 Input::make('pattern.sort_order')
                     ->type('number')
                     ->title(tkey('crm.dictionaries.fields.sort_order')),
@@ -123,21 +123,21 @@ class TrainingGroupSchedulePatternListScreen extends Screen
                     ->title(tkey('crm.dictionaries.fields.is_active')),
             ])->title(tkey('education.schedule_patterns.title')),
 
-            TranslatableFields::input('pattern.title', 'crm.dictionaries.fields.name_translations', [
+            TranslatableFields::input('pattern.title', 'education.schedule_patterns.title', [
                 'maxlength' => 255,
             ]),
 
             Layout::table('patterns', [
-                TD::make('group', tkey('website.groups.fields.name'))
+                TD::make('group', tkey('education.groups.fields.name'))
                     ->render(fn (TrainingGroupSchedulePattern $pattern): string => $pattern->group?->displayName() ?? '-'),
                 TD::make('day_of_week', tkey('education.schedule_patterns.fields.day_of_week'))
-                    ->render(fn (TrainingGroupSchedulePattern $pattern): string => (string) $pattern->day_of_week),
-                TD::make('starts_at', tkey('education.schedule_patterns.fields.starts_at'))
+                    ->render(fn (TrainingGroupSchedulePattern $pattern): string => $pattern->display_day),
+                TD::make('starts_at', tkey('education.schedule_patterns.fields.start_time'))
                     ->render(fn (TrainingGroupSchedulePattern $pattern): string => $pattern->starts_at?->format('H:i') ?? '-'),
-                TD::make('ends_at', tkey('education.schedule_patterns.fields.ends_at'))
+                TD::make('ends_at', tkey('education.schedule_patterns.fields.end_time'))
                     ->render(fn (TrainingGroupSchedulePattern $pattern): string => $pattern->ends_at?->format('H:i') ?? '-'),
-                TD::make('lesson_type', tkey('education.schedule_patterns.fields.lesson_type'))
-                    ->render(fn (TrainingGroupSchedulePattern $pattern): string => tkey('education.learning_topics.types.'.$pattern->lesson_type)),
+                TD::make('lesson_type', tkey('education.schedule_patterns.fields.type'))
+                    ->render(fn (TrainingGroupSchedulePattern $pattern): string => tkey('education.schedule_patterns.types.'.$pattern->lesson_type)),
             ]),
         ];
     }
@@ -160,8 +160,8 @@ class TrainingGroupSchedulePatternListScreen extends Screen
      */
     private function lessonTypeOptions(): array
     {
-        return collect(['theory', 'practice', 'simulator', 'exam_preparation', 'other'])
-            ->mapWithKeys(fn (string $type): array => [$type => tkey('education.learning_topics.types.'.$type)])
+        return collect(['theory', 'practice', 'consultation', 'exam_preparation', 'other'])
+            ->mapWithKeys(fn (string $type): array => [$type => tkey('education.schedule_patterns.types.'.$type)])
             ->all();
     }
 }

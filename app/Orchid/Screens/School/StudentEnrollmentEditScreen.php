@@ -8,7 +8,10 @@ use App\Actions\AssignEnrollmentGroupAction;
 use App\Actions\ChangeEnrollmentStatusAction;
 use App\Actions\CreateStudentEnrollmentAction;
 use App\Actions\UpdateStudentEnrollmentAction;
+use App\Enums\CourseFormat;
+use App\Enums\EnrollmentPaymentStatus;
 use App\Enums\EnrollmentStatus;
+use App\Enums\GearboxType;
 use App\Http\Requests\Students\AssignEnrollmentGroupRequest;
 use App\Http\Requests\Students\ChangeEnrollmentStatusRequest;
 use App\Http\Requests\Students\StudentEnrollmentRequest;
@@ -119,7 +122,7 @@ class StudentEnrollmentEditScreen extends Screen
                 'student_profile_id' => $studentId,
                 'status' => EnrollmentStatus::WaitingDocuments,
                 'currency' => 'EUR',
-                'payment_status' => 'pending',
+                'payment_status' => EnrollmentPaymentStatus::Pending->value,
                 'theory_progress' => 0,
                 'practice_progress' => 0,
             ]);
@@ -412,7 +415,7 @@ class StudentEnrollmentEditScreen extends Screen
      */
     private function formatOptions(): array
     {
-        return collect(['offline', 'online', 'hybrid', 'individual', 'group'])
+        return collect(CourseFormat::values())
             ->mapWithKeys(fn (string $format): array => [$format => tkey('students.training_formats.'.$format)])
             ->all();
     }
@@ -422,7 +425,7 @@ class StudentEnrollmentEditScreen extends Screen
      */
     private function gearboxOptions(): array
     {
-        return collect(['manual', 'automatic', 'both', 'unknown'])
+        return collect(GearboxType::values())
             ->mapWithKeys(fn (string $type): array => [$type => tkey('students.gearbox.'.$type)])
             ->all();
     }
@@ -432,7 +435,7 @@ class StudentEnrollmentEditScreen extends Screen
      */
     private function paymentStatusOptions(): array
     {
-        return collect(['not_required', 'pending', 'partially_paid', 'paid', 'overdue'])
+        return collect(EnrollmentPaymentStatus::values())
             ->mapWithKeys(fn (string $status): array => [$status => tkey('students.payment_statuses.'.$status)])
             ->all();
     }

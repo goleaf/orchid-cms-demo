@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Exams;
 
 use App\Enums\ExamAdmissionStatus;
+use App\Enums\ExamChecklistItemStatus;
+use App\Http\Requests\Exams\Concerns\UsesExamValidationMessages;
 use App\Models\Branch;
 use App\Models\ExamAdmission;
 use App\Models\Instructor;
@@ -16,6 +18,8 @@ use Illuminate\Validation\Rule;
 
 class ExamAdmissionRequest extends FormRequest
 {
+    use UsesExamValidationMessages;
+
     public function authorize(): bool
     {
         return $this->user()?->hasAnyAccess(['platform.exams', 'exams.manage_admissions']) ?? false;
@@ -39,9 +43,9 @@ class ExamAdmissionRequest extends FormRequest
             'admission.completed_theory_hours' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'admission.required_practice_hours' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'admission.completed_practice_hours' => ['nullable', 'numeric', 'min:0', 'max:1000'],
-            'admission.documents_status' => ['nullable', 'string', 'max:40'],
+            'admission.documents_status' => ['nullable', Rule::enum(ExamChecklistItemStatus::class)],
             'admission.payment_status' => ['nullable', 'string', 'max:40'],
-            'admission.checklist_status' => ['nullable', 'string', 'max:40'],
+            'admission.checklist_status' => ['nullable', Rule::enum(ExamChecklistItemStatus::class)],
             'admission.admitted_at' => ['nullable', 'date'],
             'admission.rejected_at' => ['nullable', 'date'],
             'admission.expires_at' => ['nullable', 'date'],
@@ -49,7 +53,7 @@ class ExamAdmissionRequest extends FormRequest
             'admission.internal_notes' => ['nullable', 'string', 'max:2000'],
             'admission.checklist_items' => ['nullable', 'array'],
             'admission.checklist_items.*.code' => ['required_with:admission.checklist_items', 'string', 'max:80'],
-            'admission.checklist_items.*.status' => ['nullable', 'string', 'max:40'],
+            'admission.checklist_items.*.status' => ['nullable', Rule::enum(ExamChecklistItemStatus::class)],
             'admission.checklist_items.*.notes' => ['nullable', 'string', 'max:2000'],
         ];
     }

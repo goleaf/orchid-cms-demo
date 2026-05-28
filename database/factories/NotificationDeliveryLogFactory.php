@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\CommunicationDirection;
 use App\Models\NotificationChannel;
 use App\Models\NotificationDeliveryLog;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -25,7 +26,7 @@ class NotificationDeliveryLogFactory extends Factory
             'communication_template_id' => null,
             'communication_reminder_id' => null,
             'database_notification_id' => null,
-            'direction' => 'outbound',
+            'direction' => CommunicationDirection::Outbound->value,
             'status' => NotificationDeliveryLog::STATUS_QUEUED,
             'recipient_name' => $this->faker->name(),
             'recipient_email' => $this->faker->optional()->safeEmail(),

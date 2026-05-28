@@ -1,0 +1,445 @@
+- generic [active] [ref=e1]:
+  - navigation "Основная навигация" [ref=e2]:
+    - generic [ref=e3]:
+      - link "DrivePro Academy" [ref=e4] [cursor=pointer]:
+        - /url: http://127.0.0.1:8027
+      - generic [ref=e5]:
+        - link "Главная" [ref=e6] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027
+        - link "Курсы" [ref=e7] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/courses
+        - link "Цены" [ref=e8] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/pricing
+        - link "Филиалы" [ref=e9] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/branches
+        - link "Записаться" [ref=e10] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027#application-form
+        - link "Инструкторы" [ref=e11] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/instructors
+        - link "Автопарк" [ref=e12] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/fleet
+        - link "Отзывы" [ref=e13] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/reviews
+        - link "База знаний" [ref=e14] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/blog
+        - link "Контакты" [ref=e15] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/contacts
+        - generic [ref=e16]:
+          - generic [ref=e17]:
+            - generic [ref=e18]: Язык
+            - combobox "Язык" [ref=e19]:
+              - option "Русский" [selected]
+              - option "English"
+              - option "Lietuvių"
+              - option "Polski"
+          - button "Сменить" [ref=e20] [cursor=pointer]
+        - link "Админ-панель" [ref=e21] [cursor=pointer]:
+          - /url: http://127.0.0.1:8027/admin
+  - banner [ref=e22]:
+    - generic [ref=e24]:
+      - paragraph [ref=e25]: Автошкола в Вильнюсе
+      - heading "Права категории B с понятным расписанием и практикой с инструктором" [level=1] [ref=e26]
+      - paragraph [ref=e27]: Учитесь в удобной группе, проходите теорию онлайн или в классе и отслеживайте заявки, документы, занятия и экзамены в одной системе.
+      - generic [ref=e28]:
+        - link "Записаться" [ref=e29] [cursor=pointer]:
+          - /url: "#application-form"
+        - link "Категории и цены" [ref=e30] [cursor=pointer]:
+          - /url: "#programs"
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - strong [ref=e33]: "1"
+          - generic [ref=e34]: учеников в системе
+        - generic [ref=e35]:
+          - strong [ref=e36]: 92%
+          - generic [ref=e37]: целевой процент сдачи
+        - generic [ref=e38]:
+          - strong [ref=e39]: "11"
+          - generic [ref=e40]: активных инструкторов
+        - generic [ref=e41]:
+          - strong [ref=e42]: "5"
+          - generic [ref=e43]: учебных автомобилей
+  - main [ref=e44]:
+    - generic [ref=e46]:
+      - generic [ref=e47]:
+        - generic [ref=e48]:
+          - paragraph [ref=e49]: Автошкола
+          - heading "От первой заявки до экзамена" [level=2] [ref=e50]
+        - paragraph [ref=e51]: Главная страница показывает будущему ученику курсы, филиалы, ближайшие группы, цены и форму записи. Администратор сразу видит заявку в CRM и продолжает работу без повторного ввода данных.
+      - generic [ref=e52]:
+        - article [ref=e53]:
+          - paragraph [ref=e54]: Преимущество 1
+          - heading "Заявки сразу в CRM" [level=3] [ref=e55]
+          - paragraph [ref=e56]: Формы записи, контакта и обратного звонка сохраняют источник, UTM-метки, курс, филиал и выбранную группу.
+        - article [ref=e57]:
+          - paragraph [ref=e58]: Преимущество 2
+          - heading "Группы и расписание под контролем" [level=3] [ref=e59]
+          - paragraph [ref=e60]: Публичная витрина показывает только активные курсы, открытые группы и филиалы, которые доступны для записи.
+        - article [ref=e61]:
+          - paragraph [ref=e62]: Преимущество 3
+          - heading "Контент на четырёх языках" [level=3] [ref=e63]
+          - paragraph [ref=e64]: Админка хранит тексты на русском, английском, литовском и польском, чтобы сайт следовал выбранному языку.
+    - generic [ref=e66]:
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - paragraph [ref=e69]: Наборы
+          - heading "Ближайшие группы" [level=2] [ref=e70]
+        - paragraph [ref=e71]: Группы связаны с курсом, филиалом, датой старта, инструктором и свободными местами.
+      - table [ref=e73]:
+        - rowgroup [ref=e74]:
+          - row "Группа Курс Филиал Старт Инструктор Места Действия" [ref=e75]:
+            - columnheader "Группа" [ref=e76]
+            - columnheader "Курс" [ref=e77]
+            - columnheader "Филиал" [ref=e78]
+            - columnheader "Старт" [ref=e79]
+            - columnheader "Инструктор" [ref=e80]
+            - columnheader "Места" [ref=e81]
+            - columnheader "Действия" [ref=e82]
+        - rowgroup [ref=e83]:
+          - row "Вечерняя группа категории B B-VNO-001 Категория B Литва · Вильнюс 2026-06-04 Cheyanne Rau 9 из 14 Записаться" [ref=e84]:
+            - cell "Вечерняя группа категории B B-VNO-001" [ref=e85]:
+              - text: Вечерняя группа категории B
+              - text: B-VNO-001
+            - cell "Категория B" [ref=e86]
+            - cell "Литва · Вильнюс" [ref=e87]
+            - cell "2026-06-04" [ref=e88]
+            - cell "Cheyanne Rau" [ref=e89]
+            - cell "9 из 14" [ref=e90]
+            - cell "Записаться" [ref=e91]:
+              - link "Записаться" [ref=e92] [cursor=pointer]:
+                - /url: "#application-form"
+    - generic [ref=e94]:
+      - generic [ref=e95]:
+        - generic [ref=e96]:
+          - paragraph [ref=e97]: Категории
+          - heading "Программы, цены и часы обучения" [level=2] [ref=e98]
+        - paragraph [ref=e99]: Каждая категория ведёт на страницу с ценой, программой, группами и формой записи.
+      - generic [ref=e100]:
+        - generic [ref=e101]:
+          - generic [ref=e102]:
+            - paragraph [ref=e103]: Подбор курса
+            - heading "Фильтр по месту и категории" [level=3] [ref=e104]
+          - paragraph [ref=e105]: Выберите страну, город и категорию, чтобы увидеть подходящие курсы и ближайшие группы.
+        - generic [ref=e106]:
+          - generic [ref=e107]:
+            - text: Страна
+            - combobox "Страна" [ref=e108]:
+              - option "Все страны"
+              - option "Германия"
+              - option "Латвия"
+              - option "Литва" [selected]
+              - option "Польша"
+              - option "Эстония"
+          - generic [ref=e109]:
+            - text: Город
+            - combobox "Город" [ref=e110]:
+              - option "Все города" [selected]
+              - option "Вильнюс"
+              - option "Каунас"
+              - option "Клайпеда"
+          - generic [ref=e111]:
+            - text: Категория
+            - combobox "Категория" [ref=e112]:
+              - option "Все категории"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория курса"
+              - option "Категория B" [selected]
+              - option "Категория A"
+              - option "Индивидуальные уроки"
+              - option "Подготовка к экзамену"
+              - option "Восстановление навыков"
+          - generic [ref=e113]:
+            - button "Показать" [ref=e114] [cursor=pointer]
+            - link "Сбросить" [ref=e115] [cursor=pointer]:
+              - /url: http://127.0.0.1:8027#programs
+        - paragraph [ref=e116]: Показаны курсы, группы и филиалы по выбранному фильтру.
+      - generic [ref=e117]:
+        - article [ref=e118]:
+          - paragraph [ref=e119]: Категория B
+          - heading "Корпоративное обучение водителей" [level=3] [ref=e120]
+          - paragraph [ref=e121]: Обучение водителей для компаний с групповыми отчетами и расписанием по филиалам.
+          - generic [ref=e122]:
+            - generic [ref=e123]: 4 нед.
+            - generic [ref=e124]: 10 ч теории
+            - generic [ref=e125]: 10 ч практики
+            - generic [ref=e126]: Смешанный
+          - paragraph [ref=e127]: 990.00 EUR
+          - generic [ref=e128]:
+            - link "Открыть курс" [ref=e129] [cursor=pointer]:
+              - /url: http://127.0.0.1:8027/courses/corporate-driver-training
+            - link "Записаться" [ref=e130] [cursor=pointer]:
+              - /url: "#application-form"
+        - article [ref=e131]:
+          - paragraph [ref=e132]: Категория B
+          - heading "Курс для начинающих" [level=3] [ref=e133]
+          - paragraph [ref=e134]: Структурированная программа для начинающих с дополнительной городской практикой и уверенностью за рулем.
+          - generic [ref=e135]:
+            - generic [ref=e136]: 16 нед.
+            - generic [ref=e137]: 44 ч теории
+            - generic [ref=e138]: 34 ч практики
+            - generic [ref=e139]: Смешанный
+          - paragraph [ref=e140]: 1,390.00 EUR
+          - generic [ref=e141]:
+            - link "Открыть курс" [ref=e142] [cursor=pointer]:
+              - /url: http://127.0.0.1:8027/courses/beginner-driving-course
+            - link "Записаться" [ref=e143] [cursor=pointer]:
+              - /url: "#application-form"
+        - article [ref=e144]:
+          - paragraph [ref=e145]: Категория B
+          - heading "Подготовка к пересдаче экзамена" [level=3] [ref=e146]
+          - paragraph [ref=e147]: Целевая подготовка для учеников, которые уже пробовали сдавать экзамен.
+          - generic [ref=e148]:
+            - generic [ref=e149]: 3 нед.
+            - generic [ref=e150]: 6 ч теории
+            - generic [ref=e151]: 8 ч практики
+            - generic [ref=e152]: Смешанный
+          - paragraph [ref=e153]: 450.00 EUR
+          - generic [ref=e154]:
+            - link "Открыть курс" [ref=e155] [cursor=pointer]:
+              - /url: http://127.0.0.1:8027/courses/exam-retake-preparation
+            - link "Записаться" [ref=e156] [cursor=pointer]:
+              - /url: "#application-form"
+        - article [ref=e157]:
+          - paragraph [ref=e158]: Категория B
+          - heading "Интенсив категории B" [level=3] [ref=e159]
+          - paragraph [ref=e160]: Сжатый курс категории B для учеников, которым нужен более быстрый план обучения.
+          - generic [ref=e161]:
+            - generic [ref=e162]: 6 нед.
+            - generic [ref=e163]: 40 ч теории
+            - generic [ref=e164]: 34 ч практики
+            - generic [ref=e165]: Смешанный
+          - paragraph [ref=e166]: 1,490.00 EUR
+          - generic [ref=e167]:
+            - link "Открыть курс" [ref=e168] [cursor=pointer]:
+              - /url: http://127.0.0.1:8027/courses/intensive-category-b
+            - link "Записаться" [ref=e169] [cursor=pointer]:
+              - /url: "#application-form"
+        - article [ref=e170]:
+          - paragraph [ref=e171]: Категория B
+          - heading "Восстановление навыков вождения" [level=3] [ref=e172]
+          - paragraph [ref=e173]: Уроки для водителей с правами, которые возвращаются за руль и хотят восстановить уверенность.
+          - generic [ref=e174]:
+            - generic [ref=e175]: 3 нед.
+            - generic [ref=e176]: 4 ч теории
+            - generic [ref=e177]: 8 ч практики
+            - generic [ref=e178]: Смешанный
+          - paragraph [ref=e179]: 390.00 EUR
+          - generic [ref=e180]:
+            - link "Открыть курс" [ref=e181] [cursor=pointer]:
+              - /url: http://127.0.0.1:8027/courses/skill-refresh-driving
+            - link "Записаться" [ref=e182] [cursor=pointer]:
+              - /url: "#application-form"
+        - article [ref=e183]:
+          - paragraph [ref=e184]: Категория BE
+          - heading "Категория BE прицеп" [level=3] [ref=e185]
+          - paragraph [ref=e186]: Курс управления прицепом с движением задним ходом, сцепкой и экзаменационными маневрами.
+          - generic [ref=e187]:
+            - generic [ref=e188]: 6 нед.
+            - generic [ref=e189]: 12 ч теории
+            - generic [ref=e190]: 10 ч практики
+            - generic [ref=e191]: В классе
+          - paragraph [ref=e192]: 690.00 EUR
+          - generic [ref=e193]:
+            - link "Открыть курс" [ref=e194] [cursor=pointer]:
+              - /url: http://127.0.0.1:8027/courses/category-be-trailer
+            - link "Записаться" [ref=e195] [cursor=pointer]:
+              - /url: "#application-form"
+        - article [ref=e196]:
+          - paragraph [ref=e197]: Категория C
+          - heading "Категория C грузовик" [level=3] [ref=e198]
+          - paragraph [ref=e199]: Курс вождения грузовика для подготовки к профессиональным перевозкам.
+          - generic [ref=e200]:
+            - generic [ref=e201]: 12 нед.
+            - generic [ref=e202]: 35 ч теории
+            - generic [ref=e203]: 20 ч практики
+            - generic [ref=e204]: В классе
+          - paragraph [ref=e205]: 1,590.00 EUR
+          - generic [ref=e206]:
+            - link "Открыть курс" [ref=e207] [cursor=pointer]:
+              - /url: http://127.0.0.1:8027/courses/category-c-truck
+            - link "Записаться" [ref=e208] [cursor=pointer]:
+              - /url: "#application-form"
+        - article [ref=e209]:
+          - paragraph [ref=e210]: Категория D
+          - heading "Категория D автобус" [level=3] [ref=e211]
+          - paragraph [ref=e212]: Обучение водителей автобуса с маршрутной дисциплиной, безопасностью пассажиров и подготовкой к экзамену.
+          - generic [ref=e213]:
+            - generic [ref=e214]: 12 нед.
+            - generic [ref=e215]: 35 ч теории
+            - generic [ref=e216]: 20 ч практики
+            - generic [ref=e217]: В классе
+          - paragraph [ref=e218]: 1,690.00 EUR
+          - generic [ref=e219]:
+            - link "Открыть курс" [ref=e220] [cursor=pointer]:
+              - /url: http://127.0.0.1:8027/courses/category-d-bus
+            - link "Записаться" [ref=e221] [cursor=pointer]:
+              - /url: "#application-form"
+        - article [ref=e222]:
+          - paragraph [ref=e223]: Категория B
+          - heading "Категория B" [level=3] [ref=e224]
+          - paragraph [ref=e225]: Курс категории B с теорией, практикой и сопровождением.
+          - generic [ref=e226]:
+            - generic [ref=e227]: 14 нед.
+            - generic [ref=e228]: 45 ч теории
+            - generic [ref=e229]: 30 ч практики
+            - generic [ref=e230]: Смешанный
+          - paragraph [ref=e231]: 1,290.00 EUR
+          - generic [ref=e232]:
+            - link "Открыть курс" [ref=e233] [cursor=pointer]:
+              - /url: http://127.0.0.1:8027/courses/category-b-manual
+            - link "Записаться" [ref=e234] [cursor=pointer]:
+              - /url: "#application-form"
+    - generic [ref=e236]:
+      - generic [ref=e237]:
+        - generic [ref=e238]:
+          - paragraph [ref=e239]: Процесс
+          - heading "Как проходит обучение" [level=2] [ref=e240]
+        - paragraph [ref=e241]: Заявка сразу попадает в систему, чтобы менеджер мог быстро связаться с будущим учеником.
+      - generic [ref=e242]:
+        - article [ref=e243]:
+          - paragraph [ref=e244]: Шаг 1
+          - heading "Заявка и документы" [level=3] [ref=e245]
+          - paragraph [ref=e246]: Клиент выбирает курс, филиал, группу и оставляет контакты. CRM создаёт лид для менеджера.
+        - article [ref=e247]:
+          - paragraph [ref=e248]: Шаг 2
+          - heading "Теория" [level=3] [ref=e249]
+          - paragraph [ref=e250]: Ученик получает формат обучения, материалы и план подготовки перед практикой.
+        - article [ref=e251]:
+          - paragraph [ref=e252]: Шаг 3
+          - heading "Практика" [level=3] [ref=e253]
+          - paragraph [ref=e254]: Расписание связывает ученика с инструктором, автомобилем, филиалом и темами занятий.
+        - article [ref=e255]:
+          - paragraph [ref=e256]: Шаг 4
+          - heading "Экзамены" [level=3] [ref=e257]
+          - paragraph [ref=e258]: Готовность, документы, оплаты и попытки экзаменов будут связаны со студентом.
+    - generic [ref=e260]:
+      - generic [ref=e261]:
+        - generic [ref=e262]:
+          - paragraph [ref=e263]: Цены
+          - heading "Цены на обучение" [level=2] [ref=e264]
+        - paragraph [ref=e265]: Курсы, стоимость, часы, формат и условия оплаты видны до отправки заявки.
+      - article [ref=e267]:
+        - paragraph [ref=e268]: Категория B
+        - heading "Премиум" [level=3] [ref=e269]
+        - paragraph [ref=e270]: 1,490.00 EUR
+        - paragraph [ref=e271]: Пакет для страницы цен автошколы.
+      - link "Цены" [ref=e273] [cursor=pointer]:
+        - /url: http://127.0.0.1:8027/pricing
+    - generic [ref=e275]:
+      - generic [ref=e276]:
+        - generic [ref=e277]:
+          - paragraph [ref=e278]: Отзывы
+          - heading "Отзывы учеников" [level=2] [ref=e279]
+        - paragraph [ref=e280]: Отзывы
+      - article [ref=e282]:
+        - paragraph [ref=e283]: "Оценка: 5"
+        - heading "Ieva N." [level=3] [ref=e284]
+        - paragraph [ref=e285]: Отличный курс и внимательные инструкторы.
+    - generic [ref=e287]:
+      - generic [ref=e288]:
+        - generic [ref=e289]:
+          - paragraph [ref=e290]: FAQ
+          - heading "Частые вопросы" [level=2] [ref=e291]
+        - paragraph [ref=e292]: Короткие ответы по формату обучения, документам и выбору инструктора.
+      - generic [ref=e293]:
+        - article [ref=e294]:
+          - heading "Можно учиться онлайн?" [level=3] [ref=e295]
+          - paragraph [ref=e296]: Да. Теория может быть онлайн, в классе или в смешанном формате.
+        - article [ref=e297]:
+          - heading "Можно выбрать инструктора?" [level=3] [ref=e298]
+          - paragraph [ref=e299]: Да. В заявке можно указать предпочтение, а менеджер подтвердит доступность.
+        - article [ref=e300]:
+          - heading "Какие документы нужны?" [level=3] [ref=e301]
+          - paragraph [ref=e302]: Обычно нужны документ личности, медицинская справка, фото и договор обучения.
+        - article [ref=e303]:
+          - heading "Есть интенсивные курсы?" [level=3] [ref=e304]
+          - paragraph [ref=e305]: Да. Интенсивные курсы и подготовка к пересдаче доступны как отдельные программы.
+    - generic [ref=e307]:
+      - generic [ref=e308]:
+        - generic [ref=e309]:
+          - paragraph [ref=e310]: Онлайн-запись
+          - heading "Запись в автошколу" [level=2] [ref=e311]
+        - paragraph [ref=e312]: Заявка создаёт лид в CRM и сохраняет курс, филиал, группу, источник и UTM-метки.
+      - generic [ref=e313]:
+        - generic [ref=e314]:
+          - generic [ref=e315]:
+            - text: Курс
+            - combobox "Курс" [ref=e316]:
+              - option "Корпоративное обучение водителей" [selected]
+              - option "Курс для начинающих"
+              - option "Подготовка к пересдаче экзамена"
+              - option "Интенсив категории B"
+              - option "Восстановление навыков вождения"
+              - option "Категория BE прицеп"
+              - option "Категория C грузовик"
+              - option "Категория D автобус"
+              - option "Категория B"
+          - generic [ref=e317]:
+            - text: Филиал
+            - combobox "Филиал" [ref=e318]:
+              - option "Литва · Вильнюс · DrivePro Academy Вильнюс" [selected]
+          - generic [ref=e319]:
+            - text: Учебная группа
+            - combobox "Учебная группа" [ref=e320]:
+              - option "Подобрать с менеджером" [selected]
+              - option "Вечерняя группа категории B · Категория B · Литва · Вильнюс"
+          - generic [ref=e321]:
+            - text: Имя и фамилия
+            - textbox "Имя и фамилия" [ref=e322]
+          - generic [ref=e323]:
+            - text: Телефон
+            - textbox "Телефон" [ref=e324]
+          - generic [ref=e325]:
+            - text: Эл. почта
+            - textbox "Эл. почта" [ref=e326]
+          - generic [ref=e327]:
+            - text: Удобное время
+            - textbox "Удобное время" [ref=e328]:
+              - /placeholder: Вечером, утром или по выходным
+          - generic [ref=e329]:
+            - text: Мессенджер
+            - textbox "Мессенджер" [ref=e330]:
+              - /placeholder: Например WhatsApp, Telegram или Viber
+          - generic [ref=e331]:
+            - text: Комментарий
+            - textbox "Комментарий" [ref=e332]
+          - generic [ref=e334]:
+            - checkbox "Согласие на обработку данных" [ref=e335]
+            - text: Согласие на обработку данных
+        - button "Отправить заявку" [ref=e337] [cursor=pointer]
+    - generic [ref=e339]:
+      - generic [ref=e340]:
+        - generic [ref=e341]:
+          - paragraph [ref=e342]: Контакты
+          - heading "Филиалы и контакты" [level=2] [ref=e343]
+        - paragraph [ref=e344]: Адреса, телефоны, график работы и форма обратного звонка.
+      - generic [ref=e345]:
+        - article [ref=e347]:
+          - heading "DrivePro Academy Вильнюс" [level=3] [ref=e348]
+          - paragraph [ref=e349]: Литва · Вильнюс, Gedimino pr. 1
+          - paragraph [ref=e350]: Пн-Пт 09:00-18:00
+          - generic [ref=e351]:
+            - generic [ref=e352]: 1 групп
+            - generic [ref=e353]: 1 инструкторов
+            - generic [ref=e354]: 1 автомобилей
+        - strong [ref=e356]: Карта филиалов
+  - contentinfo [ref=e357]:
+    - generic [ref=e358]:
+      - strong [ref=e359]: DrivePro Academy
+      - paragraph [ref=e360]: Публичный сайт, онлайн-запись, карта филиалов, CRM заявок и рабочая админ-панель.
+  - generic "Быстрые способы связи" [ref=e361]:
+    - link "Онлайн-чат" [ref=e362] [cursor=pointer]:
+      - /url: http://127.0.0.1:8027#application-form
+    - link "Обратный звонок" [ref=e363] [cursor=pointer]:
+      - /url: http://127.0.0.1:8027/contacts#callback

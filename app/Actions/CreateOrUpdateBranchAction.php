@@ -2,17 +2,21 @@
 
 namespace App\Actions;
 
+use App\Actions\Concerns\AssignsSortablePosition;
 use App\Models\Branch;
 use App\Services\TranslatableContentManager;
 
 class CreateOrUpdateBranchAction
 {
+    use AssignsSortablePosition;
+
     /**
      * @param  array<string, mixed>  $attributes
      */
     public function handle(?Branch $branch, array $attributes): Branch
     {
         $branch ??= new Branch;
+        $attributes = $this->assignSortablePosition($branch, $attributes);
         $attributes = app(GenerateSeoMetadataAction::class)->handle(
             $attributes,
             ['name'],

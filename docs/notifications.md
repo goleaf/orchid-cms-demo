@@ -85,6 +85,18 @@ Default seeders create:
 
 The demo notification seeder only runs in local, demo, and test environments. It creates sample messages, preferences, reminder schedules, communication history, an attachment record, and activity records without sending real external messages.
 
+## Multilingual UI And Validation
+
+Notification UI labels are seeded in Russian, English, Lithuanian, and Polish under the `menu.notifications.*`, `notifications.fields.*`, and `notifications.actions.*` namespaces.
+
+The notification enum labels are also seeded for default channels, message statuses, and priorities:
+
+- channels: internal, email, SMS placeholder, WhatsApp placeholder, Telegram placeholder, and push placeholder,
+- statuses: draft, scheduled, queued, sent, delivered, failed, cancelled, and archived,
+- priorities: low, normal, high, and urgent.
+
+Validation errors for notification Rules and Form Requests must use `notifications.validation.*` keys. The Block 11 key set includes inactive channels, unpublished templates, unsafe template content, missing recipients, invalid targets, send/retry state, reminder triggers, schedule dates, disallowed preferences, invalid priorities, and invalid communication directions.
+
 ## Internal Notifications
 
 Internal notifications are delivered through Laravel database notifications. Each internal send can also create a delivery log with the database notification identifier, sender, recipient, subject, body, and sent timestamp.
@@ -122,6 +134,8 @@ Do not add production provider credentials, webhooks, HTTP clients, or message s
 
 The communications permission group includes access for channel management, template management, reminder management, delivery log viewing, preferences, student history, and lead history.
 
+The notification permission group adds granular controls for messages, templates, reminders, deliveries, threads, preferences, channels, and exports. Message permissions are split into view, create, send, cancel, and retry. Template permissions are split into view, create, update, and publish. Reminder permissions are split into view, manage, and process.
+
 Local superadmin seeding enables these permissions. Other roles should receive only the specific communication permissions needed for their job.
 
 ## Verification
@@ -129,6 +143,7 @@ Local superadmin seeding enables these permissions. Other roles should receive o
 Run the focused notification and communication checks with:
 
 ```bash
+php artisan test --filter=NotificationLocalizationPermissionsTest
 php artisan test --filter=NotificationFactoriesSeedersTest
 php artisan test --filter=NotificationActionsRulesTest
 php artisan test --filter=NotificationDatabaseModelsTest

@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\TrainingGroupMembershipStatus;
 use App\Models\TrainingGroupMembership;
 use App\Models\User;
 
@@ -16,7 +17,7 @@ class CompleteTrainingGroupMembershipAction
         $group = $membership->group()->firstOrFail();
 
         $membership->forceFill([
-            'status' => 'completed',
+            'status' => TrainingGroupMembershipStatus::Completed->value,
             'left_at' => now(),
             'updated_by_id' => $user?->id ?? $membership->updated_by_id,
         ])->save();

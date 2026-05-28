@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-use App\Models\TrainingGroup;
+use App\Enums\TrainingGroupMembershipStatus;
 use App\Models\TrainingGroupMembership;
 use App\Models\User;
 
@@ -21,7 +21,7 @@ class RemoveStudentFromTrainingGroupAction
         $group = $model->group()->firstOrFail();
 
         $model->forceFill([
-            'status' => 'removed',
+            'status' => TrainingGroupMembershipStatus::Removed->value,
             'left_at' => now(),
             'transfer_reason' => $reason,
             'left_reason' => $reason,
@@ -52,5 +52,4 @@ class RemoveStudentFromTrainingGroupAction
 
         return $model->refresh();
     }
-
 }

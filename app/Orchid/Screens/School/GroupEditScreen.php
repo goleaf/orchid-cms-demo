@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\School;
 
-use App\Actions\SaveTrainingGroupAction;
 use App\Actions\AddStudentToTrainingGroupAction;
+use App\Actions\SaveTrainingGroupAction;
 use App\Enums\GroupStatus;
 use App\Http\Requests\Education\TrainingGroupMembershipRequest;
 use App\Http\Requests\TrainingGroupRequest;
@@ -137,13 +137,13 @@ class GroupEditScreen extends Screen
     public function name(): ?string
     {
         return $this->group?->exists
-            ? tkey('website.admin.groups.edit_title')
-            : tkey('website.admin.groups.create_title');
+            ? tkey('education.groups.edit_title')
+            : tkey('education.groups.create_title');
     }
 
     public function description(): ?string
     {
-        return tkey('website.admin.groups.description');
+        return tkey('education.groups.title');
     }
 
     public function permission(): iterable
@@ -162,7 +162,7 @@ class GroupEditScreen extends Screen
                 ->icon('bs.check-lg')
                 ->method('save'),
 
-            ModalToggle::make(tkey('education.groups.actions.add_member'))
+            ModalToggle::make(tkey('education.groups.actions.add_student'))
                 ->icon('bs.person-plus')
                 ->modal('addMemberModal')
                 ->method('addMember')
@@ -176,22 +176,22 @@ class GroupEditScreen extends Screen
             Layout::rows([
                 Input::make('group.id')->type('hidden'),
                 Input::make('group.code')
-                    ->title(tkey('website.groups.columns.code'))
+                    ->title(tkey('education.groups.fields.code'))
                     ->required(),
                 Select::make('group.training_program_id')
-                    ->title(tkey('crm.leads.fields.course'))
+                    ->title(tkey('education.groups.fields.course'))
                     ->options($this->programs)
                     ->required(),
                 Select::make('group.branch_id')
-                    ->title(tkey('crm.leads.fields.branch'))
+                    ->title(tkey('education.groups.fields.branch'))
                     ->options($this->branches)
                     ->required(),
                 Select::make('group.instructor_id')
-                    ->title(tkey('crm.leads.fields.instructor'))
+                    ->title(tkey('education.groups.fields.teacher'))
                     ->options($this->instructors)
                     ->empty(tkey('crm.leads.empty.no_instructor')),
                 Select::make('group.status')
-                    ->title(tkey('crm.leads.fields.status'))
+                    ->title(tkey('education.groups.fields.status'))
                     ->options(GroupStatus::options())
                     ->required(),
                 Select::make('group.status_id')
@@ -200,17 +200,17 @@ class GroupEditScreen extends Screen
                     ->empty(tkey('students.filters.no_segment')),
                 Input::make('group.capacity')
                     ->type('number')
-                    ->title(tkey('website.admin.groups.fields.capacity'))
+                    ->title(tkey('education.groups.fields.capacity_total'))
                     ->required(),
                 Input::make('group.places_taken')
                     ->type('number')
-                    ->title(tkey('website.admin.groups.fields.places_taken')),
+                    ->title(tkey('education.groups.fields.capacity_taken')),
                 Input::make('group.starts_on')
                     ->type('date')
-                    ->title(tkey('website.groups.columns.start')),
+                    ->title(tkey('education.groups.fields.start_date')),
                 Input::make('group.ends_on')
                     ->type('date')
-                    ->title(tkey('website.admin.groups.fields.ends_on')),
+                    ->title(tkey('education.groups.fields.planned_end_date')),
                 Input::make('group.enrollment_closes_on')
                     ->type('date')
                     ->title(tkey('education.groups.fields.enrollment_closes_on')),
@@ -221,55 +221,55 @@ class GroupEditScreen extends Screen
                     ->title(tkey('website.groups.columns.time')),
                 Input::make('group.end_time')
                     ->type('time')
-                    ->title(tkey('education.schedule_patterns.fields.ends_at')),
+                    ->title(tkey('education.schedule_patterns.fields.end_time')),
                 Input::make('group.classroom')
-                    ->title(tkey('website.admin.groups.fields.classroom')),
+                    ->title(tkey('education.schedule_patterns.fields.classroom')),
                 Input::make('group.learning_notes')
                     ->title(tkey('education.groups.fields.learning_notes')),
                 Input::make('group.schedule_notes')
                     ->title(tkey('education.groups.fields.schedule_notes')),
                 Select::make('group.is_visible_on_site')
-                    ->title(tkey('website.admin.groups.fields.is_visible_on_site'))
+                    ->title(tkey('education.groups.fields.is_visible_on_site'))
                     ->options([
                         1 => tkey('common.status.yes'),
                         0 => tkey('common.status.no'),
                     ]),
-            ])->title(tkey('website.admin.sections.system')),
+            ])->title(tkey('education.groups.sections.main_information')),
 
-            TranslatableFields::input('name', 'website.admin.groups.fields.name', [
-                'title_key' => 'website.admin.sections.content',
+            TranslatableFields::input('name', 'education.groups.fields.name', [
+                'title_key' => 'education.groups.sections.translated_content',
                 'maxlength' => 255,
                 'required' => true,
             ]),
 
             Layout::table('memberships', [
-                TD::make('student', tkey('education.memberships.fields.student'))
+                TD::make('student', tkey('education.groups.memberships.fields.student'))
                     ->render(fn (TrainingGroupMembership $membership): string => $membership->student?->display_name ?? '-'),
-                TD::make('enrollment', tkey('education.memberships.fields.enrollment'))
+                TD::make('enrollment', tkey('education.groups.memberships.fields.enrollment'))
                     ->render(fn (TrainingGroupMembership $membership): string => $membership->enrollment?->display_name ?? '-'),
-                TD::make('status', tkey('education.memberships.fields.status'))
-                    ->render(fn (TrainingGroupMembership $membership): string => tkey('education.memberships.statuses.'.$membership->status)),
-                TD::make('joined_at', tkey('education.memberships.fields.joined_at'))
+                TD::make('status', tkey('education.groups.memberships.fields.status'))
+                    ->render(fn (TrainingGroupMembership $membership): string => tkey('education.groups.memberships.statuses.'.$membership->status)),
+                TD::make('joined_at', tkey('education.groups.memberships.fields.joined_at'))
                     ->render(fn (TrainingGroupMembership $membership): string => $membership->joined_at?->format('Y-m-d H:i') ?? '-'),
-            ])->title(tkey('education.groups.sections.memberships')),
+            ])->title(tkey('education.groups.sections.members')),
 
             Layout::table('schedulePatterns', [
                 TD::make('day_of_week', tkey('education.schedule_patterns.fields.day_of_week'))
-                    ->render(fn (TrainingGroupSchedulePattern $pattern): string => (string) $pattern->day_of_week),
-                TD::make('starts_at', tkey('education.schedule_patterns.fields.starts_at'))
+                    ->render(fn (TrainingGroupSchedulePattern $pattern): string => $pattern->display_day),
+                TD::make('starts_at', tkey('education.schedule_patterns.fields.start_time'))
                     ->render(fn (TrainingGroupSchedulePattern $pattern): string => $pattern->starts_at?->format('H:i') ?? '-'),
-                TD::make('ends_at', tkey('education.schedule_patterns.fields.ends_at'))
+                TD::make('ends_at', tkey('education.schedule_patterns.fields.end_time'))
                     ->render(fn (TrainingGroupSchedulePattern $pattern): string => $pattern->ends_at?->format('H:i') ?? '-'),
-                TD::make('lesson_type', tkey('education.schedule_patterns.fields.lesson_type'))
-                    ->render(fn (TrainingGroupSchedulePattern $pattern): string => tkey('education.learning_topics.types.'.$pattern->lesson_type)),
-            ])->title(tkey('education.groups.sections.schedule')),
+                TD::make('lesson_type', tkey('education.schedule_patterns.fields.type'))
+                    ->render(fn (TrainingGroupSchedulePattern $pattern): string => tkey('education.schedule_patterns.types.'.$pattern->lesson_type)),
+            ])->title(tkey('education.groups.sections.schedule_patterns')),
 
             Layout::table('activities', [
-                TD::make('created_at', tkey('students.fields.created_at'))
+                TD::make('created_at', tkey('education.groups.fields.created_at'))
                     ->render(fn (TrainingGroupActivity $activity): string => $activity->created_at->format('Y-m-d H:i')),
-                TD::make('type', tkey('crm.leads.fields.status'))
+                TD::make('type', tkey('education.schedule_patterns.fields.type'))
                     ->render(fn (TrainingGroupActivity $activity): string => $activity->display_type),
-                TD::make('user', tkey('students.fields.updated_by'))
+                TD::make('user', tkey('education.groups.fields.updated_by'))
                     ->render(fn (TrainingGroupActivity $activity): string => $activity->user?->name ?? '-'),
             ])->title(tkey('education.groups.sections.activities')),
 
@@ -277,7 +277,7 @@ class GroupEditScreen extends Screen
                 Layout::rows([
                     Input::make('membership.training_group_id')->type('hidden'),
                     Select::make('membership.enrollment_id')
-                        ->title(tkey('education.memberships.fields.enrollment'))
+                        ->title(tkey('education.groups.memberships.fields.enrollment'))
                         ->options($this->enrollments)
                         ->required(),
                     Select::make('membership.allow_overbooking')
@@ -288,8 +288,8 @@ class GroupEditScreen extends Screen
                         ]),
                 ]),
             ])
-                ->title(tkey('education.groups.actions.add_member'))
-                ->applyButton(tkey('education.groups.actions.add_member')),
+                ->title(tkey('education.groups.actions.add_student'))
+                ->applyButton(tkey('education.groups.actions.add_student')),
         ];
     }
 
@@ -301,7 +301,7 @@ class GroupEditScreen extends Screen
 
         $save->handle($group, $request->groupData(), $request->user());
 
-        Toast::info(tkey('education.groups.messages.saved'));
+        Toast::info(tkey('education.groups.messages.updated'));
 
         return redirect()->route('platform.website.groups');
     }
@@ -313,7 +313,7 @@ class GroupEditScreen extends Screen
 
         $addToGroup->handle($enrollment, (int) $data['training_group_id'], $request->user(), (bool) $data['allow_overbooking']);
 
-        Toast::info(tkey('education.groups.messages.member_added'));
+        Toast::info(tkey('education.groups.messages.student_added'));
 
         return redirect()->route('platform.website.groups.edit', $data['training_group_id']);
     }

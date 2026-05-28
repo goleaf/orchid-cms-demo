@@ -48,7 +48,7 @@
                             <select name="branch_id" required>
                                 @foreach ($branches as $branch)
                                     <option value="{{ $branch->id }}" @selected((string) old('branch_id', $tracking['branch']) === (string) $branch->id)>
-                                        {{ $branch->displayCity() }} · {{ $branch->displayName() }}
+                                        {{ $branch->displayCountry() }} · {{ $branch->displayCity() }} · {{ $branch->displayName() }}
                                     </option>
                                 @endforeach
                             </select>
@@ -61,7 +61,7 @@
                                 <option value="">{{ tkey('website.forms.manager_select_group') }}</option>
                                 @foreach ($groups as $group)
                                     <option value="{{ $group->id }}" @selected((string) old('training_group_id', $tracking['group']) === (string) $group->id)>
-                                        {{ $group->code }} · {{ $group->trainingProgram->displayTitle() }} · {{ $group->branch->displayCity() }}
+                                        {{ $group->code }} · {{ $group->trainingProgram->displayTitle() }} · {{ $group->branch->displayCountry() }} · {{ $group->branch->displayCity() }}
                                     </option>
                                 @endforeach
                             </select>
@@ -74,7 +74,7 @@
                                 <option value="">{{ tkey('website.forms.no_instructor_preference') }}</option>
                                 @foreach ($instructors as $instructor)
                                     <option value="{{ $instructor->id }}" @selected((string) old('instructor_id', $tracking['instructor']) === (string) $instructor->id)>
-                                        {{ $instructor->name }} · {{ $instructor->branch->displayCity() }}
+                                        {{ $instructor->name }} · {{ $instructor->branch->displayCountry() }} · {{ $instructor->branch->displayCity() }}
                                     </option>
                                 @endforeach
                             </select>

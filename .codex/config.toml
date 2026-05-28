@@ -3,6 +3,18 @@ command = "php"
 args = ["artisan", "boost:mcp"]
 cwd = "/Users/andrejprus/Herd/orchid-cms-demo"
 
+[mcp_servers.chrome-devtools]
+command = "npx"
+args = ["-y", "chrome-devtools-mcp@latest"]
+startup_timeout_sec = 30
+
+  [mcp_servers.chrome-devtools.env]
+  CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS = "1"
+
+[mcp_servers.git]
+command = "uvx"
+args = ["mcp-server-git", "--repository", "/Users/andrejprus/Herd/orchid-cms-demo"]
+
 [features]
 hooks = true
 

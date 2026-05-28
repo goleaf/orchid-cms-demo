@@ -3014,3 +3014,3021 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T10:00:52+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:00:52+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6df7-d5ba-7a33-a4cf-5e8551af11bb",
+  "branch": "main",
+  "changed_file_count": 97,
+  "changed_file_groups": {
+    "code": 86,
+    "models": 4,
+    "orchid": 1,
+    "services": 1,
+    "database": 1,
+    "tests": 4
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php",
+    "app/Actions/RecordExamActivityAction.php",
+    "app/Actions/RecordExamResultAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ScheduleExamRetakeAction.php",
+    "app/Actions/StartExamAttemptAction.php",
+    "app/Actions/UpdateExamSessionAction.php",
+    "app/Enums/AnalyticsDashboardAudience.php",
+    "app/Enums/DashboardWidgetType.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:06:19+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:06:19+00:00",
+  "event": "Stop",
+  "session_id": "019e6d89-8b50-7700-9bf0-1b7bff5e9f2f",
+  "turn_id": "019e6db8-ec9a-7f70-bf82-d71080f91990",
+  "branch": "main",
+  "changed_file_count": 100,
+  "changed_file_groups": {
+    "code": 87,
+    "models": 4,
+    "orchid": 1,
+    "services": 1,
+    "database": 1,
+    "tests": 6
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php",
+    "app/Actions/RecordExamActivityAction.php",
+    "app/Actions/RecordExamResultAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ScheduleExamRetakeAction.php",
+    "app/Actions/StartExamAttemptAction.php",
+    "app/Actions/UpdateExamSessionAction.php",
+    "app/Enums/AnalyticsDashboardAudience.php",
+    "app/Enums/DashboardWidgetType.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:09:06+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:09:06+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbf-45b8-7d82-8894-aa09b2801bd0",
+  "turn_id": "019e6dcd-421e-7593-ae8a-21df14f77c85",
+  "branch": "main",
+  "changed_file_count": 100,
+  "changed_file_groups": {
+    "code": 87,
+    "models": 4,
+    "orchid": 1,
+    "services": 1,
+    "database": 1,
+    "tests": 6
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php",
+    "app/Actions/RecordExamActivityAction.php",
+    "app/Actions/RecordExamResultAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ScheduleExamRetakeAction.php",
+    "app/Actions/StartExamAttemptAction.php",
+    "app/Actions/UpdateExamSessionAction.php",
+    "app/Enums/AnalyticsDashboardAudience.php",
+    "app/Enums/DashboardWidgetType.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:13:11+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:13:11+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6df7-63d9-7c31-9487-a1b44c61c9ca",
+  "branch": "main",
+  "changed_file_count": 87,
+  "changed_file_groups": {
+    "code": 79,
+    "models": 1,
+    "orchid": 1,
+    "services": 1,
+    "tests": 5
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php",
+    "app/Actions/RecordExamActivityAction.php",
+    "app/Actions/RecordExamResultAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ScheduleExamRetakeAction.php",
+    "app/Actions/StartExamAttemptAction.php",
+    "app/Actions/UpdateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:13:11+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:13:11+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6df7-63d9-7c31-9487-a1b44c61c9ca",
+  "branch": "main",
+  "changed_file_count": 87,
+  "changed_file_groups": {
+    "code": 79,
+    "models": 1,
+    "orchid": 1,
+    "services": 1,
+    "tests": 5
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php",
+    "app/Actions/RecordExamActivityAction.php",
+    "app/Actions/RecordExamResultAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ScheduleExamRetakeAction.php",
+    "app/Actions/StartExamAttemptAction.php",
+    "app/Actions/UpdateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:13:42+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:13:42+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbc-5a94-7db1-88e6-13134264efa5",
+  "turn_id": "019e6df5-8039-7c12-97da-48244183e019",
+  "branch": "main",
+  "changed_file_count": 88,
+  "changed_file_groups": {
+    "code": 80,
+    "models": 1,
+    "orchid": 1,
+    "services": 1,
+    "tests": 5
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php",
+    "app/Actions/RecordExamActivityAction.php",
+    "app/Actions/RecordExamResultAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ScheduleExamRetakeAction.php",
+    "app/Actions/StartExamAttemptAction.php",
+    "app/Actions/UpdateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:14:07+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:14:07+00:00",
+  "event": "Stop",
+  "session_id": "019e6d9c-1446-78f3-b720-8f17cbb16ed9",
+  "turn_id": "019e6e0d-c93f-71d1-85c0-db8be8c97fc1",
+  "branch": "main",
+  "changed_file_count": 90,
+  "changed_file_groups": {
+    "code": 80,
+    "models": 1,
+    "orchid": 1,
+    "services": 1,
+    "database": 1,
+    "tests": 6
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php",
+    "app/Actions/RecordExamActivityAction.php",
+    "app/Actions/RecordExamResultAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ScheduleExamRetakeAction.php",
+    "app/Actions/StartExamAttemptAction.php",
+    "app/Actions/UpdateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:27:12+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:27:12+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbf-45b8-7d82-8894-aa09b2801bd0",
+  "turn_id": "019e6e0f-2270-7e31-90ba-03c667b4a33e",
+  "branch": "main",
+  "changed_file_count": 157,
+  "changed_file_groups": {
+    "code": 121,
+    "models": 6,
+    "orchid": 19,
+    "services": 1,
+    "database": 1,
+    "tests": 9
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:27:46+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:27:46+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6e1a-7d4f-73c3-97c0-6c7737bebfa5",
+  "branch": "main",
+  "changed_file_count": 157,
+  "changed_file_groups": {
+    "code": 121,
+    "models": 6,
+    "orchid": 19,
+    "services": 1,
+    "database": 1,
+    "tests": 9
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:27:46+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:27:46+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6e1a-7d4f-73c3-97c0-6c7737bebfa5",
+  "branch": "main",
+  "changed_file_count": 157,
+  "changed_file_groups": {
+    "code": 121,
+    "models": 6,
+    "orchid": 19,
+    "services": 1,
+    "database": 1,
+    "tests": 9
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:33:17+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:33:17+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6e12-2e26-7533-a386-2380ba63177e",
+  "branch": "main",
+  "changed_file_count": 187,
+  "changed_file_groups": {
+    "code": 144,
+    "models": 12,
+    "orchid": 19,
+    "services": 1,
+    "database": 1,
+    "tests": 10
+  },
+  "changed_files_sample": [
+    ".codex/memory/decisions.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:34:07+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:34:07+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e12-e271-7891-a6e4-21301e4a0533",
+  "branch": "main",
+  "changed_file_count": 170,
+  "changed_file_groups": {
+    "code": 132,
+    "models": 9,
+    "orchid": 19,
+    "services": 1,
+    "tests": 9
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:34:07+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:34:07+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e12-e271-7891-a6e4-21301e4a0533",
+  "branch": "main",
+  "changed_file_count": 170,
+  "changed_file_groups": {
+    "code": 132,
+    "models": 9,
+    "orchid": 19,
+    "services": 1,
+    "tests": 9
+  },
+  "changed_files_sample": [
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MarkExamAttemptNoShowAction.php",
+    "app/Actions/MarkExamFailedAction.php",
+    "app/Actions/MarkExamPassedAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:38:16+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:38:16+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbc-5a94-7db1-88e6-13134264efa5",
+  "turn_id": "019e6e13-5920-7272-bd4f-9e61fd0df6df",
+  "branch": "main",
+  "changed_file_count": 223,
+  "changed_file_groups": {
+    "code": 164,
+    "models": 26,
+    "orchid": 19,
+    "services": 1,
+    "database": 3,
+    "tests": 10
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateReminderRuleAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:38:58+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:38:58+00:00",
+  "event": "Stop",
+  "session_id": "019e6d9c-1446-78f3-b720-8f17cbb16ed9",
+  "turn_id": "019e6e13-ba12-76f3-b2e4-e6dca42d3d1a",
+  "branch": "main",
+  "changed_file_count": 226,
+  "changed_file_groups": {
+    "code": 167,
+    "models": 26,
+    "orchid": 19,
+    "services": 1,
+    "database": 3,
+    "tests": 10
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateReminderRuleAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:43:06+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:43:06+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e27-2679-7dc2-ae78-66c040de018a",
+  "branch": "main",
+  "changed_file_count": 235,
+  "changed_file_groups": {
+    "code": 174,
+    "models": 26,
+    "orchid": 19,
+    "services": 1,
+    "database": 3,
+    "tests": 12
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:43:06+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:43:06+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e27-2679-7dc2-ae78-66c040de018a",
+  "branch": "main",
+  "changed_file_count": 235,
+  "changed_file_groups": {
+    "code": 174,
+    "models": 26,
+    "orchid": 19,
+    "services": 1,
+    "database": 3,
+    "tests": 12
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:43:37+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:43:37+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6e20-3c49-7bc1-a553-5b6dadf4e71e",
+  "branch": "main",
+  "changed_file_count": 235,
+  "changed_file_groups": {
+    "code": 174,
+    "models": 26,
+    "orchid": 19,
+    "services": 1,
+    "database": 3,
+    "tests": 12
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:43:38+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:43:38+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6e20-3c49-7bc1-a553-5b6dadf4e71e",
+  "branch": "main",
+  "changed_file_count": 235,
+  "changed_file_groups": {
+    "code": 174,
+    "models": 26,
+    "orchid": 19,
+    "services": 1,
+    "database": 3,
+    "tests": 12
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:44:33+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:44:33+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e2e-447d-7ab0-b25f-304edca52ed4",
+  "branch": "main",
+  "changed_file_count": 235,
+  "changed_file_groups": {
+    "code": 174,
+    "models": 26,
+    "orchid": 19,
+    "services": 1,
+    "database": 3,
+    "tests": 12
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:44:33+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:44:33+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e2e-447d-7ab0-b25f-304edca52ed4",
+  "branch": "main",
+  "changed_file_count": 235,
+  "changed_file_groups": {
+    "code": 174,
+    "models": 26,
+    "orchid": 19,
+    "services": 1,
+    "database": 3,
+    "tests": 12
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:50:28+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:50:28+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e26-126c-7be3-9781-f5e2b0d98f97",
+  "branch": "main",
+  "changed_file_count": 228,
+  "changed_file_groups": {
+    "code": 165,
+    "models": 24,
+    "orchid": 22,
+    "services": 1,
+    "database": 3,
+    "tests": 13
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:50:28+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:50:28+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e26-126c-7be3-9781-f5e2b0d98f97",
+  "branch": "main",
+  "changed_file_count": 228,
+  "changed_file_groups": {
+    "code": 165,
+    "models": 24,
+    "orchid": 22,
+    "services": 1,
+    "database": 3,
+    "tests": 13
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T10:52:55+00:00
+
+```json
+{
+  "ts": "2026-05-28T10:52:55+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbc-5a94-7db1-88e6-13134264efa5",
+  "turn_id": "019e6e29-d8e5-75d3-9c7f-a5d5d373e47d",
+  "branch": "main",
+  "changed_file_count": 233,
+  "changed_file_groups": {
+    "code": 170,
+    "models": 24,
+    "orchid": 23,
+    "services": 1,
+    "database": 3,
+    "tests": 12
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:01:04+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:01:04+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e35-0271-7711-8815-3dbb582094ed",
+  "branch": "main",
+  "changed_file_count": 254,
+  "changed_file_groups": {
+    "code": 189,
+    "models": 24,
+    "orchid": 25,
+    "services": 1,
+    "database": 3,
+    "tests": 12
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:01:04+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:01:04+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e35-0271-7711-8815-3dbb582094ed",
+  "branch": "main",
+  "changed_file_count": 254,
+  "changed_file_groups": {
+    "code": 189,
+    "models": 24,
+    "orchid": 25,
+    "services": 1,
+    "database": 3,
+    "tests": 12
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:02:03+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:02:03+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e2f-9996-7953-87b5-f04d5ea9b69e",
+  "branch": "main",
+  "changed_file_count": 255,
+  "changed_file_groups": {
+    "code": 189,
+    "models": 24,
+    "orchid": 25,
+    "services": 1,
+    "database": 3,
+    "tests": 13
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:02:03+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:02:03+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e2f-9996-7953-87b5-f04d5ea9b69e",
+  "branch": "main",
+  "changed_file_count": 255,
+  "changed_file_groups": {
+    "code": 189,
+    "models": 24,
+    "orchid": 25,
+    "services": 1,
+    "database": 3,
+    "tests": 13
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:09:22+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:09:22+00:00",
+  "event": "Stop",
+  "session_id": "019e6d9c-1446-78f3-b720-8f17cbb16ed9",
+  "turn_id": "019e6e2a-7bba-75c1-8b88-41faf105f928",
+  "branch": "main",
+  "changed_file_count": 269,
+  "changed_file_groups": {
+    "code": 196,
+    "models": 24,
+    "orchid": 32,
+    "services": 1,
+    "database": 3,
+    "tests": 13
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:10:22+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:10:22+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6e27-06ce-7f01-b798-3e79c51f12e8",
+  "branch": "main",
+  "changed_file_count": 278,
+  "changed_file_groups": {
+    "code": 203,
+    "models": 24,
+    "orchid": 34,
+    "services": 1,
+    "database": 3,
+    "tests": 13
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:13:42+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:13:42+00:00",
+  "event": "Stop",
+  "session_id": "019e6e48-4c9c-7950-b107-26b00877c1ab",
+  "turn_id": "019e6e48-96f8-7583-bd08-ce15dda2640a",
+  "branch": "main",
+  "changed_file_count": 293,
+  "changed_file_groups": {
+    "code": 211,
+    "models": 24,
+    "orchid": 40,
+    "services": 1,
+    "database": 3,
+    "tests": 14
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/RunReportAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:13:42+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:13:42+00:00",
+  "event": "Stop",
+  "session_id": "019e6e48-4c9c-7950-b107-26b00877c1ab",
+  "turn_id": "019e6e48-96f8-7583-bd08-ce15dda2640a",
+  "branch": "main",
+  "changed_file_count": 293,
+  "changed_file_groups": {
+    "code": 211,
+    "models": 24,
+    "orchid": 40,
+    "services": 1,
+    "database": 3,
+    "tests": 14
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/RunReportAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/Concerns/",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamAttemptAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:16:27+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:16:27+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6e2e-c000-7fb2-a28b-ba33d1b46181",
+  "branch": "main",
+  "changed_file_count": 299,
+  "changed_file_groups": {
+    "code": 216,
+    "models": 24,
+    "orchid": 40,
+    "services": 1,
+    "database": 3,
+    "tests": 15
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/RunReportAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:16:27+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:16:27+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6e2e-c000-7fb2-a28b-ba33d1b46181",
+  "branch": "main",
+  "changed_file_count": 299,
+  "changed_file_groups": {
+    "code": 216,
+    "models": 24,
+    "orchid": 40,
+    "services": 1,
+    "database": 3,
+    "tests": 15
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/RunReportAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:19:12+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:19:12+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e3f-9de6-7210-8d70-24b0bbabedbf",
+  "branch": "main",
+  "changed_file_count": 302,
+  "changed_file_groups": {
+    "code": 218,
+    "models": 24,
+    "orchid": 40,
+    "services": 1,
+    "database": 3,
+    "tests": 16
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/RunReportAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:19:12+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:19:12+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e3f-9de6-7210-8d70-24b0bbabedbf",
+  "branch": "main",
+  "changed_file_count": 302,
+  "changed_file_groups": {
+    "code": 218,
+    "models": 24,
+    "orchid": 40,
+    "services": 1,
+    "database": 3,
+    "tests": 16
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/RunReportAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:20:58+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:20:58+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e4f-52a0-7ea0-b56f-704b8022e573",
+  "branch": "main",
+  "changed_file_count": 304,
+  "changed_file_groups": {
+    "code": 220,
+    "models": 24,
+    "orchid": 40,
+    "services": 1,
+    "database": 3,
+    "tests": 16
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/RunReportAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:20:58+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:20:58+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e4f-52a0-7ea0-b56f-704b8022e573",
+  "branch": "main",
+  "changed_file_count": 304,
+  "changed_file_groups": {
+    "code": 220,
+    "models": 24,
+    "orchid": 40,
+    "services": 1,
+    "database": 3,
+    "tests": 16
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/RunReportAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:25:52+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:25:52+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6e4c-cbce-7eb0-9148-578fda23a037",
+  "branch": "main",
+  "changed_file_count": 277,
+  "changed_file_groups": {
+    "code": 195,
+    "models": 25,
+    "orchid": 39,
+    "services": 1,
+    "database": 2,
+    "tests": 15
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/RunReportAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:25:52+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:25:52+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6e4c-cbce-7eb0-9148-578fda23a037",
+  "branch": "main",
+  "changed_file_count": 277,
+  "changed_file_groups": {
+    "code": 195,
+    "models": 25,
+    "orchid": 39,
+    "services": 1,
+    "database": 2,
+    "tests": 15
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/RunReportAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:27:39+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:27:39+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbf-45b8-7d82-8894-aa09b2801bd0",
+  "turn_id": "019e6e1f-b558-7dd2-b9e6-cf7ac66246ff",
+  "branch": "main",
+  "changed_file_count": 294,
+  "changed_file_groups": {
+    "code": 212,
+    "models": 25,
+    "orchid": 39,
+    "services": 1,
+    "database": 2,
+    "tests": 15
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/Concerns/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Analytics/RunReportAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:32:06+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:32:06+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e3e-b73c-7b60-bbfa-7ccf9fdc5732",
+  "branch": "main",
+  "changed_file_count": 295,
+  "changed_file_groups": {
+    "code": 211,
+    "models": 25,
+    "orchid": 42,
+    "services": 1,
+    "database": 2,
+    "tests": 14
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:32:06+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:32:06+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e3e-b73c-7b60-bbfa-7ccf9fdc5732",
+  "branch": "main",
+  "changed_file_count": 295,
+  "changed_file_groups": {
+    "code": 211,
+    "models": 25,
+    "orchid": 42,
+    "services": 1,
+    "database": 2,
+    "tests": 14
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ApproveExamAdmissionAction.php",
+    "app/Actions/BlockExamAdmissionAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelExamAttemptAction.php",
+    "app/Actions/CancelExamSessionAction.php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteExamAttemptAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "app/Actions/CreateExamSessionAction.php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:36:37+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:36:37+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbc-5a94-7db1-88e6-13134264efa5",
+  "turn_id": "019e6e37-4380-7db0-bfa3-93f339b3ed96",
+  "branch": "main",
+  "changed_file_count": 277,
+  "changed_file_groups": {
+    "code": 205,
+    "models": 25,
+    "orchid": 31,
+    "database": 2,
+    "tests": 14
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GetHomePageAction.php",
+    "app/Actions/GetPricingPageAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/MoveSortableOrderAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:50:47+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:50:47+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e5b-216f-7c32-8930-6fcc5ee260cb",
+  "branch": "main",
+  "changed_file_count": 311,
+  "changed_file_groups": {
+    "code": 231,
+    "models": 27,
+    "orchid": 31,
+    "services": 1,
+    "database": 3,
+    "tests": 18
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/GetBranchIndexPageAction.php",
+    "app/Actions/GetCourseIndexPageAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GetHomePageAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:50:47+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:50:47+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e5b-216f-7c32-8930-6fcc5ee260cb",
+  "branch": "main",
+  "changed_file_count": 311,
+  "changed_file_groups": {
+    "code": 231,
+    "models": 27,
+    "orchid": 31,
+    "services": 1,
+    "database": 3,
+    "tests": 18
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/GetBranchIndexPageAction.php",
+    "app/Actions/GetCourseIndexPageAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GetHomePageAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:57:36+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:57:36+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbf-45b8-7d82-8894-aa09b2801bd0",
+  "turn_id": "019e6e57-0ebe-76e1-b139-50f7f0b83e69",
+  "branch": "main",
+  "changed_file_count": 304,
+  "changed_file_groups": {
+    "code": 223,
+    "models": 27,
+    "orchid": 33,
+    "services": 1,
+    "database": 3,
+    "tests": 17
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/GetBranchIndexPageAction.php",
+    "app/Actions/GetCourseIndexPageAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:59:18+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:59:18+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e6d-bee1-7ba2-bbcf-e67ba230e84e",
+  "branch": "main",
+  "changed_file_count": 307,
+  "changed_file_groups": {
+    "code": 223,
+    "models": 27,
+    "orchid": 33,
+    "services": 1,
+    "database": 3,
+    "tests": 20
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/GetBranchIndexPageAction.php",
+    "app/Actions/GetCourseIndexPageAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T11:59:18+00:00
+
+```json
+{
+  "ts": "2026-05-28T11:59:18+00:00",
+  "event": "Stop",
+  "session_id": "019e6e27-1f1c-77e1-ab74-c0884965e85f",
+  "turn_id": "019e6e6d-bee1-7ba2-bbcf-e67ba230e84e",
+  "branch": "main",
+  "changed_file_count": 307,
+  "changed_file_groups": {
+    "code": 223,
+    "models": 27,
+    "orchid": 33,
+    "services": 1,
+    "database": 3,
+    "tests": 20
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/GetBranchIndexPageAction.php",
+    "app/Actions/GetCourseIndexPageAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T12:08:13+00:00
+
+```json
+{
+  "ts": "2026-05-28T12:08:13+00:00",
+  "event": "Stop",
+  "session_id": "019e6d89-8b50-7700-9bf0-1b7bff5e9f2f",
+  "turn_id": "019e6e0d-16e3-70c2-9d12-80ebf38b080d",
+  "branch": "main",
+  "changed_file_count": 341,
+  "changed_file_groups": {
+    "code": 253,
+    "models": 27,
+    "orchid": 35,
+    "services": 1,
+    "database": 3,
+    "tests": 22
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    ".codex/memory/learned_patterns.md",
+    ".playwright-mcp/",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T12:09:42+00:00
+
+```json
+{
+  "ts": "2026-05-28T12:09:42+00:00",
+  "event": "Stop",
+  "session_id": "019e6e48-4c9c-7950-b107-26b00877c1ab",
+  "turn_id": "019e6e60-ad3e-7cc1-8843-0a88d691d484",
+  "branch": "main",
+  "changed_file_count": 341,
+  "changed_file_groups": {
+    "code": 253,
+    "models": 27,
+    "orchid": 35,
+    "services": 1,
+    "database": 3,
+    "tests": 22
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    ".codex/memory/learned_patterns.md",
+    ".playwright-mcp/",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T12:09:43+00:00
+
+```json
+{
+  "ts": "2026-05-28T12:09:43+00:00",
+  "event": "Stop",
+  "session_id": "019e6e48-4c9c-7950-b107-26b00877c1ab",
+  "turn_id": "019e6e60-ad3e-7cc1-8843-0a88d691d484",
+  "branch": "main",
+  "changed_file_count": 341,
+  "changed_file_groups": {
+    "code": 253,
+    "models": 27,
+    "orchid": 35,
+    "services": 1,
+    "database": 3,
+    "tests": 22
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    ".codex/memory/learned_patterns.md",
+    ".playwright-mcp/",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T12:12:24+00:00
+
+```json
+{
+  "ts": "2026-05-28T12:12:24+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e6c-3c55-7090-9080-2f93136575c6",
+  "branch": "main",
+  "changed_file_count": 317,
+  "changed_file_groups": {
+    "code": 230,
+    "models": 27,
+    "orchid": 35,
+    "services": 1,
+    "database": 3,
+    "tests": 21
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    ".playwright-mcp/",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/GetBranchIndexPageAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T12:12:24+00:00
+
+```json
+{
+  "ts": "2026-05-28T12:12:24+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6e6c-3c55-7090-9080-2f93136575c6",
+  "branch": "main",
+  "changed_file_count": 317,
+  "changed_file_groups": {
+    "code": 230,
+    "models": 27,
+    "orchid": 35,
+    "services": 1,
+    "database": 3,
+    "tests": 21
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    ".playwright-mcp/",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/GetBranchIndexPageAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T12:17:51+00:00
+
+```json
+{
+  "ts": "2026-05-28T12:17:51+00:00",
+  "event": "Stop",
+  "session_id": "019e6e82-eb00-7172-a5f8-f8efad5d1783",
+  "turn_id": "019e6e83-efe6-72c3-b99c-6c929799fdb8",
+  "branch": "main",
+  "changed_file_count": 317,
+  "changed_file_groups": {
+    "code": 230,
+    "models": 27,
+    "orchid": 35,
+    "services": 1,
+    "database": 3,
+    "tests": 21
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    ".playwright-mcp/",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/GetBranchIndexPageAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T12:17:51+00:00
+
+```json
+{
+  "ts": "2026-05-28T12:17:51+00:00",
+  "event": "Stop",
+  "session_id": "019e6e82-eb00-7172-a5f8-f8efad5d1783",
+  "turn_id": "019e6e83-efe6-72c3-b99c-6c929799fdb8",
+  "branch": "main",
+  "changed_file_count": 317,
+  "changed_file_groups": {
+    "code": 230,
+    "models": 27,
+    "orchid": 35,
+    "services": 1,
+    "database": 3,
+    "tests": 21
+  },
+  "changed_files_sample": [
+    ".agents/skills/driving-school-design/",
+    ".codex/memory/decisions.md",
+    ".playwright-mcp/",
+    "AGENTS.md",
+    "app/Actions/AddExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CancelStudentTaskAction.php",
+    "app/Actions/CheckExamAdmissionAction.php",
+    "app/Actions/CompleteStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Concerns/",
+    "app/Actions/CreateCallbackLeadAction.php",
+    "app/Actions/CreateExamAttemptAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateBranchAction.php",
+    "app/Actions/CreateOrUpdateCourseAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateStudentTaskAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/GenerateExamNumberAction.php",
+    "app/Actions/GetBranchIndexPageAction.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

@@ -15,7 +15,10 @@ class StoreLearningTopicRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('education.manage_topics') ?? false;
+        return $this->user()?->hasAnyAccess([
+            'education.programs.manage_topics',
+            'education.manage_topics',
+        ]) ?? false;
     }
 
     /**

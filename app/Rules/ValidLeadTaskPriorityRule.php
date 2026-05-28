@@ -2,16 +2,15 @@
 
 namespace App\Rules;
 
+use App\Enums\LeadTaskPriority;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class ValidLeadTaskPriorityRule implements ValidationRule
 {
-    private const VALUES = ['low', 'normal', 'high', 'urgent'];
-
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (filled($value) && in_array((string) $value, self::VALUES, true)) {
+        if (filled($value) && in_array((string) $value, array_map(fn (LeadTaskPriority $priority): string => $priority->value, LeadTaskPriority::cases()), true)) {
             return;
         }
 

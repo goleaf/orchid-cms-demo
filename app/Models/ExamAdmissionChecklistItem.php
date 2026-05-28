@@ -19,8 +19,12 @@ class ExamAdmissionChecklistItem extends Model
     protected $fillable = [
         'exam_admission_id',
         'code',
+        'key',
         'title_translations',
+        'required',
+        'passed',
         'status',
+        'message_key',
         'source_type',
         'source_id',
         'student_document_id',
@@ -28,12 +32,15 @@ class ExamAdmissionChecklistItem extends Model
         'driving_lesson_id',
         'checked_at',
         'checked_by_id',
+        'checked_by',
         'notes',
         'meta',
     ];
 
     protected $casts = [
         'title_translations' => 'array',
+        'required' => 'boolean',
+        'passed' => 'boolean',
         'status' => ExamChecklistItemStatus::class,
         'checked_at' => 'datetime',
         'meta' => 'array',
@@ -66,8 +73,10 @@ class ExamAdmissionChecklistItem extends Model
 
     public function displayTitle(?string $locale = null): string
     {
+        $key = $this->key ?: $this->code;
+
         return $this->getTranslation('title', $locale)
-            ?: tkey('exams.checklist.items.'.$this->code)
-            ?: $this->code;
+            ?: tkey('exams.checklist.items.'.$key)
+            ?: $key;
     }
 }

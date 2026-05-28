@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SitePageType;
 use App\Models\Concerns\HasTranslations;
 use Database\Factories\SitePageFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -152,5 +153,13 @@ class SitePage extends Model
     public function getSeoDescriptionAttribute(): ?string
     {
         return $this->displaySeoDescription();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function typeValues(): array
+    {
+        return SitePageType::values();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ExamParticipantStatus;
 use Database\Factories\ExamParticipantFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,14 @@ class ExamParticipant extends Model
 {
     /** @use HasFactory<ExamParticipantFactory> */
     use HasFactory;
+
+    public const STATUS_REGISTERED = 'registered';
+
+    public const STATUS_ADMITTED = 'admitted';
+
+    public const STATUS_BLOCKED = 'blocked';
+
+    public const STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
         'exam_session_id',
@@ -61,5 +70,13 @@ class ExamParticipant extends Model
     public function displayStatus(): string
     {
         return tkey('exams.participants.statuses.'.$this->status) ?: $this->status;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function statusValues(): array
+    {
+        return ExamParticipantStatus::values();
     }
 }

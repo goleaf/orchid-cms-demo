@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Orchid;
 
+use App\Models\CommunicationReminder;
 use App\Models\MarketingLead;
 use App\Models\MarketingLeadTask;
-use App\Models\CommunicationReminder;
 use App\Models\Student;
 use App\Models\StudentTask;
 use App\Models\TrainingGroup;
@@ -128,22 +128,49 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.education.groups')
                 ->permission('education.groups.view')
                 ->title(tkey('menu.education'))
-                ->badge(fn (): int => TrainingGroup::query()->notFull()->count()),
+                ->badge(fn (): int => TrainingGroup::query()->count()),
 
-            Menu::make(tkey('menu.education.group_statuses'))
+            Menu::make(tkey('menu.education.groups.recruiting'))
+                ->icon('bs.person-plus')
+                ->route('platform.education.groups', ['segment' => 'recruiting'])
+                ->permission('education.groups.view')
+                ->badge(fn (): int => TrainingGroup::query()->recruiting()->count()),
+
+            Menu::make(tkey('menu.education.groups.scheduled'))
+                ->icon('bs.calendar-event')
+                ->route('platform.education.groups', ['segment' => 'scheduled'])
+                ->permission('education.groups.view'),
+
+            Menu::make(tkey('menu.education.groups.active'))
+                ->icon('bs.play-circle')
+                ->route('platform.education.groups', ['segment' => 'active'])
+                ->permission('education.groups.view')
+                ->badge(fn (): int => TrainingGroup::query()->active()->count()),
+
+            Menu::make(tkey('menu.education.groups.completed'))
+                ->icon('bs.check2-circle')
+                ->route('platform.education.groups', ['segment' => 'completed'])
+                ->permission('education.groups.view'),
+
+            Menu::make(tkey('menu.education.groups.cancelled'))
+                ->icon('bs.x-circle')
+                ->route('platform.education.groups', ['segment' => 'cancelled'])
+                ->permission('education.groups.view'),
+
+            Menu::make(tkey('menu.education.groups.archived'))
+                ->icon('bs.archive')
+                ->route('platform.education.groups', ['segment' => 'archived'])
+                ->permission('education.groups.view'),
+
+            Menu::make(tkey('menu.education.programs'))
+                ->icon('bs.journal-text')
+                ->route('platform.education.programs')
+                ->permission('education.programs.view'),
+
+            Menu::make(tkey('menu.education.statuses'))
                 ->icon('bs.ui-checks-grid')
                 ->route('platform.education.group-statuses')
-                ->permission('education.manage_statuses'),
-
-            Menu::make(tkey('menu.education.learning_topics'))
-                ->icon('bs.journal-text')
-                ->route('platform.education.learning-topics')
-                ->permission('education.manage_topics'),
-
-            Menu::make(tkey('menu.education.schedule_patterns'))
-                ->icon('bs.calendar2-week')
-                ->route('platform.education.schedule-patterns')
-                ->permission('education.manage_schedule_patterns'),
+                ->permission('education.groups.manage_statuses'),
 
             Menu::make(tkey('menu.schedule.lessons'))
                 ->icon('bs.calendar-week')
@@ -490,11 +517,27 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('education.groups.view', tkey('permissions.education.groups.view'))
                 ->addPermission('education.groups.create', tkey('permissions.education.groups.create'))
                 ->addPermission('education.groups.update', tkey('permissions.education.groups.update'))
-                ->addPermission('education.manage_statuses', tkey('permissions.education.manage_statuses'))
-                ->addPermission('education.manage_memberships', tkey('permissions.education.manage_memberships'))
-                ->addPermission('education.manage_schedule_patterns', tkey('permissions.education.manage_schedule_patterns'))
-                ->addPermission('education.manage_topics', tkey('permissions.education.manage_topics'))
-                ->addPermission('education.view_activities', tkey('permissions.education.view_activities')),
+                ->addPermission('education.groups.archive', tkey('permissions.education.groups.archive'))
+                ->addPermission('education.groups.delete', tkey('permissions.education.groups.delete'))
+                ->addPermission('education.groups.change_status', tkey('permissions.education.groups.change_status'))
+                ->addPermission('education.groups.override_status_transition', tkey('permissions.education.groups.override_status_transition'))
+                ->addPermission('education.groups.manage_students', tkey('permissions.education.groups.manage_students'))
+                ->addPermission('education.groups.manage_schedule_patterns', tkey('permissions.education.groups.manage_schedule_patterns'))
+                ->addPermission('education.groups.manage_statuses', tkey('permissions.education.groups.manage_statuses'))
+                ->addPermission('education.groups.manage_public_visibility', tkey('permissions.education.groups.manage_public_visibility'))
+                ->addPermission('education.groups.manage_learning_program', tkey('permissions.education.groups.manage_learning_program'))
+                ->addPermission('education.groups.export', tkey('permissions.education.groups.export'))
+                ->addPermission('education.programs.view', tkey('permissions.education.programs.view'))
+                ->addPermission('education.programs.create', tkey('permissions.education.programs.create'))
+                ->addPermission('education.programs.update', tkey('permissions.education.programs.update'))
+                ->addPermission('education.programs.delete', tkey('permissions.education.programs.delete'))
+                ->addPermission('education.programs.manage_modules', tkey('permissions.education.programs.manage_modules'))
+                ->addPermission('education.programs.manage_topics', tkey('permissions.education.programs.manage_topics'))
+                ->addPermission('education.manage_statuses', tkey('permissions.education.groups.manage_statuses'))
+                ->addPermission('education.manage_memberships', tkey('permissions.education.groups.manage_students'))
+                ->addPermission('education.manage_schedule_patterns', tkey('permissions.education.groups.manage_schedule_patterns'))
+                ->addPermission('education.manage_topics', tkey('permissions.education.programs.manage_topics'))
+                ->addPermission('education.view_activities', tkey('permissions.education.groups.view')),
 
             ItemPermission::group(tkey('permissions.groups.marketing'))
                 ->addPermission('platform.marketing.campaigns', tkey('permissions.marketing.campaigns'))
@@ -548,6 +591,27 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('communications.preferences.manage', tkey('permissions.communications.preferences.manage'))
                 ->addPermission('communications.student_history.manage', tkey('permissions.communications.student_history.manage'))
                 ->addPermission('communications.lead_history.view', tkey('permissions.communications.lead_history.view')),
+
+            ItemPermission::group(tkey('permissions.groups.notifications'))
+                ->addPermission('notifications.messages.view', tkey('permissions.notifications.messages.view'))
+                ->addPermission('notifications.messages.create', tkey('permissions.notifications.messages.create'))
+                ->addPermission('notifications.messages.send', tkey('permissions.notifications.messages.send'))
+                ->addPermission('notifications.messages.cancel', tkey('permissions.notifications.messages.cancel'))
+                ->addPermission('notifications.messages.retry', tkey('permissions.notifications.messages.retry'))
+                ->addPermission('notifications.templates.view', tkey('permissions.notifications.templates.view'))
+                ->addPermission('notifications.templates.create', tkey('permissions.notifications.templates.create'))
+                ->addPermission('notifications.templates.update', tkey('permissions.notifications.templates.update'))
+                ->addPermission('notifications.templates.publish', tkey('permissions.notifications.templates.publish'))
+                ->addPermission('notifications.reminders.view', tkey('permissions.notifications.reminders.view'))
+                ->addPermission('notifications.reminders.manage', tkey('permissions.notifications.reminders.manage'))
+                ->addPermission('notifications.reminders.process', tkey('permissions.notifications.reminders.process'))
+                ->addPermission('notifications.deliveries.view', tkey('permissions.notifications.deliveries.view'))
+                ->addPermission('notifications.deliveries.manage', tkey('permissions.notifications.deliveries.manage'))
+                ->addPermission('notifications.threads.view', tkey('permissions.notifications.threads.view'))
+                ->addPermission('notifications.threads.manage', tkey('permissions.notifications.threads.manage'))
+                ->addPermission('notifications.preferences.manage', tkey('permissions.notifications.preferences.manage'))
+                ->addPermission('notifications.channels.manage', tkey('permissions.notifications.channels.manage'))
+                ->addPermission('notifications.export', tkey('permissions.notifications.export')),
 
             ItemPermission::group(tkey('permissions.groups.system'))
                 ->addPermission('platform.systems.roles', tkey('permissions.system.roles'))

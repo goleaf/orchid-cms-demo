@@ -56,7 +56,7 @@ class AnalyticsTranslationSeeder extends SystemTranslationSeeder
             $this->entry('analytics', 'analytics.columns.type', ['ru' => 'Тип', 'en' => 'Type', 'lt' => 'Tipas', 'pl' => 'Typ']),
             $this->entry('analytics', 'analytics.columns.metric', ['ru' => 'Метрика', 'en' => 'Metric', 'lt' => 'Metrika', 'pl' => 'Metryka']),
             $this->entry('analytics', 'analytics.columns.report', ['ru' => 'Отчет', 'en' => 'Report', 'lt' => 'Ataskaita', 'pl' => 'Raport']),
-            $this->entry('analytics', 'analytics.columns.status', ['ru' => 'Статус', 'en' => 'Status', 'lt' => 'Busena', 'pl' => 'Status']),
+            $this->entry('analytics', 'analytics.columns.status', ['ru' => 'Статус', 'en' => 'Status', 'lt' => 'Busena', 'pl' => 'Stan']),
             $this->entry('analytics', 'analytics.columns.period', ['ru' => 'Период', 'en' => 'Period', 'lt' => 'Laikotarpis', 'pl' => 'Okres']),
             $this->entry('analytics', 'analytics.columns.value', ['ru' => 'Значение', 'en' => 'Value', 'lt' => 'Reiksme', 'pl' => 'Wartosc']),
             $this->entry('analytics', 'analytics.columns.target', ['ru' => 'Цель', 'en' => 'Target', 'lt' => 'Tikslas', 'pl' => 'Cel']),

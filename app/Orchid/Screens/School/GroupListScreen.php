@@ -30,12 +30,12 @@ class GroupListScreen extends Screen
 
     public function name(): ?string
     {
-        return tkey('website.admin.groups.title');
+        return tkey('education.groups.title');
     }
 
     public function description(): ?string
     {
-        return tkey('website.admin.groups.description');
+        return tkey('education.groups.description');
     }
 
     public function permission(): iterable
@@ -46,9 +46,9 @@ class GroupListScreen extends Screen
     public function commandBar(): iterable
     {
         return [
-            Link::make(tkey('website.admin.groups.create_title'))
+            Link::make(tkey('education.groups.actions.create'))
                 ->icon('bs.plus-circle')
-                ->route('platform.website.groups.create'),
+                ->route('platform.education.groups.create'),
         ];
     }
 
@@ -56,34 +56,34 @@ class GroupListScreen extends Screen
     {
         return [
             Layout::table('groups', [
-                TD::make('code', tkey('website.groups.columns.code'))
+                TD::make('code', tkey('education.groups.fields.code'))
                     ->render(fn (TrainingGroup $group): string => $group->code),
-                TD::make('name', tkey('website.groups.columns.group'))
+                TD::make('name', tkey('education.groups.fields.name'))
                     ->render(fn (TrainingGroup $group): string => $group->displayName()),
-                TD::make('branch', tkey('website.groups.columns.branch'))
+                TD::make('branch', tkey('education.groups.fields.branch'))
                     ->render(fn (TrainingGroup $group): string => $group->branch->displayName()),
-                TD::make('program', tkey('website.groups.columns.course'))
+                TD::make('program', tkey('education.groups.fields.course'))
                     ->render(fn (TrainingGroup $group): string => $group->trainingProgram->displayTitle()),
-                TD::make('instructor', tkey('website.groups.columns.instructor'))
+                TD::make('instructor', tkey('education.groups.fields.teacher'))
                     ->render(fn (TrainingGroup $group): string => $group->instructor?->name ?? '-'),
-                TD::make('starts_on', tkey('website.groups.columns.start'))
+                TD::make('starts_on', tkey('education.groups.fields.start_date'))
                     ->render(fn (TrainingGroup $group): string => $group->starts_on?->toDateString() ?? '-'),
-                TD::make('capacity', tkey('website.groups.columns.seats'))
+                TD::make('capacity', tkey('education.groups.fields.available_places'))
                     ->render(fn (TrainingGroup $group): string => tkey('website.groups.seats_value', [
                         'available' => $group->seatsAvailable(),
                         'capacity' => $group->capacity,
                     ]))
                     ->alignCenter(),
-                TD::make('available', tkey('website.admin.groups.columns.visible_on_site'))
+                TD::make('available', tkey('education.groups.fields.is_visible_on_site'))
                     ->render(fn (TrainingGroup $group): string => (string) $group->seatsAvailable())
                     ->alignCenter(),
-                TD::make('status', tkey('crm.leads.fields.status'))
+                TD::make('status', tkey('education.groups.fields.status'))
                     ->render(fn (TrainingGroup $group): string => $group->status->label()),
-                TD::make('actions', tkey('crm.leads.columns.actions'))
+                TD::make('actions', tkey('education.groups.actions.open'))
                     ->alignRight()
-                    ->render(fn (TrainingGroup $group): string => (string) Link::make(tkey('common.actions.edit'))
+                    ->render(fn (TrainingGroup $group): string => (string) Link::make(tkey('education.groups.actions.edit'))
                         ->icon('bs.pencil')
-                        ->route('platform.website.groups.edit', $group)),
+                        ->route('platform.education.groups.edit', $group)),
             ]),
         ];
     }

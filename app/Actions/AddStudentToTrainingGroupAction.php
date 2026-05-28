@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Enums\GroupStatus;
+use App\Enums\TrainingGroupMembershipStatus;
 use App\Models\StudentEnrollment;
 use App\Models\TrainingGroup;
 use App\Models\TrainingGroupMembership;
@@ -21,7 +22,7 @@ class AddStudentToTrainingGroupAction
 
             if (! $allowOverbooking && (! $this->groupAcceptsEnrollment($group) || $group->is_full)) {
                 throw ValidationException::withMessages([
-                    'training_group_id' => tkey('education.groups.validation.enrollment_cannot_join_group'),
+                    'training_group_id' => tkey('students.validation.enrollment_cannot_join_group'),
                 ]);
             }
 
@@ -31,7 +32,7 @@ class AddStudentToTrainingGroupAction
                 && (int) $enrollment->training_program_id !== (int) $group->training_program_id
             ) {
                 throw ValidationException::withMessages([
-                    'training_group_id' => tkey('education.groups.validation.enrollment_cannot_join_group'),
+                    'training_group_id' => tkey('students.validation.enrollment_cannot_join_group'),
                 ]);
             }
 
@@ -61,7 +62,7 @@ class AddStudentToTrainingGroupAction
 
                 if ($oldMembership !== null) {
                     $oldMembership->forceFill([
-                        'status' => 'transferred',
+                        'status' => TrainingGroupMembershipStatus::Transferred->value,
                         'left_at' => now(),
                         'transfer_to_group_id' => $group->id,
                         'transfer_reason' => 'group_changed',
@@ -135,7 +136,7 @@ class AddStudentToTrainingGroupAction
                 'student_id' => $enrollment->student_profile_id,
                 'student_profile_id' => $enrollment->student_profile_id,
                 'student_enrollment_id' => $enrollment->id,
-                'status' => 'active',
+                'status' => TrainingGroupMembershipStatus::Active->value,
                 'joined_at' => now(),
                 'left_at' => null,
                 'left_reason' => null,

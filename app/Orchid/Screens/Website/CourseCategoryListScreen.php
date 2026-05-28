@@ -2,8 +2,11 @@
 
 namespace App\Orchid\Screens\Website;
 
+use App\Actions\MoveSortableOrderAction;
 use App\Models\CourseCategory;
 use App\Orchid\Screens\Website\Concerns\BuildsWebsiteScreenPayloads;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
@@ -15,21 +18,25 @@ class CourseCategoryListScreen extends Screen
 
     public function query(): iterable
     {
+        $categories = CourseCategory::query()
+            ->select([
+                'id',
+                'code',
+                'slug',
+                'name_translations',
+                'seo_title_translations',
+                'seo_description_translations',
+                'is_active',
+                'is_visible_on_site',
+                'sort_order',
+            ])
+            ->ordered()
+            ->simplePaginate(15);
+
+        $this->applyOrderControlState($categories, CourseCategory::class);
+
         return [
-            'categories' => CourseCategory::query()
-                ->select([
-                    'id',
-                    'code',
-                    'slug',
-                    'name_translations',
-                    'seo_title_translations',
-                    'seo_description_translations',
-                    'is_active',
-                    'is_visible_on_site',
-                    'sort_order',
-                ])
-                ->ordered()
-                ->simplePaginate(15),
+            'categories' => $categories,
         ];
     }
 
@@ -73,9 +80,9 @@ class CourseCategoryListScreen extends Screen
                 TD::make('is_visible_on_site', tkey('website.admin.fields.is_visible_on_site'))
                     ->alignCenter()
                     ->render(fn (CourseCategory $category): string => $this->booleanBadge($category->is_visible_on_site, 'website.admin.status.visible', 'website.admin.status.hidden')),
-                TD::make('sort_order', tkey('website.admin.fields.sort_order'))
+                TD::make('order_controls', tkey('website.admin.fields.position'))
                     ->alignCenter()
-                    ->render(fn (CourseCategory $category): string => (string) $category->sort_order),
+                    ->render(fn (CourseCategory $category): string => $this->orderControls($category)),
                 TD::make('actions', tkey('crm.leads.columns.actions'))
                     ->alignRight()
                     ->render(fn (CourseCategory $category): string => (string) Link::make(tkey('common.actions.edit'))
@@ -83,5 +90,15 @@ class CourseCategoryListScreen extends Screen
                         ->route('platform.website.course-categories.edit', $category)),
             ]),
         ];
+    }
+
+    public function moveUp(Request $request, MoveSortableOrderAction $move): RedirectResponse
+    {
+        return $this->moveSortable($request, CourseCategory::class, 'platform.website.course-categories', $move, MoveSortableOrderAction::UP);
+    }
+
+    public function moveDown(Request $request, MoveSortableOrderAction $move): RedirectResponse
+    {
+        return $this->moveSortable($request, CourseCategory::class, 'platform.website.course-categories', $move, MoveSortableOrderAction::DOWN);
     }
 }

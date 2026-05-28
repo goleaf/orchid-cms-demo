@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\StudentTaskPriority;
+use App\Enums\StudentTaskStatus;
 use App\Models\Concerns\HasTranslations;
 use Database\Factories\StudentTaskFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -63,17 +65,20 @@ class StudentTask extends Model
 
     public function scopeOpen(Builder $query): Builder
     {
-        return $query->whereIn('status', ['open', 'in_progress']);
+        return $query->whereIn('status', [
+            StudentTaskStatus::Open->value,
+            StudentTaskStatus::InProgress->value,
+        ]);
     }
 
     public function scopeCompleted(Builder $query): Builder
     {
-        return $query->where('status', 'done');
+        return $query->where('status', StudentTaskStatus::Done->value);
     }
 
     public function scopeCancelled(Builder $query): Builder
     {
-        return $query->where('status', 'cancelled');
+        return $query->where('status', StudentTaskStatus::Cancelled->value);
     }
 
     public function scopeOverdue(Builder $query): Builder
@@ -98,7 +103,7 @@ class StudentTask extends Model
 
     public function getIsOverdueAttribute(): bool
     {
-        return in_array($this->status, ['open', 'in_progress'], true)
+        return in_array($this->status, [StudentTaskStatus::Open->value, StudentTaskStatus::InProgress->value], true)
             && $this->due_at !== null
             && $this->due_at->isPast();
     }
@@ -107,5 +112,21 @@ class StudentTask extends Model
     {
         return $this->getTranslation('title')
             ?: tkey('students.tasks.fallback.title');
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function statusValues(): array
+    {
+        return StudentTaskStatus::values();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function priorityValues(): array
+    {
+        return StudentTaskPriority::values();
     }
 }

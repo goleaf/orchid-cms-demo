@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\StudentTaskStatus;
 use App\Models\StudentTask;
 use App\Models\User;
 
@@ -10,7 +11,7 @@ class CompleteStudentTaskAction
     public function handle(StudentTask $task, ?User $user = null): StudentTask
     {
         $task->forceFill([
-            'status' => 'done',
+            'status' => StudentTaskStatus::Done->value,
             'completed_at' => $task->completed_at ?? now(),
             'cancelled_at' => null,
         ])->save();

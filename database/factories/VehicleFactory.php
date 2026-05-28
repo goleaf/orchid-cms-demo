@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\TransmissionType;
 use App\Enums\VehicleStatus;
 use App\Models\Branch;
 use App\Models\Instructor;
@@ -28,7 +29,7 @@ class VehicleFactory extends Factory
             'model' => $this->faker->randomElement(['Yaris', 'Golf', 'Fabia', 'i20']),
             'year' => $this->faker->numberBetween(2018, 2026),
             'license_category' => 'B',
-            'transmission' => $this->faker->randomElement(['manual', 'automatic']),
+            'transmission' => $this->faker->randomElement(TransmissionType::values()),
             'odometer_km' => $this->faker->numberBetween(12000, 98000),
             'status' => VehicleStatus::Active,
             'next_service_at' => now()->addDays($this->faker->numberBetween(20, 120)),

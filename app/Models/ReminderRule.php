@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ReminderTriggerType;
 use App\Models\Concerns\HasTranslations;
 use Database\Factories\ReminderRuleFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -76,12 +77,6 @@ class ReminderRule extends Model
      */
     public static function triggerValues(): array
     {
-        return [
-            self::TRIGGER_BEFORE_LESSON,
-            self::TRIGGER_AFTER_SIGNUP,
-            self::TRIGGER_BEFORE_PAYMENT_DUE,
-            self::TRIGGER_BEFORE_EXAM,
-            self::TRIGGER_MANUAL,
-        ];
+        return ReminderTriggerType::values();
     }
 }

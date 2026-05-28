@@ -83,6 +83,10 @@ class ExamBlockFoundationTest extends TestCase
             $this->assertTrue(Schema::hasColumn('exam_sessions', $column), $column);
         }
 
+        foreach (['key', 'required', 'passed', 'status', 'message_key', 'checked_at', 'checked_by'] as $column) {
+            $this->assertTrue(Schema::hasColumn('exam_admission_checklist_items', $column), $column);
+        }
+
         foreach ([
             'exam_admission_id',
             'exam_session_id',
@@ -293,7 +297,7 @@ class ExamBlockFoundationTest extends TestCase
         $this->assertTrue(ExamAttempt::query()->where('status', ExamAttemptStatus::Scheduled->value)->exists());
         $this->assertTrue(Route::has('platform.exams'));
 
-        $this->actingAs($this->userWithPermissions(['exams.view']))
+        $this->actingAs($this->userWithPermissions(['platform.exams', 'exams.view', 'exams.sessions.view']))
             ->get(route('platform.exams'))
             ->assertOk()
             ->assertSee(tkey('operations.exams.title'));

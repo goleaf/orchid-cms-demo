@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\NotificationRecipientStatus;
 use Database\Factories\NotificationRecipientFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -106,13 +107,6 @@ class NotificationRecipient extends Model
      */
     public static function statusValues(): array
     {
-        return [
-            self::STATUS_PENDING,
-            self::STATUS_QUEUED,
-            self::STATUS_SENT,
-            self::STATUS_DELIVERED,
-            self::STATUS_FAILED,
-            self::STATUS_SKIPPED,
-        ];
+        return NotificationRecipientStatus::values();
     }
 }

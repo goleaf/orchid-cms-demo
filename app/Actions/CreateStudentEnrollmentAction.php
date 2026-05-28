@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\EnrollmentPaymentStatus;
 use App\Enums\EnrollmentStatus as EnrollmentStatusEnum;
 use App\Models\EnrollmentStatus;
 use App\Models\Student;
@@ -54,7 +55,7 @@ class CreateStudentEnrollmentAction
                 'price' => $data['price'] ?? $course?->price,
                 'discount' => $data['discount'] ?? 0,
                 'currency' => $data['currency'] ?? $course?->currency ?? 'EUR',
-                'payment_status' => $data['payment_status'] ?? 'pending',
+                'payment_status' => $data['payment_status'] ?? EnrollmentPaymentStatus::Pending->value,
                 'theory_progress' => $data['theory_progress'] ?? 0,
                 'practice_progress' => $data['practice_progress'] ?? 0,
                 'total_theory_hours' => $data['total_theory_hours'] ?? $course?->theory_hours,

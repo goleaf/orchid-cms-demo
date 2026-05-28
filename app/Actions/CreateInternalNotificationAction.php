@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\CommunicationDirection;
 use App\Models\CommunicationReminder;
 use App\Models\CommunicationTemplate;
 use App\Models\NotificationChannel;
@@ -35,7 +36,7 @@ class CreateInternalNotificationAction
             'notification_channel_id' => $channel?->id,
             'communication_template_id' => $template?->id,
             'communication_reminder_id' => $reminder?->id,
-            'direction' => 'outbound',
+            'direction' => CommunicationDirection::Outbound->value,
             'status' => NotificationDeliveryLog::STATUS_SENT,
             'recipient_name' => $recipient->name,
             'recipient_email' => $recipient->email,

@@ -4,15 +4,47 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "validate:js": "eslint \"resources/js/**/*.js\" \"tests/frontend/**/*.js\" \"vite.config.js\" \"vitest.config.js\" \"eslint.config.js\" \"postcss.config.js\"",
+        "validate:styles": "stylelint \"resources/scss/**/*.scss\"",
+        "test:js": "vitest run tests/frontend/js",
+        "test:styles": "vitest run tests/frontend/styles",
+        "test:frontend": "npm run validate:js && npm run validate:styles && npm run test:js && npm run test:styles"
     },
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
         "@tailwindcss/vite": "^4.0.0",
+        "@vitejs/plugin-legacy": "^7.2.1",
+        "autoprefixer": "^10.5.0",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
+        "eslint": "^10.4.0",
+        "globals": "^17.6.0",
+        "jsdom": "^29.1.1",
         "laravel-vite-plugin": "^2.0.0",
+        "postcss-preset-env": "^11.3.0",
+        "postcss-scss": "^4.0.9",
         "sass": "^1.100.0",
+        "stylelint": "^17.12.0",
+        "stylelint-config-standard-scss": "^17.0.0",
         "tailwindcss": "^4.0.0",
-        "vite": "^7.0.7"
+        "terser": "^5.48.0",
+        "vite": "^7.0.7",
+        "vitest": "^4.1.7"
+    },
+    "browserslist": {
+        "production": [
+            "> 0.3%",
+            "last 3 versions",
+            "Firefox ESR",
+            "not dead",
+            "not IE 11",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
     }
 }

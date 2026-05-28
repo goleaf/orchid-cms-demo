@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use Database\Factories\PaymentFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -76,5 +77,13 @@ class Payment extends Model
             'paid_at',
             'reference',
         ]);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function methodValues(): array
+    {
+        return PaymentMethod::values();
     }
 }

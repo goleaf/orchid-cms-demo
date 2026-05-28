@@ -2,7 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Enums\CourseFormat;
+use App\Enums\EnrollmentPaymentStatus;
 use App\Enums\EnrollmentStatus as EnrollmentStatusEnum;
+use App\Enums\GearboxType;
 use App\Models\Branch;
 use App\Models\CourseCategory;
 use App\Models\EnrollmentStatus as EnrollmentStatusModel;
@@ -38,14 +41,14 @@ class StudentEnrollmentFactory extends Factory
             'completed_at' => null,
             'preferred_time' => $this->faker->optional()->randomElement(['morning', 'daytime', 'evening', 'weekend']),
             'training_language' => $this->faker->optional()->randomElement(['ru', 'en', 'lt', 'pl']),
-            'format' => $this->faker->optional()->randomElement(['offline', 'online', 'hybrid', 'individual', 'group']),
-            'gearbox_type' => $this->faker->optional()->randomElement(['manual', 'automatic']),
+            'format' => $this->faker->optional()->randomElement(CourseFormat::values()),
+            'gearbox_type' => $this->faker->optional()->randomElement(GearboxType::values()),
             'contracted_price_cents' => 129000,
             'paid_cents' => 0,
             'price' => 1290.00,
             'discount' => 0,
             'currency' => 'EUR',
-            'payment_status' => 'waiting',
+            'payment_status' => EnrollmentPaymentStatus::Waiting->value,
             'theory_progress' => 0,
             'practice_progress' => 0,
             'total_theory_hours' => 40,

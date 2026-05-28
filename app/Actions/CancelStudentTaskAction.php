@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\StudentTaskStatus;
 use App\Models\StudentTask;
 use App\Models\User;
 
@@ -10,7 +11,7 @@ class CancelStudentTaskAction
     public function handle(StudentTask $task, ?User $user = null): StudentTask
     {
         $task->forceFill([
-            'status' => 'cancelled',
+            'status' => StudentTaskStatus::Cancelled->value,
             'cancelled_at' => $task->cancelled_at ?? now(),
         ])->save();
 

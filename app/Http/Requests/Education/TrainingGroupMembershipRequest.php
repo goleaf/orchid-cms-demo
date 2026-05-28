@@ -8,8 +8,8 @@ use App\Models\TrainingGroupMembership;
 use App\Rules\StudentEnrollmentCanJoinGroupRule;
 use App\Rules\StudentEnrollmentNotAlreadyInActiveGroupRule;
 use App\Rules\TrainingGroupCapacityRule;
-use App\Rules\TrainingGroupOpenForEnrollmentRule;
 use App\Rules\TrainingGroupMembershipNotDuplicateRule;
+use App\Rules\TrainingGroupOpenForEnrollmentRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -18,7 +18,10 @@ class TrainingGroupMembershipRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('education.manage_memberships') ?? false;
+        return $this->user()?->hasAnyAccess([
+            'education.groups.manage_students',
+            'education.manage_memberships',
+        ]) ?? false;
     }
 
     /**

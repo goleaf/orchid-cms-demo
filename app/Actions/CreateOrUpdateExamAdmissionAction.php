@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Enums\DocumentStatus;
+use App\Enums\EnrollmentPaymentStatus;
 use App\Enums\ExamAdmissionStatus;
 use App\Enums\ExamChecklistItemStatus;
 use App\Enums\ExamType;
@@ -42,9 +43,9 @@ class CreateOrUpdateExamAdmissionAction
                     'completed_theory_hours' => $data['completed_theory_hours'] ?? $enrollment->completed_theory_hours,
                     'required_practice_hours' => $data['required_practice_hours'] ?? $enrollment->total_practice_hours,
                     'completed_practice_hours' => $data['completed_practice_hours'] ?? $enrollment->completed_practice_hours,
-                    'documents_status' => $data['documents_status'] ?? 'pending',
-                    'payment_status' => $data['payment_status'] ?? $enrollment->payment_status ?? 'pending',
-                    'checklist_status' => $data['checklist_status'] ?? 'pending',
+                    'documents_status' => $data['documents_status'] ?? ExamChecklistItemStatus::Pending->value,
+                    'payment_status' => $data['payment_status'] ?? $enrollment->payment_status ?? EnrollmentPaymentStatus::Pending->value,
+                    'checklist_status' => $data['checklist_status'] ?? ExamChecklistItemStatus::Pending->value,
                     'admitted_at' => $data['admitted_at'] ?? null,
                     'rejected_at' => $data['rejected_at'] ?? null,
                     'expires_at' => $data['expires_at'] ?? null,
@@ -192,7 +193,7 @@ class CreateOrUpdateExamAdmissionAction
                 ],
                 [
                     'title_translations' => $item['title_translations'] ?? null,
-                    'status' => $item['status'] ?? ExamChecklistItemStatus::Pending,
+                    'status' => $item['status'] ?? ExamChecklistItemStatus::Pending->value,
                     'source_type' => $item['source_type'] ?? null,
                     'source_id' => $item['source_id'] ?? null,
                     'student_document_id' => $item['student_document_id'] ?? null,
@@ -220,7 +221,9 @@ class CreateOrUpdateExamAdmissionAction
             ->count();
 
         $admission->forceFill([
-            'checklist_status' => $failedCount > 0 ? 'failed' : ($openCount > 0 ? 'pending' : 'passed'),
+            'checklist_status' => $failedCount > 0
+                ? ExamChecklistItemStatus::Failed->value
+                : ($openCount > 0 ? ExamChecklistItemStatus::Pending->value : ExamChecklistItemStatus::Passed->value),
             'status' => $statusWasExplicit
                 ? $admission->status
                 : ($openCount > 0 ? ExamAdmissionStatus::Checking : ExamAdmissionStatus::Ready),

@@ -20,7 +20,7 @@ class ReminderRuleFactory extends Factory
         return [
             'code' => $code,
             'name_translations' => $this->translations(str($code)->replace('_', ' ')->title()->toString()),
-            'trigger_type' => $this->faker->randomElement(['before_lesson', 'after_signup', 'before_payment_due']),
+            'trigger_type' => $this->faker->randomElement(ReminderRule::triggerValues()),
             'target_type' => $this->faker->randomElement(['student', 'lead', 'lesson', 'enrollment']),
             'template_id' => NotificationTemplate::factory(),
             'offset_minutes' => 60,

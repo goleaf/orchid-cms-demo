@@ -13,6 +13,19 @@ use App\Actions\SendEmailNotificationAction;
 use App\Actions\SendInternalNotificationAction;
 use App\Actions\SendSmsPlaceholderNotificationAction;
 use App\Actions\UpdateNotificationPreferenceAction;
+use App\Enums\CommunicationDirection;
+use App\Enums\CommunicationPriority;
+use App\Enums\CommunicationReminderStatus;
+use App\Enums\CommunicationTemplateType;
+use App\Enums\CommunicationThreadStatus;
+use App\Enums\NotificationDeliveryLogStatus;
+use App\Enums\NotificationDeliveryStatus;
+use App\Enums\NotificationMessageStatus;
+use App\Enums\NotificationPriority;
+use App\Enums\NotificationRecipientStatus;
+use App\Enums\NotificationTemplateVersionStatus;
+use App\Enums\ReminderScheduleStatus;
+use App\Enums\ReminderTriggerType;
 use App\Models\CommunicationMessage;
 use App\Models\NotificationChannel;
 use App\Models\NotificationDelivery;
@@ -310,6 +323,36 @@ class NotificationActionsRulesTest extends TestCase
         $this->assertContains(NotificationMessage::PRIORITY_LOW, NotificationMessage::priorityValues());
         $this->assertContains(NotificationMessage::STATUS_ARCHIVED, NotificationMessage::statusValues());
         $this->assertContains(CommunicationMessage::DIRECTION_INTERNAL, CommunicationMessage::directionValues());
+    }
+
+    public function test_notification_and_communication_enum_labels_are_translated(): void
+    {
+        $enumPrefixes = [
+            CommunicationDirection::class => 'communication.messages.directions.',
+            CommunicationPriority::class => 'communication.reminders.priorities.',
+            CommunicationReminderStatus::class => 'communication.reminders.statuses.',
+            CommunicationTemplateType::class => 'communication.templates.types.',
+            CommunicationThreadStatus::class => 'communication.threads.statuses.',
+            NotificationDeliveryLogStatus::class => 'communication.delivery_logs.statuses.',
+            NotificationDeliveryStatus::class => 'notifications.deliveries.statuses.',
+            NotificationMessageStatus::class => 'notifications.messages.statuses.',
+            NotificationPriority::class => 'notifications.priorities.',
+            NotificationRecipientStatus::class => 'notifications.recipients.statuses.',
+            NotificationTemplateVersionStatus::class => 'notifications.template_versions.statuses.',
+            ReminderScheduleStatus::class => 'notifications.reminder_schedules.statuses.',
+            ReminderTriggerType::class => 'notifications.reminder_triggers.',
+        ];
+
+        foreach ($enumPrefixes as $enumClass => $prefix) {
+            foreach ($enumClass::cases() as $case) {
+                $key = $prefix.$case->value;
+
+                foreach (['ru', 'en', 'lt', 'pl'] as $locale) {
+                    $this->assertNotSame($key, tkey($key, [], $locale), $key.' '.$locale);
+                    $this->assertNotSame('', tkey($key, [], $locale), $key.' '.$locale);
+                }
+            }
+        }
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ExamChecklistItemStatus;
 use App\Models\ExamAttempt;
 use App\Models\ExamChecklistItem;
 use App\Models\ExamSession;
@@ -31,8 +32,12 @@ class ExamChecklistItemFactory extends Factory
                 'lt' => $title,
                 'pl' => $title,
             ],
-            'status' => 'pending',
+            'status' => ExamChecklistItemStatus::Pending->value,
             'required' => true,
+            'passed' => false,
+            'message_key' => null,
+            'checked_at' => null,
+            'checked_by' => null,
         ];
     }
 
@@ -48,6 +53,11 @@ class ExamChecklistItemFactory extends Factory
 
     public function passed(): static
     {
-        return $this->state(fn (): array => ['status' => 'passed']);
+        return $this->state(fn (): array => [
+            'status' => ExamChecklistItemStatus::Passed->value,
+            'passed' => true,
+            'message_key' => 'exams.admissions.checks.passed',
+            'checked_at' => now(),
+        ]);
     }
 }

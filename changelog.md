@@ -2,7 +2,16 @@
 
 ## 2026-05-28
 
+- Added multilingual notification labels and granular notification access controls for messages, templates, reminders, deliveries, threads, preferences, channels, and exports
+
 - Analytics now validates dashboard, widget, report, export, KPI target, cache refresh, and dashboard preference forms with translated field names and local permission checks
+
+- Exam admissions now build a full readiness checklist for documents, payments, completed hours, internal prerequisites, student status, enrollment status, and manual review
+- Exam session participants are now admitted or blocked from the same checklist result, with manual approval and manual block flows covered
+
+- Added public course filtering by country, city, and category on the homepage
+- Course application forms now reuse the current course and branch context so visitors do not need to repeat those choices
+- Added pricing filters for courses and packages by course, category, format, duration, hours, and price range
 
 - Analytics validation now checks report filters, export formats, KPI periods and targets, dashboard widget settings, cache keys, permissions, and optional module availability with translated messages
 
@@ -22,7 +31,24 @@
 
 - Added reusable exam sample builders and repeatable exam setup data for default types, statuses, admission rules, translations, and local demo records
 
+- Report setup now has a clearer local data model for definitions, run history, exports, translated labels, permission metadata, and owner reporting
+
 - Added the notification data foundation for channel capabilities, reusable template versions, recipient tracking, delivery attempts, preferences, reminders, conversation history, attachments, and activity records
+
+- Exam management now supports session setup, student admission checks, attempt handling, results, retakes, and activity history
+- Dashboard setup now supports role-focused views, widget layouts, and saved user preferences
+- Demo education and website data is richer and more consistent for training programs, groups, memberships, and public course pages
+- Exam and analytics documentation now explains the new operating workflows in plain project terms
+- Additional tests cover exam rules, dashboard data, education setup, and public website sample content
+
+- Added the exam action and validation foundation for sessions, admissions, participants, attempts, results, retakes, and activity history
+- Added translated validation coverage for exam readiness, session capacity, status transitions, result scores, and retake eligibility
+
+- Added a complete exam workflow for session planning, student admission checks, attempts, results, retakes, and activity history
+- Added stronger validation around exam readiness, session capacity, status changes, required documents, payments, and training progress
+- Added configurable analytics dashboards with role-based views, dashboard widgets, and saved user preferences
+- Expanded demo education data, training groups, learning programs, and public course seed data for a richer local setup
+- Updated analytics documentation and tests to cover the new dashboard data model, education seed data, and public website course data
 
 - Added a dashboard and widget data model for local analytics, including translated labels, default owner dashboard setup, user layout preferences, and automated checks
 - Added a stronger exam management foundation with exam types, statuses, admission rules, participants, results, retakes, and checklist tracking

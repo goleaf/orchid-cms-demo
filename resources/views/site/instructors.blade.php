@@ -15,7 +15,7 @@
                 <div class="grid three">
                     @forelse ($instructors as $instructor)
                         <article class="card">
-                            <p class="kicker">{{ $instructor->branch->displayCity() }}</p>
+                            <p class="kicker">{{ $instructor->branch->displayCountry() }} · {{ $instructor->branch->displayCity() }}</p>
                             <h3>{{ $instructor->name }}</h3>
                             <p class="meta">{{ $instructor->bio }}</p>
                             <p>{{ $instructor->teaching_style }}</p>

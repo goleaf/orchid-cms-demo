@@ -19,6 +19,10 @@
   Evidence: Added additive exam database migration, model relationships, factories, dictionary seeder, docs, and ExamDatabaseModelsTest.
   Added: 2026-05-28T13:00:00+00:00
 
+- Block 10 exam workflow writes should go through dedicated Actions and translated FormRequest/Rule validation; readiness checks combine documents, payments, hours, internal exam requirements, session capacity, attempt lifecycle, result scoring, retakes, and activity history without official registry sync.
+  Evidence: Added ExamWorkflowService-backed Actions, exam FormRequests, custom validation Rules, translations, docs, and ExamActionsValidationTest.
+  Added: 2026-05-28T13:30:00+00:00
+
 - Block 10 exam seed data uses idempotent factory-backed dictionary seeders for default internal exams, official placeholder exams, statuses, result statuses, admission rules, and multilingual translations; demo exam data stays local/demo/testing only.
   Evidence: Added ExamTypeSeeder, ExamStatusSeeder, ExamAttemptStatusSeeder, ExamResultStatusSeeder, ExamAdmissionRuleSeeder, DemoExamSeeder, docs, and ExamFactoriesSeedersTest.
   Added: 2026-05-28T16:30:00+03:00
@@ -30,6 +34,10 @@
 - Block 10 exam Orchid UI uses thin local-driving-school screens for sessions, admissions, attempts, results, retakes, and dictionaries; screen writes call exam Actions, labels use translation keys, and access is checked with granular exam permissions instead of broad platform access.
   Evidence: Added exam screens, menu entries, routes, docs, and ExamOrchidScreensTest.
   Added: 2026-05-28T20:30:00+03:00
+
+- Block 10 exam admissions use a structured checklist result for documents, payments, theory hours, practice hours, internal prerequisites, enrollment status, student status, and manual review; session participants are admitted or blocked from that same result without adding global enforcement outside exams.
+  Evidence: Added admission checklist storage fields, structured admission checks, manual approval/block behavior, session rechecks, docs, and ExamAdmissionChecklistTest.
+  Added: 2026-05-28T21:30:00+03:00
 
 - Block 11 communications foundation uses notification channels, communication templates, reminders, delivery logs, user notification preferences, and student communication history while CRM lead history continues to reuse existing lead communication records.
   Evidence: Implemented foundation schema, Actions, Form Requests, validation Rules, factories, seeders, Orchid communication pages, notification placeholders, documentation, and CommunicationModuleFoundationTest.
@@ -47,6 +55,10 @@
   Evidence: Added notification factory states, default seeders, translation seeding, docs, and NotificationFactoriesSeedersTest.
   Added: 2026-05-28T21:00:00+03:00
 
+- Block 11 notification UI and access labels use seeded Russian, English, Lithuanian, and Polish translation keys with granular local permissions for messages, templates, reminders, deliveries, threads, preferences, channels, and exports.
+  Evidence: Added notification UI, field, action, validation, enum, and permission translation keys; registered notification permissions; updated docs; and added NotificationLocalizationPermissionsTest.
+  Added: 2026-05-28T21:45:00+03:00
+
 - Block 12 analytics foundation is local-driving-school reporting only: dashboard widgets, report definitions, report runs, report exports, KPI metrics, targets, snapshots, analytics cache, and user dashboard preferences are kept without tenant, subscription, reseller, platform-owner, or multi-company dimensions.
   Evidence: Implemented analytics foundation schema, models, Actions, Form Requests, validation Rules, factories, seeders, Orchid owner dashboard, documentation, and AnalyticsBlockFoundationTest.
   Added: 2026-05-28T13:00:00+03:00
@@ -54,6 +66,10 @@
 - Block 12 dashboard definitions use analytics_dashboards linked to dashboard_widgets and user_dashboard_preferences for local role audiences only; dashboard data must not gain SaaS tenant, subscription, reseller, platform-owner, or multi-company dimensions.
   Evidence: Added additive dashboard schema, AnalyticsDashboard model, widget/preference relationships, factories, demo seed data, documentation, and AnalyticsDashboardDataModelTest.
   Added: 2026-05-28T14:00:00+03:00
+
+- Block 12 report definitions, runs, and exports use local analytics tables with report groups, data sources, schema metadata, permission metadata, run users, export metadata, and soft-deletable definitions; they must not gain SaaS tenant, subscription, reseller, platform-owner, or multi-company dimensions.
+  Evidence: Added additive report schema, ReportGroup enum, model relationships, factories, Actions compatibility updates, documentation, and AnalyticsReportDataModelTest.
+  Added: 2026-05-28T16:00:00+03:00
 
 - Block 12 KPI metrics, targets, and snapshots use local analytics tables with metric groups, units, period ranges, thresholds, optional branch/user scope, translated metric labels, and snapshot metadata; they must not gain SaaS tenant, subscription, reseller, platform-owner, or multi-company dimensions.
   Evidence: Added additive KPI schema, KPI enums, model relationships, factories, docs, and AnalyticsKpiDataModelTest.

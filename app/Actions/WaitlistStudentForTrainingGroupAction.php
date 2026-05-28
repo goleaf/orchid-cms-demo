@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\TrainingGroupMembershipStatus;
 use App\Models\StudentEnrollment;
 use App\Models\TrainingGroup;
 use App\Models\TrainingGroupMembership;
@@ -31,7 +32,7 @@ class WaitlistStudentForTrainingGroupAction
                     'student_id' => $enrollment->student_profile_id,
                     'student_profile_id' => $enrollment->student_profile_id,
                     'student_enrollment_id' => $enrollment->id,
-                    'status' => 'waitlisted',
+                    'status' => TrainingGroupMembershipStatus::Waitlisted->value,
                     'joined_at' => now(),
                     'left_at' => null,
                     'notes' => $notes,

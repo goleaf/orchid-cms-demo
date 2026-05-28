@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\ExamAdmissionStatus;
+use App\Enums\ExamChecklistItemStatus;
 use App\Enums\ExamType;
 use App\Models\Branch;
 use App\Models\ExamAdmission;
@@ -36,9 +37,9 @@ class ExamAdmissionFactory extends Factory
             'completed_theory_hours' => 20,
             'required_practice_hours' => 30,
             'completed_practice_hours' => 10,
-            'documents_status' => 'pending',
-            'payment_status' => 'pending',
-            'checklist_status' => 'pending',
+            'documents_status' => ExamChecklistItemStatus::Pending->value,
+            'payment_status' => ExamChecklistItemStatus::Pending->value,
+            'checklist_status' => ExamChecklistItemStatus::Pending->value,
             'admitted_at' => null,
             'rejected_at' => null,
             'expires_at' => now()->addMonths(3),
@@ -75,10 +76,10 @@ class ExamAdmissionFactory extends Factory
     {
         return $this->state(fn (): array => [
             'status' => ExamAdmissionStatus::Ready,
-            'checklist_status' => 'passed',
+            'checklist_status' => ExamChecklistItemStatus::Passed->value,
             'admitted_at' => now(),
-            'documents_status' => 'passed',
-            'payment_status' => 'passed',
+            'documents_status' => ExamChecklistItemStatus::Passed->value,
+            'payment_status' => ExamChecklistItemStatus::Passed->value,
             'completed_theory_hours' => 40,
             'completed_practice_hours' => 30,
         ]);

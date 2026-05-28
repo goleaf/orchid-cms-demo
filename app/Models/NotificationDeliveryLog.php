@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\CommunicationDirection;
+use App\Enums\NotificationDeliveryLogStatus;
 use Database\Factories\NotificationDeliveryLogFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,18 +18,20 @@ class NotificationDeliveryLog extends Model
     use HasFactory;
 
     public const STATUS_QUEUED = 'queued';
+
     public const STATUS_SENT = 'sent';
+
     public const STATUS_FAILED = 'failed';
+
     public const STATUS_SKIPPED = 'skipped';
+
     public const STATUS_READ = 'read';
 
-    private const STATUSES = [
-        self::STATUS_QUEUED,
-        self::STATUS_SENT,
-        self::STATUS_FAILED,
-        self::STATUS_SKIPPED,
-        self::STATUS_READ,
-    ];
+    public const DIRECTION_INBOUND = 'inbound';
+
+    public const DIRECTION_OUTBOUND = 'outbound';
+
+    public const DIRECTION_INTERNAL = 'internal';
 
     protected $fillable = [
         'uuid',
@@ -169,6 +173,14 @@ class NotificationDeliveryLog extends Model
      */
     public static function statusValues(): array
     {
-        return self::STATUSES;
+        return NotificationDeliveryLogStatus::values();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function directionValues(): array
+    {
+        return CommunicationDirection::values();
     }
 }

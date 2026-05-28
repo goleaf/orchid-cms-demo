@@ -102,9 +102,6 @@ class CourseCategoryEditScreen extends Screen
                 Select::make('is_visible_on_site')
                     ->title(tkey('website.admin.fields.is_visible_on_site'))
                     ->options($this->booleanOptions()),
-                Input::make('sort_order')
-                    ->type('number')
-                    ->title(tkey('website.admin.fields.sort_order')),
             ])->title(tkey('website.admin.sections.main')),
 
             TranslatableFields::input('name', 'website.admin.course_categories.fields.name', [

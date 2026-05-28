@@ -26,6 +26,7 @@ class ReportRunFactory extends Factory
         return [
             'uuid' => (string) Str::uuid(),
             'report_definition_id' => ReportDefinition::factory(),
+            'user_id' => User::factory(),
             'status' => AnalyticsRunStatus::Completed,
             'period_start' => now()->startOfMonth()->toDateString(),
             'period_end' => now()->endOfMonth()->toDateString(),
@@ -36,6 +37,7 @@ class ReportRunFactory extends Factory
             'summary' => ['records' => 0],
             'result_payload' => [],
             'error_message' => null,
+            'metadata' => [],
             'created_by_id' => null,
         ];
     }
@@ -51,6 +53,23 @@ class ReportRunFactory extends Factory
     {
         return $this->state(fn (): array => [
             'created_by_id' => $user->id,
+        ]);
+    }
+
+    public function byUser(User $user): static
+    {
+        return $this->state(fn (): array => [
+            'user_id' => $user->id,
+            'created_by_id' => $user->id,
+        ]);
+    }
+
+    public function status(AnalyticsRunStatus|string $status): static
+    {
+        $value = $status instanceof AnalyticsRunStatus ? $status->value : $status;
+
+        return $this->state(fn (): array => [
+            'status' => $value,
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MarketingLeadCallResult;
 use Database\Factories\MarketingLeadCommunicationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,19 +12,6 @@ class MarketingLeadCommunication extends Model
 {
     /** @use HasFactory<MarketingLeadCommunicationFactory> */
     use HasFactory;
-
-    private const CALL_RESULTS = [
-        'reached',
-        'answered',
-        'no_answer',
-        'wrong_number',
-        'call_back_later',
-        'callback_requested',
-        'thinking',
-        'ready_to_pay',
-        'refused',
-        'lost',
-    ];
 
     protected $fillable = [
         'marketing_lead_id',
@@ -86,7 +74,7 @@ class MarketingLeadCommunication extends Model
      */
     public static function callResultValues(): array
     {
-        return self::CALL_RESULTS;
+        return MarketingLeadCallResult::values();
     }
 
     /**
@@ -94,7 +82,7 @@ class MarketingLeadCommunication extends Model
      */
     public static function callResultOptions(): array
     {
-        return collect(self::CALL_RESULTS)
+        return collect(self::callResultValues())
             ->mapWithKeys(fn (string $result): array => [
                 $result => tkey('crm.communications.call_results.'.$result),
             ])

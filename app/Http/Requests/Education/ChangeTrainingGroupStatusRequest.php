@@ -14,7 +14,7 @@ class ChangeTrainingGroupStatusRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('education.groups.update') ?? false;
+        return $this->user()?->hasAccess('education.groups.change_status') ?? false;
     }
 
     /**

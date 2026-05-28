@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\CourseFormat;
+use App\Enums\TransmissionType;
 use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\Course;
 use App\Models\CourseCategory;
@@ -37,7 +39,7 @@ class StoreCourseRequest extends FormRequest
             'code' => ['nullable', 'string', 'max:80'],
             'slug' => ['required', 'string', 'max:255', new ValidSlugRule(Course::class, 'slug', $this->recordId())],
             'license_category' => ['required', 'string', 'max:20'],
-            'transmission' => ['required', Rule::in(['manual', 'automatic'])],
+            'transmission' => ['required', Rule::enum(TransmissionType::class)],
             'name_translations' => ['required', 'array', new TranslatedFieldRequiredRule],
             'name_translations.*' => ['nullable', 'string', 'max:255'],
             'short_description_translations' => ['nullable', 'array'],
@@ -55,7 +57,7 @@ class StoreCourseRequest extends FormRequest
             'theory_hours' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'practice_hours' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'duration_weeks' => ['nullable', 'integer', 'min:0', 'max:255'],
-            'format' => ['nullable', Rule::in(['offline', 'online', 'hybrid', 'individual', 'group', 'mixed'])],
+            'format' => ['nullable', Rule::enum(CourseFormat::class)],
             'image' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:255'],
             'seo_title_translations' => ['nullable', 'array', new SeoTitleLengthRule],

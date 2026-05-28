@@ -62,7 +62,7 @@ class ExamDatabaseModelsTest extends TestCase
             'exam_attempts' => ['attempt_number', 'exam_session_id', 'student_id', 'enrollment_id', 'status_id', 'attempt_no', 'started_at', 'finished_at', 'score', 'passed', 'no_show'],
             'exam_results' => ['attempt_id', 'result_status_id', 'score', 'max_score', 'passed', 'examiner_comment', 'mistakes_summary', 'decided_by_id', 'decided_at'],
             'exam_retakes' => ['student_id', 'enrollment_id', 'previous_attempt_id', 'new_attempt_id', 'reason', 'planned_at', 'status'],
-            'exam_checklist_items' => ['exam_session_id', 'attempt_id', 'student_id', 'enrollment_id', 'key', 'title_translations', 'status', 'required'],
+            'exam_checklist_items' => ['exam_session_id', 'attempt_id', 'student_id', 'enrollment_id', 'key', 'title_translations', 'status', 'required', 'passed', 'message_key', 'checked_at', 'checked_by'],
             'exam_activities' => ['exam_session_id', 'attempt_id', 'student_id', 'user_id', 'type', 'old_value', 'new_value', 'meta'],
         ];
 

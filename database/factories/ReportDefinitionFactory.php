@@ -3,9 +3,11 @@
 namespace Database\Factories;
 
 use App\Enums\AnalyticsReportType;
+use App\Enums\ReportGroup;
 use App\Models\ReportDefinition;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<ReportDefinition>
@@ -23,9 +25,15 @@ class ReportDefinitionFactory extends Factory
         $name = str($code)->replace('-', ' ')->title()->toString();
 
         return [
+            'uuid' => (string) Str::uuid(),
             'code' => $code,
             'name_translations' => $this->translations($name),
             'description_translations' => $this->translations($this->faker->sentence(10)),
+            'report_group' => ReportGroup::System->value,
+            'data_source' => null,
+            'filters_schema' => [],
+            'columns_schema' => [],
+            'permissions' => [],
             'report_type' => $this->faker->randomElement(AnalyticsReportType::cases()),
             'source_model' => null,
             'default_filters' => [],
@@ -42,6 +50,23 @@ class ReportDefinitionFactory extends Factory
     public function type(AnalyticsReportType $type): static
     {
         return $this->state(fn (): array => ['report_type' => $type]);
+    }
+
+    public function group(ReportGroup|string $group): static
+    {
+        $value = $group instanceof ReportGroup ? $group->value : $group;
+
+        return $this->state(fn (): array => [
+            'report_group' => $value,
+        ]);
+    }
+
+    public function dataSource(string $source): static
+    {
+        return $this->state(fn (): array => [
+            'data_source' => $source,
+            'source_model' => $source,
+        ]);
     }
 
     public function system(): static

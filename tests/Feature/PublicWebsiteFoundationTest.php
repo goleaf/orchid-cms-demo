@@ -35,8 +35,8 @@ class PublicWebsiteFoundationTest extends TestCase
             route('site.prices') => tkey('website.prices.title', [], 'ru'),
             route('site.contacts') => tkey('website.contacts.title', [], 'ru'),
             route('site.thanks') => tkey('website.thanks.title', [], 'ru'),
-            route('site.courses.show', $program) => $program->displayTitle(),
-            route('site.branches.show', ['branch' => $branch->slug]) => $branch->displayName(),
+            route('site.courses.show', $program) => $program->displayTitle('ru'),
+            route('site.branches.show', ['branch' => $branch->slug]) => $branch->displayName('ru'),
             route('site.instructors') => tkey('website.instructors.title', [], 'ru'),
             route('site.fleet') => tkey('website.vehicles.title', [], 'ru'),
             route('site.reviews') => tkey('website.reviews.title', [], 'ru'),
@@ -49,7 +49,7 @@ class PublicWebsiteFoundationTest extends TestCase
         $this->get(route('site.prices'))
             ->assertOk()
             ->assertSee(tkey('website.prices.packages.title', [], 'ru'))
-            ->assertSee(PricingPackage::query()->where('slug', 'category-b-premium')->firstOrFail()->displayName());
+            ->assertSee(PricingPackage::query()->where('slug', 'category-b-premium')->firstOrFail()->displayName('ru'));
     }
 
     public function test_enrollment_form_creates_crm_lead_with_site_tracking(): void

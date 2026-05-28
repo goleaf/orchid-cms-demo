@@ -96,15 +96,15 @@ class ExamAdmissionScreen extends Screen
                 TD::make('status', tkey('exams.fields.status'))
                     ->render(fn (ExamAdmission $admission): string => tkey('exams.admission_statuses.'.$admission->status->value)),
                 TD::make('documents_status', tkey('exams.checklist.items.identity_document'))
-                    ->render(fn (ExamAdmission $admission): string => $this->statusOrChecklist($admission, ['identity_document', 'medical_certificate', 'training_contract'], $admission->documents_status)),
+                    ->render(fn (ExamAdmission $admission): string => $this->statusOrChecklist($admission, ['documents'], $admission->documents_status)),
                 TD::make('payment_status', tkey('exams.checklist.items.payment_clearance'))
-                    ->render(fn (ExamAdmission $admission): string => $this->statusOrChecklist($admission, ['payment_clearance'], $admission->payment_status)),
+                    ->render(fn (ExamAdmission $admission): string => $this->statusOrChecklist($admission, ['payments'], $admission->payment_status)),
                 TD::make('theory_hours', tkey('exams.checklist.items.theory_hours'))
                     ->render(fn (ExamAdmission $admission): string => $this->hoursLabel($admission->completed_theory_hours, $admission->required_theory_hours)),
                 TD::make('practice_hours', tkey('exams.checklist.items.practice_hours'))
                     ->render(fn (ExamAdmission $admission): string => $this->hoursLabel($admission->completed_practice_hours, $admission->required_practice_hours)),
                 TD::make('internal_exam', tkey('exams.checklist.items.internal_exam_passed'))
-                    ->render(fn (ExamAdmission $admission): string => $this->statusOrChecklist($admission, ['internal_exam_passed'], $this->dash())),
+                    ->render(fn (ExamAdmission $admission): string => $this->statusOrChecklist($admission, ['internal_theory', 'internal_practical'], $this->dash())),
                 TD::make('actions', tkey('exams.fields.actions'))
                     ->alignRight()
                     ->render(fn (ExamAdmission $admission): DropDown => DropDown::make()
@@ -188,7 +188,7 @@ class ExamAdmissionScreen extends Screen
     private function statusOrChecklist(ExamAdmission $admission, array $codes, ?string $fallback): string
     {
         $items = $admission->checklistItems
-            ->filter(fn (ExamAdmissionChecklistItem $item): bool => in_array($item->code, $codes, true));
+            ->filter(fn (ExamAdmissionChecklistItem $item): bool => in_array($item->key ?: $item->code, $codes, true));
 
         if ($items->isEmpty()) {
             return filled($fallback) ? (string) $fallback : $this->dash();

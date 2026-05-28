@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CommunicationDirection;
 use Database\Factories\CommunicationMessageFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -97,10 +98,6 @@ class CommunicationMessage extends Model
      */
     public static function directionValues(): array
     {
-        return [
-            self::DIRECTION_INBOUND,
-            self::DIRECTION_OUTBOUND,
-            self::DIRECTION_INTERNAL,
-        ];
+        return CommunicationDirection::values();
     }
 }

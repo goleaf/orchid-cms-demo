@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\CourseFormat;
+use App\Enums\TransmissionType;
 use App\Models\Concerns\HasTranslations;
 use Database\Factories\TrainingProgramFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -340,12 +342,14 @@ class TrainingProgram extends Model
             'id',
             'title',
             'title_translations',
+            'name_translations',
             'slug',
             'license_category',
             'transmission',
             'theory_hours',
             'practice_hours',
             'duration_weeks',
+            'duration_translations',
             'format',
             'available_languages',
             'price_cents',
@@ -354,12 +358,16 @@ class TrainingProgram extends Model
             'short_description',
             'short_description_translations',
             'description_translations',
+            'program_summary_translations',
             'required_documents',
             'admission_requirements',
+            'requirements_translations',
             'included_items',
             'included_items_translations',
+            'includes_translations',
             'extra_costs',
             'extra_costs_translations',
+            'excludes_translations',
             'theory_program',
             'theory_program_translations',
             'practice_program',
@@ -383,5 +391,21 @@ class TrainingProgram extends Model
             'sort_order',
             'updated_at',
         ]);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function formatValues(): array
+    {
+        return CourseFormat::values();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function transmissionValues(): array
+    {
+        return TransmissionType::values();
     }
 }

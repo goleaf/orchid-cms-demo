@@ -69,6 +69,6 @@ class TrainingGroupActivity extends Model
 
     public function getDisplayTypeAttribute(): string
     {
-        return tkey('education.activities.types.'.$this->type);
+        return tkey('education.groups.activities.types.'.$this->type);
     }
 }

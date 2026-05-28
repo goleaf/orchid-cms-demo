@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\CourseFormat;
 use App\Models\Branch;
 use App\Models\Instructor;
 use App\Models\TrainingGroup;
@@ -50,9 +51,9 @@ class GetEnrollmentFormAction
                 ->orderBy('name')
                 ->get(),
             'formats' => [
-                'offline' => tkey('website.courses.formats.offline'),
-                'online' => tkey('website.courses.formats.online'),
-                'mixed' => tkey('website.courses.formats.hybrid'),
+                CourseFormat::Offline->value => CourseFormat::Offline->label(),
+                CourseFormat::Online->value => CourseFormat::Online->label(),
+                CourseFormat::Mixed->value => CourseFormat::Mixed->label(),
             ],
             'languages' => $languageOptions,
             'tracking' => [

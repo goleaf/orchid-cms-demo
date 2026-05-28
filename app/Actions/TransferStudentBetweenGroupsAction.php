@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\TrainingGroupMembershipStatus;
 use App\Models\TrainingGroup;
 use App\Models\TrainingGroupMembership;
 use App\Models\User;
@@ -29,7 +30,7 @@ class TransferStudentBetweenGroupsAction
             }
 
             $membership->forceFill([
-                'status' => 'transferred',
+                'status' => TrainingGroupMembershipStatus::Transferred->value,
                 'left_at' => now(),
                 'transfer_to_group_id' => $targetGroup->id,
                 'transfer_reason' => $reason,
@@ -43,7 +44,7 @@ class TransferStudentBetweenGroupsAction
                 'student_profile_id' => $membership->student_profile_id,
                 'student_enrollment_id' => $membership->enrollment_id,
                 'enrollment_id' => $membership->enrollment_id,
-                'status' => 'active',
+                'status' => TrainingGroupMembershipStatus::Active->value,
                 'joined_at' => now(),
                 'transfer_from_group_id' => $sourceGroup->id,
                 'transfer_reason' => $reason,

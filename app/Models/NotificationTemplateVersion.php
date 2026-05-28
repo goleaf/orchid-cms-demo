@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\NotificationTemplateVersionStatus;
 use App\Models\Concerns\HasTranslations;
 use Database\Factories\NotificationTemplateVersionFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -74,5 +75,13 @@ class NotificationTemplateVersion extends Model
     public function body(?string $locale = null): ?string
     {
         return $this->getTranslation('body', $locale);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function statusValues(): array
+    {
+        return NotificationTemplateVersionStatus::values();
     }
 }

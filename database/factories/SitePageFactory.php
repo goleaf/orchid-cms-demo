@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\SitePageType;
 use App\Models\SitePage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -29,7 +30,7 @@ class SitePageFactory extends Factory
 
         return [
             'uuid' => (string) Str::uuid(),
-            'type' => 'custom',
+            'type' => SitePageType::Custom->value,
             'slug' => $slug,
             'title_translations' => $titleTranslations,
             'subtitle_translations' => $summaryTranslations,
@@ -54,7 +55,7 @@ class SitePageFactory extends Factory
     public function home(): static
     {
         return $this->state(fn (): array => [
-            'type' => 'home',
+            'type' => SitePageType::Home->value,
             'slug' => 'home',
             'template' => 'home',
             'canonical_url' => url('/'),
@@ -74,7 +75,7 @@ class SitePageFactory extends Factory
     public function pricing(): static
     {
         return $this->state(fn (): array => [
-            'type' => 'pricing',
+            'type' => SitePageType::Pricing->value,
             'slug' => 'pricing',
             'template' => 'pricing',
             'canonical_url' => url('/pricing'),
@@ -94,7 +95,7 @@ class SitePageFactory extends Factory
     public function contacts(): static
     {
         return $this->state(fn (): array => [
-            'type' => 'contacts',
+            'type' => SitePageType::Contacts->value,
             'slug' => 'contacts',
             'template' => 'contacts',
             'canonical_url' => url('/contacts'),
@@ -114,7 +115,7 @@ class SitePageFactory extends Factory
     public function thankYou(): static
     {
         return $this->state(fn (): array => [
-            'type' => 'thank_you',
+            'type' => SitePageType::ThankYou->value,
             'slug' => 'thank-you',
             'template' => 'thank-you',
             'canonical_url' => url('/thank-you'),
@@ -135,7 +136,7 @@ class SitePageFactory extends Factory
     public function privacyPolicy(): static
     {
         return $this->state(fn (): array => [
-            'type' => 'privacy_policy',
+            'type' => SitePageType::PrivacyPolicy->value,
             'slug' => 'privacy-policy',
             'template' => 'legal',
             'canonical_url' => url('/pages/privacy-policy'),
@@ -155,7 +156,7 @@ class SitePageFactory extends Factory
     public function terms(): static
     {
         return $this->state(fn (): array => [
-            'type' => 'terms',
+            'type' => SitePageType::Terms->value,
             'slug' => 'terms',
             'template' => 'legal',
             'canonical_url' => url('/pages/terms'),

@@ -2,8 +2,11 @@
 
 namespace App\Orchid\Screens\Website;
 
+use App\Actions\MoveSortableOrderAction;
 use App\Models\Branch;
 use App\Orchid\Screens\Website\Concerns\BuildsWebsiteScreenPayloads;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
@@ -15,11 +18,15 @@ class BranchListScreen extends Screen
 
     public function query(): iterable
     {
+        $branches = Branch::query()
+            ->forAdminList()
+            ->ordered()
+            ->simplePaginate(15);
+
+        $this->applyOrderControlState($branches, Branch::class);
+
         return [
-            'branches' => Branch::query()
-                ->forAdminList()
-                ->ordered()
-                ->simplePaginate(15),
+            'branches' => $branches,
         ];
     }
 
@@ -67,14 +74,24 @@ class BranchListScreen extends Screen
                 TD::make('is_visible_on_site', tkey('website.admin.fields.is_visible_on_site'))
                     ->alignCenter()
                     ->render(fn (Branch $branch): string => $this->booleanBadge($branch->is_visible_on_site, 'website.admin.status.visible', 'website.admin.status.hidden')),
-                TD::make('sort_order', tkey('website.admin.fields.sort_order'))
+                TD::make('order_controls', tkey('website.admin.fields.position'))
                     ->alignCenter()
-                    ->render(fn (Branch $branch): string => (string) $branch->sort_order),
+                    ->render(fn (Branch $branch): string => $this->orderControls($branch)),
                 TD::make('actions', tkey('crm.leads.columns.actions'))
                     ->alignRight()
                     ->render(fn (Branch $branch): string => $this->branchActions($branch)),
             ]),
         ];
+    }
+
+    public function moveUp(Request $request, MoveSortableOrderAction $move): RedirectResponse
+    {
+        return $this->moveSortable($request, Branch::class, 'platform.website.branches', $move, MoveSortableOrderAction::UP);
+    }
+
+    public function moveDown(Request $request, MoveSortableOrderAction $move): RedirectResponse
+    {
+        return $this->moveSortable($request, Branch::class, 'platform.website.branches', $move, MoveSortableOrderAction::DOWN);
     }
 
     private function branchActions(Branch $branch): string

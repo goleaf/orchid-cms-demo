@@ -2,8 +2,11 @@
 
 namespace App\Orchid\Screens\Website;
 
+use App\Actions\MoveSortableOrderAction;
 use App\Models\Testimonial;
 use App\Orchid\Screens\Website\Concerns\BuildsWebsiteScreenPayloads;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
@@ -15,26 +18,30 @@ class TestimonialListScreen extends Screen
 
     public function query(): iterable
     {
+        $testimonials = Testimonial::query()
+            ->select([
+                'id',
+                'training_program_id',
+                'branch_id',
+                'author_name',
+                'name_translations',
+                'rating',
+                'is_active',
+                'is_featured',
+                'published_at',
+                'sort_order',
+            ])
+            ->with([
+                'course:id,title,title_translations,name_translations,slug',
+                'branch:id,name,name_translations,slug',
+            ])
+            ->ordered()
+            ->simplePaginate(15);
+
+        $this->applyOrderControlState($testimonials, Testimonial::class);
+
         return [
-            'testimonials' => Testimonial::query()
-                ->select([
-                    'id',
-                    'training_program_id',
-                    'branch_id',
-                    'author_name',
-                    'name_translations',
-                    'rating',
-                    'is_active',
-                    'is_featured',
-                    'published_at',
-                    'sort_order',
-                ])
-                ->with([
-                    'course:id,title,title_translations,name_translations,slug',
-                    'branch:id,name,name_translations,slug',
-                ])
-                ->ordered()
-                ->simplePaginate(15),
+            'testimonials' => $testimonials,
         ];
     }
 
@@ -83,6 +90,9 @@ class TestimonialListScreen extends Screen
                     ->render(fn (Testimonial $testimonial): string => $this->booleanBadge($testimonial->is_active, 'website.admin.status.active', 'website.admin.status.inactive')),
                 TD::make('published_at', tkey('website.admin.fields.published_at'))
                     ->render(fn (Testimonial $testimonial): string => $testimonial->published_at?->format('Y-m-d H:i') ?? '-'),
+                TD::make('order_controls', tkey('website.admin.fields.position'))
+                    ->alignCenter()
+                    ->render(fn (Testimonial $testimonial): string => $this->orderControls($testimonial)),
                 TD::make('actions', tkey('crm.leads.columns.actions'))
                     ->alignRight()
                     ->render(fn (Testimonial $testimonial): string => (string) Link::make(tkey('common.actions.edit'))
@@ -90,5 +100,15 @@ class TestimonialListScreen extends Screen
                         ->route('platform.website.testimonials.edit', $testimonial)),
             ]),
         ];
+    }
+
+    public function moveUp(Request $request, MoveSortableOrderAction $move): RedirectResponse
+    {
+        return $this->moveSortable($request, Testimonial::class, 'platform.website.testimonials', $move, MoveSortableOrderAction::UP);
+    }
+
+    public function moveDown(Request $request, MoveSortableOrderAction $move): RedirectResponse
+    {
+        return $this->moveSortable($request, Testimonial::class, 'platform.website.testimonials', $move, MoveSortableOrderAction::DOWN);
     }
 }

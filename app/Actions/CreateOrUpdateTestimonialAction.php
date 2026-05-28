@@ -2,18 +2,22 @@
 
 namespace App\Actions;
 
+use App\Actions\Concerns\AssignsSortablePosition;
 use App\Enums\ReviewStatus;
 use App\Models\Testimonial;
 use App\Services\TranslatableContentManager;
 
 class CreateOrUpdateTestimonialAction
 {
+    use AssignsSortablePosition;
+
     /**
      * @param  array<string, mixed>  $attributes
      */
     public function handle(?Testimonial $testimonial, array $attributes): Testimonial
     {
         $testimonial ??= new Testimonial;
+        $attributes = $this->assignSortablePosition($testimonial, $attributes);
 
         if (array_key_exists('course_id', $attributes) && ! array_key_exists('training_program_id', $attributes)) {
             $attributes['training_program_id'] = $attributes['course_id'];

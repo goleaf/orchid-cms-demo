@@ -45,8 +45,8 @@ class DrivingSchoolPlatformTest extends TestCase
             ->firstOrFail();
 
         collect([
-            route('site.courses.show', $program) => $program->displayTitle(),
-            route('site.categories.show', $program) => $program->displayTitle(),
+            route('site.courses.show', $program) => $program->displayTitle('ru'),
+            route('site.categories.show', $program) => $program->displayTitle('ru'),
             route('site.apply') => tkey('website.apply.title', [], 'ru'),
             route('site.prices') => tkey('website.prices.title', [], 'ru'),
             route('site.instructors') => 'Инструкторы автошколы',
@@ -240,7 +240,7 @@ class DrivingSchoolPlatformTest extends TestCase
             'platform.website.settings' => tkey('website.admin.settings.title'),
             'platform.operations.branches' => tkey('website.admin.branches.title'),
             'platform.operations.instructors' => tkey('operations.instructors.title'),
-            'platform.operations.groups' => tkey('website.admin.groups.title'),
+            'platform.operations.groups' => tkey('education.groups.title'),
             'platform.crm.students' => tkey('students.title'),
             'platform.lms.programs' => tkey('website.admin.courses.title'),
             'platform.schedule.lessons' => tkey('operations.schedule.title'),
@@ -274,7 +274,12 @@ class DrivingSchoolPlatformTest extends TestCase
             ->get(route('platform.main'))
             ->assertOk()
             ->assertSee(tkey('operations.dashboard.title', [], 'en'))
-            ->assertSee(tkey('operations.metrics.active_students', [], 'en'));
+            ->assertSee(tkey('operations.metrics.active_students', [], 'en'))
+            ->assertSee(tkey('operations.tables.open_leads', [], 'en'))
+            ->assertSee(tkey('operations.tables.active_enrollments', [], 'en'))
+            ->assertSee(tkey('operations.tables.active_training_groups', [], 'en'))
+            ->assertSee(tkey('operations.tables.upcoming_lessons', [], 'en'))
+            ->assertDontSee('workspace-limit', false);
 
         $this->actingAs($admin)
             ->withSession([LocaleManager::SESSION_KEY => 'en'])
@@ -288,7 +293,8 @@ class DrivingSchoolPlatformTest extends TestCase
             ->withSession([LocaleManager::SESSION_KEY => 'ru'])
             ->get(route('platform.main'))
             ->assertOk()
-            ->assertSee(tkey('operations.dashboard.title', [], 'ru'));
+            ->assertSee(tkey('operations.dashboard.title', [], 'ru'))
+            ->assertSee(tkey('operations.tables.open_leads', [], 'ru'));
     }
 
     public function test_admin_can_open_catalog_create_and_edit_screens(): void
@@ -318,8 +324,8 @@ class DrivingSchoolPlatformTest extends TestCase
             route('platform.website.pricing.edit', $package) => tkey('website.admin.pricing.edit_title', [], 'ru'),
             route('platform.website.branches.create') => tkey('website.admin.branches.create_title', [], 'ru'),
             route('platform.website.branches.edit', $branch) => tkey('website.admin.branches.edit_title', [], 'ru'),
-            route('platform.website.groups.create') => tkey('website.admin.groups.create_title', [], 'ru'),
-            route('platform.website.groups.edit', $group) => tkey('website.admin.groups.edit_title', [], 'ru'),
+            route('platform.website.groups.create') => tkey('education.groups.create_title', [], 'ru'),
+            route('platform.website.groups.edit', $group) => tkey('education.groups.edit_title', [], 'ru'),
             route('platform.marketing.leads.create') => tkey('crm.leads.create_title', [], 'ru'),
         ])->each(function (string $title, string $url) use ($admin): void {
             $this->actingAs($admin)

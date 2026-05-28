@@ -5,6 +5,7 @@ namespace App\Orchid\Screens\Website;
 use App\Actions\CreateOrUpdateSitePageAction;
 use App\Actions\PublishSitePageAction;
 use App\Actions\UnpublishSitePageAction;
+use App\Enums\SitePageType;
 use App\Http\Requests\StoreSitePageRequest;
 use App\Models\SitePage;
 use App\Orchid\Screens\Website\Concerns\BuildsWebsiteScreenPayloads;
@@ -29,7 +30,7 @@ class SitePageEditScreen extends Screen
         $pageModel = $page?->exists
             ? $page
             : new SitePage([
-                'type' => 'custom',
+                'type' => SitePageType::Custom->value,
                 'slug' => '',
                 'is_active' => true,
                 'is_indexable' => true,
@@ -118,9 +119,6 @@ class SitePageEditScreen extends Screen
                     ->required(),
                 Input::make('template')
                     ->title(tkey('website.admin.pages.fields.template')),
-                Input::make('sort_order')
-                    ->type('number')
-                    ->title(tkey('website.admin.fields.sort_order')),
             ])->title(tkey('website.admin.sections.main')),
 
             TranslatableFields::input('title', 'website.admin.pages.fields.title', [
@@ -213,7 +211,7 @@ class SitePageEditScreen extends Screen
      */
     private function pageTypeOptions(): array
     {
-        return collect(['home', 'pricing', 'contacts', 'thank_you', 'privacy_policy', 'terms', 'custom'])
+        return collect(SitePageType::values())
             ->mapWithKeys(fn (string $type): array => [$type => tkey('website.admin.pages.types.'.$type)])
             ->all();
     }

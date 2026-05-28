@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\EnrollmentPaymentStatus;
 use App\Models\Student;
 use App\Models\StudentEnrollment;
 use App\Models\User;
@@ -11,7 +12,7 @@ class PrepareStudentPaymentPlaceholderAction
     public function handle(Student $student, ?User $user = null, ?StudentEnrollment $enrollment = null): Student
     {
         $enrollment ??= $student->current_enrollment;
-        $status = $enrollment?->payment_status ?: 'pending';
+        $status = $enrollment?->payment_status ?: EnrollmentPaymentStatus::Pending->value;
         $summary = [
             'status' => $status,
             'payment_status' => $status,

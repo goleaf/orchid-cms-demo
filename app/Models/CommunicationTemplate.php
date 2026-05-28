@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CommunicationTemplateType;
 use App\Models\Concerns\HasTranslations;
 use Database\Factories\CommunicationTemplateFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,18 +19,14 @@ class CommunicationTemplate extends Model
     use HasTranslations;
 
     public const TYPE_GENERAL = 'general';
-    public const TYPE_INTERNAL = 'internal';
-    public const TYPE_STUDENT = 'student';
-    public const TYPE_LEAD = 'lead';
-    public const TYPE_REMINDER = 'reminder';
 
-    private const TYPES = [
-        self::TYPE_GENERAL,
-        self::TYPE_INTERNAL,
-        self::TYPE_STUDENT,
-        self::TYPE_LEAD,
-        self::TYPE_REMINDER,
-    ];
+    public const TYPE_INTERNAL = 'internal';
+
+    public const TYPE_STUDENT = 'student';
+
+    public const TYPE_LEAD = 'lead';
+
+    public const TYPE_REMINDER = 'reminder';
 
     protected $fillable = [
         'code',
@@ -174,7 +171,7 @@ class CommunicationTemplate extends Model
      */
     public static function typeValues(): array
     {
-        return self::TYPES;
+        return CommunicationTemplateType::values();
     }
 
     /**
@@ -182,7 +179,7 @@ class CommunicationTemplate extends Model
      */
     public static function typeOptions(): array
     {
-        return collect(self::TYPES)
+        return collect(self::typeValues())
             ->mapWithKeys(fn (string $type): array => [$type => tkey('communication.templates.types.'.$type)])
             ->all();
     }

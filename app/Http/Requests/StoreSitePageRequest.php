@@ -2,10 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\SitePageType;
 use App\Http\Requests\Concerns\HasWebsiteValidationAttributes;
 use App\Models\SitePage;
-use App\Rules\PublishedPageRequirementRule;
 use App\Rules\PublicPageIndexableRule;
+use App\Rules\PublishedPageRequirementRule;
 use App\Rules\SeoDescriptionLengthRule;
 use App\Rules\SeoMetadataRule;
 use App\Rules\SeoTitleLengthRule;
@@ -33,7 +34,7 @@ class StoreSitePageRequest extends FormRequest
     {
         return [
             'page.id' => ['nullable', 'integer'],
-            'type' => ['nullable', Rule::in(['home', 'pricing', 'contacts', 'thank_you', 'privacy_policy', 'terms', 'custom'])],
+            'type' => ['nullable', Rule::enum(SitePageType::class)],
             'slug' => ['required', 'string', 'max:255', new ValidSlugRule(SitePage::class, 'slug', $this->recordId())],
             'title_translations' => ['required', 'array', new TranslatedFieldRequiredRule],
             'title_translations.*' => ['nullable', 'string', 'max:255'],

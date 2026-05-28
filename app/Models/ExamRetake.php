@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ExamRetakeStatus;
 use Database\Factories\ExamRetakeFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,7 +50,7 @@ class ExamRetake extends Model
 
     public function scopePlanned(Builder $query): Builder
     {
-        return $query->where('status', 'planned');
+        return $query->where('status', ExamRetakeStatus::Planned->value);
     }
 
     public function scopeLinked(Builder $query): Builder
@@ -60,5 +61,13 @@ class ExamRetake extends Model
     public function displayStatus(): string
     {
         return tkey('exams.retakes.statuses.'.$this->status) ?: $this->status;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function statusValues(): array
+    {
+        return ExamRetakeStatus::values();
     }
 }

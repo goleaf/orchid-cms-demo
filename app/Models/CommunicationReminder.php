@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\CommunicationPriority;
+use App\Enums\CommunicationReminderStatus;
 use App\Models\Concerns\HasTranslations;
 use Database\Factories\CommunicationReminderFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,28 +22,20 @@ class CommunicationReminder extends Model
     use HasTranslations;
 
     public const STATUS_SCHEDULED = 'scheduled';
+
     public const STATUS_COMPLETED = 'completed';
+
     public const STATUS_CANCELLED = 'cancelled';
+
     public const STATUS_FAILED = 'failed';
 
     public const PRIORITY_LOW = 'low';
+
     public const PRIORITY_NORMAL = 'normal';
+
     public const PRIORITY_HIGH = 'high';
+
     public const PRIORITY_URGENT = 'urgent';
-
-    private const STATUSES = [
-        self::STATUS_SCHEDULED,
-        self::STATUS_COMPLETED,
-        self::STATUS_CANCELLED,
-        self::STATUS_FAILED,
-    ];
-
-    private const PRIORITIES = [
-        self::PRIORITY_LOW,
-        self::PRIORITY_NORMAL,
-        self::PRIORITY_HIGH,
-        self::PRIORITY_URGENT,
-    ];
 
     protected $fillable = [
         'uuid',
@@ -213,7 +207,7 @@ class CommunicationReminder extends Model
      */
     public static function statusValues(): array
     {
-        return self::STATUSES;
+        return CommunicationReminderStatus::values();
     }
 
     /**
@@ -221,6 +215,6 @@ class CommunicationReminder extends Model
      */
     public static function priorityValues(): array
     {
-        return self::PRIORITIES;
+        return CommunicationPriority::values();
     }
 }

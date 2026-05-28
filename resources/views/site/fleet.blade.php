@@ -15,7 +15,7 @@
                 <div class="grid three">
                     @forelse ($vehicles as $vehicle)
                         <article class="card">
-                            <p class="kicker">{{ $vehicle->license_category }} · {{ $vehicle->branch->displayCity() }}</p>
+                            <p class="kicker">{{ $vehicle->license_category }} · {{ $vehicle->branch->displayCountry() }} · {{ $vehicle->branch->displayCity() }}</p>
                             <h3>{{ $vehicle->make }} {{ $vehicle->model }}</h3>
                             <p class="meta">{{ $vehicle->description }}</p>
                             <div class="badge-list">

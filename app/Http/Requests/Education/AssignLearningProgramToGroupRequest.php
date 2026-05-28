@@ -12,7 +12,7 @@ class AssignLearningProgramToGroupRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasAccess('education.groups.update') ?? false;
+        return $this->user()?->hasAccess('education.groups.manage_learning_program') ?? false;
     }
 
     public function rules(): array
