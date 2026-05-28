@@ -5,13 +5,17 @@ namespace App\Actions;
 use App\Models\LeadSource;
 use App\Models\MarketingLead;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExportMarketingLeadsCsvAction
 {
+    /**
+     * @param  Builder<MarketingLead>  $query
+     */
     public function handle(Builder $query, bool $includeMarketing = true): StreamedResponse
     {
-        $filename = 'crm-leads-'.now()->format('Y-m-d-His').'.csv';
+        $filename = 'crm-leads-'.now()->format('Y-m-d').'.csv';
 
         return response()->streamDownload(function () use ($query, $includeMarketing): void {
             $output = fopen('php://output', 'w');
@@ -23,11 +27,11 @@ class ExportMarketingLeadsCsvAction
             fputcsv($output, $this->headings($includeMarketing));
 
             $sourceLabels = LeadSource::translatedLabels();
-            $exportQuery = clone $query;
+            $exportQuery = $this->prepareQuery(clone $query, $includeMarketing);
 
             $exportQuery
                 ->reorder('id')
-                ->chunkById(200, function ($leads) use ($output, $sourceLabels, $includeMarketing): void {
+                ->chunkById(200, function (Collection $leads) use ($output, $sourceLabels, $includeMarketing): void {
                     foreach ($leads as $lead) {
                         $this->writeRow($output, $lead, $sourceLabels, $includeMarketing);
                     }
@@ -38,13 +42,74 @@ class ExportMarketingLeadsCsvAction
     }
 
     /**
+     * @param  Builder<MarketingLead>  $query
+     * @return Builder<MarketingLead>
+     */
+    private function prepareQuery(Builder $query, bool $includeMarketing): Builder
+    {
+        $query
+            ->addSelect([
+                'id',
+                'uuid',
+                'lead_number',
+                'responsible_manager_id',
+                'branch_id',
+                'training_program_id',
+                'training_group_id',
+                'full_name',
+                'first_name',
+                'middle_name',
+                'last_name',
+                'email',
+                'phone',
+                'source',
+                'status',
+                'priority',
+                'lead_score',
+                'created_at',
+                'last_contacted_at',
+                'next_follow_up_at',
+                'closed_at',
+                'converted_at',
+                'message',
+                'internal_comment',
+            ])
+            ->with([
+                'responsibleManager:id,name',
+                'trainingProgram:id,title,title_translations,name_translations,license_category',
+                'branch:id,name,name_translations,city,city_translations',
+                'trainingGroup:id,name,name_translations,code,group_number',
+            ]);
+
+        if ($includeMarketing) {
+            $query->addSelect([
+                'utm_source',
+                'utm_medium',
+                'utm_campaign',
+                'utm_content',
+                'utm_term',
+                'referrer_url',
+                'landing_page',
+                'form_page',
+                'form_name',
+                'locale',
+                'ip_address',
+                'user_agent',
+            ]);
+        }
+
+        return $query;
+    }
+
+    /**
      * @return array<int, string>
      */
     private function headings(bool $includeMarketing): array
     {
         $headings = [
-            tkey('crm.leads.columns.id'),
+            tkey('crm.leads.fields.id'),
             tkey('crm.leads.fields.uuid'),
+            tkey('crm.leads.fields.lead_number'),
             tkey('crm.leads.columns.full_name'),
             tkey('crm.leads.columns.phone'),
             tkey('crm.leads.columns.email'),
@@ -54,9 +119,15 @@ class ExportMarketingLeadsCsvAction
             tkey('crm.leads.columns.course'),
             tkey('crm.leads.columns.branch'),
             tkey('crm.leads.columns.training_group'),
-            tkey('crm.leads.columns.created_at'),
+            tkey('crm.leads.fields.priority'),
+            tkey('crm.leads.fields.lead_score'),
+            tkey('crm.leads.fields.created_at'),
             tkey('crm.leads.fields.last_contacted_at'),
             tkey('crm.leads.fields.next_follow_up_at'),
+            tkey('crm.leads.fields.closed_at'),
+            tkey('crm.leads.fields.converted_at'),
+            tkey('crm.leads.fields.comment'),
+            tkey('crm.leads.fields.internal_comment'),
         ];
 
         if ($includeMarketing) {
@@ -70,14 +141,14 @@ class ExportMarketingLeadsCsvAction
                 tkey('crm.leads.fields.referrer'),
                 tkey('crm.leads.fields.landing_page'),
                 tkey('crm.leads.fields.form_page'),
+                tkey('crm.leads.fields.form_name'),
+                tkey('crm.leads.fields.locale'),
+                tkey('crm.leads.fields.ip_address'),
+                tkey('crm.leads.fields.user_agent'),
             ];
         }
 
-        return [
-            ...$headings,
-            tkey('crm.leads.fields.comment'),
-            tkey('crm.leads.fields.internal_comment'),
-        ];
+        return $headings;
     }
 
     /**
@@ -88,6 +159,7 @@ class ExportMarketingLeadsCsvAction
         $row = [
             $lead->id,
             $lead->uuid,
+            $lead->lead_number,
             $lead->fullName(),
             $lead->phone,
             $lead->email,
@@ -97,9 +169,15 @@ class ExportMarketingLeadsCsvAction
             $lead->trainingProgram?->displayTitle(),
             $lead->branch?->displayName(),
             $lead->trainingGroup?->displayName(),
+            $lead->priority,
+            $lead->lead_score,
             $lead->created_at?->format('Y-m-d H:i:s'),
             $lead->last_contacted_at?->format('Y-m-d H:i:s'),
             $lead->next_follow_up_at?->format('Y-m-d H:i:s'),
+            $lead->closed_at?->format('Y-m-d H:i:s'),
+            $lead->converted_at?->format('Y-m-d H:i:s'),
+            $lead->message,
+            $lead->internal_comment,
         ];
 
         if ($includeMarketing) {
@@ -113,13 +191,13 @@ class ExportMarketingLeadsCsvAction
                 $lead->referrer_url,
                 $lead->landing_page,
                 $lead->form_page,
+                $lead->form_name,
+                $lead->locale,
+                $lead->ip_address,
+                $lead->user_agent,
             ];
         }
 
-        fputcsv($output, [
-            ...$row,
-            $lead->message,
-            $lead->internal_comment,
-        ]);
+        fputcsv($output, $row);
     }
 }

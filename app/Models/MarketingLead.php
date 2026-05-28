@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\LeadStatus;
 use App\Enums\LeadTaskStatus;
 use App\Support\Crm\PhoneNormalizer;
+use BackedEnum;
+use Closure;
 use Database\Factories\MarketingLeadFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -760,6 +762,119 @@ class MarketingLead extends Model
     public function priorityLabel(): string
     {
         return tkey('crm.leads.priorities.'.($this->priority ?: 'normal'));
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public static function reportCountByStatus(?Closure $scope = null): array
+    {
+        return self::reportCountByColumn('status', $scope);
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public static function reportCountBySource(?Closure $scope = null): array
+    {
+        return self::reportCountByColumn('source', $scope);
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public static function reportCountByManager(?Closure $scope = null): array
+    {
+        return self::reportCountByColumn('responsible_manager_id', $scope, 'unassigned');
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public static function reportCountByLostReason(?Closure $scope = null): array
+    {
+        return self::reportCountByColumn('lost_reason_code', $scope, 'none');
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public static function reportCountByDay(?Closure $scope = null): array
+    {
+        $query = static::query()
+            ->select(['id', 'created_at'])
+            ->orderBy('created_at')
+            ->orderBy('id');
+
+        if ($scope !== null) {
+            $scope($query);
+        }
+
+        $counts = [];
+
+        foreach ($query->cursor() as $lead) {
+            $date = $lead->created_at?->toDateString();
+
+            if ($date === null) {
+                continue;
+            }
+
+            $counts[$date] = ($counts[$date] ?? 0) + 1;
+        }
+
+        return $counts;
+    }
+
+    public static function reportConversionReadyCount(?Closure $scope = null): int
+    {
+        $query = static::query()->where('status', LeadStatus::ReadyToEnroll->value);
+
+        if ($scope !== null) {
+            $scope($query);
+        }
+
+        return $query->count();
+    }
+
+    public static function reportOverdueFollowUpCount(?Closure $scope = null): int
+    {
+        $query = static::query()->overdueFollowUp();
+
+        if ($scope !== null) {
+            $scope($query);
+        }
+
+        return $query->count();
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private static function reportCountByColumn(string $column, ?Closure $scope = null, string $emptyKey = 'none'): array
+    {
+        $query = static::query()
+            ->select(['id', $column])
+            ->orderBy($column)
+            ->orderBy('id');
+
+        if ($scope !== null) {
+            $scope($query);
+        }
+
+        $counts = [];
+
+        foreach ($query->cursor() as $lead) {
+            $value = $lead->getAttribute($column);
+
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
+            }
+
+            $key = filled($value) ? (string) $value : $emptyKey;
+            $counts[$key] = ($counts[$key] ?? 0) + 1;
+        }
+
+        return $counts;
     }
 
     /**

@@ -1818,3 +1818,31 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T02:47:57+00:00
+
+```json
+{
+  "ts": "2026-05-28T02:47:57+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6c6e-09a3-7d42-a399-bd49f056a62e",
+  "branch": "main",
+  "changed_file_count": 6,
+  "changed_file_groups": {
+    "code": 3,
+    "models": 1,
+    "orchid": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Models/MarketingLead.php",
+    "[REDACTED_SECRET].php",
+    "pp/Actions/ExportLeadsCsvAction.php",
+    "tests/Feature/CrmLeadCsvExportTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

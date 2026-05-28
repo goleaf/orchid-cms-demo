@@ -7,6 +7,7 @@ namespace App\Orchid\Screens\School;
 use App\Actions\ExportLeadsCsvAction;
 use App\Actions\FilterLeadsAction;
 use App\Enums\LeadStatus;
+use App\Http\Requests\Marketing\ExportLeadsRequest;
 use App\Models\Branch;
 use App\Models\CourseCategory;
 use App\Models\LeadLostReason;
@@ -503,10 +504,8 @@ class LeadListScreen extends Screen
         ], fn (mixed $value): bool => filled($value)));
     }
 
-    public function export(Request $request, ExportLeadsCsvAction $exportLeads): StreamedResponse
+    public function export(ExportLeadsRequest $request, ExportLeadsCsvAction $exportLeads): StreamedResponse
     {
-        abort_unless($request->user()?->hasAccess('crm.leads.export'), 403);
-
         $this->filters = $this->filtersFromRequest($request);
 
         return $exportLeads->handle($this->leadQuery($request), $request->user());
@@ -598,38 +597,51 @@ class LeadListScreen extends Screen
     private function filtersFromRequest(Request $request): array
     {
         return [
-            'search' => trim((string) $request->query('search')),
-            'status' => trim((string) $request->query('status')),
-            'source' => trim((string) $request->query('source')),
-            'manager_id' => trim((string) $request->query('manager_id')),
-            'branch_id' => trim((string) $request->query('branch_id')),
-            'training_program_id' => trim((string) ($request->query('training_program_id') ?? $request->query('course_id'))),
-            'course_category_id' => trim((string) $request->query('course_category_id')),
-            'training_group_id' => trim((string) $request->query('training_group_id')),
-            'tag_id' => trim((string) $request->query('tag_id')),
-            'lost_reason_code' => trim((string) ($request->query('lost_reason_code') ?? $request->query('lost_reason'))),
-            'priority' => trim((string) $request->query('priority')),
-            'created_from' => trim((string) $request->query('created_from')),
-            'created_to' => trim((string) $request->query('created_to')),
-            'next_follow_up_from' => trim((string) ($request->query('next_follow_up_from') ?? $request->query('follow_up_from'))),
-            'next_follow_up_to' => trim((string) ($request->query('next_follow_up_to') ?? $request->query('follow_up_to'))),
-            'last_contacted_from' => trim((string) $request->query('last_contacted_from')),
-            'last_contacted_to' => trim((string) $request->query('last_contacted_to')),
-            'utm_source' => trim((string) $request->query('utm_source')),
-            'utm_medium' => trim((string) $request->query('utm_medium')),
-            'utm_campaign' => trim((string) $request->query('utm_campaign')),
-            'form_name' => trim((string) $request->query('form_name')),
-            'overdue' => trim((string) $request->query('overdue')),
-            'only_due_today' => trim((string) ($request->query('only_due_today') ?? $request->query('due_today'))),
-            'only_my' => trim((string) $request->query('only_my')),
-            'only_unassigned' => trim((string) $request->query('only_unassigned')),
-            'only_duplicates' => trim((string) $request->query('only_duplicates')),
-            'only_open' => trim((string) $request->query('only_open')),
-            'only_closed' => trim((string) $request->query('only_closed')),
-            'only_converted' => trim((string) $request->query('only_converted')),
-            'only_not_converted' => trim((string) $request->query('only_not_converted')),
-            'segment' => trim((string) $request->query('segment')),
+            'search' => $this->requestFilterValue($request, 'search'),
+            'status' => $this->requestFilterValue($request, 'status'),
+            'source' => $this->requestFilterValue($request, 'source'),
+            'manager_id' => $this->requestFilterValue($request, 'manager_id'),
+            'branch_id' => $this->requestFilterValue($request, 'branch_id'),
+            'training_program_id' => $this->requestFilterValue($request, 'training_program_id', 'course_id'),
+            'course_category_id' => $this->requestFilterValue($request, 'course_category_id'),
+            'training_group_id' => $this->requestFilterValue($request, 'training_group_id'),
+            'tag_id' => $this->requestFilterValue($request, 'tag_id'),
+            'lost_reason_code' => $this->requestFilterValue($request, 'lost_reason_code', 'lost_reason'),
+            'priority' => $this->requestFilterValue($request, 'priority'),
+            'created_from' => $this->requestFilterValue($request, 'created_from'),
+            'created_to' => $this->requestFilterValue($request, 'created_to'),
+            'next_follow_up_from' => $this->requestFilterValue($request, 'next_follow_up_from', 'follow_up_from'),
+            'next_follow_up_to' => $this->requestFilterValue($request, 'next_follow_up_to', 'follow_up_to'),
+            'last_contacted_from' => $this->requestFilterValue($request, 'last_contacted_from'),
+            'last_contacted_to' => $this->requestFilterValue($request, 'last_contacted_to'),
+            'utm_source' => $this->requestFilterValue($request, 'utm_source'),
+            'utm_medium' => $this->requestFilterValue($request, 'utm_medium'),
+            'utm_campaign' => $this->requestFilterValue($request, 'utm_campaign'),
+            'form_name' => $this->requestFilterValue($request, 'form_name'),
+            'overdue' => $this->requestFilterValue($request, 'overdue'),
+            'only_due_today' => $this->requestFilterValue($request, 'only_due_today', 'due_today'),
+            'only_my' => $this->requestFilterValue($request, 'only_my'),
+            'only_unassigned' => $this->requestFilterValue($request, 'only_unassigned'),
+            'only_duplicates' => $this->requestFilterValue($request, 'only_duplicates'),
+            'only_open' => $this->requestFilterValue($request, 'only_open'),
+            'only_closed' => $this->requestFilterValue($request, 'only_closed'),
+            'only_converted' => $this->requestFilterValue($request, 'only_converted'),
+            'only_not_converted' => $this->requestFilterValue($request, 'only_not_converted'),
+            'segment' => $this->requestFilterValue($request, 'segment'),
         ];
+    }
+
+    private function requestFilterValue(Request $request, string ...$keys): string
+    {
+        foreach ($keys as $key) {
+            $value = $request->query($key, $request->input($key));
+
+            if (filled($value)) {
+                return trim((string) $value);
+            }
+        }
+
+        return '';
     }
 
     private function leadIndexRoute(): string
