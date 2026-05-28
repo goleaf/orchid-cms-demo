@@ -50,6 +50,7 @@ class WebsiteTestimonialSeeder extends Seeder
                 ->make([
                     'training_program_id' => $course?->id,
                     'branch_id' => $branch?->id,
+                    'instructor_id' => null,
                     'author_name' => $item['author'],
                     'name_translations' => [
                         'ru' => $item['author'],
