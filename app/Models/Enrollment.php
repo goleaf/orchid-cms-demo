@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -134,6 +135,16 @@ class Enrollment extends Model
         return $this->belongsTo(TrainingGroup::class);
     }
 
+    public function groupMemberships(): HasMany
+    {
+        return $this->hasMany(TrainingGroupMembership::class, 'enrollment_id');
+    }
+
+    public function activeGroupMembership(): HasOne
+    {
+        return $this->hasOne(TrainingGroupMembership::class, 'enrollment_id')->active();
+    }
+
     public function status(): BelongsTo
     {
         return $this->belongsTo(\App\Models\EnrollmentStatus::class, 'status_id');
@@ -167,6 +178,16 @@ class Enrollment extends Model
     public function exams(): HasMany
     {
         return $this->hasMany(Exam::class);
+    }
+
+    public function examAdmissions(): HasMany
+    {
+        return $this->hasMany(ExamAdmission::class);
+    }
+
+    public function examAttempts(): HasMany
+    {
+        return $this->hasMany(ExamAttempt::class);
     }
 
     public function payments(): HasMany

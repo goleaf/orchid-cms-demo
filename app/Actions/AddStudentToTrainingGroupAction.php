@@ -61,6 +61,8 @@ class AddStudentToTrainingGroupAction
                     $oldMembership->forceFill([
                         'status' => 'transferred',
                         'left_at' => now(),
+                        'transfer_to_group_id' => $group->id,
+                        'transfer_reason' => 'group_changed',
                         'left_reason' => 'group_changed',
                         'updated_by_id' => $user?->id ?? $oldMembership->updated_by_id,
                     ])->save();
@@ -130,7 +132,9 @@ class AddStudentToTrainingGroupAction
                 'enrollment_id' => $enrollment->id,
             ],
             [
+                'student_id' => $enrollment->student_profile_id,
                 'student_profile_id' => $enrollment->student_profile_id,
+                'student_enrollment_id' => $enrollment->id,
                 'status' => 'active',
                 'joined_at' => now(),
                 'left_at' => null,
@@ -145,6 +149,7 @@ class AddStudentToTrainingGroupAction
     {
         $group->forceFill([
             'places_taken' => ((int) $group->places_taken) + 1,
+            'capacity_taken' => ((int) ($group->capacity_taken ?? $group->places_taken)) + 1,
         ])->save();
     }
 
@@ -152,6 +157,7 @@ class AddStudentToTrainingGroupAction
     {
         $group->forceFill([
             'places_taken' => max(0, ((int) $group->places_taken) - 1),
+            'capacity_taken' => max(0, ((int) ($group->capacity_taken ?? $group->places_taken)) - 1),
         ])->save();
     }
 

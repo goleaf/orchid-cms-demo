@@ -89,7 +89,7 @@ class LeadLostReasonFactory extends Factory
 
     public function spam(): static
     {
-        return $this->dictionaryState('spam', ['ru' => 'Спам', 'en' => 'Spam', 'lt' => 'Slamstas', 'pl' => 'Spam']);
+        return $this->dictionaryState('spam', ['ru' => 'Спам', 'en' => 'Spam', 'lt' => 'Slamstas', 'pl' => 'Niechciane']);
     }
 
     public function other(): static

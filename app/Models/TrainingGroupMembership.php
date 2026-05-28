@@ -20,11 +20,16 @@ class TrainingGroupMembership extends Model
     protected $fillable = [
         'uuid',
         'training_group_id',
+        'student_id',
         'student_profile_id',
+        'student_enrollment_id',
         'enrollment_id',
         'status',
         'joined_at',
         'left_at',
+        'transfer_from_group_id',
+        'transfer_to_group_id',
+        'transfer_reason',
         'left_reason',
         'notes',
         'created_by_id',
@@ -47,6 +52,12 @@ class TrainingGroupMembership extends Model
             if ($membership->joined_at === null) {
                 $membership->joined_at = now();
             }
+
+            $membership->syncAliases();
+        });
+
+        static::saving(function (self $membership): void {
+            $membership->syncAliases();
         });
     }
 
@@ -75,6 +86,16 @@ class TrainingGroupMembership extends Model
         return $this->belongsTo(StudentEnrollment::class, 'enrollment_id');
     }
 
+    public function transferFromGroup(): BelongsTo
+    {
+        return $this->belongsTo(TrainingGroup::class, 'transfer_from_group_id');
+    }
+
+    public function transferToGroup(): BelongsTo
+    {
+        return $this->belongsTo(TrainingGroup::class, 'transfer_to_group_id');
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_id');
@@ -90,6 +111,21 @@ class TrainingGroupMembership extends Model
         return $query->where('status', 'active')->whereNull('left_at');
     }
 
+    public function scopeWaitlisted(Builder $query): Builder
+    {
+        return $query->where('status', 'waitlisted');
+    }
+
+    public function scopeTransferred(Builder $query): Builder
+    {
+        return $query->where('status', 'transferred');
+    }
+
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->where('status', 'completed');
+    }
+
     public function scopeByGroup(Builder $query, int|string|null $groupId): Builder
     {
         return filled($groupId) ? $query->where('training_group_id', $groupId) : $query;
@@ -97,11 +133,43 @@ class TrainingGroupMembership extends Model
 
     public function scopeByStudent(Builder $query, int|string|null $studentId): Builder
     {
-        return filled($studentId) ? $query->where('student_profile_id', $studentId) : $query;
+        return filled($studentId)
+            ? $query->where(fn (Builder $query): Builder => $query
+                ->where('student_profile_id', $studentId)
+                ->orWhere('student_id', $studentId))
+            : $query;
+    }
+
+    public function scopeByEnrollment(Builder $query, int|string|null $enrollmentId): Builder
+    {
+        return filled($enrollmentId)
+            ? $query->where(fn (Builder $query): Builder => $query
+                ->where('enrollment_id', $enrollmentId)
+                ->orWhere('student_enrollment_id', $enrollmentId))
+            : $query;
     }
 
     public function getIsActiveAttribute(): bool
     {
         return $this->status === 'active' && $this->left_at === null;
+    }
+
+    public function getIsWaitlistedAttribute(): bool
+    {
+        return $this->status === 'waitlisted';
+    }
+
+    public function getIsTransferredAttribute(): bool
+    {
+        return $this->status === 'transferred';
+    }
+
+    private function syncAliases(): void
+    {
+        $this->student_id ??= $this->student_profile_id;
+        $this->student_profile_id ??= $this->student_id;
+        $this->student_enrollment_id ??= $this->enrollment_id;
+        $this->enrollment_id ??= $this->student_enrollment_id;
+        $this->transfer_reason ??= $this->left_reason;
     }
 }

@@ -7,11 +7,15 @@ from memorylib import (
     ensure_memory_files,
     find_repo_root,
     read_stdin_json,
+    self_learning_disabled,
     skill_inventory_context,
 )
 
 
 def main() -> None:
+    if self_learning_disabled():
+        return
+
     data = read_stdin_json()
     root = find_repo_root(data.get("cwd"))
     ensure_memory_files(root)

@@ -2,6 +2,16 @@
 
 ## 2026-05-28
 
+- Added the foundation for managing exam readiness, exam sessions, attempts, results, and retakes
+- Improved student group membership tracking, including transfers, waiting lists, completed memberships, and capacity counts
+- Improved website lead listings so source and form names display as friendly translated labels
+- Expanded sample data and tests for training programs, groups, translations, leads, and exam-related workflows
+- Improved the automated project workflow with stronger validation and cleaner memory handling
+
+- Improved project automation hooks so memory context, tool evidence, learning candidates, changelog updates, commits, and pushes are wired through the same local workflow
+- Added safer hook validation before automated commits and made generated hook-memory files less likely to pollute future task history
+- Added local controls for disabling self-learning hooks or skipping only the automatic push step
+
 - Improved sample course and pricing content so multilingual test data is more consistent
 - Updated training package examples to use clearer localized names and features
 

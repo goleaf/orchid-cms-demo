@@ -72,11 +72,24 @@ def fallback_entries(name_status: str) -> list[str]:
     changed = [line for line in name_status.splitlines() if line.strip()]
     if not changed:
         return ["Updated the project workspace."]
+    if any(".codex/" in line or "codex-automation" in line for line in changed):
+        return ["Improved the automated project workflow."]
     if any("docs/" in line or "README" in line or "AGENTS" in line for line in changed):
         return ["Improved the project documentation and working guidance."]
     if any("tests/" in line for line in changed):
         return ["Expanded project verification coverage."]
     return ["Updated the application workflow and supporting project files."]
+
+
+def fallback_subject(name_status: str) -> str:
+    changed = [line for line in name_status.splitlines() if line.strip()]
+    if any(".codex/" in line or "codex-automation" in line for line in changed):
+        return "chore(codex): improve automation hooks"
+    if any("docs/" in line or "README" in line or "AGENTS" in line for line in changed):
+        return "docs: update project documentation"
+    if any("tests/" in line for line in changed):
+        return "test: update project coverage"
+    return DEFAULT_SUBJECT
 
 
 def build_prompt(repo: Path) -> str:
@@ -182,12 +195,23 @@ def call_codex(repo: Path, prompt: str, timeout: int) -> dict[str, Any] | None:
 def build_commit_message(repo: Path, data: dict[str, Any] | None) -> str:
     subject = clean_subject(str((data or {}).get("commit_subject") or ""))
     if not conventional_subject_is_valid(repo, subject):
-        subject = DEFAULT_SUBJECT
+        name_status = git(repo, ["diff", "--cached", "--name-status"], timeout=30)
+        subject = fallback_subject(name_status)
 
     body = str((data or {}).get("commit_body") or "").strip()
     if body:
         return subject + "\n\n" + body + "\n"
     return subject + "\n"
+
+
+def today_section(text: str, heading: str) -> str:
+    start = text.find(heading)
+    if start < 0:
+        return ""
+    next_heading = text.find("\n## ", start + len(heading))
+    if next_heading < 0:
+        return text[start:]
+    return text[start:next_heading]
 
 
 def update_changelog(repo: Path, data: dict[str, Any] | None) -> None:
@@ -200,14 +224,20 @@ def update_changelog(repo: Path, data: dict[str, Any] | None) -> None:
 
     changelog = repo / "changelog.md"
     today = datetime.now().strftime("%Y-%m-%d")
-    block = "\n".join(f"- {entry}" for entry in entries)
+    heading = f"## {today}"
 
     if not changelog.exists():
+        block = "\n".join(f"- {entry}" for entry in entries)
         changelog.write_text(f"# Changelog\n\n## {today}\n\n{block}\n", encoding="utf-8")
         return
 
     text = changelog.read_text(encoding="utf-8")
-    heading = f"## {today}"
+    section = today_section(text, heading)
+    entries = [entry for entry in entries if f"- {entry}" not in section]
+    if not entries:
+        return
+
+    block = "\n".join(f"- {entry}" for entry in entries)
     if heading in text:
         text = text.replace(heading, f"{heading}\n\n{block}", 1)
     else:

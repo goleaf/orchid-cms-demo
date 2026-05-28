@@ -2476,3 +2476,109 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T08:56:52+00:00
+
+```json
+{
+  "ts": "2026-05-28T08:56:52+00:00",
+  "event": "Stop",
+  "session_id": "019e6d9c-1446-78f3-b720-8f17cbb16ed9",
+  "turn_id": "019e6dc4-762c-7600-836f-c52d8c4fa7fd",
+  "branch": "main",
+  "changed_file_count": 65,
+  "changed_file_groups": {
+    "code": 48,
+    "models": 13,
+    "orchid": 1,
+    "database": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    ".codex/hooks.json",
+    ".codex/hooks/auto-commit-push.sh",
+    ".codex/hooks/generate_commit_artifacts.py",
+    ".codex/hooks/memorylib.py",
+    ".codex/hooks/post_tool_learning.py",
+    ".codex/hooks/session_start_context.py",
+    ".codex/hooks/stop_learning.py",
+    ".codex/hooks/user_prompt_context.py",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/RecordExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ScheduleExamSessionAction.php",
+    "app/Enums/ExamAdmissionStatus.php",
+    "app/Enums/ExamAttemptStatus.php",
+    "app/Enums/ExamChecklistItemStatus.php",
+    "app/Enums/ExamSessionStatus.php",
+    "app/Enums/ExamType.php",
+    "app/Models/DrivingLesson.php",
+    "app/Models/Enrollment.php",
+    "app/Models/ExamActivity.php",
+    "app/Models/ExamAdmission.php",
+    "app/Models/ExamAdmissionChecklistItem.php",
+    "app/Models/ExamAttempt.php",
+    "app/Models/ExamSession.php",
+    "app/Models/Payment.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T08:57:08+00:00
+
+```json
+{
+  "ts": "2026-05-28T08:57:08+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbf-45b8-7d82-8894-aa09b2801bd0",
+  "turn_id": "019e6dc5-8eef-7122-8428-b70aa288e726",
+  "branch": "main",
+  "changed_file_count": 67,
+  "changed_file_groups": {
+    "code": 50,
+    "models": 13,
+    "orchid": 1,
+    "database": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    ".codex/config.toml",
+    ".codex/hooks.json",
+    ".codex/hooks/auto-commit-push.sh",
+    ".codex/hooks/generate_commit_artifacts.py",
+    ".codex/hooks/memorylib.py",
+    ".codex/hooks/post_tool_learning.py",
+    ".codex/hooks/session_start_context.py",
+    ".codex/hooks/stop_learning.py",
+    ".codex/hooks/user_prompt_context.py",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateExamRetakeAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/RecordExamActivityAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ScheduleExamSessionAction.php",
+    "app/Enums/ExamAdmissionStatus.php",
+    "app/Enums/ExamAttemptStatus.php",
+    "app/Enums/ExamChecklistItemStatus.php",
+    "app/Enums/ExamSessionStatus.php",
+    "app/Enums/ExamType.php",
+    "app/Models/DrivingLesson.php",
+    "app/Models/Enrollment.php",
+    "app/Models/ExamActivity.php",
+    "app/Models/ExamAdmission.php",
+    "app/Models/ExamAdmissionChecklistItem.php",
+    "app/Models/ExamAttempt.php",
+    "app/Models/ExamSession.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

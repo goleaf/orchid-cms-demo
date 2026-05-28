@@ -59,7 +59,7 @@ class LeadSourceFactory extends Factory
 
     public function googleAds(): static
     {
-        return $this->dictionaryState('google_ads', ['ru' => 'Google Ads', 'en' => 'Google Ads', 'lt' => 'Google Ads', 'pl' => 'Google Ads'], '#ea4335');
+        return $this->dictionaryState('google_ads', ['ru' => 'Google Ads реклама', 'en' => 'Google Ads', 'lt' => 'Google Ads reklama', 'pl' => 'Reklama Google Ads'], '#ea4335');
     }
 
     public function facebook(): static
@@ -74,7 +74,7 @@ class LeadSourceFactory extends Factory
 
     public function tiktok(): static
     {
-        return $this->dictionaryState('tiktok', ['ru' => 'TikTok', 'en' => 'TikTok', 'lt' => 'TikTok', 'pl' => 'TikTok'], '#111827');
+        return $this->dictionaryState('tiktok', ['ru' => 'TikTok канал', 'en' => 'TikTok', 'lt' => 'TikTok kanalas', 'pl' => 'Kanal TikTok'], '#111827');
     }
 
     public function telegram(): static
@@ -94,7 +94,7 @@ class LeadSourceFactory extends Factory
 
     public function partner(): static
     {
-        return $this->dictionaryState('partner', ['ru' => 'Партнёр', 'en' => 'Partner', 'lt' => 'Partneris', 'pl' => 'Partner'], '#9333ea');
+        return $this->dictionaryState('partner', ['ru' => 'Партнёр', 'en' => 'Partner', 'lt' => 'Partneris', 'pl' => 'Polecenie partnera'], '#9333ea');
     }
 
     public function other(): static

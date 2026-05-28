@@ -14,6 +14,8 @@ class TrainingGroupActivity extends Model
 
     protected $fillable = [
         'training_group_id',
+        'student_id',
+        'student_enrollment_id',
         'enrollment_id',
         'membership_id',
         'student_profile_id',
@@ -29,6 +31,16 @@ class TrainingGroupActivity extends Model
     protected $casts = [
         'meta' => 'array',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $activity): void {
+            $activity->student_id ??= $activity->student_profile_id;
+            $activity->student_profile_id ??= $activity->student_id;
+            $activity->student_enrollment_id ??= $activity->enrollment_id;
+            $activity->enrollment_id ??= $activity->student_enrollment_id;
+        });
+    }
 
     public function group(): BelongsTo
     {

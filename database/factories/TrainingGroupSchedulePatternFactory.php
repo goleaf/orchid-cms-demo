@@ -21,11 +21,17 @@ class TrainingGroupSchedulePatternFactory extends Factory
             'uuid' => (string) Str::uuid(),
             'training_group_id' => TrainingGroup::factory(),
             'title_translations' => $this->translations('Теория вечером', 'Evening theory', 'Vakaro teorija', 'Teoria wieczorem'),
+            'type' => 'theory',
             'day_of_week' => $this->faker->numberBetween(1, 7),
+            'start_time' => '18:00',
+            'end_time' => '20:00',
             'starts_at' => '18:00',
             'ends_at' => '20:00',
             'lesson_type' => 'theory',
             'classroom' => 'Room '.$this->faker->numberBetween(1, 5),
+            'classroom_id' => null,
+            'location_translations' => null,
+            'notes_translations' => null,
             'instructor_id' => Instructor::factory(),
             'is_active' => true,
             'sort_order' => 0,
@@ -36,12 +42,12 @@ class TrainingGroupSchedulePatternFactory extends Factory
 
     public function theory(): static
     {
-        return $this->state(fn (): array => ['lesson_type' => 'theory']);
+        return $this->state(fn (): array => ['type' => 'theory', 'lesson_type' => 'theory']);
     }
 
     public function practice(): static
     {
-        return $this->state(fn (): array => ['lesson_type' => 'practice']);
+        return $this->state(fn (): array => ['type' => 'practice', 'lesson_type' => 'practice']);
     }
 
     /**

@@ -29,16 +29,23 @@ class TrainingGroupStatusFactory extends Factory
             'is_active' => true,
             'is_public' => false,
             'accepts_enrollments' => false,
+            'is_open_for_enrollment' => false,
             'is_in_progress' => false,
             'is_final' => false,
             'is_success' => false,
             'is_cancelled' => false,
+            'is_archived' => false,
         ];
+    }
+
+    public function draft(): static
+    {
+        return $this->dictionaryState('draft', $this->translations('Черновик', 'Draft', 'Juodrastis', 'Szkic'), '#64748b', ['is_default' => true]);
     }
 
     public function planned(): static
     {
-        return $this->dictionaryState('planned', $this->translations('Запланирована', 'Planned', 'Suplanuota', 'Zaplanowana'), '#64748b', ['is_default' => true, 'is_public' => true, 'accepts_enrollments' => true]);
+        return $this->scheduled();
     }
 
     public function recruiting(): static
@@ -56,6 +63,16 @@ class TrainingGroupStatusFactory extends Factory
         return $this->dictionaryState('almost_full', $this->translations('Почти заполнена', 'Almost full', 'Beveik pilna', 'Prawie pelna'), '#f59e0b', ['is_public' => true, 'accepts_enrollments' => true]);
     }
 
+    public function full(): static
+    {
+        return $this->dictionaryState('full', $this->translations('Заполнена', 'Full', 'Pilna', 'Pelna'), '#dc2626', ['is_public' => true]);
+    }
+
+    public function scheduled(): static
+    {
+        return $this->dictionaryState('scheduled', $this->translations('Запланирована', 'Scheduled', 'Suplanuota', 'Zaplanowana'), '#64748b', ['is_public' => true]);
+    }
+
     public function active(): static
     {
         return $this->dictionaryState('active', $this->translations('Идет обучение', 'Active', 'Vyksta mokymai', 'Aktywna'), '#2563eb', ['is_in_progress' => true]);
@@ -66,6 +83,11 @@ class TrainingGroupStatusFactory extends Factory
         return $this->dictionaryState('completed', $this->translations('Завершена', 'Completed', 'Baigta', 'Ukonczona'), '#475569', ['is_final' => true, 'is_success' => true]);
     }
 
+    public function paused(): static
+    {
+        return $this->dictionaryState('paused', $this->translations('Приостановлена', 'Paused', 'Pristabdyta', 'Wstrzymana'), '#9333ea', ['is_in_progress' => true]);
+    }
+
     public function cancelled(): static
     {
         return $this->dictionaryState('cancelled', $this->translations('Отменена', 'Cancelled', 'Atsaukta', 'Anulowana'), '#dc2626', ['is_final' => true, 'is_cancelled' => true]);
@@ -74,6 +96,11 @@ class TrainingGroupStatusFactory extends Factory
     public function closed(): static
     {
         return $this->dictionaryState('closed', $this->translations('Закрыта', 'Closed', 'Uzdaryta', 'Zamknieta'), '#64748b', ['is_final' => true]);
+    }
+
+    public function archived(): static
+    {
+        return $this->dictionaryState('archived', $this->translations('Архив', 'Archived', 'Archyvas', 'Archiwum'), '#334155', ['is_final' => true, 'is_archived' => true]);
     }
 
     public function translated(): static
@@ -99,10 +126,12 @@ class TrainingGroupStatusFactory extends Factory
             'is_active' => true,
             'is_public' => false,
             'accepts_enrollments' => false,
+            'is_open_for_enrollment' => false,
             'is_in_progress' => false,
             'is_final' => false,
             'is_success' => false,
             'is_cancelled' => false,
+            'is_archived' => false,
             ...$flags,
         ]);
     }

@@ -23,6 +23,7 @@ class RemoveStudentFromTrainingGroupAction
         $model->forceFill([
             'status' => 'left',
             'left_at' => now(),
+            'transfer_reason' => $reason,
             'left_reason' => $reason,
             'updated_by_id' => $user?->id ?? $model->updated_by_id,
         ])->save();
@@ -56,6 +57,7 @@ class RemoveStudentFromTrainingGroupAction
     {
         $group->forceFill([
             'places_taken' => max(0, ((int) $group->places_taken) - 1),
+            'capacity_taken' => max(0, ((int) ($group->capacity_taken ?? $group->places_taken)) - 1),
         ])->save();
     }
 }

@@ -69,7 +69,7 @@ class StudentStatusFactory extends Factory
     {
         return $this->dictionaryState(
             'lead',
-            ['ru' => 'Лид', 'en' => 'Lead', 'lt' => 'Užklausa', 'pl' => 'Lead'],
+            ['ru' => 'Лид', 'en' => 'Lead', 'lt' => 'Užklausa', 'pl' => 'Zgloszenie'],
             '#2563eb',
         );
     }

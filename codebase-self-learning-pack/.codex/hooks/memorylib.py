@@ -79,6 +79,20 @@ SKILL_PROMPT_TERMS = [
     "discovery",
 ]
 
+GENERATED_NOISE_PATHS = {
+    ".codex/memory/events.jsonl",
+    ".codex/memory/prompt_index.jsonl",
+    ".codex/memory/skill_inventory.json",
+    ".codex/memory/tool_notes.md",
+    ".codex/memory/learning_candidates.md",
+}
+
+GENERATED_NOISE_SUFFIXES = {
+    ".pyc",
+    ".pyo",
+    ".log",
+}
+
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -97,6 +111,10 @@ def read_stdin_json() -> dict[str, Any]:
         return data if isinstance(data, dict) else {}
     except json.JSONDecodeError:
         return {}
+
+
+def self_learning_disabled() -> bool:
+    return os.environ.get("CODEX_SELF_LEARNING_DISABLED") == "1" or os.environ.get("CODEX_MEMORY_DISABLED") == "1"
 
 
 def emit_context(event_name: str, text: str) -> None:
@@ -176,9 +194,31 @@ def sanitize(text: Any, max_len: int = 3000) -> str:
     return value
 
 
+def sanitize_value(value: Any, max_string_len: int = 3000, max_items: int = 80) -> Any:
+    if isinstance(value, str):
+        return sanitize(value, max_len=max_string_len)
+    if value is None or isinstance(value, (bool, int, float)):
+        return value
+    if isinstance(value, dict):
+        items = list(value.items())
+        safe: dict[str, Any] = {}
+        for key, item in items[:max_items]:
+            safe[sanitize(str(key), max_len=120)] = sanitize_value(item, max_string_len=max_string_len, max_items=max_items)
+        if len(items) > max_items:
+            safe["_truncated_items"] = len(items) - max_items
+        return safe
+    if isinstance(value, (list, tuple, set)):
+        items = list(value)
+        safe_items = [sanitize_value(item, max_string_len=max_string_len, max_items=max_items) for item in items[:max_items]]
+        if len(items) > max_items:
+            safe_items.append({"_truncated_items": len(items) - max_items})
+        return safe_items
+    return sanitize(str(value), max_len=max_string_len)
+
+
 def append_jsonl(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    safe_payload = json.loads(sanitize(payload, max_len=10000)) if isinstance(payload, dict) else payload
+    safe_payload = sanitize_value(payload, max_string_len=2000)
     with path.open("a", encoding="utf-8") as fh:
         fh.write(json.dumps(safe_payload, ensure_ascii=False, default=str) + "\n")
 
@@ -211,7 +251,23 @@ def safe_read_text(path: Path, max_bytes: int = 256_000) -> tuple[str, list[str]
         return "", [*warnings, "could not read file"]
 
 
-def git_changed_files(root: Path) -> list[str]:
+def is_generated_noise_path(path: str) -> bool:
+    normalized = path.replace("\\", "/")
+    while normalized.startswith("./"):
+        normalized = normalized[2:]
+    lower = normalized.lower()
+    parts = set(lower.split("/"))
+
+    if "__pycache__" in parts:
+        return True
+    if lower in GENERATED_NOISE_PATHS:
+        return True
+    if any(lower.endswith(suffix) for suffix in GENERATED_NOISE_SUFFIXES):
+        return True
+    return False
+
+
+def git_changed_files(root: Path, include_noise: bool = False) -> list[str]:
     output = run(["git", "status", "--porcelain"], cwd=root)
     files: list[str] = []
     for line in output.splitlines():
@@ -221,7 +277,7 @@ def git_changed_files(root: Path) -> list[str]:
         path = line[3:].strip()
         if " -> " in path:
             path = path.split(" -> ")[-1]
-        if path:
+        if path and (include_noise or not is_generated_noise_path(path)):
             files.append(path)
     return sorted(set(files))
 

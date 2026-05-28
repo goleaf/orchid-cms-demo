@@ -208,6 +208,21 @@ class TrainingGroup extends Model
         return $this->hasMany(TrainingGroupActivity::class);
     }
 
+    public function examAdmissions(): HasMany
+    {
+        return $this->hasMany(ExamAdmission::class);
+    }
+
+    public function examSessions(): HasMany
+    {
+        return $this->hasMany(ExamSession::class);
+    }
+
+    public function examAttempts(): HasMany
+    {
+        return $this->hasMany(ExamAttempt::class);
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_id');
@@ -528,16 +543,56 @@ class TrainingGroup extends Model
 
     private function syncEducationAliases(): void
     {
-        $this->course_id ??= $this->training_program_id;
-        $this->training_program_id ??= $this->course_id;
-        $this->capacity_total ??= $this->capacity;
-        $this->capacity ??= $this->capacity_total ?? 12;
-        $this->capacity_taken ??= $this->places_taken ?? 0;
-        $this->places_taken ??= $this->capacity_taken ?? 0;
-        $this->start_date ??= $this->starts_on;
-        $this->starts_on ??= $this->start_date;
-        $this->planned_end_date ??= $this->ends_on;
-        $this->ends_on ??= $this->planned_end_date;
-        $this->is_accepting_applications ??= $this->is_visible_on_site && $this->acceptsEnrollment();
+        if ($this->getAttribute('course_id') === null) {
+            $this->setAttribute('course_id', $this->getAttribute('training_program_id'));
+        }
+
+        if ($this->getAttribute('training_program_id') === null) {
+            $this->setAttribute('training_program_id', $this->getAttribute('course_id'));
+        }
+
+        if ($this->getAttribute('capacity_total') === null) {
+            $this->setAttribute('capacity_total', $this->getAttribute('capacity'));
+        }
+
+        if ($this->getAttribute('capacity') === null) {
+            $this->setAttribute('capacity', $this->getAttribute('capacity_total') ?? 12);
+        }
+
+        if ($this->getAttribute('capacity_reserved') === null) {
+            $this->setAttribute('capacity_reserved', 0);
+        }
+
+        if ($this->getAttribute('capacity_taken') === null) {
+            $this->setAttribute('capacity_taken', $this->getAttribute('places_taken') ?? 0);
+        }
+
+        if ($this->getAttribute('capacity_waitlist') === null) {
+            $this->setAttribute('capacity_waitlist', 0);
+        }
+
+        if ($this->getAttribute('places_taken') === null) {
+            $this->setAttribute('places_taken', $this->getAttribute('capacity_taken') ?? 0);
+        }
+
+        if ($this->getAttribute('start_date') === null) {
+            $this->setAttribute('start_date', $this->getAttribute('starts_on'));
+        }
+
+        if ($this->getAttribute('starts_on') === null) {
+            $this->setAttribute('starts_on', $this->getAttribute('start_date'));
+        }
+
+        if ($this->getAttribute('planned_end_date') === null) {
+            $this->setAttribute('planned_end_date', $this->getAttribute('ends_on'));
+        }
+
+        if ($this->getAttribute('ends_on') === null) {
+            $this->setAttribute('ends_on', $this->getAttribute('planned_end_date'));
+        }
+
+        if ($this->getAttribute('is_accepting_applications') === null) {
+            $this->setAttribute('is_accepting_applications', $this->is_visible_on_site && $this->acceptsEnrollment());
+        }
     }
 }

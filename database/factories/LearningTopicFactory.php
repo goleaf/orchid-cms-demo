@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\LearningProgram;
+use App\Models\Course;
 use App\Models\LearningProgramModule;
 use App\Models\LearningTopic;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -19,13 +19,16 @@ class LearningTopicFactory extends Factory
     {
         return [
             'uuid' => (string) Str::uuid(),
-            'training_program_id' => LearningProgram::factory(),
+            'training_program_id' => Course::factory(),
             'course_module_id' => null,
+            'learning_program_module_id' => LearningProgramModule::factory(),
             'code' => strtoupper($this->faker->unique()->bothify('TOPIC-####')),
+            'name_translations' => $this->translations('Тема обучения', 'Learning topic', 'Mokymo tema', 'Temat nauki'),
             'title_translations' => $this->translations('Тема обучения', 'Learning topic', 'Mokymo tema', 'Temat nauki'),
             'description_translations' => null,
             'topic_type' => 'theory',
             'duration_minutes' => 45,
+            'estimated_hours' => 1.00,
             'sort_order' => 0,
             'is_required' => true,
             'is_active' => true,
@@ -36,7 +39,7 @@ class LearningTopicFactory extends Factory
 
     public function forModule(): static
     {
-        return $this->state(fn (): array => ['course_module_id' => LearningProgramModule::factory()]);
+        return $this->state(fn (): array => ['learning_program_module_id' => LearningProgramModule::factory()]);
     }
 
     public function theory(): static

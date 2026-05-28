@@ -11,11 +11,15 @@ from memorylib import (
     read_stdin_json,
     relevant_memory,
     sanitize,
+    self_learning_disabled,
     skill_inventory_context,
 )
 
 
 def main() -> None:
+    if self_learning_disabled():
+        return
+
     data = read_stdin_json()
     root = find_repo_root(data.get("cwd"))
     ensure_memory_files(root)

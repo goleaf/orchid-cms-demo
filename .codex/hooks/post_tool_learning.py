@@ -12,10 +12,14 @@ from memorylib import (
     memory_dir,
     read_stdin_json,
     response_summary,
+    self_learning_disabled,
 )
 
 
 def main() -> None:
+    if self_learning_disabled():
+        return
+
     data = read_stdin_json()
     root = find_repo_root(data.get("cwd"))
     ensure_memory_files(root)

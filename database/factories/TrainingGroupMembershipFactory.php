@@ -26,6 +26,9 @@ class TrainingGroupMembershipFactory extends Factory
             'status' => 'active',
             'joined_at' => now(),
             'left_at' => null,
+            'transfer_from_group_id' => null,
+            'transfer_to_group_id' => null,
+            'transfer_reason' => null,
             'left_reason' => null,
             'notes' => null,
             'created_by_id' => null,
@@ -41,5 +44,20 @@ class TrainingGroupMembershipFactory extends Factory
     public function left(): static
     {
         return $this->state(fn (): array => ['status' => 'left', 'left_at' => now(), 'left_reason' => 'cancelled']);
+    }
+
+    public function waitlisted(): static
+    {
+        return $this->state(fn (): array => ['status' => 'waitlisted']);
+    }
+
+    public function transferred(): static
+    {
+        return $this->state(fn (): array => ['status' => 'transferred', 'left_at' => now(), 'transfer_reason' => 'group_changed']);
+    }
+
+    public function completed(): static
+    {
+        return $this->state(fn (): array => ['status' => 'completed']);
     }
 }

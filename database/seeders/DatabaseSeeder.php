@@ -104,9 +104,20 @@ class DatabaseSeeder extends Seeder
                 'practice_hours' => 30,
                 'duration_weeks' => 14,
                 'format' => 'mixed',
-                'available_languages' => ['Lithuanian', 'English', 'Russian'],
+                'available_languages' => ['Lithuanian', 'English', 'Russian', 'Polish'],
                 'price_cents' => 129000,
                 'description' => 'Complete Category B training with theory, practice, exams, and document tracking.',
+                ...$this->programTranslations([
+                    'title' => 'Category B Manual',
+                    'duration_weeks' => 14,
+                    'title_translations' => $this->translations('Категория B механика', 'Category B Manual', 'B kategorija mechanine', 'Kategoria B manualna'),
+                    'description_translations' => $this->translations(
+                        'Полный курс категории B с теорией, практикой, экзаменами и документами.',
+                        'Complete Category B training with theory, practice, exams, and document tracking.',
+                        'Pilnas B kategorijos kursas su teorija, praktika, egzaminais ir dokumentais.',
+                        'Pelny kurs kategorii B z teoria, praktyka, egzaminami i dokumentami.'
+                    ),
+                ]),
                 'required_documents' => ['ID card', 'Medical certificate', 'Photo', 'Training contract'],
                 'admission_requirements' => 'Students must meet local age and medical eligibility requirements before practical driving lessons.',
                 'is_active' => true,
@@ -130,6 +141,8 @@ class DatabaseSeeder extends Seeder
                 'format' => 'mixed',
                 'price_cents' => 89000,
                 'description' => 'Motorcycle training with maneuver practice, road safety, and exam route preparation.',
+                'title_translations' => $this->translations('Категория A мотоцикл', 'Category A Motorcycle', 'A kategorija motociklui', 'Kategoria A motocykl'),
+                'description_translations' => $this->translations('Обучение на мотоцикл с маневрами, безопасностью и подготовкой к маршруту экзамена.', 'Motorcycle training with maneuver practice, road safety, and exam route preparation.', 'Motociklo mokymas su manevrais, saugumu ir pasirengimu egzamino marsrutui.', 'Szkolenie motocyklowe z manewrami, bezpieczenstwem i przygotowaniem do trasy egzaminu.'),
             ],
             [
                 'slug' => 'category-c-truck',
@@ -142,6 +155,8 @@ class DatabaseSeeder extends Seeder
                 'format' => 'offline',
                 'price_cents' => 159000,
                 'description' => 'Truck driving course for professional road transport preparation.',
+                'title_translations' => $this->translations('Категория C грузовик', 'Category C Truck', 'C kategorija sunkvezimiui', 'Kategoria C ciezarowka'),
+                'description_translations' => $this->translations('Курс вождения грузовика для подготовки к профессиональным перевозкам.', 'Truck driving course for professional road transport preparation.', 'Sunkvezimio vairavimo kursas profesionaliam keliu transportui.', 'Kurs jazdy ciezarowka do przygotowania transportu zawodowego.'),
             ],
             [
                 'slug' => 'category-d-bus',
@@ -154,6 +169,8 @@ class DatabaseSeeder extends Seeder
                 'format' => 'offline',
                 'price_cents' => 169000,
                 'description' => 'Bus driver training with route discipline, passenger safety, and exam readiness.',
+                'title_translations' => $this->translations('Категория D автобус', 'Category D Bus', 'D kategorija autobusui', 'Kategoria D autobus'),
+                'description_translations' => $this->translations('Обучение водителей автобуса с маршрутной дисциплиной, безопасностью пассажиров и подготовкой к экзамену.', 'Bus driver training with route discipline, passenger safety, and exam readiness.', 'Autobuso vairuotoju mokymas su marsruto disciplina, keleiviu saugumu ir pasirengimu egzaminui.', 'Szkolenie kierowcow autobusu z dyscyplina trasy, bezpieczenstwem pasazerow i przygotowaniem do egzaminu.'),
             ],
             [
                 'slug' => 'category-be-trailer',
@@ -166,6 +183,8 @@ class DatabaseSeeder extends Seeder
                 'format' => 'offline',
                 'price_cents' => 69000,
                 'description' => 'Trailer handling course with reversing, coupling, and exam maneuvers.',
+                'title_translations' => $this->translations('Категория BE прицеп', 'Category BE Trailer', 'BE kategorija priekabai', 'Kategoria BE przyczepa'),
+                'description_translations' => $this->translations('Курс управления прицепом с движением задним ходом, сцепкой и экзаменационными маневрами.', 'Trailer handling course with reversing, coupling, and exam maneuvers.', 'Priekabos valdymo kursas su atbuliniu vaziavimu, prikabinimu ir egzamino manevrais.', 'Kurs obslugi przyczepy z cofaniem, laczeniem i manewrami egzaminacyjnymi.'),
             ],
             [
                 'slug' => 'skill-refresh-driving',
@@ -178,6 +197,8 @@ class DatabaseSeeder extends Seeder
                 'format' => 'mixed',
                 'price_cents' => 39000,
                 'description' => 'Confidence-building driving lessons for licensed drivers returning to the road.',
+                'title_translations' => $this->translations('Восстановление навыков вождения', 'Skill Refresh Lessons', 'Vairavimo igudziu atnaujinimas', 'Odswiezenie umiejetnosci jazdy'),
+                'description_translations' => $this->translations('Уроки для водителей с правами, которые возвращаются за руль и хотят восстановить уверенность.', 'Confidence-building driving lessons for licensed drivers returning to the road.', 'Pamokos vairuotojams, griztantiems i kelia ir norintiems atkurti pasitikejima.', 'Lekcje dla kierowcow z prawem jazdy, ktorzy wracaja na droge i chca odzyskac pewnosc.'),
             ],
             [
                 'slug' => 'individual-driving-lessons',
@@ -190,6 +211,8 @@ class DatabaseSeeder extends Seeder
                 'format' => 'offline',
                 'price_cents' => 49000,
                 'description' => 'Flexible one-to-one driving lessons with instructor and vehicle selection.',
+                'title_translations' => $this->translations('Индивидуальные уроки вождения', 'Individual Driving Lessons', 'Individualios vairavimo pamokos', 'Indywidualne lekcje jazdy'),
+                'description_translations' => $this->translations('Гибкие индивидуальные уроки с выбором инструктора и автомобиля.', 'Flexible one-to-one driving lessons with instructor and vehicle selection.', 'Lankscios individualios pamokos su instruktoriaus ir automobilio pasirinkimu.', 'Elastyczne lekcje indywidualne z wyborem instruktora i samochodu.'),
             ],
             [
                 'slug' => 'intensive-category-b',
@@ -202,6 +225,8 @@ class DatabaseSeeder extends Seeder
                 'format' => 'mixed',
                 'price_cents' => 149000,
                 'description' => 'Condensed Category B course for students who need a faster training plan.',
+                'title_translations' => $this->translations('Интенсив категории B', 'Intensive Category B', 'Intensyvus B kategorijos kursas', 'Intensywny kurs kategorii B'),
+                'description_translations' => $this->translations('Сжатый курс категории B для учеников, которым нужен более быстрый план обучения.', 'Condensed Category B course for students who need a faster training plan.', 'Sutrumpintas B kategorijos kursas mokiniams, kuriems reikia greitesnio mokymo plano.', 'Skondensowany kurs kategorii B dla uczniow, ktorzy potrzebuja szybszego planu.'),
             ],
             [
                 'slug' => 'beginner-driving-course',
@@ -214,6 +239,8 @@ class DatabaseSeeder extends Seeder
                 'format' => 'mixed',
                 'price_cents' => 139000,
                 'description' => 'Structured beginner program with extra city driving and confidence practice.',
+                'title_translations' => $this->translations('Курс для начинающих', 'Course for Beginners', 'Kursas pradedantiesiems', 'Kurs dla poczatkujacych'),
+                'description_translations' => $this->translations('Структурированная программа для начинающих с дополнительной городской практикой и уверенностью за рулем.', 'Structured beginner program with extra city driving and confidence practice.', 'Strukturuota pradedanciuju programa su papildoma miesto praktika ir pasitikejimo ugdymu.', 'Ustrukturyzowany program dla poczatkujacych z dodatkowa jazda miejska i budowaniem pewnosci.'),
             ],
             [
                 'slug' => 'exam-retake-preparation',
@@ -226,6 +253,8 @@ class DatabaseSeeder extends Seeder
                 'format' => 'mixed',
                 'price_cents' => 45000,
                 'description' => 'Focused preparation for students who already attempted an exam.',
+                'title_translations' => $this->translations('Подготовка к пересдаче экзамена', 'Exam Retake Preparation', 'Pasiruosimas perlaikyti egzamina', 'Przygotowanie do poprawki egzaminu'),
+                'description_translations' => $this->translations('Целевая подготовка для учеников, которые уже пробовали сдавать экзамен.', 'Focused preparation for students who already attempted an exam.', 'Tikslinis pasirengimas mokiniams, kurie jau bande laikyti egzamina.', 'Skupione przygotowanie dla uczniow, ktorzy juz podchodzili do egzaminu.'),
             ],
             [
                 'slug' => 'corporate-driver-training',
@@ -238,14 +267,17 @@ class DatabaseSeeder extends Seeder
                 'format' => 'mixed',
                 'price_cents' => 99000,
                 'description' => 'Company driver training with group reporting and branch scheduling.',
+                'title_translations' => $this->translations('Корпоративное обучение водителей', 'Corporate Driver Training', 'Imoniu vairuotoju mokymai', 'Szkolenie kierowcow firmowych'),
+                'description_translations' => $this->translations('Обучение водителей для компаний с групповыми отчетами и расписанием по филиалам.', 'Company driver training with group reporting and branch scheduling.', 'Imoniu vairuotoju mokymai su grupinemis ataskaitomis ir filialu tvarkarasciais.', 'Szkolenie kierowcow firmowych z raportami grupowymi i harmonogramem oddzialow.'),
             ],
         ])->each(fn (array $course): TrainingProgram => TrainingProgram::query()->updateOrCreate(
             ['slug' => $course['slug']],
             [
                 ...$course,
-                'available_languages' => ['Lithuanian', 'English', 'Russian'],
+                'available_languages' => ['Lithuanian', 'English', 'Russian', 'Polish'],
                 'required_documents' => ['ID card', 'Medical certificate', 'Photo'],
                 'admission_requirements' => 'Admission depends on age, medical eligibility, and document verification.',
+                ...$this->programTranslations($course),
                 'is_active' => true,
                 'seo_title' => $course['title'].' | DrivePro Academy',
                 'meta_description' => $course['description'],
@@ -842,5 +874,104 @@ class DatabaseSeeder extends Seeder
         $this->call(PublicWebsiteSeeder::class);
 
         Cache::forget('driving-school.dashboard.metrics');
+    }
+
+    /**
+     * @param  array<string, mixed>  $course
+     * @return array<string, mixed>
+     */
+    private function programTranslations(array $course): array
+    {
+        $title = $course['title_translations'];
+        $description = $course['description_translations'];
+        $weeks = (int) $course['duration_weeks'];
+
+        return [
+            'title_translations' => $title,
+            'name_translations' => $title,
+            'duration_translations' => [
+                'ru' => $weeks.' нед.',
+                'en' => $weeks.' weeks',
+                'lt' => $weeks.' sav.',
+                'pl' => $weeks.' tyg.',
+            ],
+            'short_description_translations' => $description,
+            'description_translations' => $description,
+            'program_summary_translations' => $this->translations(
+                'Теория, практика и поддержка до экзамена.',
+                'Theory, practice, and support up to the exam.',
+                'Teorija, praktika ir pagalba iki egzamino.',
+                'Teoria, praktyka i wsparcie do egzaminu.'
+            ),
+            'requirements_translations' => $this->translations(
+                'Нужны возрастное соответствие, медсправка и документы.',
+                'Age eligibility, medical certificate, and documents are required.',
+                'Reikia tinkamo amziaus, medicinines pazymos ir dokumentu.',
+                'Wymagany jest odpowiedni wiek, zaswiadczenie lekarskie i dokumenty.'
+            ),
+            'included_items_translations' => $this->translations(
+                'Теория, практика, материалы и консультация менеджера.',
+                'Theory, practice, materials, and manager consultation.',
+                'Teorija, praktika, medziaga ir vadybininko konsultacija.',
+                'Teoria, praktyka, materialy i konsultacja menedzera.'
+            ),
+            'includes_translations' => $this->translations(
+                'Теория, практика, материалы и консультация менеджера.',
+                'Theory, practice, materials, and manager consultation.',
+                'Teorija, praktika, medziaga ir vadybininko konsultacija.',
+                'Teoria, praktyka, materialy i konsultacja menedzera.'
+            ),
+            'extra_costs_translations' => $this->translations(
+                'Госэкзамены и медсправка оплачиваются отдельно.',
+                'State exams and medical certificate are paid separately.',
+                'Valstybiniai egzaminai ir medicinine pazyma apmokami atskirai.',
+                'Egzaminy panstwowe i zaswiadczenie lekarskie sa platne osobno.'
+            ),
+            'excludes_translations' => $this->translations(
+                'Госэкзамены и медсправка оплачиваются отдельно.',
+                'State exams and medical certificate are paid separately.',
+                'Valstybiniai egzaminai ir medicinine pazyma apmokami atskirai.',
+                'Egzaminy panstwowe i zaswiadczenie lekarskie sa platne osobno.'
+            ),
+            'theory_program_translations' => $this->translations(
+                'Правила дорожного движения, безопасность и подготовка к тесту.',
+                'Traffic rules, safety, and test preparation.',
+                'Keliu eismo taisykles, saugumas ir pasirengimas testui.',
+                'Przepisy ruchu, bezpieczenstwo i przygotowanie do testu.'
+            ),
+            'practice_program_translations' => $this->translations(
+                'Управление автомобилем, городские маршруты и экзаменационные упражнения.',
+                'Vehicle control, city routes, and exam maneuvers.',
+                'Automobilio valdymas, miesto marsrutai ir egzamino pratimai.',
+                'Prowadzenie auta, trasy miejskie i manewry egzaminacyjne.'
+            ),
+            'seo_title_translations' => [
+                'ru' => $title['ru'].' | DrivePro Academy',
+                'en' => $title['en'].' | DrivePro Academy',
+                'lt' => $title['lt'].' | DrivePro Academy',
+                'pl' => $title['pl'].' | DrivePro Academy',
+            ],
+            'seo_description_translations' => $description,
+            'og_title_translations' => [
+                'ru' => $title['ru'].' | DrivePro Academy',
+                'en' => $title['en'].' | DrivePro Academy',
+                'lt' => $title['lt'].' | DrivePro Academy',
+                'pl' => $title['pl'].' | DrivePro Academy',
+            ],
+            'og_description_translations' => $description,
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function translations(string $ru, string $en, string $lt, string $pl): array
+    {
+        return [
+            'ru' => $ru,
+            'en' => $en,
+            'lt' => $lt,
+            'pl' => $pl,
+        ];
     }
 }

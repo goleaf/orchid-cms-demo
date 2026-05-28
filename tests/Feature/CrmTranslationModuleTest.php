@@ -250,6 +250,7 @@ class CrmTranslationModuleTest extends TestCase
             ...$this->prefixed('crm.leads.sources.', [
                 'website',
                 'callback',
+                'contact',
                 'contact_form',
                 'phone',
                 'office',

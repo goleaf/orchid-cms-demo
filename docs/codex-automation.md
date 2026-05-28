@@ -2,22 +2,44 @@
 
 Project baseline: follow [`docs/project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). Automation must not store secrets or private student/customer data.
 
+## Hook Lifecycle
+
+The project-local Codex config registers these hooks:
+
+- Session start: loads compact project memory and repository skill inventory.
+- User prompt submit: records a private prompt hash/preview and injects relevant project memory.
+- Post tool use: records bounded tool evidence, test-command signals, branch, and changed-file context.
+- Stop: records a learning candidate, updates the changelog, creates the commit, and pushes when configured.
+
+Self-learning hooks can be disabled for a deliberate local run:
+
+```bash
+CODEX_SELF_LEARNING_DISABLED=1 codex
+```
+
 ## Stop Hook
 
 At the end of a Codex prompt, the Stop hook runs the local automation pipeline:
 
 1. Stage all current repository changes.
-2. Ask `codex exec` to summarize the staged diff.
-3. Update `changelog.md` with plain human-readable entries.
-4. Generate a Conventional Commit message.
-5. Stage the changelog update.
-6. Commit all staged changes.
-7. Push to the configured upstream when available.
+2. Reject staged whitespace errors.
+3. Validate changed hook scripts and hook config files.
+4. Ask `codex exec` to summarize the staged diff.
+5. Update `changelog.md` with plain human-readable entries.
+6. Generate a Conventional Commit message.
+7. Stage the changelog update.
+8. Commit all staged changes.
+9. Push to the configured upstream when available.
 
 The hook is implemented by:
 
 - `.codex/hooks/auto-commit-push.sh`
 - `.codex/hooks/generate_commit_artifacts.py`
+- `.codex/hooks/stop_learning.py`
+- `.codex/hooks/post_tool_learning.py`
+- `.codex/hooks/session_start_context.py`
+- `.codex/hooks/user_prompt_context.py`
+- `.codex/hooks/memorylib.py`
 
 ## Changelog Rules
 
@@ -53,6 +75,12 @@ Disable the auto commit/push hook for one run:
 
 ```bash
 CODEX_AUTO_PUSH_DISABLED=1 bash .codex/hooks/auto-commit-push.sh
+```
+
+Create the local commit but skip the push:
+
+```bash
+CODEX_AUTO_PUSH_SKIP_PUSH=1 bash .codex/hooks/auto-commit-push.sh
 ```
 
 Run only changelog and commit-message artifact generation without AI:

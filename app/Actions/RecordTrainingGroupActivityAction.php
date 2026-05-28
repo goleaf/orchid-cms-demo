@@ -27,6 +27,8 @@ class RecordTrainingGroupActivityAction
     ): TrainingGroupActivity {
         return TrainingGroupActivity::query()->create([
             'training_group_id' => $group->id,
+            'student_id' => $enrollment?->student_profile_id ?? $membership?->student_profile_id,
+            'student_enrollment_id' => $enrollment?->id ?? $membership?->enrollment_id,
             'enrollment_id' => $enrollment?->id,
             'membership_id' => $membership?->id,
             'student_profile_id' => $enrollment?->student_profile_id ?? $membership?->student_profile_id,

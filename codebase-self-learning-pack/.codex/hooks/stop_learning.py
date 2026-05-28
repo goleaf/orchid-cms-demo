@@ -14,6 +14,7 @@ from memorylib import (
     now_iso,
     read_stdin_json,
     safe_append,
+    self_learning_disabled,
 )
 
 
@@ -37,6 +38,10 @@ def classify_file(path: str) -> str:
 
 
 def main() -> None:
+    if self_learning_disabled():
+        emit_common()
+        return
+
     data = read_stdin_json()
     root = find_repo_root(data.get("cwd"))
     ensure_memory_files(root)

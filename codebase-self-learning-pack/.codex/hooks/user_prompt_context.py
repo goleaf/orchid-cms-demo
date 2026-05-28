@@ -11,12 +11,15 @@ from memorylib import (
     read_stdin_json,
     relevant_memory,
     sanitize,
+    self_learning_disabled,
     skill_inventory_context,
-    skill_inventory_prompt_relevant,
 )
 
 
 def main() -> None:
+    if self_learning_disabled():
+        return
+
     data = read_stdin_json()
     root = find_repo_root(data.get("cwd"))
     ensure_memory_files(root)
@@ -36,10 +39,9 @@ def main() -> None:
     context_parts: list[str] = []
     if matches:
         context_parts.append("Relevant self-learning memory for this prompt:\n" + "\n".join(matches))
-    if skill_inventory_prompt_relevant(prompt):
-        skill_context = skill_inventory_context(root)
-        if skill_context:
-            context_parts.append(skill_context)
+    skill_context = skill_inventory_context(root)
+    if skill_context:
+        context_parts.append(skill_context)
 
     if context_parts:
         context = "\n\n".join(context_parts)

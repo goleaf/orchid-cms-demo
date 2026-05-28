@@ -137,7 +137,7 @@ class LeadStatusFactory extends Factory
     {
         return $this->dictionaryState(
             'spam',
-            ['ru' => 'Спам', 'en' => 'Spam', 'lt' => 'Slamstas', 'pl' => 'Spam'],
+            ['ru' => 'Спам', 'en' => 'Spam', 'lt' => 'Slamstas', 'pl' => 'Niechciane'],
             '#991b1b',
             ['is_final' => true, 'is_lost' => true, 'is_spam' => true],
         );

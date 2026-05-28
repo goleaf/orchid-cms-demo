@@ -4,6 +4,7 @@ namespace App\Orchid\Screens\Website;
 
 use App\Models\Branch;
 use App\Models\Course;
+use App\Models\LeadSource;
 use App\Models\MarketingLead;
 use App\Models\TrainingGroup;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,6 +41,11 @@ class WebsiteLeadListScreen extends Screen
      */
     private array $groups = [];
 
+    /**
+     * @var array<string, string>
+     */
+    private array $sourceLabels = [];
+
     private bool $canViewMarketing = false;
 
     public function query(Request $request): iterable
@@ -71,11 +77,15 @@ class WebsiteLeadListScreen extends Screen
             ->mapWithKeys(fn (TrainingGroup $group): array => [$group->id => $group->displayName()])
             ->all();
 
+        $leads = $this->leadQuery()
+            ->orderByDesc('created_at')
+            ->simplePaginate(15)
+            ->withQueryString();
+
+        $this->sourceLabels = LeadSource::translatedLabels();
+
         return [
-            'leads' => $this->leadQuery()
-                ->orderByDesc('created_at')
-                ->simplePaginate(15)
-                ->withQueryString(),
+            'leads' => $leads,
         ];
     }
 
@@ -189,9 +199,9 @@ class WebsiteLeadListScreen extends Screen
             TD::make('group', tkey('website.forms.fields.training_group'))
                 ->render(fn (MarketingLead $lead): string => $lead->trainingGroup?->displayName() ?? '-'),
             TD::make('source', tkey('crm.leads.columns.source'))
-                ->render(fn (MarketingLead $lead): string => $lead->source ?? '-'),
+                ->render(fn (MarketingLead $lead): string => $this->sourceLabel($lead->source)),
             TD::make('form_name', tkey('website.forms.fields.form_name'))
-                ->render(fn (MarketingLead $lead): string => $lead->form_name ?? '-'),
+                ->render(fn (MarketingLead $lead): string => $this->formNameLabel($lead->form_name)),
         ];
 
         if ($this->canViewMarketing) {
@@ -259,5 +269,37 @@ class WebsiteLeadListScreen extends Screen
     private function short(?string $value): string
     {
         return filled($value) ? Str::limit($value, 64, '...') : '-';
+    }
+
+    private function sourceLabel(?string $source): string
+    {
+        if (! filled($source)) {
+            return '-';
+        }
+
+        if (isset($this->sourceLabels[$source])) {
+            return $this->sourceLabels[$source];
+        }
+
+        $translationKey = 'crm.leads.sources.'.$source;
+        $translated = tkey($translationKey);
+
+        return $translated !== $translationKey
+            ? $translated
+            : LeadSource::translatedLabel($source);
+    }
+
+    private function formNameLabel(?string $formName): string
+    {
+        if (! filled($formName)) {
+            return '-';
+        }
+
+        return match ($formName) {
+            'application', 'enrollment', 'website_application' => tkey('website.forms.apply.title'),
+            'callback' => tkey('website.forms.callback.title'),
+            'contact' => tkey('website.forms.contact.title'),
+            default => Str::of($formName)->replace(['_', '-'], ' ')->title()->toString(),
+        };
     }
 }

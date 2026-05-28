@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -124,6 +125,18 @@ class StudentProfile extends Model
         return $this->hasMany(StudentEnrollment::class, 'student_profile_id');
     }
 
+    public function groupMemberships(): HasMany
+    {
+        return $this->hasMany(TrainingGroupMembership::class, 'student_profile_id');
+    }
+
+    public function trainingGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(TrainingGroup::class, 'training_group_memberships', 'student_profile_id', 'training_group_id')
+            ->withPivot(['enrollment_id', 'student_enrollment_id', 'status', 'joined_at', 'left_at'])
+            ->withTimestamps();
+    }
+
     public function currentEnrollment(): HasOne
     {
         return $this->hasOne(StudentEnrollment::class, 'student_profile_id')
@@ -187,6 +200,16 @@ class StudentProfile extends Model
     public function documents(): HasMany
     {
         return $this->hasMany(StudentDocument::class);
+    }
+
+    public function examAdmissions(): HasMany
+    {
+        return $this->hasMany(ExamAdmission::class);
+    }
+
+    public function examAttempts(): HasMany
+    {
+        return $this->hasMany(ExamAttempt::class);
     }
 
     public function fullName(): string

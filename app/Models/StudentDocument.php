@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class StudentDocument extends Model
 {
@@ -41,6 +42,16 @@ class StudentDocument extends Model
     public function enrollment(): BelongsTo
     {
         return $this->belongsTo(Enrollment::class);
+    }
+
+    public function examChecklistItems(): HasMany
+    {
+        return $this->hasMany(ExamAdmissionChecklistItem::class);
+    }
+
+    public function examAttempts(): HasMany
+    {
+        return $this->hasMany(ExamAttempt::class);
     }
 
     public function scopeForDocumentList(Builder $query): Builder

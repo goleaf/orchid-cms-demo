@@ -6,6 +6,7 @@ use App\Enums\GroupStatus;
 use App\Models\Branch;
 use App\Models\Course;
 use App\Models\Instructor;
+use App\Models\LearningProgram;
 use App\Models\TrainingGroup;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -24,6 +25,11 @@ class TrainingGroupFactory extends Factory
      */
     public function definition(): array
     {
+        $capacity = $this->faker->numberBetween(8, 16);
+        $placesTaken = $this->faker->numberBetween(0, 4);
+        $startsOn = now()->addDays($this->faker->numberBetween(7, 30));
+        $endsOn = (clone $startsOn)->addMonths($this->faker->numberBetween(3, 6));
+
         return [
             'uuid' => (string) Str::uuid(),
             'group_number' => strtoupper($this->faker->unique()->bothify('GROUP-####')),
@@ -34,19 +40,36 @@ class TrainingGroupFactory extends Factory
             'name' => 'Group '.$this->faker->unique()->bothify('B-##'),
             'name_translations' => $this->translations('Вечерняя группа', 'Evening group', 'Vakaro grupe', 'Grupa wieczorowa'),
             'description_translations' => null,
+            'public_description_translations' => null,
             'schedule_summary_translations' => null,
             'code' => strtoupper($this->faker->unique()->bothify('GRP-####')),
             'status' => GroupStatus::Recruiting,
-            'capacity' => $this->faker->numberBetween(8, 16),
-            'places_taken' => $this->faker->numberBetween(0, 4),
-            'starts_on' => now()->addDays($this->faker->numberBetween(7, 30)),
-            'ends_on' => now()->addMonths($this->faker->numberBetween(3, 6)),
+            'learning_program_id' => LearningProgram::factory(),
+            'manager_id' => null,
+            'administrator_id' => null,
+            'teacher_id' => null,
+            'capacity' => $capacity,
+            'capacity_total' => $capacity,
+            'capacity_reserved' => 0,
+            'capacity_taken' => $placesTaken,
+            'capacity_waitlist' => 0,
+            'places_taken' => $placesTaken,
+            'starts_on' => $startsOn,
+            'ends_on' => $endsOn,
+            'start_date' => $startsOn->toDateString(),
+            'planned_end_date' => $endsOn->toDateString(),
+            'actual_end_date' => null,
             'meeting_days' => ['monday', 'wednesday'],
             'meeting_time' => '18:00',
             'end_time' => '20:00',
             'classroom' => 'Room '.$this->faker->numberBetween(1, 6),
+            'timezone' => 'Europe/Vilnius',
+            'default_lesson_duration_minutes' => 120,
+            'notes' => null,
+            'internal_notes' => null,
             'is_visible_on_site' => true,
             'is_featured' => false,
+            'is_accepting_applications' => true,
             'sort_order' => 0,
             'created_by_id' => null,
             'updated_by_id' => null,
@@ -71,6 +94,8 @@ class TrainingGroupFactory extends Factory
         return $this->state(fn (): array => [
             'status' => GroupStatus::AlmostFull,
             'capacity' => 12,
+            'capacity_total' => 12,
+            'capacity_taken' => 11,
             'places_taken' => 11,
         ]);
     }
@@ -79,6 +104,8 @@ class TrainingGroupFactory extends Factory
     {
         return $this->state(fn (): array => [
             'capacity' => 12,
+            'capacity_total' => 12,
+            'capacity_taken' => 12,
             'places_taken' => 12,
         ]);
     }
@@ -95,7 +122,10 @@ class TrainingGroupFactory extends Factory
 
     public function hiddenFromSite(): static
     {
-        return $this->state(fn (): array => ['is_visible_on_site' => false]);
+        return $this->state(fn (): array => [
+            'is_visible_on_site' => false,
+            'is_accepting_applications' => false,
+        ]);
     }
 
     public function startingSoon(): static
@@ -103,6 +133,8 @@ class TrainingGroupFactory extends Factory
         return $this->state(fn (): array => [
             'starts_on' => now()->addDays(7),
             'ends_on' => now()->addMonths(4),
+            'start_date' => now()->addDays(7)->toDateString(),
+            'planned_end_date' => now()->addMonths(4)->toDateString(),
         ]);
     }
 
@@ -130,6 +162,10 @@ class TrainingGroupFactory extends Factory
     {
         return $this->state(fn (): array => [
             'capacity' => $total,
+            'capacity_total' => $total,
+            'capacity_taken' => min($taken, $total),
+            'capacity_reserved' => 0,
+            'capacity_waitlist' => 0,
             'places_taken' => min($taken, $total),
         ]);
     }

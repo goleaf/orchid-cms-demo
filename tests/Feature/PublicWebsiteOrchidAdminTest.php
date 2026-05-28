@@ -14,7 +14,6 @@ use App\Models\Lead;
 use App\Models\PricingPackage;
 use App\Models\SitePage;
 use App\Models\Testimonial;
-use App\Models\TrainingGroup;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery\MockInterface;
@@ -409,6 +408,43 @@ class PublicWebsiteOrchidAdminTest extends TestCase
             ->assertSee(tkey('crm.leads.fields.form_page', [], 'ru'))
             ->assertSee('google-hidden')
             ->assertSee('website-hidden-campaign');
+    }
+
+    public function test_website_leads_screen_localizes_source_and_form_labels_for_current_locale(): void
+    {
+        $this->seed();
+
+        Lead::factory()->fromWebsite()->create([
+            'full_name' => 'Localized Website Lead',
+            'source' => 'website',
+            'form_name' => 'enrollment',
+        ]);
+        Lead::factory()->contactForm()->create([
+            'full_name' => 'Localized Contact Lead',
+            'source' => 'contact',
+            'form_name' => 'contact',
+        ]);
+
+        $user = User::factory()->create();
+        $user->forceFill([
+            'preferred_locale' => 'lt',
+            'permissions' => [
+                'platform.index' => true,
+                'website.view_leads' => true,
+            ],
+        ])->save();
+
+        $this->actingAs($user)
+            ->get(route('platform.website.leads'))
+            ->assertOk()
+            ->assertSee(tkey('website.admin.leads.title', [], 'lt'))
+            ->assertSee(tkey('crm.leads.sources.website', [], 'lt'))
+            ->assertSee(tkey('crm.leads.sources.contact', [], 'lt'))
+            ->assertSee(tkey('website.forms.apply.title', [], 'lt'))
+            ->assertSee(tkey('website.forms.contact.title', [], 'lt'))
+            ->assertDontSee('>website<', false)
+            ->assertDontSee('>contact<', false)
+            ->assertDontSee('>enrollment<', false);
     }
 
     /**

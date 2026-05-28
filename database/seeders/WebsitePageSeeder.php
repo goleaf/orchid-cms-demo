@@ -61,6 +61,12 @@ class WebsitePageSeeder extends Seeder
                     'type' => $page['type'],
                     'slug' => $page['slug'],
                     'title_translations' => $page['title'],
+                    'subtitle_translations' => [
+                        'ru' => 'Информация автошколы для учеников и заявок.',
+                        'en' => 'Driving school information for students and applications.',
+                        'lt' => 'Vairavimo mokyklos informacija mokiniams ir paraiskoms.',
+                        'pl' => 'Informacje szkoly jazdy dla uczniow i zgloszen.',
+                    ],
                     'content_translations' => [
                         'ru' => 'Публичная страница автошколы с актуальной информацией о курсах, группах, филиалах и заявках.',
                         'en' => 'Public driving school page with current information about courses, groups, branches, and applications.',

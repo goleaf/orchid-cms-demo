@@ -18,6 +18,9 @@ class CreateOrUpdateLearningProgramAction
 
         $data['updated_by_id'] = $data['updated_by_id'] ?? $user?->id;
 
-        return app(CreateOrUpdateCourseAction::class)->handle($program, $data);
+        $program->fill($data);
+        $program->save();
+
+        return $program->refresh();
     }
 }
