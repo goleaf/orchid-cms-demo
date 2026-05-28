@@ -90,3 +90,7 @@
 - Block 12 analytics Form Requests validate dashboard setup, widget setup, report runs, report exports, KPI targets, cache refreshes, and dashboard preferences with local Orchid permissions, analytics Rules, translated attributes, and no SaaS scope fields.
   Evidence: Added analytics request classes, shared request validation helpers, translation attributes, docs, and AnalyticsFormRequestsTest.
   Added: 2026-05-28T20:30:00+03:00
+
+- Block 13 user statuses and staff profiles are local security extensions: user_statuses controls lifecycle state and staff_profiles stores one-to-one school employee profile data without tenants, subscriptions, platform owners, or multi-company isolation.
+  Evidence: Added user status and staff profile migration, models, Actions, Form Requests, Rules, factories, seeders, translations, docs, and SecurityUserStatusesStaffProfilesTest.
+  Added: 2026-05-28T22:00:00+03:00

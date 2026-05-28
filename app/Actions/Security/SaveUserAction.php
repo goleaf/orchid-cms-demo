@@ -3,10 +3,12 @@
 namespace App\Actions\Security;
 
 use App\Models\User;
+use App\Models\UserStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use Orchid\Platform\Models\Role;
 
@@ -19,11 +21,17 @@ class SaveUserAction
             $before = $user->exists ? $user->only([
                 'name',
                 'email',
+                'status_id',
                 'permissions',
+                'preferred_locale',
+                'timezone',
                 'is_active',
                 'security_locked_at',
                 'security_lock_reason',
+                'last_login_at',
+                'last_seen_at',
                 'password_changed_at',
+                'must_change_password',
                 'two_factor_placeholder_enabled',
             ]) : [];
 
@@ -31,10 +39,13 @@ class SaveUserAction
             $attributes = Arr::only($payload, [
                 'name',
                 'email',
+                'status_id',
                 'preferred_locale',
+                'timezone',
                 'is_active',
                 'security_locked_at',
                 'security_lock_reason',
+                'must_change_password',
                 'two_factor_placeholder_enabled',
             ]);
 
@@ -42,8 +53,22 @@ class SaveUserAction
                 $attributes['is_active'] = true;
             }
 
+            if (
+                ! $user->exists
+                && blank($attributes['status_id'] ?? null)
+                && Schema::hasTable('user_statuses')
+                && Schema::hasColumn('users', 'status_id')
+            ) {
+                $attributes['status_id'] = UserStatus::query()->default()->value('id')
+                    ?: UserStatus::query()->where('code', 'active')->value('id');
+            }
+
             if (array_key_exists('is_active', $attributes)) {
                 $attributes['is_active'] = filter_var($attributes['is_active'], FILTER_VALIDATE_BOOLEAN);
+            }
+
+            if (array_key_exists('must_change_password', $attributes)) {
+                $attributes['must_change_password'] = filter_var($attributes['must_change_password'], FILTER_VALIDATE_BOOLEAN);
             }
 
             if (($payload['two_factor_placeholder_enabled'] ?? false) === true || ($payload['two_factor_placeholder_enabled'] ?? null) === '1') {
@@ -85,11 +110,17 @@ class SaveUserAction
                 $user->only([
                     'name',
                     'email',
+                    'status_id',
                     'permissions',
+                    'preferred_locale',
+                    'timezone',
                     'is_active',
                     'security_locked_at',
                     'security_lock_reason',
+                    'last_login_at',
+                    'last_seen_at',
                     'password_changed_at',
+                    'must_change_password',
                     'two_factor_placeholder_enabled',
                 ]),
                 [
@@ -125,10 +156,12 @@ class SaveUserAction
         $wouldDisable = array_key_exists('is_active', $payload)
             && ! filter_var($payload['is_active'], FILTER_VALIDATE_BOOLEAN);
         $wouldLock = filled($payload['security_locked_at'] ?? null);
+        $wouldStatusLock = array_key_exists('status_id', $payload)
+            && $this->statusLocksAccount($payload['status_id']);
         $wouldLoseRole = array_key_exists('roles', $payload)
             && ! $this->roleIdsIncludeSuperadmin((array) ($payload['roles'] ?? []));
 
-        if (! ($wouldDisable || $wouldLock || $wouldLoseRole)) {
+        if (! ($wouldDisable || $wouldLock || $wouldStatusLock || $wouldLoseRole)) {
             return;
         }
 
@@ -157,6 +190,21 @@ class SaveUserAction
             ->whereKeyNot($user->getKey())
             ->whereHas('roles', fn ($query) => $query->where('slug', 'superadmin'))
             ->count();
+    }
+
+    private function statusLocksAccount(mixed $statusId): bool
+    {
+        if (blank($statusId)) {
+            return false;
+        }
+
+        if (! Schema::hasTable('user_statuses')) {
+            return false;
+        }
+
+        $status = UserStatus::query()->find($statusId);
+
+        return (bool) ($status?->is_blocked || $status?->is_archived);
     }
 
     /**

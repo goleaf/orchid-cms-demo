@@ -40,6 +40,13 @@ class RecordUserSessionAction
                 ],
             );
 
+            if (Schema::hasColumn('users', 'last_login_at') && Schema::hasColumn('users', 'last_seen_at')) {
+                $user->forceFill([
+                    'last_login_at' => now(),
+                    'last_seen_at' => now(),
+                ])->saveQuietly();
+            }
+
             app(RecordSecurityEventAction::class)->handle('session.started', $user, 'info', [], $request);
 
             return $session;

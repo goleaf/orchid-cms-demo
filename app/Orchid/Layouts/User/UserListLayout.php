@@ -46,6 +46,10 @@ class UserListLayout extends Table
                         'user' => $user->id,
                     ])),
 
+            TD::make('status_id', tkey('security.users.fields.status'))
+                ->sort()
+                ->render(fn (User $user): string => $user->relationLoaded('status') ? ($user->status?->display_name ?: '-') : '-'),
+
             TD::make('created_at', tkey('security.users.columns.created'))
                 ->usingComponent(DateTimeSplit::class)
                 ->align(TD::ALIGN_RIGHT)

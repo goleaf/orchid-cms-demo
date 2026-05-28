@@ -66,6 +66,8 @@ class SuperadminPermissions
             'platform.crm.tasks',
             'platform.systems.roles',
             'platform.systems.users',
+            'security.user_statuses.manage',
+            'security.staff_profiles.manage',
             'platform.systems.attachment',
             'website.view',
             'website.manage_pages',

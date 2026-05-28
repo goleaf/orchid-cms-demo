@@ -3,12 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Schema;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Types\Where;
 use Orchid\Filters\Types\WhereDateStartEnd;
 use Orchid\Platform\Models\User as Authenticatable;
+use Throwable;
 
 class User extends Authenticatable
 {
@@ -21,16 +25,22 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'status_id',
         'preferred_locale',
+        'timezone',
         'is_active',
         'security_locked_at',
         'security_lock_reason',
+        'last_login_at',
+        'last_seen_at',
         'password_changed_at',
+        'must_change_password',
         'two_factor_placeholder_enabled',
     ];
 
     protected $attributes = [
         'is_active' => true,
+        'must_change_password' => false,
         'two_factor_placeholder_enabled' => false,
     ];
 
@@ -55,7 +65,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'is_active' => 'boolean',
         'security_locked_at' => 'datetime',
+        'last_login_at' => 'datetime',
+        'last_seen_at' => 'datetime',
         'password_changed_at' => 'datetime',
+        'must_change_password' => 'boolean',
         'two_factor_placeholder_enabled' => 'boolean',
     ];
 
@@ -160,6 +173,16 @@ class User extends Authenticatable
         return $this->hasMany(UserSession::class);
     }
 
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(UserStatus::class, 'status_id');
+    }
+
+    public function staffProfile(): HasOne
+    {
+        return $this->hasOne(StaffProfile::class);
+    }
+
     public function branchAccessRecords(): HasMany
     {
         return $this->hasMany(UserBranchAccess::class);
@@ -178,12 +201,19 @@ class User extends Authenticatable
             ->where(fn (Builder $query): Builder => $query
                 ->where('is_active', true)
                 ->orWhereNull('is_active'))
-            ->whereNull('security_locked_at');
+            ->whereNull('security_locked_at')
+            ->when($this->statusColumnsAvailable(), fn (Builder $query): Builder => $query
+                ->whereDoesntHave('status', fn (Builder $query): Builder => $query
+                    ->where('is_blocked', true)
+                    ->orWhere('is_archived', true)));
     }
 
     public function isLockedOut(): bool
     {
-        return $this->is_active === false || $this->security_locked_at !== null;
+        return $this->is_active === false
+            || $this->security_locked_at !== null
+            || $this->isBlocked()
+            || $this->isArchived();
     }
 
     public function hasBranchAccess(Branch|int|null $branch): bool
@@ -208,5 +238,54 @@ class User extends Authenticatable
         }
 
         return $this->roles()->where('slug', 'superadmin')->exists();
+    }
+
+    public function isBlocked(): bool
+    {
+        if ($this->relationLoaded('status')) {
+            return (bool) $this->status?->is_blocked;
+        }
+
+        if (blank($this->status_id) || ! $this->statusColumnsAvailable()) {
+            return false;
+        }
+
+        return $this->status()->where('is_blocked', true)->exists();
+    }
+
+    public function isArchived(): bool
+    {
+        if ($this->relationLoaded('status')) {
+            return (bool) $this->status?->is_archived;
+        }
+
+        if (blank($this->status_id) || ! $this->statusColumnsAvailable()) {
+            return false;
+        }
+
+        return $this->status()->where('is_archived', true)->exists();
+    }
+
+    public function getDisplayNameAttribute(): string
+    {
+        if ($this->relationLoaded('staffProfile') && $this->staffProfile !== null) {
+            $profileName = $this->staffProfile->getTranslation('display_name');
+
+            if (filled($profileName)) {
+                return (string) $profileName;
+            }
+        }
+
+        return (string) $this->name;
+    }
+
+    private function statusColumnsAvailable(): bool
+    {
+        try {
+            return Schema::hasTable('user_statuses')
+                && Schema::hasColumn($this->getTable(), 'status_id');
+        } catch (Throwable) {
+            return false;
+        }
     }
 }

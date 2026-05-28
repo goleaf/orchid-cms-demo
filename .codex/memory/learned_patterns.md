@@ -45,3 +45,11 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - Analytics Form Requests should centralize shared field labels, filter rules, and permission checks in a request concern, then keep dashboard, report, KPI, cache, and preference requests thin around module-specific data helpers.
   Evidence: Added UsesAnalyticsRequestValidation, concrete analytics request classes, translation attributes, docs, and AnalyticsFormRequestsTest.
   Added: 2026-05-28T20:30:00+03:00
+
+- Block 13 account lifecycle uses user_statuses plus User::status(), User::isBlocked(), and User::isArchived(); active is the default seeded status and blocked or archived statuses count as local lockout states.
+  Evidence: Added UserStatus model, UserStatusSeeder, ChangeUserStatusAction, UserStatusCanBeChangedRule, and SecurityUserStatusesStaffProfilesTest.
+  Added: 2026-05-28T22:00:00+03:00
+
+- Local staff identity extends Orchid users through one-to-one staff_profiles records instead of changing the core Orchid user contract or adding tenant/company account logic.
+  Evidence: Added StaffProfile model, StaffProfileFactory, StaffProfileDemoSeeder, CreateStaffProfileAction, UpdateStaffProfileAction, and docs/users.md.
+  Added: 2026-05-28T22:00:00+03:00

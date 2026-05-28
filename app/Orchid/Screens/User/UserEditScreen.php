@@ -8,12 +8,16 @@ use App\Actions\Security\DeleteUserAction;
 use App\Actions\Security\SaveUserAction;
 use App\Http\Requests\Security\UserRequest;
 use App\Models\User;
+use App\Models\UserStatus;
 use App\Orchid\Layouts\Role\RolePermissionLayout;
 use App\Orchid\Layouts\User\UserEditLayout;
 use App\Orchid\Layouts\User\UserPasswordLayout;
 use App\Orchid\Layouts\User\UserRoleLayout;
+use App\Orchid\Layouts\User\UserSecurityLayout;
+use App\Services\LocaleManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Orchid\Access\Impersonation;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
@@ -34,17 +38,33 @@ class UserEditScreen extends Screen
      *
      * @return array
      */
-    public function query(User $user): iterable
+    public function query(User $user, LocaleManager $locales): iterable
     {
-        $user->load(['roles', 'accessibleBranches']);
+        $relations = ['roles', 'accessibleBranches'];
+
+        if (Schema::hasTable('user_statuses')) {
+            $relations[] = 'status';
+        }
+
+        if (Schema::hasTable('staff_profiles')) {
+            $relations[] = 'staffProfile';
+        }
+
+        $user->load($relations);
 
         if (! $user->exists) {
             $user->is_active = true;
+            $user->timezone = config('app.timezone', 'Europe/Vilnius');
+            $user->status_id = Schema::hasTable('user_statuses')
+                ? (UserStatus::query()->default()->value('id') ?: UserStatus::query()->where('code', 'active')->value('id'))
+                : null;
         }
 
         return [
             'user' => $user,
             'user.branch_ids' => $user->accessibleBranches->pluck('id')->all(),
+            'user_status_options' => $this->statusOptions(),
+            'locale_options' => $locales->languageOptions(),
             'permission' => $user->statusOfPermissions(),
         ];
     }
@@ -127,6 +147,17 @@ class UserEditScreen extends Screen
                         ->method('save')
                 ),
 
+            Layout::block(UserSecurityLayout::class)
+                ->title(tkey('security.users.blocks.account.title'))
+                ->description(tkey('security.users.blocks.account.description'))
+                ->commands(
+                    Button::make(tkey('common.actions.save'))
+                        ->type(Color::BASIC)
+                        ->icon('bs.check-circle')
+                        ->canSee($this->user->exists)
+                        ->method('save')
+                ),
+
             Layout::block(UserRoleLayout::class)
                 ->title(tkey('security.users.blocks.roles.title'))
                 ->description(tkey('security.users.blocks.roles.description'))
@@ -188,5 +219,23 @@ class UserEditScreen extends Screen
         Toast::info(tkey('security.users.messages.impersonating'));
 
         return redirect()->route(config('platform.index'));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function statusOptions(): array
+    {
+        if (! Schema::hasTable('user_statuses')) {
+            return [];
+        }
+
+        return UserStatus::query()
+            ->active()
+            ->orderBy('sort_order')
+            ->orderBy('code')
+            ->get(['id', 'code', 'name_translations'])
+            ->mapWithKeys(fn (UserStatus $status): array => [$status->id => $status->display_name])
+            ->all();
     }
 }

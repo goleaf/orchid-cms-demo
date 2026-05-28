@@ -616,6 +616,8 @@ class PlatformProvider extends OrchidServiceProvider
             ItemPermission::group(tkey('permissions.groups.system'))
                 ->addPermission('platform.systems.roles', tkey('permissions.system.roles'))
                 ->addPermission('platform.systems.users', tkey('permissions.system.users'))
+                ->addPermission('security.user_statuses.manage', tkey('permissions.system.user_statuses'))
+                ->addPermission('security.staff_profiles.manage', tkey('permissions.system.staff_profiles'))
                 ->addPermission('system.languages.view', tkey('permissions.system.languages.view'))
                 ->addPermission('system.languages.create', tkey('permissions.system.languages.create'))
                 ->addPermission('system.languages.update', tkey('permissions.system.languages.update'))

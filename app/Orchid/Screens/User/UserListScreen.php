@@ -12,6 +12,7 @@ use App\Orchid\Layouts\User\UserEditLayout;
 use App\Orchid\Layouts\User\UserFiltersLayout;
 use App\Orchid\Layouts\User\UserListLayout;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
@@ -27,8 +28,10 @@ class UserListScreen extends Screen
      */
     public function query(): iterable
     {
+        $relations = Schema::hasTable('user_statuses') ? ['roles', 'status'] : ['roles'];
+
         return [
-            'users' => User::with('roles')
+            'users' => User::with($relations)
                 ->filters(UserFiltersLayout::class)
                 ->defaultSort('id', 'desc')
                 ->paginate(),

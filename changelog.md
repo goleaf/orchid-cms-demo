@@ -2,6 +2,8 @@
 
 ## 2026-05-28
 
+- Added local account statuses and staff profiles so the driving school can manage staff lifecycle, branch profile details, translated public staff names, and safer Superadmin protection without adding any multi-company or subscription behavior
+
 - Added multilingual notification labels and granular notification access controls for messages, templates, reminders, deliveries, threads, preferences, channels, and exports
 
 - Analytics now validates dashboard, widget, report, export, KPI target, cache refresh, and dashboard preference forms with translated field names and local permission checks

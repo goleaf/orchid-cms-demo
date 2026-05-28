@@ -38,6 +38,7 @@ use App\Models\StudentReview;
 use App\Models\TrainingGroup;
 use App\Models\TrainingProgram;
 use App\Models\User;
+use App\Models\UserStatus;
 use App\Models\Vehicle;
 use App\Support\Access\SuperadminPermissions;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -57,6 +58,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             LanguageSeeder::class,
             SystemTranslationSeeder::class,
+            SecurityTranslationSeeder::class,
+            UserStatusSeeder::class,
             WebsiteTranslationSeeder::class,
             CrmTranslationSeeder::class,
             CrmDictionarySeeder::class,
@@ -770,16 +773,21 @@ class DatabaseSeeder extends Seeder
         );
 
         $permissions = SuperadminPermissions::enabled();
+        $activeUserStatusId = UserStatus::query()->where('code', 'active')->value('id');
 
         $admin = User::query()->updateOrCreate(
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin',
                 'password' => Hash::make('password'),
+                'status_id' => $activeUserStatusId,
+                'timezone' => config('app.timezone', 'Europe/Vilnius'),
+                'must_change_password' => false,
                 'permissions' => $permissions,
             ],
         );
         $this->call(SuperadminRoleSeeder::class);
+        $this->call(StaffProfileDemoSeeder::class);
 
         collect([$convertedLead, $qualifiedLead, $rejectedLead])->each(function (MarketingLead $lead) use ($admin, $callTemplate, $smsTemplate, $messengerTemplate, $qualifiedLead): void {
             $lead->update(['responsible_manager_id' => $admin->id]);

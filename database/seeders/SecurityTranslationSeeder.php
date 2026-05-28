@@ -119,9 +119,87 @@ class SecurityTranslationSeeder extends SystemTranslationSeeder
             'validation.attributes.security.permissions' => 'permissions',
         ];
 
-        return collect($entries)
+        $localizedEntries = [
+            'permissions.system.user_statuses' => ['ru' => 'Управление статусами пользователей', 'en' => 'Manage user statuses', 'lt' => 'Tvarkyti vartotoju busenas', 'pl' => 'Zarzadzanie statusami uzytkownikow'],
+            'permissions.system.staff_profiles' => ['ru' => 'Управление профилями сотрудников', 'en' => 'Manage staff profiles', 'lt' => 'Tvarkyti darbuotoju profilius', 'pl' => 'Zarzadzanie profilami pracownikow'],
+            'security.user_statuses.active' => ['ru' => 'Активен', 'en' => 'Active', 'lt' => 'Aktyvus', 'pl' => 'Aktywny'],
+            'security.user_statuses.inactive' => ['ru' => 'Неактивен', 'en' => 'Inactive', 'lt' => 'Neaktyvus', 'pl' => 'Nieaktywny'],
+            'security.user_statuses.blocked' => ['ru' => 'Заблокирован', 'en' => 'Blocked', 'lt' => 'Užblokuotas', 'pl' => 'Zablokowany'],
+            'security.user_statuses.archived' => ['ru' => 'Архив', 'en' => 'Archived', 'lt' => 'Archyvas', 'pl' => 'Archiwum'],
+            'security.users.blocks.account.title' => ['ru' => 'Статус и настройки входа', 'en' => 'Status and login settings', 'lt' => 'Busena ir prisijungimo nustatymai', 'pl' => 'Status i ustawienia logowania'],
+            'security.users.blocks.account.description' => ['ru' => 'Управляйте локальным статусом аккаунта, языком и часовым поясом.', 'en' => 'Manage the local account status, language, and timezone.', 'lt' => 'Tvarkykite vietine paskyros busena, kalba ir laiko juosta.', 'pl' => 'Zarzadzaj lokalnym statusem konta, jezykiem i strefa czasowa.'],
+            'security.users.fields.status' => ['ru' => 'Статус', 'en' => 'Status', 'lt' => 'Busena', 'pl' => 'Status'],
+            'security.users.fields.preferred_locale' => ['ru' => 'Язык интерфейса', 'en' => 'Interface language', 'lt' => 'Sasajos kalba', 'pl' => 'Jezyk interfejsu'],
+            'security.users.fields.timezone' => ['ru' => 'Часовой пояс', 'en' => 'Timezone', 'lt' => 'Laiko juosta', 'pl' => 'Strefa czasowa'],
+            'security.users.fields.last_login_at' => ['ru' => 'Последний вход', 'en' => 'Last login', 'lt' => 'Paskutinis prisijungimas', 'pl' => 'Ostatnie logowanie'],
+            'security.users.fields.last_seen_at' => ['ru' => 'Последняя активность', 'en' => 'Last seen', 'lt' => 'Paskutinis aktyvumas', 'pl' => 'Ostatnia aktywnosc'],
+            'security.users.fields.must_change_password' => ['ru' => 'Требовать смену пароля', 'en' => 'Must change password', 'lt' => 'Privalo pakeisti slaptazodi', 'pl' => 'Musi zmienic haslo'],
+            'security.users.placeholders.status' => ['ru' => 'Использовать статус по умолчанию', 'en' => 'Use default status', 'lt' => 'Naudoti numatytaja busena', 'pl' => 'Uzyj statusu domyslnego'],
+            'security.users.placeholders.preferred_locale' => ['ru' => 'Использовать язык школы', 'en' => 'Use school default', 'lt' => 'Naudoti mokyklos numatytaja kalba', 'pl' => 'Uzyj domyslnego jezyka szkoly'],
+            'security.staff_profiles.title' => ['ru' => 'Профили сотрудников', 'en' => 'Staff profiles', 'lt' => 'Darbuotoju profiliai', 'pl' => 'Profile pracownikow'],
+            'security.staff_profiles.description' => ['ru' => 'Локальные профили команды автошколы для сайта и администрирования.', 'en' => 'Local driving school team profiles for the website and administration.', 'lt' => 'Vietiniai vairavimo mokyklos komandos profiliai svetainei ir administravimui.', 'pl' => 'Lokalne profile zespolu szkoly jazdy dla strony i administracji.'],
+            'security.staff_profiles.fields.user' => ['ru' => 'Пользователь', 'en' => 'User', 'lt' => 'Vartotojas', 'pl' => 'Uzytkownik'],
+            'security.staff_profiles.fields.branch' => ['ru' => 'Филиал', 'en' => 'Branch', 'lt' => 'Filialas', 'pl' => 'Oddzial'],
+            'security.staff_profiles.fields.staff_number' => ['ru' => 'Номер сотрудника', 'en' => 'Staff number', 'lt' => 'Darbuotojo numeris', 'pl' => 'Numer pracownika'],
+            'security.staff_profiles.fields.display_name' => ['ru' => 'Отображаемое имя', 'en' => 'Display name', 'lt' => 'Rodomas vardas', 'pl' => 'Nazwa wyswietlana'],
+            'security.staff_profiles.fields.job_title' => ['ru' => 'Должность', 'en' => 'Job title', 'lt' => 'Pareigos', 'pl' => 'Stanowisko'],
+            'security.staff_profiles.fields.public_bio' => ['ru' => 'Описание для сайта', 'en' => 'Public bio', 'lt' => 'Aprasymas svetainei', 'pl' => 'Opis publiczny'],
+            'security.staff_profiles.fields.phone' => ['ru' => 'Телефон', 'en' => 'Phone', 'lt' => 'Telefonas', 'pl' => 'Telefon'],
+            'security.staff_profiles.fields.work_email' => ['ru' => 'Рабочая почта', 'en' => 'Work email', 'lt' => 'Darbo el. pastas', 'pl' => 'E-mail sluzbowy'],
+            'security.staff_profiles.fields.preferred_locale' => ['ru' => 'Язык сотрудника', 'en' => 'Staff language', 'lt' => 'Darbuotojo kalba', 'pl' => 'Jezyk pracownika'],
+            'security.staff_profiles.fields.timezone' => ['ru' => 'Часовой пояс', 'en' => 'Timezone', 'lt' => 'Laiko juosta', 'pl' => 'Strefa czasowa'],
+            'security.staff_profiles.fields.avatar' => ['ru' => 'Аватар', 'en' => 'Avatar', 'lt' => 'Avataras', 'pl' => 'Awatar'],
+            'security.staff_profiles.fields.is_visible_on_site' => ['ru' => 'Показывать на сайте', 'en' => 'Visible on site', 'lt' => 'Rodomas svetaineje', 'pl' => 'Widoczny na stronie'],
+            'security.staff_profiles.fields.internal_notes' => ['ru' => 'Внутренние заметки', 'en' => 'Internal notes', 'lt' => 'Vidines pastabos', 'pl' => 'Notatki wewnetrzne'],
+            'security.staff_profiles.messages.saved' => ['ru' => 'Профиль сотрудника сохранен.', 'en' => 'Staff profile was saved.', 'lt' => 'Darbuotojo profilis issaugotas.', 'pl' => 'Profil pracownika zostal zapisany.'],
+            'security.validation.user_status_not_active' => ['ru' => 'Выберите активный статус пользователя.', 'en' => 'Select an active user status.', 'lt' => 'Pasirinkite aktyvia vartotojo busena.', 'pl' => 'Wybierz aktywny status uzytkownika.'],
+            'security.validation.user_status_invalid' => ['ru' => 'Выбранный статус пользователя недоступен.', 'en' => 'The selected user status is not available.', 'lt' => 'Pasirinkta vartotojo busena nepasiekiama.', 'pl' => 'Wybrany status uzytkownika jest niedostepny.'],
+            'security.validation.default_user_status_inactive' => ['ru' => 'Статус по умолчанию должен быть активным.', 'en' => 'The default user status must be active.', 'lt' => 'Numatytoji vartotojo busena turi buti aktyvi.', 'pl' => 'Domyslny status uzytkownika musi byc aktywny.'],
+            'security.validation.default_user_status_required' => ['ru' => 'Должен оставаться один статус пользователя по умолчанию.', 'en' => 'One default user status must remain.', 'lt' => 'Turi likti viena numatytoji vartotojo busena.', 'pl' => 'Musi pozostac jeden domyslny status uzytkownika.'],
+            'security.validation.user_status_code_required' => ['ru' => 'Введите код статуса пользователя.', 'en' => 'Enter the user status code.', 'lt' => 'Iveskite vartotojo busenos koda.', 'pl' => 'Wpisz kod statusu uzytkownika.'],
+            'security.validation.user_status_code_invalid' => ['ru' => 'Код статуса может содержать только строчные буквы, цифры, дефисы и подчеркивания.', 'en' => 'The status code may contain only lowercase letters, numbers, dashes, and underscores.', 'lt' => 'Busenos kodas gali tureti tik mazasias raides, skaicius, bruksnius ir pabraukimus.', 'pl' => 'Kod statusu moze zawierac tylko male litery, cyfry, myslniki i podkreslenia.'],
+            'security.validation.user_status_code_unique' => ['ru' => 'Такой код статуса уже используется.', 'en' => 'This user status code is already used.', 'lt' => 'Sis vartotojo busenos kodas jau naudojamas.', 'pl' => 'Ten kod statusu uzytkownika jest juz uzywany.'],
+            'security.validation.user_status_name_required' => ['ru' => 'Введите название статуса на языке по умолчанию.', 'en' => 'Enter the status name in the default language.', 'lt' => 'Iveskite busenos pavadinima numatytaja kalba.', 'pl' => 'Wpisz nazwe statusu w jezyku domyslnym.'],
+            'security.validation.user_status_name_too_long' => ['ru' => 'Название статуса слишком длинное.', 'en' => 'The status name is too long.', 'lt' => 'Busenos pavadinimas per ilgas.', 'pl' => 'Nazwa statusu jest zbyt dluga.'],
+            'security.validation.user_status_description_too_long' => ['ru' => 'Описание статуса слишком длинное.', 'en' => 'The status description is too long.', 'lt' => 'Busenos aprasymas per ilgas.', 'pl' => 'Opis statusu jest zbyt dlugi.'],
+            'security.validation.user_status_color_too_long' => ['ru' => 'Значение цвета слишком длинное.', 'en' => 'The color value is too long.', 'lt' => 'Spalvos reiksme per ilga.', 'pl' => 'Wartosc koloru jest zbyt dluga.'],
+            'security.validation.user_status_sort_order_invalid' => ['ru' => 'Порядок сортировки должен быть неотрицательным числом.', 'en' => 'The sort order must be a non-negative number.', 'lt' => 'Rusiavimo tvarka turi buti neneigiamas skaicius.', 'pl' => 'Kolejnosc sortowania musi byc liczba nieujemna.'],
+            'security.validation.user_locale_invalid' => ['ru' => 'Выберите активный язык интерфейса.', 'en' => 'Select an active interface language.', 'lt' => 'Pasirinkite aktyvia sasajos kalba.', 'pl' => 'Wybierz aktywny jezyk interfejsu.'],
+            'security.validation.user_timezone_invalid' => ['ru' => 'Выберите действительный часовой пояс.', 'en' => 'Select a valid timezone.', 'lt' => 'Pasirinkite galiojancia laiko juosta.', 'pl' => 'Wybierz prawidlowa strefe czasowa.'],
+            'security.validation.staff_profile_user_unique' => ['ru' => 'У этого пользователя уже есть профиль сотрудника.', 'en' => 'This user already has a staff profile.', 'lt' => 'Sis vartotojas jau turi darbuotojo profili.', 'pl' => 'Ten uzytkownik ma juz profil pracownika.'],
+            'security.validation.staff_number_format' => ['ru' => 'Номер сотрудника должен быть в формате STAFF-2026-0001.', 'en' => 'The staff number must use the format STAFF-2026-0001.', 'lt' => 'Darbuotojo numeris turi buti formato STAFF-2026-0001.', 'pl' => 'Numer pracownika musi miec format STAFF-2026-0001.'],
+            'security.validation.staff_profile_user_required' => ['ru' => 'Выберите пользователя для профиля сотрудника.', 'en' => 'Select the user for the staff profile.', 'lt' => 'Pasirinkite darbuotojo profilio vartotoja.', 'pl' => 'Wybierz uzytkownika dla profilu pracownika.'],
+            'security.validation.staff_profile_user_invalid' => ['ru' => 'Выбранный пользователь недоступен.', 'en' => 'The selected user is not available.', 'lt' => 'Pasirinktas vartotojas nepasiekiamas.', 'pl' => 'Wybrany uzytkownik jest niedostepny.'],
+            'security.validation.staff_number_unique' => ['ru' => 'Этот номер сотрудника уже используется.', 'en' => 'This staff number is already used.', 'lt' => 'Sis darbuotojo numeris jau naudojamas.', 'pl' => 'Ten numer pracownika jest juz uzywany.'],
+            'security.validation.staff_profile_branch_invalid' => ['ru' => 'Выбранный филиал недоступен.', 'en' => 'The selected branch is not available.', 'lt' => 'Pasirinktas filialas nepasiekiamas.', 'pl' => 'Wybrany oddzial jest niedostepny.'],
+            'security.validation.staff_profile_name_too_long' => ['ru' => 'Отображаемое имя слишком длинное.', 'en' => 'The display name is too long.', 'lt' => 'Rodomas vardas per ilgas.', 'pl' => 'Nazwa wyswietlana jest zbyt dluga.'],
+            'security.validation.staff_profile_job_title_too_long' => ['ru' => 'Должность слишком длинная.', 'en' => 'The job title is too long.', 'lt' => 'Pareigos per ilgos.', 'pl' => 'Stanowisko jest zbyt dlugie.'],
+            'security.validation.staff_profile_bio_too_long' => ['ru' => 'Описание для сайта слишком длинное.', 'en' => 'The public bio is too long.', 'lt' => 'Aprasymas svetainei per ilgas.', 'pl' => 'Opis publiczny jest zbyt dlugi.'],
+            'security.validation.staff_profile_work_email_invalid' => ['ru' => 'Введите действительную рабочую почту.', 'en' => 'Enter a valid work email.', 'lt' => 'Iveskite galiojanti darbo el. pasta.', 'pl' => 'Wpisz prawidlowy e-mail sluzbowy.'],
+            'validation.attributes.security.user_status' => ['ru' => 'статус пользователя', 'en' => 'user status', 'lt' => 'vartotojo busena', 'pl' => 'status uzytkownika'],
+            'validation.attributes.security.user_preferred_locale' => ['ru' => 'язык интерфейса', 'en' => 'interface language', 'lt' => 'sasajos kalba', 'pl' => 'jezyk interfejsu'],
+            'validation.attributes.security.user_timezone' => ['ru' => 'часовой пояс', 'en' => 'timezone', 'lt' => 'laiko juosta', 'pl' => 'strefa czasowa'],
+            'validation.attributes.security.must_change_password' => ['ru' => 'требование смены пароля', 'en' => 'password change requirement', 'lt' => 'slaptazodzio keitimo reikalavimas', 'pl' => 'wymog zmiany hasla'],
+            'validation.attributes.security.staff_profile_user' => ['ru' => 'пользователь профиля сотрудника', 'en' => 'staff profile user', 'lt' => 'darbuotojo profilio vartotojas', 'pl' => 'uzytkownik profilu pracownika'],
+            'validation.attributes.security.staff_number' => ['ru' => 'номер сотрудника', 'en' => 'staff number', 'lt' => 'darbuotojo numeris', 'pl' => 'numer pracownika'],
+            'validation.attributes.security.staff_branch' => ['ru' => 'филиал сотрудника', 'en' => 'staff branch', 'lt' => 'darbuotojo filialas', 'pl' => 'oddzial pracownika'],
+            'validation.attributes.security.staff_display_name' => ['ru' => 'отображаемое имя сотрудника', 'en' => 'staff display name', 'lt' => 'darbuotojo rodomas vardas', 'pl' => 'wyswietlana nazwa pracownika'],
+            'validation.attributes.security.staff_job_title' => ['ru' => 'должность сотрудника', 'en' => 'staff job title', 'lt' => 'darbuotojo pareigos', 'pl' => 'stanowisko pracownika'],
+            'validation.attributes.security.staff_public_bio' => ['ru' => 'описание сотрудника для сайта', 'en' => 'staff public bio', 'lt' => 'darbuotojo aprasymas svetainei', 'pl' => 'publiczny opis pracownika'],
+            'validation.attributes.security.staff_work_email' => ['ru' => 'рабочая почта сотрудника', 'en' => 'staff work email', 'lt' => 'darbuotojo darbo el. pastas', 'pl' => 'e-mail sluzbowy pracownika'],
+            'validation.attributes.security.staff_phone' => ['ru' => 'телефон сотрудника', 'en' => 'staff phone', 'lt' => 'darbuotojo telefonas', 'pl' => 'telefon pracownika'],
+        ];
+
+        $baseEntries = collect($entries)
             ->map(fn (string $value, string $key): array => $this->entry('security', $key, $this->labels($value)))
-            ->values()
+            ->values();
+
+        $newEntries = collect($localizedEntries)
+            ->map(fn (array $values, string $key): array => $this->entry('security', $key, $values))
+            ->values();
+
+        return $baseEntries
+            ->merge($newEntries)
             ->all();
     }
 
