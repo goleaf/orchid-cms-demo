@@ -2387,3 +2387,31 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T08:43:12+00:00
+
+```json
+{
+  "ts": "2026-05-28T08:43:12+00:00",
+  "event": "Stop",
+  "session_id": "019e6dbc-5a94-7db1-88e6-13134264efa5",
+  "turn_id": "019e6dbc-6072-7733-a110-fbe6db78d035",
+  "branch": "main",
+  "changed_file_count": 7,
+  "changed_file_groups": {
+    "code": 4,
+    "orchid": 2,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "app/Actions/MoveFaqOrderAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "composer.lock",
+    "[REDACTED_SECRET].php",
+    "pp/Actions/CreateOrUpdateFaqAction.php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

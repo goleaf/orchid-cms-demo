@@ -42,7 +42,6 @@ class FaqEditScreen extends Screen
             'faqable_type' => $faqModel->faqable_type,
             'faqable_id' => $faqModel->faqable_id,
             'is_active' => $faqModel->is_active,
-            'sort_order' => $faqModel->sort_order,
             'question_translations' => $this->translations($faqModel, 'question'),
             'answer_translations' => $this->translations($faqModel, 'answer'),
         ];
@@ -96,9 +95,6 @@ class FaqEditScreen extends Screen
                 Select::make('is_active')
                     ->title(tkey('website.admin.fields.is_active'))
                     ->options($this->booleanOptions()),
-                Input::make('sort_order')
-                    ->type('number')
-                    ->title(tkey('website.admin.fields.sort_order')),
             ])->title(tkey('website.admin.sections.main')),
 
             TranslatableFields::input('question', 'website.faq.fields.question', [

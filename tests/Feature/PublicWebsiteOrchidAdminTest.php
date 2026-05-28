@@ -127,6 +127,116 @@ class PublicWebsiteOrchidAdminTest extends TestCase
         ]);
     }
 
+    public function test_faq_list_has_boundary_aware_order_controls_without_numeric_sorting(): void
+    {
+        $this->seed();
+
+        $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+        Faq::query()->delete();
+
+        $first = Faq::factory()->create([
+            'question_translations' => ['ru' => 'Первый вопрос', 'en' => 'First question'],
+            'sort_order' => 12345,
+        ]);
+        $middle = Faq::factory()->create([
+            'question_translations' => ['ru' => 'Средний вопрос', 'en' => 'Middle question'],
+            'sort_order' => 23456,
+        ]);
+        $last = Faq::factory()->create([
+            'question_translations' => ['ru' => 'Последний вопрос', 'en' => 'Last question'],
+            'sort_order' => 34567,
+        ]);
+
+        $baseUrl = route('platform.website.faq');
+
+        $this->actingAs($admin)
+            ->get($baseUrl)
+            ->assertOk()
+            ->assertSee('Первый вопрос')
+            ->assertSee('Средний вопрос')
+            ->assertSee('Последний вопрос')
+            ->assertSee(tkey('website.admin.faq.fields.position', [], 'ru'))
+            ->assertDontSee(tkey('website.admin.fields.sort_order', [], 'ru'))
+            ->assertDontSee('>12345<', false)
+            ->assertDontSee('>23456<', false)
+            ->assertDontSee('>34567<', false)
+            ->assertDontSee($baseUrl.'/moveUp?id='.$first->id, false)
+            ->assertSee($baseUrl.'/moveDown?id='.$first->id, false)
+            ->assertSee($baseUrl.'/moveUp?id='.$middle->id, false)
+            ->assertSee($baseUrl.'/moveDown?id='.$middle->id, false)
+            ->assertSee($baseUrl.'/moveUp?id='.$last->id, false)
+            ->assertDontSee($baseUrl.'/moveDown?id='.$last->id, false);
+    }
+
+    public function test_faq_order_actions_reorder_items_and_ignore_boundaries(): void
+    {
+        $this->seed();
+
+        $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+        Faq::query()->delete();
+
+        $first = Faq::factory()->create(['sort_order' => 10]);
+        $middle = Faq::factory()->create(['sort_order' => 20]);
+        $last = Faq::factory()->create(['sort_order' => 30]);
+
+        $this->actingAs($admin)
+            ->post(route('platform.website.faq', ['method' => 'moveUp']), ['id' => $first->id])
+            ->assertRedirect(route('platform.website.faq'));
+        $this->assertSame([$first->id, $middle->id, $last->id], $this->orderedFaqIds());
+
+        $this->actingAs($admin)
+            ->post(route('platform.website.faq', ['method' => 'moveDown']), ['id' => $last->id])
+            ->assertRedirect(route('platform.website.faq'));
+        $this->assertSame([$first->id, $middle->id, $last->id], $this->orderedFaqIds());
+
+        $this->actingAs($admin)
+            ->post(route('platform.website.faq', ['method' => 'moveDown']), ['id' => $first->id])
+            ->assertRedirect(route('platform.website.faq'));
+        $this->assertSame([$middle->id, $first->id, $last->id], $this->orderedFaqIds());
+
+        $this->actingAs($admin)
+            ->post(route('platform.website.faq', ['method' => 'moveUp']), ['id' => $last->id])
+            ->assertRedirect(route('platform.website.faq'));
+        $this->assertSame([$middle->id, $last->id, $first->id], $this->orderedFaqIds());
+    }
+
+    public function test_faq_edit_screen_hides_manual_sort_order_field(): void
+    {
+        $this->seed();
+
+        $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+        $faq = Faq::factory()->create(['sort_order' => 98765]);
+
+        $this->actingAs($admin)
+            ->get(route('platform.website.faq.edit', $faq))
+            ->assertOk()
+            ->assertDontSee(tkey('website.admin.fields.sort_order', [], 'ru'))
+            ->assertDontSee('name="sort_order"', false)
+            ->assertDontSee('value="98765"', false);
+    }
+
+    public function test_faq_create_assigns_next_position_without_manual_sort_order(): void
+    {
+        $this->seed();
+
+        $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+        Faq::query()->delete();
+        Faq::factory()->create(['sort_order' => 50]);
+
+        $this->actingAs($admin)
+            ->post(route('platform.website.faq.create', ['method' => 'save']), [
+                'is_active' => '1',
+                'question_translations' => ['ru' => 'Новый вопрос', 'en' => 'New question'],
+                'answer_translations' => ['ru' => 'Новый ответ', 'en' => 'New answer'],
+            ])
+            ->assertRedirect(route('platform.website.faq'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('faqs', [
+            'sort_order' => 60,
+        ]);
+    }
+
     public function test_user_without_permission_cannot_access_website_screens(): void
     {
         $this->seed();
@@ -299,5 +409,16 @@ class PublicWebsiteOrchidAdminTest extends TestCase
             ->assertSee(tkey('crm.leads.fields.form_page', [], 'ru'))
             ->assertSee('google-hidden')
             ->assertSee('website-hidden-campaign');
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    private function orderedFaqIds(): array
+    {
+        return Faq::query()
+            ->ordered()
+            ->pluck('id')
+            ->all();
     }
 }
