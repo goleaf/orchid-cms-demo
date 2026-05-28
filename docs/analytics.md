@@ -20,7 +20,7 @@ Block 12 adds the foundation for local owner reporting and operational analytics
 
 The first admin surface is a read-only owner dashboard in Orchid. It shows live counters, seeded widget definitions, saved reports, recent runs, and KPI snapshots.
 
-Dashboard definitions, widget definitions, and per-user layout preferences are described in [`docs/analytics-dashboard.md`](analytics-dashboard.md).
+Dashboard definitions, widget definitions, and per-user layout preferences are described in [`docs/analytics-dashboard.md`](analytics-dashboard.md). Core dashboard, report, export, KPI, cache, date-range, and filter Actions are described in [`docs/analytics-actions.md`](analytics-actions.md).
 
 ## Data Sources
 
@@ -41,13 +41,13 @@ The foundation intentionally reuses existing tables and relationships. It does n
 
 Report definitions describe reusable local reports such as lead pipeline, enrollment health, lesson utilization, payment summary, and exam readiness.
 
-Report runs store the filters, period, status, summary, row count, start time, finish time, and result payload. Report exports store export format, status, file name, row count, filters, and expiration metadata. The current foundation records exports; later work can attach generated files behind the same Action boundary.
+Report runs store the filters, period, status, summary, row count, start time, finish time, and result payload. Core Actions record completed or failed runs and create CSV, JSON, and spreadsheet-placeholder export records; later work can attach generated files behind the same Action boundary.
 
 ## KPI Model
 
 KPI metrics define what the school tracks. KPI targets define expected values by period and optional local scope such as branch, training program, or group. KPI snapshots store calculated values, target values, status, source payload, and calculation time.
 
-Supported target directions are increase, decrease, and maintain. Snapshot status is derived as on track, warning, off track, or neutral.
+Supported target directions are increase, decrease, and maintain. Snapshot status is derived as below target, on track, achieved, exceeded, or unknown.
 
 ## Analytics Cache
 
@@ -88,6 +88,7 @@ Analytics permissions are part of the local superadmin permission set and are se
 Relevant verification:
 
 - `AnalyticsBlockFoundationTest`
+- `AnalyticsCoreActionsTest`
 - `DrivingSchoolPlatformTest`
 - `SystemLocalizationTest`
 - `SuperadminRoleTest`

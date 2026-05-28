@@ -54,3 +54,7 @@
 - Block 12 analytics snapshots and cache entries store local owner dashboard and operational summary payloads with period ranges, optional branch/user scope, cache tags, and expiration handling; they must not store external telemetry or SaaS tenant, subscription, reseller, platform-owner, or multi-company dimensions.
   Evidence: Added analytics snapshot/cache-entry schema, models, factories, Actions, cache key validation, docs, and AnalyticsSnapshotsCacheTest.
   Added: 2026-05-28T19:00:00+03:00
+
+- Block 12 core analytics Actions calculate dashboard summaries, widget payloads, report runs, export records, KPI values, KPI snapshots, cache refreshes, date ranges, and filters through local Eloquent models while guarding optional module tables.
+  Evidence: Added table-safe analytics Actions, export payload records, KPI comparison/snapshot calculation, docs, and AnalyticsCoreActionsTest.
+  Added: 2026-05-28T19:30:00+03:00
