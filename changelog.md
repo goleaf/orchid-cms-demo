@@ -2,6 +2,14 @@
 
 ## 2026-05-28
 
+- Added clearer changelog coverage for the newest module guides and recent project history
+- Clarified the operations foundation for branches, instructors, vehicles, lesson schedules, public instructor pages, and public vehicle pages
+- Clarified the document foundation for student documents, lead attachments, onboarding placeholders, exam readiness checks, and future review workflows
+- Clarified the payment foundation for student payments, enrollment links, payment placeholders, exam readiness checks, and future finance workflows
+- Clarified the communication foundation for reminder scheduling, user notification preferences, student contact history, reusable messages, and delivery history
+- Clarified the analytics foundation for local dashboard metrics, saved reports, report runs, exports, targets, and future reporting snapshots
+- Clarified that public website content now also covers instructor pages, vehicle pages, review pages, and knowledge articles
+
 - Added a communications foundation for reminders, message templates, student contact history, notification channels, and delivery tracking
 - Added a dashboard and analytics foundation for key metrics, targets, saved reports, report runs, and exports
 - Improved training group management with waitlists, transfers, capacity updates, schedule patterns, status changes, publishing, and archiving
