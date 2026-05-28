@@ -2632,3 +2632,45 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T09:09:39+00:00
+
+```json
+{
+  "ts": "2026-05-28T09:09:39+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6dd5-0a59-7940-b814-09b7aec054ce",
+  "branch": "main",
+  "changed_file_count": 2,
+  "changed_file_groups": {
+    "code": 2
+  },
+  "changed_files_sample": [
+    "docs/exams.md",
+    "hangelog.md"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T09:09:39+00:00
+
+```json
+{
+  "ts": "2026-05-28T09:09:39+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd5-0482-78d3-b46f-4913e3c5f963",
+  "turn_id": "019e6dd5-0a59-7940-b814-09b7aec054ce",
+  "branch": "main",
+  "changed_file_count": 2,
+  "changed_file_groups": {
+    "code": 2
+  },
+  "changed_files_sample": [
+    "docs/exams.md",
+    "hangelog.md"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

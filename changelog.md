@@ -2,6 +2,10 @@
 
 ## 2026-05-28
 
+- Added a clear exam planning guide covering admissions, sessions, results, retakes, and activity history
+- Clarified that exam tracking is for one local driving school and does not include external registry integration or online testing
+- Updated the project notes used for future learning review
+
 - Added the foundation for managing exam admissions, exam sessions, attempts, results, and retakes
 - Added clearer exam permissions and translated admin labels for exam workflows
 - Updated the exam admin page to show scheduled sessions with program, group, instructor, seat, status, and location details
@@ -9,6 +13,8 @@
 - Improved seeded homepage, branch, and training group data so public pages show more complete multilingual demo content
 
 - Added the foundation for managing exam readiness, exam sessions, attempts, results, and retakes
+- Connected exam readiness to student enrollments, training groups, driving lessons, documents, payments, and activity history
+- Added multilingual exam labels, validation messages, permissions, sample records, and documentation for the new foundation
 - Improved student group membership tracking, including transfers, waiting lists, completed memberships, and capacity counts
 - Improved website lead listings so source and form names display as friendly translated labels
 - Expanded sample data and tests for training programs, groups, translations, leads, and exam-related workflows
