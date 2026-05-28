@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\User;
 
+use App\Actions\Security\DeleteUserAction;
+use App\Actions\Security\SaveUserAction;
+use App\Http\Requests\Security\UserRequest;
 use App\Models\User;
 use App\Orchid\Layouts\Role\RolePermissionLayout;
 use App\Orchid\Layouts\User\UserEditLayout;
 use App\Orchid\Layouts\User\UserPasswordLayout;
 use App\Orchid\Layouts\User\UserRoleLayout;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Orchid\Access\Impersonation;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
@@ -36,10 +36,15 @@ class UserEditScreen extends Screen
      */
     public function query(User $user): iterable
     {
-        $user->load(['roles']);
+        $user->load(['roles', 'accessibleBranches']);
+
+        if (! $user->exists) {
+            $user->is_active = true;
+        }
 
         return [
             'user' => $user,
+            'user.branch_ids' => $user->accessibleBranches->pluck('id')->all(),
             'permission' => $user->statusOfPermissions(),
         ];
     }
@@ -49,7 +54,7 @@ class UserEditScreen extends Screen
      */
     public function name(): ?string
     {
-        return $this->user->exists ? 'Edit User' : 'Create User';
+        return $this->user->exists ? tkey('security.users.edit_title') : tkey('security.users.create_title');
     }
 
     /**
@@ -57,7 +62,7 @@ class UserEditScreen extends Screen
      */
     public function description(): ?string
     {
-        return 'User profile and privileges, including their associated role.';
+        return tkey('security.users.description');
     }
 
     public function permission(): ?iterable
@@ -75,19 +80,19 @@ class UserEditScreen extends Screen
     public function commandBar(): iterable
     {
         return [
-            Button::make(__('Impersonate user'))
+            Button::make(tkey('security.users.actions.impersonate'))
                 ->icon('bg.box-arrow-in-right')
-                ->confirm(__('You can revert to your original state by logging out.'))
+                ->confirm(tkey('security.users.confirm_impersonate'))
                 ->method('loginAs')
-                ->canSee($this->user->exists && $this->user->id !== \request()->user()->id),
+                ->canSee($this->user->exists && $this->user->id !== request()->user()->id && ! $this->user->isLockedOut()),
 
-            Button::make(__('Remove'))
+            Button::make(tkey('security.users.actions.remove'))
                 ->icon('bs.trash3')
-                ->confirm(__('Once the account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.'))
+                ->confirm(tkey('security.users.confirm_delete'))
                 ->method('remove')
                 ->canSee($this->user->exists),
 
-            Button::make(__('Save'))
+            Button::make(tkey('security.users.actions.save'))
                 ->icon('bs.check-circle')
                 ->method('save'),
         ];
@@ -101,10 +106,10 @@ class UserEditScreen extends Screen
         return [
 
             Layout::block(UserEditLayout::class)
-                ->title(__('Profile Information'))
-                ->description(__('Update your account\'s profile information and email address.'))
+                ->title(tkey('security.users.blocks.profile.title'))
+                ->description(tkey('security.users.blocks.profile.description'))
                 ->commands(
-                    Button::make(__('Save'))
+                    Button::make(tkey('common.actions.save'))
                         ->type(Color::BASIC)
                         ->icon('bs.check-circle')
                         ->canSee($this->user->exists)
@@ -112,10 +117,10 @@ class UserEditScreen extends Screen
                 ),
 
             Layout::block(UserPasswordLayout::class)
-                ->title(__('Password'))
-                ->description(__('Ensure your account is using a long, random password to stay secure.'))
+                ->title(tkey('security.users.blocks.password.title'))
+                ->description(tkey('security.users.blocks.password.description'))
                 ->commands(
-                    Button::make(__('Save'))
+                    Button::make(tkey('common.actions.save'))
                         ->type(Color::BASIC)
                         ->icon('bs.check-circle')
                         ->canSee($this->user->exists)
@@ -123,10 +128,10 @@ class UserEditScreen extends Screen
                 ),
 
             Layout::block(UserRoleLayout::class)
-                ->title(__('Roles'))
-                ->description(__('A Role defines a set of tasks a user assigned the role is allowed to perform.'))
+                ->title(tkey('security.users.blocks.roles.title'))
+                ->description(tkey('security.users.blocks.roles.description'))
                 ->commands(
-                    Button::make(__('Save'))
+                    Button::make(tkey('common.actions.save'))
                         ->type(Color::BASIC)
                         ->icon('bs.check-circle')
                         ->canSee($this->user->exists)
@@ -134,10 +139,10 @@ class UserEditScreen extends Screen
                 ),
 
             Layout::block(RolePermissionLayout::class)
-                ->title(__('Permissions'))
-                ->description(__('Allow the user to perform some actions that are not provided for by his roles'))
+                ->title(tkey('security.users.blocks.permissions.title'))
+                ->description(tkey('security.users.blocks.permissions.description'))
                 ->commands(
-                    Button::make(__('Save'))
+                    Button::make(tkey('common.actions.save'))
                         ->type(Color::BASIC)
                         ->icon('bs.check-circle')
                         ->canSee($this->user->exists)
@@ -150,32 +155,11 @@ class UserEditScreen extends Screen
     /**
      * @return RedirectResponse
      */
-    public function save(User $user, Request $request)
+    public function save(User $user, UserRequest $request, SaveUserAction $saveUser): RedirectResponse
     {
-        $request->validate([
-            'user.email' => [
-                'required',
-                Rule::unique(User::class, 'email')->ignore($user),
-            ],
-        ]);
+        $saveUser->handle($user, $request, $request->user());
 
-        $permissions = collect($request->get('permissions'))
-            ->map(fn ($value, $key) => [base64_decode($key) => $value])
-            ->collapse()
-            ->toArray();
-
-        $user->when($request->filled('user.password'), function (Builder $builder) use ($request) {
-            $builder->getModel()->password = Hash::make($request->input('user.password'));
-        });
-
-        $user
-            ->fill($request->collect('user')->except(['password', 'permissions', 'roles'])->toArray())
-            ->forceFill(['permissions' => $permissions])
-            ->save();
-
-        $user->replaceRoles($request->input('user.roles'));
-
-        Toast::info(__('User was saved.'));
+        Toast::info(tkey('security.users.messages.saved'));
 
         return redirect()->route('platform.systems.users');
     }
@@ -185,11 +169,11 @@ class UserEditScreen extends Screen
      *
      * @throws \Exception
      */
-    public function remove(User $user)
+    public function remove(User $user, Request $request, DeleteUserAction $deleteUser): RedirectResponse
     {
-        $user->delete();
+        $deleteUser->handle($user, $request->user(), $request);
 
-        Toast::info(__('User was removed'));
+        Toast::info(tkey('security.users.messages.removed'));
 
         return redirect()->route('platform.systems.users');
     }
@@ -201,7 +185,7 @@ class UserEditScreen extends Screen
     {
         Impersonation::loginAs($user);
 
-        Toast::info(__('You are now impersonating this user'));
+        Toast::info(tkey('security.users.messages.impersonating'));
 
         return redirect()->route(config('platform.index'));
     }

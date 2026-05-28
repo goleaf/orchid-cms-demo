@@ -19,18 +19,18 @@ class ProfilePasswordLayout extends Rows
     {
         return [
             Password::make('old_password')
-                ->placeholder(__('Enter the current password'))
-                ->title(__('Current password'))
-                ->help('This is your password set at the moment.'),
+                ->placeholder(tkey('security.profile.placeholders.current_password'))
+                ->title(tkey('security.profile.fields.current_password'))
+                ->help(tkey('security.profile.help.current_password')),
 
             Password::make('password')
-                ->placeholder(__('Enter the password to be set'))
-                ->title(__('New password')),
+                ->placeholder(tkey('security.profile.placeholders.new_password'))
+                ->title(tkey('security.profile.fields.new_password')),
 
             Password::make('password_confirmation')
-                ->placeholder(__('Enter the password to be set'))
-                ->title(__('Confirm new password'))
-                ->help('A good password is at least 15 characters or at least 8 characters long, including a number and a lowercase letter.'),
+                ->placeholder(tkey('security.profile.placeholders.new_password'))
+                ->title(tkey('security.profile.fields.confirm_password'))
+                ->help(tkey('security.profile.help.password_policy')),
         ];
     }
 }

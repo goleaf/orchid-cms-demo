@@ -28,13 +28,13 @@ class UserListLayout extends Table
     public function columns(): array
     {
         return [
-            TD::make('name', __('Name'))
+            TD::make('name', tkey('security.users.columns.name'))
                 ->sort()
                 ->cantHide()
                 ->filter(Input::make())
                 ->render(fn (User $user) => new Persona($user->presenter())),
 
-            TD::make('email', __('Email'))
+            TD::make('email', tkey('security.users.columns.email'))
                 ->sort()
                 ->cantHide()
                 ->filter(Input::make())
@@ -46,31 +46,31 @@ class UserListLayout extends Table
                         'user' => $user->id,
                     ])),
 
-            TD::make('created_at', __('Created'))
+            TD::make('created_at', tkey('security.users.columns.created'))
                 ->usingComponent(DateTimeSplit::class)
                 ->align(TD::ALIGN_RIGHT)
                 ->defaultHidden()
                 ->sort(),
 
-            TD::make('updated_at', __('Last edit'))
+            TD::make('updated_at', tkey('security.users.columns.updated'))
                 ->usingComponent(DateTimeSplit::class)
                 ->align(TD::ALIGN_RIGHT)
                 ->sort(),
 
-            TD::make(__('Actions'))
+            TD::make(tkey('security.users.columns.actions'))
                 ->align(TD::ALIGN_CENTER)
                 ->width('100px')
                 ->render(fn (User $user) => DropDown::make()
                     ->icon('bs.three-dots-vertical')
                     ->list([
 
-                        Link::make(__('Edit'))
+                        Link::make(tkey('security.users.actions.edit'))
                             ->route('platform.systems.users.edit', $user->id)
                             ->icon('bs.pencil'),
 
-                        Button::make(__('Delete'))
+                        Button::make(tkey('security.users.actions.delete'))
                             ->icon('bs.trash3')
-                            ->confirm(__('Once the account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.'))
+                            ->confirm(tkey('security.users.confirm_delete'))
                             ->method('remove', [
                                 'id' => $user->id,
                             ]),

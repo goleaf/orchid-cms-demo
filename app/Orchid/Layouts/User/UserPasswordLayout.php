@@ -24,13 +24,14 @@ class UserPasswordLayout extends Rows
         $exists = $user->exists;
 
         $placeholder = $exists
-            ? __('Leave empty to keep current password')
-            : __('Enter the password to be set');
+            ? tkey('security.users.placeholders.keep_password')
+            : tkey('security.users.placeholders.new_password');
 
         return [
             Password::make('user.password')
                 ->placeholder($placeholder)
-                ->title(__('Password'))
+                ->title(tkey('security.users.fields.password'))
+                ->help(tkey('security.users.help.password_policy'))
                 ->required(! $exists),
         ];
     }

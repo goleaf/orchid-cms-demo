@@ -8,6 +8,10 @@ Security isn't optional foundation concepts every system designer must understan
 
 Security is not a feature you add at the end. It's a property of the system that must be considered from the start.
 
+### Local Project Note
+
+For this driving-school repository, Block 13 security hardening remains local application behavior. It is not SaaS, remote telemetry, model retraining, or background automation. Users, roles, branch access, audit logs, login attempts, and hashed session records stay in the repository database. Sensitive fields are redacted before audit storage, and raw session identifiers are never written to the security session log.
+
 **Defense in depth:** Multiple layers of security. No single point of failure.
 
 **Principle of least privilege:** Grant minimum access needed. Reduce blast radius.

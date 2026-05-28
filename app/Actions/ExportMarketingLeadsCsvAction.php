@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Actions\Security\SanitizeExportRowAction;
 use App\Models\LeadSource;
 use App\Models\MarketingLead;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,7 +25,7 @@ class ExportMarketingLeadsCsvAction
                 return;
             }
 
-            fputcsv($output, $this->headings($includeMarketing));
+            fputcsv($output, app(SanitizeExportRowAction::class)->handle($this->headings($includeMarketing)));
 
             $sourceLabels = LeadSource::translatedLabels();
             $exportQuery = $this->prepareQuery(clone $query, $includeMarketing);
@@ -198,6 +199,6 @@ class ExportMarketingLeadsCsvAction
             ];
         }
 
-        fputcsv($output, $row);
+        fputcsv($output, app(SanitizeExportRowAction::class)->handle($row));
     }
 }

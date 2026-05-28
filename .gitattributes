@@ -1,11 +1,55 @@
 * text=auto eol=lf
 
+*.bat text eol=crlf
 *.blade.php diff=html
+*.cmd text eol=crlf
 *.css diff=css
 *.html diff=html
+*.js diff=javascript
+*.json diff=json
 *.md diff=markdown
 *.php diff=php
+*.scss diff=css
+*.sh text eol=lf
+*.svg text eol=lf
+*.xml diff=xml
+*.yml text eol=lf
+*.yaml text eol=lf
+
+*.db binary
+*.gif binary
+*.gz binary
+*.ico binary
+*.jpeg binary
+*.jpg binary
+*.pdf binary
+*.png binary
+*.sqlite binary
+*.webp binary
+*.zip binary
 
 /.github export-ignore
-CHANGELOG.md export-ignore
-.styleci.yml export-ignore
+/.agents export-ignore
+/.codex export-ignore
+/.fleet export-ignore
+/.idea export-ignore
+/.nova export-ignore
+/.playwright-mcp export-ignore
+/.taskmaster export-ignore
+/.vscode export-ignore
+/.zed export-ignore
+/codebase-self-learning-pack export-ignore
+/node_modules export-ignore
+/public/build export-ignore
+/public/hot export-ignore
+/public/storage export-ignore
+/public/vendor export-ignore
+/storage/app export-ignore
+/storage/framework export-ignore
+/storage/logs export-ignore
+/tests export-ignore
+/vendor export-ignore
+/changelog.md export-ignore
+/package-lock.json export-ignore
+/phpunit.xml export-ignore
+/.styleci.yml export-ignore

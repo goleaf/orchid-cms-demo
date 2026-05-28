@@ -6032,3 +6032,109 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T12:58:06+00:00
+
+```json
+{
+  "ts": "2026-05-28T12:58:06+00:00",
+  "event": "Stop",
+  "session_id": "019e6ea5-f3c6-7203-b627-a4889119e257",
+  "turn_id": "019e6ea6-829d-7bf1-b5de-79d512206a67",
+  "branch": "main",
+  "changed_file_count": 62,
+  "changed_file_groups": {
+    "code": 40,
+    "models": 6,
+    "orchid": 14,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/security.md",
+    ".gitattributes",
+    ".gitignore",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ExportStudentsCsvAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/DeleteRoleAction.php",
+    "app/Actions/Security/DeleteUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/SaveRoleAction.php",
+    "app/Actions/Security/SaveUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/Security/RoleRequest.php",
+    "app/Http/Requests/Security/UserRequest.php",
+    "app/Models/AuditLog.php",
+    "app/Models/LoginAttempt.php",
+    "app/Models/SecurityEvent.php",
+    "app/Models/User.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T12:58:06+00:00
+
+```json
+{
+  "ts": "2026-05-28T12:58:06+00:00",
+  "event": "Stop",
+  "session_id": "019e6ea5-f3c6-7203-b627-a4889119e257",
+  "turn_id": "019e6ea6-829d-7bf1-b5de-79d512206a67",
+  "branch": "main",
+  "changed_file_count": 62,
+  "changed_file_groups": {
+    "code": 40,
+    "models": 6,
+    "orchid": 14,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/security.md",
+    ".gitattributes",
+    ".gitignore",
+    "[REDACTED_SECRET].php",
+    "app/Actions/ExportStudentsCsvAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/DeleteRoleAction.php",
+    "app/Actions/Security/DeleteUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/SaveRoleAction.php",
+    "app/Actions/Security/SaveUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/Security/RoleRequest.php",
+    "app/Http/Requests/Security/UserRequest.php",
+    "app/Models/AuditLog.php",
+    "app/Models/LoginAttempt.php",
+    "app/Models/SecurityEvent.php",
+    "app/Models/User.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

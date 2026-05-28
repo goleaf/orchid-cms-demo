@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\User;
 
+use App\Actions\Security\DeleteUserAction;
+use App\Actions\Security\SaveUserAction;
+use App\Http\Requests\Security\UserRequest;
 use App\Models\User;
 use App\Orchid\Layouts\User\UserEditLayout;
 use App\Orchid\Layouts\User\UserFiltersLayout;
 use App\Orchid\Layouts\User\UserListLayout;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
@@ -38,7 +40,7 @@ class UserListScreen extends Screen
      */
     public function name(): ?string
     {
-        return 'User Management';
+        return tkey('security.users.title');
     }
 
     /**
@@ -46,7 +48,7 @@ class UserListScreen extends Screen
      */
     public function description(): ?string
     {
-        return 'A comprehensive list of all registered users, including their profiles and privileges.';
+        return tkey('security.users.description');
     }
 
     public function permission(): ?iterable
@@ -64,7 +66,7 @@ class UserListScreen extends Screen
     public function commandBar(): iterable
     {
         return [
-            Link::make(__('Add'))
+            Link::make(tkey('security.users.actions.add'))
                 ->icon('bs.plus-circle')
                 ->route('platform.systems.users.create'),
         ];
@@ -98,24 +100,17 @@ class UserListScreen extends Screen
         ];
     }
 
-    public function saveUser(Request $request, User $user): void
+    public function saveUser(UserRequest $request, User $user, SaveUserAction $saveUser): void
     {
-        $request->validate([
-            'user.email' => [
-                'required',
-                Rule::unique(User::class, 'email')->ignore($user),
-            ],
-        ]);
+        $saveUser->handle($user, $request, $request->user());
 
-        $user->fill($request->input('user'))->save();
-
-        Toast::info(__('User was saved.'));
+        Toast::info(tkey('security.users.messages.saved'));
     }
 
-    public function remove(Request $request): void
+    public function remove(Request $request, DeleteUserAction $deleteUser): void
     {
-        User::findOrFail($request->get('id'))->delete();
+        $deleteUser->handle(User::findOrFail($request->get('id')), $request->user(), $request);
 
-        Toast::info(__('User was removed'));
+        Toast::info(tkey('security.users.messages.removed'));
     }
 }

@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Orchid\Screens\User;
 
+use App\Actions\Security\ChangeUserPasswordAction;
+use App\Actions\Security\UpdateUserProfileAction;
+use App\Http\Requests\Security\ProfilePasswordRequest;
+use App\Http\Requests\Security\ProfileUpdateRequest;
 use App\Models\User;
 use App\Orchid\Layouts\User\ProfilePasswordLayout;
 use App\Orchid\Layouts\User\UserEditLayout;
 use App\Services\LocaleManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Orchid\Access\Impersonation;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
@@ -128,19 +130,9 @@ class UserProfileScreen extends Screen
         ];
     }
 
-    public function save(Request $request): void
+    public function save(ProfileUpdateRequest $request, UpdateUserProfileAction $updateProfile): void
     {
-        $request->validate([
-            'user.name' => 'required|string',
-            'user.email' => [
-                'required',
-                Rule::unique(User::class, 'email')->ignore($request->user()),
-            ],
-        ]);
-
-        $request->user()
-            ->fill($request->get('user'))
-            ->save();
+        $updateProfile->handle($request->user(), $request->input('user', []), $request);
 
         Toast::info(tkey('profile.messages.updated'));
     }
@@ -164,17 +156,9 @@ class UserProfileScreen extends Screen
         return redirect()->back();
     }
 
-    public function changePassword(Request $request): void
+    public function changePassword(ProfilePasswordRequest $request, ChangeUserPasswordAction $changePassword): void
     {
-        $guard = config('platform.guard', 'web');
-        $request->validate([
-            'old_password' => 'required|current_password:'.$guard,
-            'password' => 'required|confirmed|different:old_password',
-        ]);
-
-        tap($request->user(), function ($user) use ($request) {
-            $user->password = Hash::make($request->get('password'));
-        })->save();
+        $changePassword->handle($request->user(), (string) $request->get('password'), $request->user(), $request);
 
         Toast::info(tkey('profile.messages.password_changed'));
     }

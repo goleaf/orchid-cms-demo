@@ -17,7 +17,7 @@ class UserPresenter extends Presenter implements Personable, Searchable
      */
     public function label(): string
     {
-        return 'Users';
+        return tkey('security.presenter.users');
     }
 
     /**
@@ -37,7 +37,7 @@ class UserPresenter extends Presenter implements Personable, Searchable
 
         return (string) Str::of($roles)
             ->limit(20)
-            ->whenEmpty(fn () => __('Regular User'));
+            ->whenEmpty(fn () => tkey('security.presenter.regular_user'));
     }
 
     /**

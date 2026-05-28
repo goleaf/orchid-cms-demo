@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Actions\Security\SanitizeExportRowAction;
 use App\Models\LeadSource;
 use App\Models\Student;
 use App\Models\User;
@@ -37,7 +38,7 @@ class ExportStudentsCsvAction
                 return;
             }
 
-            fputcsv($output, $this->headings($includeCrmSource, $includeMarketing));
+            fputcsv($output, app(SanitizeExportRowAction::class)->handle($this->headings($includeCrmSource, $includeMarketing)));
 
             $sourceLabels = LeadSource::translatedLabels();
             $exportQuery = $this->prepareQuery(clone $query, $includeCrmSource, $includeMarketing);
@@ -235,6 +236,6 @@ class ExportStudentsCsvAction
             ];
         }
 
-        fputcsv($output, $row);
+        fputcsv($output, app(SanitizeExportRowAction::class)->handle($row));
     }
 }

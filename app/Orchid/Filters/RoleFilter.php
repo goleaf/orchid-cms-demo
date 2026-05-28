@@ -16,7 +16,7 @@ class RoleFilter extends Filter
      */
     public function name(): string
     {
-        return __('Roles');
+        return tkey('security.filters.roles');
     }
 
     /**
@@ -47,7 +47,7 @@ class RoleFilter extends Filter
                 ->fromModel(Role::class, 'name', 'slug')
                 ->empty()
                 ->value($this->request->get('role'))
-                ->title(__('Roles')),
+                ->title(tkey('security.filters.roles')),
         ];
     }
 
@@ -56,6 +56,6 @@ class RoleFilter extends Filter
      */
     public function value(): string
     {
-        return $this->name().': '.Role::where('slug', $this->request->get('role'))->first()->name;
+        return $this->name().': '.(Role::where('slug', $this->request->get('role'))->first()?->name ?? $this->request->get('role'));
     }
 }
