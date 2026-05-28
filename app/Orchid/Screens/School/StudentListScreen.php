@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace App\Orchid\Screens\School;
 
 use App\Actions\ArchiveStudentAction;
+use App\Actions\ExportStudentsCsvAction;
+use App\Actions\FilterStudentsAction;
 use App\Enums\EnrollmentStatus;
 use App\Enums\StudentStatus;
 use App\Http\Requests\Students\ArchiveStudentRequest;
+use App\Http\Requests\Students\ExportStudentsRequest;
 use App\Models\Branch;
+use App\Models\CourseCategory;
 use App\Models\Student;
 use App\Models\StudentEnrollment;
 use App\Models\TrainingGroup;
@@ -26,6 +30,7 @@ use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
 use Orchid\Support\Facades\Layout;
 use Orchid\Support\Facades\Toast;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class StudentListScreen extends Screen
 {
@@ -47,6 +52,11 @@ class StudentListScreen extends Screen
     /**
      * @var array<int, string>
      */
+    private array $categories = [];
+
+    /**
+     * @var array<int, string>
+     */
     private array $groups = [];
 
     /**
@@ -54,20 +64,14 @@ class StudentListScreen extends Screen
      */
     private array $managers = [];
 
+    /**
+     * @var array<int, string>
+     */
+    private array $administrators = [];
+
     public function query(Request $request): iterable
     {
-        $this->filters = [
-            'search' => (string) $request->query('search', ''),
-            'status' => (string) $request->query('status', ''),
-            'enrollment_status' => (string) $request->query('enrollment_status', ''),
-            'training_program_id' => (string) $request->query('training_program_id', ''),
-            'branch_id' => (string) $request->query('branch_id', ''),
-            'training_group_id' => (string) $request->query('training_group_id', ''),
-            'manager_id' => (string) $request->query('manager_id', ''),
-            'created_from' => (string) $request->query('created_from', ''),
-            'created_to' => (string) $request->query('created_to', ''),
-            'segment' => (string) $request->query('segment', ''),
-        ];
+        $this->filters = $this->filtersFromRequest($request);
 
         $this->branches = Branch::query()
             ->forAdminList()
@@ -83,6 +87,12 @@ class StudentListScreen extends Screen
             ->get()
             ->mapWithKeys(fn (TrainingProgram $program): array => [$program->id => $program->displayTitle()])
             ->all();
+        $this->categories = CourseCategory::query()
+            ->active()
+            ->ordered()
+            ->get(['id', 'code', 'slug', 'name_translations'])
+            ->mapWithKeys(fn (CourseCategory $category): array => [$category->id => $category->displayName()])
+            ->all();
         $this->groups = TrainingGroup::query()
             ->operationalList()
             ->orderBy('starts_on')
@@ -95,9 +105,10 @@ class StudentListScreen extends Screen
             ->limit(100)
             ->pluck('name', 'id')
             ->all();
+        $this->administrators = $this->managers;
 
         return [
-            'students' => $this->studentQuery()
+            'students' => $this->studentQuery($request)
                 ->orderByDesc('created_at')
                 ->simplePaginate(15)
                 ->withQueryString(),
@@ -131,6 +142,11 @@ class StudentListScreen extends Screen
                 ->icon('bs.check2-square')
                 ->route('platform.students.tasks')
                 ->canSee($this->hasStudentAccess('students.manage_tasks')),
+
+            Button::make(tkey('common.actions.export_csv'))
+                ->icon('bs.download')
+                ->method('export')
+                ->canSee($this->hasStudentAccess('students.export')),
         ];
     }
 
@@ -166,6 +182,12 @@ class StudentListScreen extends Screen
                     ->options($this->programs)
                     ->value($this->filters['training_program_id'] ?? ''),
 
+                Select::make('course_category_id')
+                    ->title(tkey('students.filters.course_category'))
+                    ->empty(tkey('students.filters.all_course_categories'), '')
+                    ->options($this->categories)
+                    ->value($this->filters['course_category_id'] ?? ''),
+
                 Select::make('branch_id')
                     ->title(tkey('students.filters.branch'))
                     ->empty(tkey('students.filters.all_branches'), '')
@@ -184,6 +206,12 @@ class StudentListScreen extends Screen
                     ->options($this->managers)
                     ->value($this->filters['manager_id'] ?? ''),
 
+                Select::make('administrator_id')
+                    ->title(tkey('students.filters.administrator'))
+                    ->empty(tkey('students.filters.all_administrators'), '')
+                    ->options($this->administrators)
+                    ->value($this->filters['administrator_id'] ?? ''),
+
                 Input::make('created_from')
                     ->type('date')
                     ->title(tkey('students.filters.created_from'))
@@ -193,6 +221,60 @@ class StudentListScreen extends Screen
                     ->type('date')
                     ->title(tkey('students.filters.created_to'))
                     ->value($this->filters['created_to'] ?? ''),
+
+                Select::make('only_active')
+                    ->title(tkey('students.filters.only_active'))
+                    ->empty(tkey('students.filters.no_segment'), '')
+                    ->options($this->booleanFilterOptions())
+                    ->value($this->filters['only_active'] ?? ''),
+
+                Select::make('only_archived')
+                    ->title(tkey('students.filters.only_archived'))
+                    ->empty(tkey('students.filters.no_segment'), '')
+                    ->options($this->booleanFilterOptions())
+                    ->value($this->filters['only_archived'] ?? ''),
+
+                Select::make('only_blocked')
+                    ->title(tkey('students.filters.only_blocked'))
+                    ->empty(tkey('students.filters.no_segment'), '')
+                    ->options($this->booleanFilterOptions())
+                    ->value($this->filters['only_blocked'] ?? ''),
+
+                Select::make('only_with_active_enrollment')
+                    ->title(tkey('students.filters.only_with_active_enrollment'))
+                    ->empty(tkey('students.filters.no_segment'), '')
+                    ->options($this->booleanFilterOptions())
+                    ->value($this->filters['only_with_active_enrollment'] ?? ''),
+
+                Select::make('only_without_active_enrollment')
+                    ->title(tkey('students.filters.only_without_active_enrollment'))
+                    ->empty(tkey('students.filters.no_segment'), '')
+                    ->options($this->booleanFilterOptions())
+                    ->value($this->filters['only_without_active_enrollment'] ?? ''),
+
+                Select::make('only_without_group')
+                    ->title(tkey('students.filters.only_without_group'))
+                    ->empty(tkey('students.filters.no_segment'), '')
+                    ->options($this->booleanFilterOptions())
+                    ->value($this->filters['only_without_group'] ?? ''),
+
+                Select::make('only_waiting_documents')
+                    ->title(tkey('students.filters.only_waiting_documents'))
+                    ->empty(tkey('students.filters.no_segment'), '')
+                    ->options($this->booleanFilterOptions())
+                    ->value($this->filters['only_waiting_documents'] ?? ''),
+
+                Select::make('only_waiting_payment')
+                    ->title(tkey('students.filters.only_waiting_payment'))
+                    ->empty(tkey('students.filters.no_segment'), '')
+                    ->options($this->booleanFilterOptions())
+                    ->value($this->filters['only_waiting_payment'] ?? ''),
+
+                Select::make('only_waiting_start')
+                    ->title(tkey('students.filters.only_waiting_start'))
+                    ->empty(tkey('students.filters.no_segment'), '')
+                    ->options($this->booleanFilterOptions())
+                    ->value($this->filters['only_waiting_start'] ?? ''),
 
                 Button::make(tkey('common.actions.search'))
                     ->icon('bs.search')
@@ -255,12 +337,30 @@ class StudentListScreen extends Screen
             'status' => $request->input('status'),
             'enrollment_status' => $request->input('enrollment_status'),
             'training_program_id' => $request->input('training_program_id'),
+            'course_category_id' => $request->input('course_category_id'),
             'branch_id' => $request->input('branch_id'),
             'training_group_id' => $request->input('training_group_id'),
             'manager_id' => $request->input('manager_id'),
+            'administrator_id' => $request->input('administrator_id'),
             'created_from' => $request->input('created_from'),
             'created_to' => $request->input('created_to'),
+            'only_active' => $request->input('only_active'),
+            'only_archived' => $request->input('only_archived'),
+            'only_blocked' => $request->input('only_blocked'),
+            'only_with_active_enrollment' => $request->input('only_with_active_enrollment'),
+            'only_without_active_enrollment' => $request->input('only_without_active_enrollment'),
+            'only_without_group' => $request->input('only_without_group'),
+            'only_waiting_documents' => $request->input('only_waiting_documents'),
+            'only_waiting_payment' => $request->input('only_waiting_payment'),
+            'only_waiting_start' => $request->input('only_waiting_start'),
         ], fn (mixed $value): bool => filled($value)));
+    }
+
+    public function export(ExportStudentsRequest $request, ExportStudentsCsvAction $exportStudents): StreamedResponse
+    {
+        $this->filters = $this->filtersFromRequest($request);
+
+        return $exportStudents->handle($this->studentQuery($request), $request->user());
     }
 
     public function archive(ArchiveStudentRequest $request, ArchiveStudentAction $archiveStudent): RedirectResponse
@@ -274,8 +374,12 @@ class StudentListScreen extends Screen
         return redirect()->route('platform.students', $request->query());
     }
 
-    private function studentQuery(): Builder
+    private function studentQuery(Request $request): Builder
     {
+        if ($this->filters === []) {
+            $this->filters = $this->filtersFromRequest($request);
+        }
+
         $query = Student::query()
             ->forCrmList()
             ->with([
@@ -300,50 +404,9 @@ class StudentListScreen extends Screen
                         'trainingGroup:id,name,name_translations,code',
                     ]),
             ])
-            ->search($this->filters['search'] ?? null)
-            ->byStatus($this->filters['status'] ?? null)
-            ->byManager($this->filters['manager_id'] ?? null)
-            ->when($this->filters['created_from'] !== '', fn (Builder $query): Builder => $query->whereDate('created_at', '>=', $this->filters['created_from']))
-            ->when($this->filters['created_to'] !== '', fn (Builder $query): Builder => $query->whereDate('created_at', '<=', $this->filters['created_to']))
-            ->when($this->filters['enrollment_status'] !== '', fn (Builder $query): Builder => $query->whereHas(
-                'enrollments',
-                fn (Builder $enrollment): Builder => $enrollment->byStatus($this->filters['enrollment_status'])
-            ))
-            ->when($this->filters['training_program_id'] !== '', fn (Builder $query): Builder => $query->whereHas(
-                'enrollments',
-                fn (Builder $enrollment): Builder => $enrollment->byCourse($this->filters['training_program_id'])
-            ))
-            ->when($this->filters['branch_id'] !== '', fn (Builder $query): Builder => $query->where(function (Builder $query): void {
-                $query->where('branch_id', $this->filters['branch_id'])
-                    ->orWhereHas('enrollments', fn (Builder $enrollment): Builder => $enrollment->byBranch($this->filters['branch_id']));
-            }))
-            ->when($this->filters['training_group_id'] !== '', fn (Builder $query): Builder => $query->whereHas(
-                'enrollments',
-                fn (Builder $enrollment): Builder => $enrollment->byTrainingGroup($this->filters['training_group_id'])
-            ));
+            ->tap(fn (Builder $query): Builder => app(FilterStudentsAction::class)->handle($query, $this->filters, $request->user()));
 
-        return $this->applySegment($query, (string) ($this->filters['segment'] ?? ''));
-    }
-
-    private function applySegment(Builder $query, string $segment): Builder
-    {
-        return match ($segment) {
-            'active' => $query->active(),
-            'new' => $query->whereDoesntHave('enrollments'),
-            'waiting_documents' => $query->whereHas('enrollments', fn (Builder $enrollment): Builder => $enrollment->waitingDocuments()),
-            'waiting_payment' => $query->whereHas('enrollments', fn (Builder $enrollment): Builder => $enrollment->waitingPayment()),
-            'waiting_start' => $query->whereHas('enrollments', fn (Builder $enrollment): Builder => $enrollment->waitingStart()),
-            'without_group' => $query->whereHas('activeEnrollments', fn (Builder $enrollment): Builder => $enrollment->whereNull('training_group_id')),
-            'in_training' => $query->whereHas('enrollments', fn (Builder $enrollment): Builder => $enrollment->whereIn('status', [
-                EnrollmentStatus::Active->value,
-                EnrollmentStatus::Theory->value,
-                EnrollmentStatus::Practice->value,
-            ])),
-            'paused' => $query->whereHas('enrollments', fn (Builder $enrollment): Builder => $enrollment->where('status', EnrollmentStatus::Paused->value)),
-            'completed' => $query->whereHas('enrollments', fn (Builder $enrollment): Builder => $enrollment->completed()),
-            'archived' => $query->archived(),
-            default => $query,
-        };
+        return $query;
     }
 
     /**
@@ -384,6 +447,59 @@ class StudentListScreen extends Screen
         return collect(EnrollmentStatus::cases())
             ->mapWithKeys(fn (EnrollmentStatus $status): array => [$status->value => tkey('students.enrollments.statuses.'.$status->value)])
             ->all();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function booleanFilterOptions(): array
+    {
+        return [
+            '1' => tkey('common.status.yes'),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function filtersFromRequest(Request $request): array
+    {
+        return [
+            'search' => $this->requestFilterValue($request, 'search'),
+            'status' => $this->requestFilterValue($request, 'status'),
+            'enrollment_status' => $this->requestFilterValue($request, 'enrollment_status'),
+            'training_program_id' => $this->requestFilterValue($request, 'training_program_id', 'course_id'),
+            'course_category_id' => $this->requestFilterValue($request, 'course_category_id'),
+            'branch_id' => $this->requestFilterValue($request, 'branch_id'),
+            'training_group_id' => $this->requestFilterValue($request, 'training_group_id'),
+            'manager_id' => $this->requestFilterValue($request, 'manager_id'),
+            'administrator_id' => $this->requestFilterValue($request, 'administrator_id'),
+            'created_from' => $this->requestFilterValue($request, 'created_from'),
+            'created_to' => $this->requestFilterValue($request, 'created_to'),
+            'only_active' => $this->requestFilterValue($request, 'only_active'),
+            'only_archived' => $this->requestFilterValue($request, 'only_archived'),
+            'only_blocked' => $this->requestFilterValue($request, 'only_blocked'),
+            'only_with_active_enrollment' => $this->requestFilterValue($request, 'only_with_active_enrollment'),
+            'only_without_active_enrollment' => $this->requestFilterValue($request, 'only_without_active_enrollment'),
+            'only_without_group' => $this->requestFilterValue($request, 'only_without_group'),
+            'only_waiting_documents' => $this->requestFilterValue($request, 'only_waiting_documents'),
+            'only_waiting_payment' => $this->requestFilterValue($request, 'only_waiting_payment'),
+            'only_waiting_start' => $this->requestFilterValue($request, 'only_waiting_start'),
+            'segment' => $this->requestFilterValue($request, 'segment'),
+        ];
+    }
+
+    private function requestFilterValue(Request $request, string ...$keys): string
+    {
+        foreach ($keys as $key) {
+            $value = $request->query($key, $request->input($key));
+
+            if (filled($value)) {
+                return trim((string) $value);
+            }
+        }
+
+        return '';
     }
 
     private function studentNameLabel(Student $student): string
