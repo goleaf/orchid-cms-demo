@@ -12,6 +12,22 @@ This project is a Laravel Orchid operating system for one local driving school c
 - Training groups, schedules, instructors, vehicles, documents, payments, and analytics as local back-office modules.
 - Multilingual UI and editable business content as a foundation.
 
+## Module Documentation
+
+- Public website: [`public-website.md`](public-website.md) and [`public-website-foundation.md`](public-website-foundation.md)
+- CRM leads: [`crm-leads.md`](crm-leads.md) and [`crm-block-2.md`](crm-block-2.md)
+- Students and enrollments: [`students.md`](students.md)
+- Lead conversion: [`lead-to-student-conversion.md`](lead-to-student-conversion.md)
+- Training groups and education structure: [`training-groups.md`](training-groups.md)
+- Operations, schedule, instructors, and fleet: [`operations.md`](operations.md)
+- Exams: [`exams.md`](exams.md)
+- Documents: [`documents.md`](documents.md)
+- Payments: [`payments.md`](payments.md)
+- Communications and reminders: [`communications.md`](communications.md)
+- Dashboard and analytics foundation: [`analytics.md`](analytics.md)
+- Local Orchid workflow: [`orchid-local-documentation.md`](orchid-local-documentation.md)
+- Codex automation: [`codex-automation.md`](codex-automation.md)
+
 ## Stack
 
 - Laravel 12.x

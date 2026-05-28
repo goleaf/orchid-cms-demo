@@ -5,6 +5,7 @@ namespace App\Models;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Types\Where;
 use Orchid\Filters\Types\WhereDateStartEnd;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Orchid\Platform\Models\User as Authenticatable;
 
 class User extends Authenticatable
@@ -67,4 +68,19 @@ class User extends Authenticatable
         'updated_at',
         'created_at',
     ];
+
+    public function notificationPreferences(): HasMany
+    {
+        return $this->hasMany(UserNotificationPreference::class);
+    }
+
+    public function communicationReminders(): HasMany
+    {
+        return $this->hasMany(CommunicationReminder::class, 'assigned_to_user_id');
+    }
+
+    public function notificationDeliveryLogs(): HasMany
+    {
+        return $this->hasMany(NotificationDeliveryLog::class);
+    }
 }

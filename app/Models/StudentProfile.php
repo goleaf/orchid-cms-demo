@@ -182,6 +182,21 @@ class StudentProfile extends Model
         return $this->hasMany(StudentTask::class, 'student_id');
     }
 
+    public function communications(): HasMany
+    {
+        return $this->hasMany(StudentCommunication::class, 'student_profile_id');
+    }
+
+    public function communicationReminders(): HasMany
+    {
+        return $this->hasMany(CommunicationReminder::class, 'student_profile_id');
+    }
+
+    public function notificationDeliveryLogs(): HasMany
+    {
+        return $this->hasMany(NotificationDeliveryLog::class, 'student_profile_id');
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_id');
@@ -204,12 +219,12 @@ class StudentProfile extends Model
 
     public function examAdmissions(): HasMany
     {
-        return $this->hasMany(ExamAdmission::class);
+        return $this->hasMany(ExamAdmission::class, 'student_profile_id');
     }
 
     public function examAttempts(): HasMany
     {
-        return $this->hasMany(ExamAttempt::class);
+        return $this->hasMany(ExamAttempt::class, 'student_profile_id');
     }
 
     public function fullName(): string

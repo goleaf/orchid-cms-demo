@@ -12,16 +12,16 @@ use Illuminate\Validation\ValidationException;
 
 class AddStudentToTrainingGroupAction
 {
-    public function handle(StudentEnrollment $enrollment, TrainingGroup|int $group, ?User $user = null, bool $allowOverbooking = false): StudentEnrollment
+    public function handle(StudentEnrollment $enrollment, TrainingGroup|int $group, ?User $user = null, bool $allowOverbooking = false): TrainingGroupMembership
     {
-        return DB::transaction(function () use ($enrollment, $group, $user, $allowOverbooking): StudentEnrollment {
+        return DB::transaction(function () use ($enrollment, $group, $user, $allowOverbooking): TrainingGroupMembership {
             $group = $group instanceof TrainingGroup
                 ? $group
                 : TrainingGroup::query()->findOrFail($group);
 
             if (! $allowOverbooking && (! $this->groupAcceptsEnrollment($group) || $group->is_full)) {
                 throw ValidationException::withMessages([
-                    'training_group_id' => tkey('students.validation.enrollment_cannot_join_group'),
+                    'training_group_id' => tkey('education.groups.validation.enrollment_cannot_join_group'),
                 ]);
             }
 
@@ -31,7 +31,7 @@ class AddStudentToTrainingGroupAction
                 && (int) $enrollment->training_program_id !== (int) $group->training_program_id
             ) {
                 throw ValidationException::withMessages([
-                    'training_group_id' => tkey('students.validation.enrollment_cannot_join_group'),
+                    'training_group_id' => tkey('education.groups.validation.enrollment_cannot_join_group'),
                 ]);
             }
 
@@ -40,14 +40,16 @@ class AddStudentToTrainingGroupAction
                 : null;
 
             if ($oldGroupId === (int) $group->id) {
-                $this->syncMembership($enrollment, $group, $user);
+                $membership = $this->syncMembership($enrollment, $group, $user);
 
-                return $this->syncEnrollmentGroupFields($enrollment, $group, $user)->refresh();
+                $this->syncEnrollmentGroupFields($enrollment, $group, $user);
+
+                return $membership->refresh();
             }
 
             if ($oldGroupId !== null) {
                 $oldGroup = TrainingGroup::query()
-                    ->select(['id', 'places_taken'])
+                    ->select(['id', 'places_taken', 'capacity_taken', 'capacity_waitlist', 'capacity_total', 'capacity'])
                     ->whereKey($oldGroupId)
                     ->first();
 
@@ -69,14 +71,12 @@ class AddStudentToTrainingGroupAction
                 }
 
                 if ($oldGroup !== null) {
-                    $this->decrementCapacity($oldGroup);
+                    app(RecalculateTrainingGroupCapacityAction::class)->handle($oldGroup, $user);
                 }
             }
 
             $membership = $this->syncMembership($enrollment, $group, $user);
-            if ($membership->wasRecentlyCreated || $membership->wasChanged('left_at') || $membership->wasChanged('status')) {
-                $this->incrementCapacity($group);
-            }
+            app(RecalculateTrainingGroupCapacityAction::class)->handle($group, $user);
 
             $type = $oldGroupId === null ? 'group_assigned' : 'group_changed';
             $enrollment = $this->syncEnrollmentGroupFields($enrollment, $group, $user)->refresh();
@@ -106,7 +106,7 @@ class AddStudentToTrainingGroupAction
                 $membership,
             );
 
-            return $enrollment->refresh();
+            return $membership->refresh();
         });
     }
 
@@ -145,26 +145,10 @@ class AddStudentToTrainingGroupAction
         );
     }
 
-    private function incrementCapacity(TrainingGroup $group): void
-    {
-        $group->forceFill([
-            'places_taken' => ((int) $group->places_taken) + 1,
-            'capacity_taken' => ((int) ($group->capacity_taken ?? $group->places_taken)) + 1,
-        ])->save();
-    }
-
-    private function decrementCapacity(TrainingGroup $group): void
-    {
-        $group->forceFill([
-            'places_taken' => max(0, ((int) $group->places_taken) - 1),
-            'capacity_taken' => max(0, ((int) ($group->capacity_taken ?? $group->places_taken)) - 1),
-        ])->save();
-    }
-
     private function groupAcceptsEnrollment(TrainingGroup $group): bool
     {
         return $group->acceptsEnrollment()
-            && in_array($group->status, [
+            || in_array($group->status, [
                 GroupStatus::Planned,
                 GroupStatus::Recruiting,
                 GroupStatus::Open,

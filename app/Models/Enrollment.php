@@ -182,12 +182,12 @@ class Enrollment extends Model
 
     public function examAdmissions(): HasMany
     {
-        return $this->hasMany(ExamAdmission::class);
+        return $this->hasMany(ExamAdmission::class, 'enrollment_id');
     }
 
     public function examAttempts(): HasMany
     {
-        return $this->hasMany(ExamAttempt::class);
+        return $this->hasMany(ExamAttempt::class, 'enrollment_id');
     }
 
     public function payments(): HasMany

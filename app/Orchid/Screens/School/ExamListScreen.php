@@ -71,7 +71,8 @@ class ExamListScreen extends Screen
                     ->alignCenter()
                     ->render(fn (ExamSession $session): string => $session->seats_taken.'/'.$session->capacity),
                 TD::make('attempts_count', tkey('exams.columns.attempts'))
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->render(fn (ExamSession $session): string => (string) $session->attempts_count),
                 TD::make('status', tkey('operations.columns.status'))
                     ->render(fn (ExamSession $session): string => LocalizedLabel::for('exams.session_statuses', $session->status)),
                 TD::make('location', tkey('exams.columns.location'))

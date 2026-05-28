@@ -2,6 +2,32 @@
 
 ## 2026-05-28
 
+- Backfilled the changelog from the project history so earlier website, CRM, student, education, operations, and automation foundations are represented
+- Added missing module guides for operations, communications, documents, payments, and dashboard reporting
+- Updated the documentation index and website notes so current guides match the committed project surface
+
+- Added the student and enrollment management foundation using the existing student profile and enrollment records
+- Added student and enrollment statuses, onboarding tasks, student activity history, manager assignment, filtering, and export support
+- Added a lead-to-student conversion flow that can create or link students, create enrollments, assign groups, and preserve CRM history
+- Added student administration pages for student lists, student cards, enrollments, tasks, and status dictionaries
+- Added stronger student validation, dictionary protection, translated labels, sample records, and focused verification coverage
+
+- Expanded CRM management with a clearer pipeline, lead filters, task handling, call logging, CSV exports, and translated admin labels
+- Added CRM dictionary management for statuses, sources, lost reasons, and tags with safer deletion rules
+- Added message template management and stronger lead validation for contact details, duplicate handling, status changes, and marketing data access
+- Added CRM documentation and verification coverage for factories, seeders, translations, admin pages, pipeline behavior, and exports
+
+- Added public website management for pages, course offers, pricing, branches, public groups, FAQ, testimonials, SEO settings, and lead intake
+- Added public pages for instructors, vehicles, reviews, and knowledge articles using prepared page data
+- Connected public website forms to the CRM intake flow with tracking, follow-up records, and translated validation
+- Added multilingual public content foundations for courses, branches, reviews, FAQ, pricing packages, and site settings
+
+- Added the first local driving-school operating system foundation with branches, instructors, vehicles, lessons, enrollments, payments, documents, exams, campaigns, reviews, and knowledge articles
+- Added the first admin pages for operations, CRM, students, schedule, fleet, documents, payments, exams, and the dashboard
+- Added the multilingual foundation for languages, translations, locale switching, user locale preference, and translation management
+- Added the local superadmin permission foundation for the driving-school admin role
+- Added local project automation for changelog updates, learning notes, commit preparation, and repository skill discovery
+
 - Added a clear exam planning guide covering admissions, sessions, results, retakes, and activity history
 - Clarified that exam tracking is for one local driving school and does not include external registry integration or online testing
 - Updated the project notes used for future learning review
@@ -48,3 +74,13 @@
 - Expanded multilingual labels for student, education, CRM, and public website workflows
 - Added project documentation for the driving school operating system, training groups, local Orchid guidance, and automation workflow
 - Improved automated changelog and commit preparation for internal project workflow
+
+## 2026-05-27
+
+- Created the initial application and admin-panel foundation for a local driving-school operating system
+- Added early public website pages for home, contacts, course selection, instructors, vehicles, reviews, knowledge articles, and lead forms
+- Added the first CRM lead intake flow for public enrollment requests, contact requests, lead comments, communications, tasks, and status history
+- Added the first sales pipeline workflow with safer status handling and clearer lead titles
+- Added early lead administration improvements for extra lead fields, task creation, filters, and display columns
+- Added the first project self-learning and local automation setup for repeatable repository work
+- Added the first public website, CRM, and project notes that later module guides build on

@@ -80,12 +80,13 @@ class CreateStudentEnrollmentAction
             );
 
             if ($group !== null) {
-                $enrollment = app(AddStudentToTrainingGroupAction::class)->handle(
+                app(AddStudentToTrainingGroupAction::class)->handle(
                     $enrollment->refresh(),
                     $group,
                     $user,
                     (bool) ($data['allow_overbooking'] ?? false),
                 );
+                $enrollment = $enrollment->refresh();
             }
 
             if ($createOnboardingTasks || (bool) ($data['create_onboarding_tasks'] ?? false)) {

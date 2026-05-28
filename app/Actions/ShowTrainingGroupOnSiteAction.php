@@ -8,8 +8,6 @@ class ShowTrainingGroupOnSiteAction
 {
     public function handle(TrainingGroup $group): TrainingGroup
     {
-        $group->forceFill(['is_visible_on_site' => true])->save();
-
-        return $group->refresh();
+        return app(PublishTrainingGroupOnSiteAction::class)->handle($group);
     }
 }

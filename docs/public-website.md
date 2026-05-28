@@ -6,7 +6,7 @@ Block 1 provides the public website foundation for one local driving school. It 
 
 ## Purpose
 
-The public website lets administrators manage public pages, course offers, prices, branches, public group visibility, FAQ, testimonials, SEO metadata, and site settings from Orchid. Public forms create structured CRM lead records instead of only sending email.
+The public website lets administrators manage public pages, course offers, prices, branches, public group visibility, FAQ, testimonials, SEO metadata, and site settings from Orchid. It also exposes public instructor, vehicle, review, and knowledge article directories from existing school records. Public forms create structured CRM lead records instead of only sending email.
 
 FAQ management keeps manual numeric ordering out of the edit form. New FAQ records receive the next available position automatically, and the FAQ list provides translated move-up and move-down controls that reorder records from the table.
 
@@ -20,6 +20,9 @@ FAQ management keeps manual numeric ordering out of the edit form. New FAQ recor
 - `TrainingGroup`: existing group model with public visibility, capacity, schedule summary, course, branch, and lead relations.
 - `Faq`: global or polymorphic FAQ content for pages, courses, and branches.
 - `Testimonial`: public testimonial facade over `student_reviews`.
+- `Instructor`: public instructor directory records.
+- `Vehicle`: public fleet directory records.
+- `KnowledgeArticle`: public knowledge base and blog article records.
 - `SiteSetting`: key/value public website settings.
 - `Lead`: CRM-compatible lead facade over `marketing_leads`.
 
@@ -48,6 +51,11 @@ Public page data:
 - `GetBranchPageAction`
 - `GetContactPageAction`
 - `GetSitePageAction`
+- `GetInstructorDirectoryAction`
+- `GetFleetDirectoryAction`
+- `GetPublicReviewsAction`
+- `GetKnowledgeBaseAction`
+- `GetKnowledgeArticleAction`
 
 Orchid/content management:
 

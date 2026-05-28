@@ -251,6 +251,16 @@ class MarketingLead extends Model
         return $this->hasMany(MarketingLeadCommunication::class, 'marketing_lead_id');
     }
 
+    public function communicationReminders(): HasMany
+    {
+        return $this->hasMany(CommunicationReminder::class, 'marketing_lead_id');
+    }
+
+    public function notificationDeliveryLogs(): HasMany
+    {
+        return $this->hasMany(NotificationDeliveryLog::class, 'marketing_lead_id');
+    }
+
     public function callLogs(): HasMany
     {
         return $this->communications()->where('channel', 'phone');

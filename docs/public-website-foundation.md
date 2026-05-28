@@ -21,6 +21,10 @@ This block adds the public website layer for one local driving school. It is not
 - `site.prices`: public pricing table for active courses.
 - `site.branches.show`: public branch detail pages by branch slug.
 - `site.contacts`: branch contact cards and callback form.
+- `site.instructors`: public instructor directory.
+- `site.fleet`: public vehicle directory.
+- `site.reviews`: public student review list.
+- `site.blog.index` / `site.blog.show`: public knowledge article index and detail pages.
 - `site.apply` / `site.apply.store`: website lead form connected to CRM lead intake.
 - `site.callback.store`: callback form connected to CRM lead intake.
 - `site.thanks`: shared thank-you page after public lead submission.
@@ -56,6 +60,11 @@ Public lead intake actions:
 - `ResolveWebsiteCourseContextAction`
 - `GetCourseIndexPageAction`
 - `GetBranchIndexPageAction`
+- `GetInstructorDirectoryAction`
+- `GetFleetDirectoryAction`
+- `GetPublicReviewsAction`
+- `GetKnowledgeBaseAction`
+- `GetKnowledgeArticleAction`
 
 Public content management actions:
 

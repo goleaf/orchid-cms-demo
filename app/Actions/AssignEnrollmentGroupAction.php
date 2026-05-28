@@ -10,6 +10,8 @@ class AssignEnrollmentGroupAction
 {
     public function handle(StudentEnrollment $enrollment, TrainingGroup|int $group, ?User $user = null, bool $allowOverbooking = false): StudentEnrollment
     {
-        return app(AddStudentToTrainingGroupAction::class)->handle($enrollment, $group, $user, $allowOverbooking);
+        app(AddStudentToTrainingGroupAction::class)->handle($enrollment, $group, $user, $allowOverbooking);
+
+        return $enrollment->refresh();
     }
 }

@@ -277,6 +277,7 @@ class SystemTranslationSeeder extends Seeder
             ...$this->crmActivityEntries(),
             ...$this->crmValidationEntries(),
             ...$this->crmNotificationEntries(),
+            ...$this->communicationEntries(),
             ...$this->statusEntries(),
             ...$this->sourceEntries(),
             ...$this->operationEntries(),

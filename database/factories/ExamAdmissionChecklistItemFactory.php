@@ -67,6 +67,13 @@ class ExamAdmissionChecklistItemFactory extends Factory
         ]);
     }
 
+    public function forAdmission(ExamAdmission $admission): static
+    {
+        return $this->state(fn (): array => [
+            'exam_admission_id' => $admission->id,
+        ]);
+    }
+
     public function forDocument(StudentDocument $document, string $code = 'identity_document'): static
     {
         return $this->state(fn (): array => [

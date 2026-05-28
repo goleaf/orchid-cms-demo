@@ -21,7 +21,7 @@ class RemoveStudentFromTrainingGroupAction
         $group = $model->group()->firstOrFail();
 
         $model->forceFill([
-            'status' => 'left',
+            'status' => 'removed',
             'left_at' => now(),
             'transfer_reason' => $reason,
             'left_reason' => $reason,
@@ -35,7 +35,7 @@ class RemoveStudentFromTrainingGroupAction
             ])->save();
         }
 
-        $this->decrementCapacity($group);
+        app(RecalculateTrainingGroupCapacityAction::class)->handle($group, $user);
 
         app(RecordTrainingGroupActivityAction::class)->handle(
             $group->refresh(),
@@ -53,11 +53,4 @@ class RemoveStudentFromTrainingGroupAction
         return $model->refresh();
     }
 
-    private function decrementCapacity(TrainingGroup $group): void
-    {
-        $group->forceFill([
-            'places_taken' => max(0, ((int) $group->places_taken) - 1),
-            'capacity_taken' => max(0, ((int) ($group->capacity_taken ?? $group->places_taken)) - 1),
-        ])->save();
-    }
 }

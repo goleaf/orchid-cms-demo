@@ -123,7 +123,9 @@ class UpdateStudentEnrollmentAction
     private function syncGroup(StudentEnrollment $enrollment, mixed $targetGroupId, ?User $user, bool $allowOverbooking): StudentEnrollment
     {
         if (filled($targetGroupId)) {
-            return app(AddStudentToTrainingGroupAction::class)->handle($enrollment, (int) $targetGroupId, $user, $allowOverbooking);
+            app(AddStudentToTrainingGroupAction::class)->handle($enrollment, (int) $targetGroupId, $user, $allowOverbooking);
+
+            return $enrollment->refresh();
         }
 
         if ($enrollment->training_group_id === null) {

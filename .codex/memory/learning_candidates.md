@@ -2674,3 +2674,111 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T09:18:32+00:00
+
+```json
+{
+  "ts": "2026-05-28T09:18:32+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6dda-4ccd-7cc3-9715-1dea7b121114",
+  "branch": "main",
+  "changed_file_count": 112,
+  "changed_file_groups": {
+    "code": 89,
+    "models": 19,
+    "orchid": 1,
+    "services": 1,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/decisions.md",
+    "README.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddTrainingGroupNoteAction.php",
+    "app/Actions/ArchiveTrainingGroupAction.php",
+    "app/Actions/AssignEnrollmentGroupAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateLearningProgramAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateLearningTopicAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateTrainingGroupAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T09:18:32+00:00
+
+```json
+{
+  "ts": "2026-05-28T09:18:32+00:00",
+  "event": "Stop",
+  "session_id": "019e6dd9-5261-7331-8e14-d72324d4a5d8",
+  "turn_id": "019e6dda-4ccd-7cc3-9715-1dea7b121114",
+  "branch": "main",
+  "changed_file_count": 112,
+  "changed_file_groups": {
+    "code": 89,
+    "models": 19,
+    "orchid": 1,
+    "services": 1,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/decisions.md",
+    "README.md",
+    "[REDACTED_SECRET].php",
+    "app/Actions/AddTrainingGroupNoteAction.php",
+    "app/Actions/ArchiveTrainingGroupAction.php",
+    "app/Actions/AssignEnrollmentGroupAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateLearningProgramAction.php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateLearningTopicAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/CreateTrainingGroupAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
