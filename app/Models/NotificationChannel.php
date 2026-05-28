@@ -18,10 +18,15 @@ class NotificationChannel extends Model
     use HasTranslations;
 
     public const CODE_INTERNAL = 'internal';
+
     public const CODE_EMAIL = 'email';
+
     public const CODE_PHONE = 'phone';
+
     public const CODE_SMS = 'sms';
+
     public const CODE_WHATSAPP = 'whatsapp';
+
     public const CODE_TELEGRAM = 'telegram';
 
     private const CODES = [
@@ -41,6 +46,12 @@ class NotificationChannel extends Model
         'provider',
         'is_system',
         'is_active',
+        'is_internal',
+        'is_email',
+        'is_sms_placeholder',
+        'is_whatsapp_placeholder',
+        'is_telegram_placeholder',
+        'is_push_placeholder',
         'supports_internal',
         'supports_external',
         'supports_templates',
@@ -58,6 +69,12 @@ class NotificationChannel extends Model
         'settings' => 'array',
         'is_system' => 'boolean',
         'is_active' => 'boolean',
+        'is_internal' => 'boolean',
+        'is_email' => 'boolean',
+        'is_sms_placeholder' => 'boolean',
+        'is_whatsapp_placeholder' => 'boolean',
+        'is_telegram_placeholder' => 'boolean',
+        'is_push_placeholder' => 'boolean',
         'supports_internal' => 'boolean',
         'supports_external' => 'boolean',
         'supports_templates' => 'boolean',
@@ -81,6 +98,31 @@ class NotificationChannel extends Model
         return $this->hasMany(CommunicationTemplate::class);
     }
 
+    public function notificationTemplates(): HasMany
+    {
+        return $this->hasMany(NotificationTemplate::class, 'channel_id');
+    }
+
+    public function notificationMessages(): HasMany
+    {
+        return $this->hasMany(NotificationMessage::class, 'channel_id');
+    }
+
+    public function notificationDeliveries(): HasMany
+    {
+        return $this->hasMany(NotificationDelivery::class, 'channel_id');
+    }
+
+    public function notificationPreferences(): HasMany
+    {
+        return $this->hasMany(NotificationPreference::class, 'channel_id');
+    }
+
+    public function communicationMessages(): HasMany
+    {
+        return $this->hasMany(CommunicationMessage::class, 'channel_id');
+    }
+
     public function reminders(): HasMany
     {
         return $this->hasMany(CommunicationReminder::class);
@@ -101,6 +143,27 @@ class NotificationChannel extends Model
         return $query->where('is_active', true);
     }
 
+    public function scopeInternal(Builder $query): Builder
+    {
+        return $query->where('is_internal', true);
+    }
+
+    public function scopeEmail(Builder $query): Builder
+    {
+        return $query->where('is_email', true);
+    }
+
+    public function scopeExternalPlaceholders(Builder $query): Builder
+    {
+        return $query->where(function (Builder $inner): void {
+            $inner
+                ->where('is_sms_placeholder', true)
+                ->orWhere('is_whatsapp_placeholder', true)
+                ->orWhere('is_telegram_placeholder', true)
+                ->orWhere('is_push_placeholder', true);
+        });
+    }
+
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('sort_order')->orderBy('code');
@@ -117,6 +180,12 @@ class NotificationChannel extends Model
             'provider',
             'is_system',
             'is_active',
+            'is_internal',
+            'is_email',
+            'is_sms_placeholder',
+            'is_whatsapp_placeholder',
+            'is_telegram_placeholder',
+            'is_push_placeholder',
             'supports_internal',
             'supports_external',
             'supports_templates',

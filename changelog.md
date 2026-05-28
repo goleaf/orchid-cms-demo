@@ -2,13 +2,19 @@
 
 ## 2026-05-28
 
+- Analytics now has core local calculation actions for owner dashboard summaries, widget data, report runs, exports, KPI snapshots, cache refreshes, date ranges, and filters
+
 - Analytics now has local snapshot storage and action-based cache entries for owner dashboards, summaries, expiration handling, and tag-based clearing
 
 - Added multilingual exam labels and more precise local exam access controls for sessions, admissions, attempts, results, retakes, dictionaries, and exports
 
+- Added the notification workflow foundation for message creation, template rendering, scheduled reminders, internal and email delivery, external placeholder queues, failed delivery retries, and recipient preferences
+
 - KPI setup now has a clearer local data model for metric definitions, targets, snapshots, translated labels, period ranges, thresholds, and branch or staff ownership
 
 - Added reusable exam sample builders and repeatable exam setup data for default types, statuses, admission rules, translations, and local demo records
+
+- Added the notification data foundation for channel capabilities, reusable template versions, recipient tracking, delivery attempts, preferences, reminders, conversation history, attachments, and activity records
 
 - Added a dashboard and widget data model for local analytics, including translated labels, default owner dashboard setup, user layout preferences, and automated checks
 - Added a stronger exam management foundation with exam types, statuses, admission rules, participants, results, retakes, and checklist tracking

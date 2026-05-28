@@ -198,6 +198,31 @@ class StudentProfile extends Model
         return $this->hasMany(NotificationDeliveryLog::class, 'student_profile_id');
     }
 
+    public function notificationRecipients(): HasMany
+    {
+        return $this->hasMany(NotificationRecipient::class, 'student_id');
+    }
+
+    public function notificationPreferences(): HasMany
+    {
+        return $this->hasMany(NotificationPreference::class, 'student_id');
+    }
+
+    public function communicationThreads(): HasMany
+    {
+        return $this->hasMany(CommunicationThread::class, 'student_id');
+    }
+
+    public function communicationMessages(): HasMany
+    {
+        return $this->hasMany(CommunicationMessage::class, 'student_id');
+    }
+
+    public function notificationActivities(): HasMany
+    {
+        return $this->hasMany(NotificationActivity::class, 'student_id');
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_id');

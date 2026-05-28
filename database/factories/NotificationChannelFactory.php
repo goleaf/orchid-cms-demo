@@ -29,6 +29,12 @@ class NotificationChannelFactory extends Factory
             'provider' => null,
             'is_system' => false,
             'is_active' => true,
+            'is_internal' => $code === NotificationChannel::CODE_INTERNAL,
+            'is_email' => $code === NotificationChannel::CODE_EMAIL,
+            'is_sms_placeholder' => $code === NotificationChannel::CODE_SMS,
+            'is_whatsapp_placeholder' => $code === NotificationChannel::CODE_WHATSAPP,
+            'is_telegram_placeholder' => $code === NotificationChannel::CODE_TELEGRAM,
+            'is_push_placeholder' => false,
             'supports_internal' => $code === NotificationChannel::CODE_INTERNAL,
             'supports_external' => $code !== NotificationChannel::CODE_INTERNAL,
             'supports_templates' => true,
@@ -46,6 +52,8 @@ class NotificationChannelFactory extends Factory
         return $this->state(fn (): array => [
             'code' => NotificationChannel::CODE_INTERNAL,
             'driver' => 'database',
+            'is_internal' => true,
+            'is_email' => false,
             'supports_internal' => true,
             'supports_external' => false,
         ]);
@@ -57,6 +65,9 @@ class NotificationChannelFactory extends Factory
             'code' => $code,
             'driver' => 'placeholder',
             'provider' => null,
+            'is_sms_placeholder' => $code === NotificationChannel::CODE_SMS,
+            'is_whatsapp_placeholder' => $code === NotificationChannel::CODE_WHATSAPP,
+            'is_telegram_placeholder' => $code === NotificationChannel::CODE_TELEGRAM,
         ]);
     }
 }

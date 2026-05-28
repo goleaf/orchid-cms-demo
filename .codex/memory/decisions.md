@@ -31,6 +31,14 @@
   Evidence: Implemented foundation schema, Actions, Form Requests, validation Rules, factories, seeders, Orchid communication pages, notification placeholders, documentation, and CommunicationModuleFoundationTest.
   Added: 2026-05-28T12:31:35+03:00
 
+- Block 11 normalized notification database models add notification templates, template versions, variables, messages, recipients, deliveries, preferences, reminder rules, reminder schedules, communication threads, communication messages, attachments, and activity records while reusing users, student_profiles, marketing_leads, and notification_channels.
+  Evidence: Added additive notification database schema, model relationships, factories, docs, and NotificationDatabaseModelsTest.
+  Added: 2026-05-28T14:20:00+03:00
+
+- Block 11 notification workflows use dedicated Actions, notification FormRequests, and translated custom Rules for template rendering, message scheduling, internal/email sending, placeholder external queues, retries, reminders, communication history, and preferences; SMS, WhatsApp, and Telegram remain placeholders until a provider is selected.
+  Evidence: Added notification Actions, request validation, rules, translations, docs, and NotificationActionsRulesTest.
+  Added: 2026-05-28T18:30:00+03:00
+
 - Block 12 analytics foundation is local-driving-school reporting only: dashboard widgets, report definitions, report runs, report exports, KPI metrics, targets, snapshots, analytics cache, and user dashboard preferences are kept without tenant, subscription, reseller, platform-owner, or multi-company dimensions.
   Evidence: Implemented analytics foundation schema, models, Actions, Form Requests, validation Rules, factories, seeders, Orchid owner dashboard, documentation, and AnalyticsBlockFoundationTest.
   Added: 2026-05-28T13:00:00+03:00

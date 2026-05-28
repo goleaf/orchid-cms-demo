@@ -8,6 +8,8 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class TranslatedCommunicationFieldRequiredRule implements ValidationRule
 {
+    public function __construct(private readonly ?string $messageKey = null) {}
+
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $translations = is_array($value) ? $value : [];
@@ -16,6 +18,6 @@ class TranslatedCommunicationFieldRequiredRule implements ValidationRule
             return;
         }
 
-        $fail(tkey('communication.validation.default_translation_required'));
+        $fail(tkey($this->messageKey ?? 'communication.validation.default_translation_required'));
     }
 }

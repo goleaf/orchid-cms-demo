@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Types\Where;
 use Orchid\Filters\Types\WhereDateStartEnd;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Orchid\Platform\Models\User as Authenticatable;
 
 class User extends Authenticatable
@@ -72,6 +72,31 @@ class User extends Authenticatable
     public function notificationPreferences(): HasMany
     {
         return $this->hasMany(UserNotificationPreference::class);
+    }
+
+    public function notificationPreferenceRecords(): HasMany
+    {
+        return $this->hasMany(NotificationPreference::class);
+    }
+
+    public function createdNotificationMessages(): HasMany
+    {
+        return $this->hasMany(NotificationMessage::class, 'created_by_id');
+    }
+
+    public function notificationRecipients(): HasMany
+    {
+        return $this->hasMany(NotificationRecipient::class);
+    }
+
+    public function communicationMessages(): HasMany
+    {
+        return $this->hasMany(CommunicationMessage::class);
+    }
+
+    public function notificationActivities(): HasMany
+    {
+        return $this->hasMany(NotificationActivity::class);
     }
 
     public function dashboardPreferences(): HasMany

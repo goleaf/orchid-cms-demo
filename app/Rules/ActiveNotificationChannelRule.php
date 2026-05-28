@@ -11,6 +11,7 @@ class ActiveNotificationChannelRule implements ValidationRule
     public function __construct(
         private readonly bool $mustSupportTemplates = false,
         private readonly bool $mustSupportScheduling = false,
+        private readonly ?string $messageKey = null,
     ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
@@ -35,6 +36,6 @@ class ActiveNotificationChannelRule implements ValidationRule
             return;
         }
 
-        $fail(tkey('communication.validation.channel_unavailable'));
+        $fail(tkey($this->messageKey ?? 'communication.validation.channel_unavailable'));
     }
 }
