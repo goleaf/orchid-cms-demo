@@ -1700,3 +1700,23 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T01:46:41+00:00
+
+```json
+{
+  "ts": "2026-05-28T01:46:41+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6c3c-6821-78f3-8dd1-1f9f2d09faa4",
+  "branch": "main",
+  "changed_file_count": 1,
+  "changed_file_groups": {
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "ests/Feature/PublicWebsiteFrontendTest.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

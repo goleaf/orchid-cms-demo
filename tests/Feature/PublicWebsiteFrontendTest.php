@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Enums\GroupStatus;
+use App\Enums\LeadTaskPriority;
+use App\Enums\LeadTaskStatus;
 use App\Models\Branch;
 use App\Models\Course;
 use App\Models\MarketingLead;
@@ -85,12 +87,22 @@ class PublicWebsiteFrontendTest extends TestCase
         $this->assertSame('website', $lead->source);
         $this->assertSame('new', $lead->status->value);
         $this->assertSame('frontend_test_application', $lead->form_name);
+        $this->assertTrue($lead->consent_accepted);
+        $this->assertNotNull($lead->consent_accepted_at);
+        $this->assertSame('google', $lead->utm_source);
         $this->assertSame('frontend', $lead->utm_campaign);
         $this->assertSame($program->id, $lead->training_program_id);
         $this->assertSame($branch->id, $lead->branch_id);
         $this->assertSame($group->id, $lead->training_group_id);
         $this->assertSame('Interested in this group.', $lead->message);
         $this->assertStringContainsString('utm_source=google', (string) $lead->landing_page);
+        $this->assertTrue($lead->activities()->where('type', 'created_from_website')->exists());
+
+        $task = $lead->tasks()->firstOrFail();
+        $this->assertSame(tkey('crm.tasks.defaults.contact_new_website_lead'), $task->title);
+        $this->assertSame(LeadTaskPriority::High, $task->priority);
+        $this->assertSame(LeadTaskStatus::Open, $task->status);
+        $this->assertNotNull($task->due_at);
     }
 
     public function test_application_form_marks_possible_duplicate_without_blocking_creation(): void
@@ -129,6 +141,8 @@ class PublicWebsiteFrontendTest extends TestCase
             ->firstOrFail();
 
         $this->assertSame($original->id, $duplicate->duplicate_of_id);
+        $this->assertSame('new', $duplicate->status->value);
+        $this->assertTrue($duplicate->activities()->where('type', 'created_from_website')->exists());
         $this->assertDatabaseHas('marketing_lead_activities', [
             'marketing_lead_id' => $duplicate->id,
             'type' => 'marked_duplicate',
@@ -174,6 +188,24 @@ class PublicWebsiteFrontendTest extends TestCase
             'form_name' => 'contact',
             'message' => 'I have a question.',
         ]);
+
+        $callbackLead = MarketingLead::query()
+            ->where('full_name', 'Callback Lead')
+            ->firstOrFail();
+        $contactLead = MarketingLead::query()
+            ->where('full_name', 'Contact Lead')
+            ->firstOrFail();
+
+        foreach ([$callbackLead, $contactLead] as $lead) {
+            $this->assertSame('new', $lead->status->value);
+            $this->assertTrue($lead->consent_accepted);
+            $this->assertTrue($lead->activities()->where('type', 'created_from_website')->exists());
+
+            $task = $lead->tasks()->firstOrFail();
+            $this->assertSame(tkey('crm.tasks.defaults.contact_new_website_lead'), $task->title);
+            $this->assertSame(LeadTaskPriority::High, $task->priority);
+            $this->assertSame(LeadTaskStatus::Open, $task->status);
+        }
     }
 
     public function test_public_frontend_hides_hidden_catalog_and_full_groups(): void
