@@ -2068,3 +2068,43 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T07:01:28+00:00
+
+```json
+{
+  "ts": "2026-05-28T07:01:28+00:00",
+  "event": "Stop",
+  "session_id": "019e6ad0-f101-7e20-bc3e-e6165c5f7444",
+  "turn_id": "019e6d53-7891-7442-be27-8124acf011dc",
+  "branch": "main",
+  "changed_file_count": 19,
+  "changed_file_groups": {
+    "code": 16,
+    "orchid": 2,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/DeleteStudentStatusAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Rules/EnrollmentStatusCodeRule.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Rules/StudentStatusCodeRule.php",
+    "[REDACTED_SECRET].php",
+    "app/Support/Students/",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

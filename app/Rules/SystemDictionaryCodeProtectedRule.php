@@ -3,6 +3,7 @@
 namespace App\Rules;
 
 use App\Support\Crm\LeadDictionaryRegistry;
+use App\Support\Students\StudentDictionaryRegistry;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +21,7 @@ class SystemDictionaryCodeProtectedRule implements ValidationRule
             return;
         }
 
-        $definition = LeadDictionaryRegistry::definition($this->dictionary);
+        $definition = $this->definition();
         $keyColumn = (string) $definition['key_column'];
 
         /** @var class-string<Model> $modelClass */
@@ -32,7 +33,22 @@ class SystemDictionaryCodeProtectedRule implements ValidationRule
         }
 
         if ((string) $value !== (string) $item->getAttribute($keyColumn)) {
-            $fail(tkey('crm.validation.dictionary_system_code_locked'));
+            $fail(tkey((string) $definition['system_code_key']));
         }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function definition(): array
+    {
+        if (array_key_exists($this->dictionary, LeadDictionaryRegistry::definitions())) {
+            return [
+                ...LeadDictionaryRegistry::definition($this->dictionary),
+                'system_code_key' => 'crm.validation.dictionary_system_code_locked',
+            ];
+        }
+
+        return StudentDictionaryRegistry::definition($this->dictionary);
     }
 }

@@ -46,5 +46,39 @@ class CreateOrUpdateStudentStatusAction
                 'status.is_default' => tkey('students.validation.default_status_inactive'),
             ]);
         }
+
+        if ($status->exists && (bool) $status->is_default && ! (bool) ($data['is_default'] ?? false) && ! $this->anotherDefaultStatusExists($status)) {
+            throw ValidationException::withMessages([
+                'status.is_default' => tkey('students.validation.default_status_required'),
+            ]);
+        }
+
+        if ($status->exists && (bool) $status->is_system && ((bool) $status->is_final || (bool) $status->is_archived)) {
+            if (array_key_exists('is_final', $data) && ! (bool) $data['is_final']) {
+                throw ValidationException::withMessages([
+                    'status.is_final' => tkey('students.validation.final_status_locked'),
+                ]);
+            }
+
+            if (array_key_exists('is_archived', $data) && ! (bool) $data['is_archived'] && (bool) $status->is_archived) {
+                throw ValidationException::withMessages([
+                    'status.is_archived' => tkey('students.validation.final_status_locked'),
+                ]);
+            }
+
+            if (array_key_exists('is_active', $data) && ! (bool) $data['is_active']) {
+                throw ValidationException::withMessages([
+                    'status.is_active' => tkey('students.validation.final_status_locked'),
+                ]);
+            }
+        }
+    }
+
+    private function anotherDefaultStatusExists(StudentStatus $status): bool
+    {
+        return StudentStatus::query()
+            ->whereKeyNot($status->getKey())
+            ->where('is_default', true)
+            ->exists();
     }
 }

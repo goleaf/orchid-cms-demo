@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace App\Orchid\Screens\School;
 
 use App\Actions\CreateOrUpdateStudentStatusAction;
+use App\Actions\DeleteStudentStatusAction;
+use App\Http\Requests\Students\DeleteStudentStatusRequest;
 use App\Http\Requests\Students\StudentStatusRequest;
 use App\Models\StudentStatus;
+use App\Orchid\Support\TranslatableFields;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
+use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Switcher;
@@ -33,8 +37,21 @@ class StudentStatusListScreen extends Screen
 
         return [
             'statuses' => StudentStatus::query()
-                ->orderBy('sort_order')
-                ->orderBy('code')
+                ->select([
+                    'id',
+                    'code',
+                    'name',
+                    'name_translations',
+                    'color',
+                    'sort_order',
+                    'is_system',
+                    'is_default',
+                    'is_active',
+                    'is_final',
+                    'is_blocked',
+                    'is_archived',
+                ])
+                ->ordered()
                 ->simplePaginate(20)
                 ->withQueryString(),
             'status' => $this->status,
@@ -61,13 +78,20 @@ class StudentStatusListScreen extends Screen
     public function commandBar(): iterable
     {
         return [
-            Link::make(tkey('students.actions.create'))
+            Link::make(tkey('common.actions.create'))
                 ->icon('bs.plus-circle')
                 ->route('platform.students.statuses'),
 
-            Button::make(tkey('crm.dictionaries.actions.save'))
+            Button::make(tkey('common.actions.save'))
                 ->icon('bs.check2-circle')
                 ->method('save'),
+
+            Button::make(tkey('common.actions.delete'))
+                ->icon('bs.trash3')
+                ->method('delete')
+                ->parameters(['record' => $this->status?->getKey()])
+                ->confirm(tkey('crm.dictionaries.messages.delete_confirm'))
+                ->canSee(($this->status?->exists ?? false) && ! (bool) $this->status?->is_system),
         ];
     }
 
@@ -81,17 +105,6 @@ class StudentStatusListScreen extends Screen
                     ->required(),
                 Input::make('status.name')
                     ->title(tkey('crm.dictionaries.fields.name')),
-                Input::make('status.name_translations.ru')
-                    ->title(tkey('crm.dictionaries.fields.name_translations'))
-                    ->required(),
-                Input::make('status.name_translations.en')
-                    ->title(tkey('crm.dictionaries.fields.name_translations').' EN'),
-                Input::make('status.name_translations.lt')
-                    ->title(tkey('crm.dictionaries.fields.name_translations').' LT'),
-                Input::make('status.name_translations.pl')
-                    ->title(tkey('crm.dictionaries.fields.name_translations').' PL'),
-                Input::make('status.description_translations.ru')
-                    ->title(tkey('crm.dictionaries.fields.description_translations')),
                 Input::make('status.color')
                     ->title(tkey('crm.dictionaries.fields.color')),
                 Input::make('status.sort_order')
@@ -114,6 +127,16 @@ class StudentStatusListScreen extends Screen
                     ->title(tkey('crm.dictionaries.fields.is_archived')),
             ])->title($this->status?->exists ? tkey('crm.dictionaries.edit_title') : tkey('crm.dictionaries.create_title')),
 
+            TranslatableFields::input('status.name', 'crm.dictionaries.fields.name_translations', [
+                'maxlength' => 255,
+                'required' => true,
+            ]),
+
+            TranslatableFields::textarea('status.description', 'crm.dictionaries.fields.description_translations', [
+                'rows' => 3,
+                'maxlength' => 1000,
+            ]),
+
             Layout::table('statuses', [
                 TD::make('code', tkey('crm.dictionaries.fields.code'))
                     ->render(fn (StudentStatus $status): string => (string) Link::make($status->code)
@@ -128,6 +151,22 @@ class StudentStatusListScreen extends Screen
                     ->render(fn (StudentStatus $status): string => $status->is_active ? tkey('common.status.active') : tkey('common.status.inactive')),
                 TD::make('sort_order', tkey('crm.dictionaries.fields.sort_order'))
                     ->render(fn (StudentStatus $status): string => (string) $status->sort_order),
+                TD::make('actions', tkey('crm.leads.columns.actions'))
+                    ->cantHide()
+                    ->alignRight()
+                    ->render(fn (StudentStatus $status): DropDown => DropDown::make()
+                        ->icon('bs.three-dots-vertical')
+                        ->list([
+                            Link::make(tkey('common.actions.edit'))
+                                ->icon('bs.pencil')
+                                ->route('platform.students.statuses', ['status_id' => $status->id]),
+                            Button::make(tkey('common.actions.delete'))
+                                ->icon('bs.trash3')
+                                ->method('delete')
+                                ->parameters(['record' => $status->id])
+                                ->confirm(tkey('crm.dictionaries.messages.delete_confirm'))
+                                ->canSee(! (bool) $status->is_system),
+                        ])),
             ]),
         ];
     }
@@ -137,6 +176,15 @@ class StudentStatusListScreen extends Screen
         $saveStatus->handle($request->statusId(), $request->statusData());
 
         Toast::info(tkey('crm.dictionaries.messages.saved'));
+
+        return redirect()->route('platform.students.statuses');
+    }
+
+    public function delete(DeleteStudentStatusRequest $request, DeleteStudentStatusAction $deleteStatus): RedirectResponse
+    {
+        $deleteStatus->handle($request->recordId());
+
+        Toast::info(tkey('crm.dictionaries.messages.deleted'));
 
         return redirect()->route('platform.students.statuses');
     }

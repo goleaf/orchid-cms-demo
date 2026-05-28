@@ -46,5 +46,45 @@ class CreateOrUpdateEnrollmentStatusAction
                 'status.is_default' => tkey('students.validation.default_status_inactive'),
             ]);
         }
+
+        if ($status->exists && (bool) $status->is_default && ! (bool) ($data['is_default'] ?? false) && ! $this->anotherDefaultStatusExists($status)) {
+            throw ValidationException::withMessages([
+                'status.is_default' => tkey('students.validation.default_status_required'),
+            ]);
+        }
+
+        if ($status->exists && (bool) $status->is_system && ((bool) $status->is_final || (bool) $status->is_success || (bool) $status->is_cancelled)) {
+            if (array_key_exists('is_final', $data) && ! (bool) $data['is_final']) {
+                throw ValidationException::withMessages([
+                    'status.is_final' => tkey('students.validation.final_status_locked'),
+                ]);
+            }
+
+            if (array_key_exists('is_success', $data) && ! (bool) $data['is_success'] && (bool) $status->is_success) {
+                throw ValidationException::withMessages([
+                    'status.is_success' => tkey('students.validation.final_status_locked'),
+                ]);
+            }
+
+            if (array_key_exists('is_cancelled', $data) && ! (bool) $data['is_cancelled'] && (bool) $status->is_cancelled) {
+                throw ValidationException::withMessages([
+                    'status.is_cancelled' => tkey('students.validation.final_status_locked'),
+                ]);
+            }
+
+            if (array_key_exists('is_active', $data) && ! (bool) $data['is_active']) {
+                throw ValidationException::withMessages([
+                    'status.is_active' => tkey('students.validation.final_status_locked'),
+                ]);
+            }
+        }
+    }
+
+    private function anotherDefaultStatusExists(EnrollmentStatus $status): bool
+    {
+        return EnrollmentStatus::query()
+            ->whereKeyNot($status->getKey())
+            ->where('is_default', true)
+            ->exists();
     }
 }
