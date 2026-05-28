@@ -3,12 +3,11 @@ __pycache__/
 *.py[cod]
 .DS_Store
 .env
-.env.backup
-.env.production
+.env.*
+!.env.example
 .phpactor.json
 .phpunit.result.cache
-/.codex/memory/events.jsonl
-/.codex/memory/prompt_index.jsonl
+/.codex/memory/*.jsonl
 /.fleet
 /.idea
 /.nova
@@ -27,5 +26,3 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 package-lock.json
-composer.lock
-composer.lock

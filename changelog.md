@@ -2,6 +2,8 @@
 
 ## 2026-05-28
 
+- Improved project ignore rules for local environment files, generated database files, and runtime cache folders
+
 - Website group managers can now start creating a new group directly from the group list
 - Added checks to confirm a new public website group can be created successfully from the admin area
 
