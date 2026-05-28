@@ -1,5 +1,7 @@
 # Students And Enrollments
 
+Project baseline: follow [`docs/project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). Student work is Laravel + Orchid + Blade, uses Eloquent only, and keeps all visible admin/public text translatable.
+
 Block 3 manages students and enrollments for one local driving school. It is not a SaaS module and does not add tenants, subscription billing, reseller behavior, platform-owner dashboards, or multi-company isolation.
 
 ## Architecture

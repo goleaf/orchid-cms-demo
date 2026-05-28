@@ -143,10 +143,10 @@ class CrmDemoLeadSeeder extends Seeder
             'marketing_lead_id' => $overdue->id,
             'title' => 'CRM demo overdue follow-up',
             'title_translations' => [
-                'ru' => 'CRM demo overdue follow-up',
+                'ru' => 'Просроченный повторный контакт CRM demo',
                 'en' => 'CRM demo overdue follow-up',
-                'lt' => 'CRM demo overdue follow-up',
-                'pl' => 'CRM demo overdue follow-up',
+                'lt' => 'Veluojantis CRM demo pakartotinis kontaktas',
+                'pl' => 'Zalegly kontakt ponowny CRM demo',
             ],
         ]));
 
@@ -154,10 +154,10 @@ class CrmDemoLeadSeeder extends Seeder
             'marketing_lead_id' => $newWebsite->id,
             'title' => 'CRM demo contact website lead',
             'title_translations' => [
-                'ru' => 'CRM demo contact website lead',
+                'ru' => 'Связаться с заявкой сайта CRM demo',
                 'en' => 'CRM demo contact website lead',
-                'lt' => 'CRM demo contact website lead',
-                'pl' => 'CRM demo contact website lead',
+                'lt' => 'Susisiekti su CRM demo svetaines uzklausa',
+                'pl' => 'Skontaktowac sie ze zgloszeniem strony CRM demo',
             ],
         ]));
 

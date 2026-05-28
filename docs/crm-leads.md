@@ -1,5 +1,7 @@
 # CRM Leads
 
+Project baseline: follow [`docs/project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). This module is Laravel + Orchid + Blade, uses Eloquent only, and must keep all visible admin/public text translatable.
+
 The CRM lead module manages requests for one local driving school company. It receives structured leads from the public website, lets managers process them in Orchid, tracks next actions and timeline history, and prepares qualified leads for the future Student module.
 
 This module is not SaaS. It has no tenants, subscription billing, reseller logic, platform-owner dashboards, or multi-company isolation.

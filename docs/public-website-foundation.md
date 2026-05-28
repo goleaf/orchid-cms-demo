@@ -1,5 +1,7 @@
 # Public Website Foundation
 
+Project baseline: follow [`docs/project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). This block is Laravel + Orchid + Blade, uses Eloquent only, and keeps all visible admin/public text translatable.
+
 This block adds the public website layer for one local driving school. It is not a SaaS module and does not introduce tenants, subscriptions, resellers, platform-owner dashboards, or multi-company isolation.
 
 ## Public Routes

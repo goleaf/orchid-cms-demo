@@ -1,25 +1,80 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Orchid CMS Demo
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This repository is becoming a local driving-school operating system built with Laravel and Orchid. It is for one driving school company, not a SaaS platform.
 
-## Project Integrations
+Project rules live in [`AGENTS.md`](AGENTS.md) and [`docs/project-specs.md`](docs/project-specs.md).
 
-### Public Website Foundation
+## Stack
 
-The local driving school public website foundation is documented in
-[`docs/public-website-foundation.md`](docs/public-website-foundation.md). It
-covers public routes, Orchid management screens, CRM lead intake, UTM tracking,
-multilingual content, and tests.
+- Laravel 12.x
+- Orchid Platform 14.x
+- Server-rendered Blade
+- Eloquent-only query layer
+- Actions, Form Requests, policies, model scopes, factories, and feature tests
 
-### System Design Vibecoding Corpus
+## Documentation
 
-The `nimin1/system-design-vibecoding` Markdown corpus is vendored under
-`resources/system-design-vibecoding` with its MIT license preserved.
+- Project specs: [`docs/project-specs.md`](docs/project-specs.md)
+- Public website: [`docs/public-website.md`](docs/public-website.md)
+- Public website foundation: [`docs/public-website-foundation.md`](docs/public-website-foundation.md)
+- CRM leads: [`docs/crm-leads.md`](docs/crm-leads.md)
+- CRM Block 2: [`docs/crm-block-2.md`](docs/crm-block-2.md)
+- Students and enrollments: [`docs/students.md`](docs/students.md)
+- Lead to student conversion: [`docs/lead-to-student-conversion.md`](docs/lead-to-student-conversion.md)
+- Orchid local documentation workflow: [`docs/orchid-local-documentation.md`](docs/orchid-local-documentation.md)
+- Codex automation: [`docs/codex-automation.md`](docs/codex-automation.md)
+- Human changelog: [`changelog.md`](changelog.md)
+
+## Local Orchid Docs
+
+The `orchid-platform` skill is discovered locally and the compact skill inventory is loaded by default through Codex hooks. Full Orchid docs are mirrored locally and searched on demand:
+
+```bash
+rg -n "Layout::table|TD::make|ModalToggle|permission|Screen" .agents/skills/orchid-platform/references/docs
+```
+
+Refresh the mirror and skill inventory:
+
+```bash
+.agents/skills/orchid-platform/scripts/sync_orchid_docs.sh
+python3 .agents/skills/codebase-self-learning/scripts/discover_skills.py --json
+```
+
+## Automated Changelog And Commits
+
+After each Codex prompt, the Stop hook stages all changes, updates `changelog.md` in plain human language, generates a Conventional Commit message through `codex exec`, commits the staged changes, and pushes when an upstream is configured.
+
+Details are in [`docs/codex-automation.md`](docs/codex-automation.md).
+
+## Development
+
+Install dependencies and prepare the app with the Laravel setup flow:
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm install
+npm run build
+```
+
+Run tests:
+
+```bash
+php artisan test
+```
+
+Use focused tests before the full suite when working in one module:
+
+```bash
+php artisan test --filter=DrivingSchoolPlatformTest
+php artisan test --filter=SystemLocalizationTest
+```
+
+## System Design Corpus
+
+The `nimin1/system-design-vibecoding` Markdown corpus is vendored under `resources/system-design-vibecoding` with its MIT license preserved.
 
 Run the importer with:
 
@@ -27,65 +82,4 @@ Run the importer with:
 php artisan db:seed --class=SystemDesignVibecodingSeeder
 ```
 
-The seeder imports every Markdown file from that source directory into
-`knowledge_articles` with `system-design-vibecoding-*` slugs, source metadata,
-rewritten internal links, translated category labels, and public rendering
-through the existing `/blog` knowledge-base routes.
-
-### Orchid Local Documentation
-
-Official Orchid Platform docs are mirrored for local agent and developer use
-through the repo-local `orchid-platform` skill. See
-[`docs/orchid-local-documentation.md`](docs/orchid-local-documentation.md) for
-the refresh command, local search paths, and quality gate.
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The seeder imports those Markdown files into `knowledge_articles` with source metadata, rewritten internal links, translated category labels, and public rendering through the existing `/blog` knowledge-base routes.

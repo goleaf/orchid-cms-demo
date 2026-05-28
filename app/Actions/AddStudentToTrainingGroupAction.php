@@ -157,12 +157,13 @@ class AddStudentToTrainingGroupAction
 
     private function groupAcceptsEnrollment(TrainingGroup $group): bool
     {
-        return in_array($group->status, [
-            GroupStatus::Planned,
-            GroupStatus::Recruiting,
-            GroupStatus::Open,
-            GroupStatus::AlmostFull,
-            GroupStatus::Active,
-        ], true);
+        return $group->acceptsEnrollment()
+            && in_array($group->status, [
+                GroupStatus::Planned,
+                GroupStatus::Recruiting,
+                GroupStatus::Open,
+                GroupStatus::AlmostFull,
+                GroupStatus::Active,
+            ], true);
     }
 }

@@ -111,7 +111,7 @@ class LearningTopicListScreen extends Screen
                     ->title(tkey('crm.dictionaries.fields.sort_order')),
                 Switcher::make('topic.is_required')
                     ->sendTrueOrFalse()
-                    ->title(tkey('students.tasks.fields.required')),
+                    ->title(tkey('education.learning_topics.fields.is_required')),
                 Switcher::make('topic.is_active')
                     ->sendTrueOrFalse()
                     ->title(tkey('crm.dictionaries.fields.is_active')),

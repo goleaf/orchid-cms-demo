@@ -62,10 +62,10 @@ class WebsitePageSeeder extends Seeder
                     'slug' => $page['slug'],
                     'title_translations' => $page['title'],
                     'content_translations' => [
-                        'ru' => 'Демонстрационный контент публичной страницы автошколы. TODO: review copy with a human translator.',
-                        'en' => 'Demo driving school public page content. TODO: review copy with a human translator.',
-                        'lt' => 'Demonstracinis vairavimo mokyklos puslapio turinys. TODO: review copy with a human translator.',
-                        'pl' => 'Przykladowa tresc strony szkoly jazdy. TODO: review copy with a human translator.',
+                        'ru' => 'Публичная страница автошколы с актуальной информацией о курсах, группах, филиалах и заявках.',
+                        'en' => 'Public driving school page with current information about courses, groups, branches, and applications.',
+                        'lt' => 'Viesas vairavimo mokyklos puslapis su aktualia informacija apie kursus, grupes, filialus ir paraiskas.',
+                        'pl' => 'Publiczna strona szkoly jazdy z aktualnymi informacjami o kursach, grupach, oddzialach i zgloszeniach.',
                     ],
                     'excerpt_translations' => [
                         'ru' => 'Публичная страница автошколы.',

@@ -29,6 +29,8 @@ It does **not** retrain the model. It creates a repository memory layer that Cod
 4. `Stop` writes a learning candidate summary when files changed.
 5. The `codebase-self-learning` skill tells Codex how to promote useful candidates into stable memory.
 6. Repository skill discovery keeps a compact inventory of local Codex skills available to context hooks.
+7. In this project, the compact inventory is included in prompt context by default so local skills such as `orchid-platform` are visible without naming them explicitly.
+8. The Stop hook can update `changelog.md` and create a Conventional Commit message from the staged diff before committing and pushing changes.
 
 ## Install
 
@@ -91,7 +93,7 @@ Discovery writes:
 - `.codex/memory/events.jsonl`
 - `.codex/memory/tool_notes.md`
 
-Session-start context may include skill name, description, relative path, and key warnings. User-prompt context includes skills only when the prompt is about skills, hooks, self-learning, memory, or discovery. Full `SKILL.md` contents, references, scripts, and assets are not injected.
+Session-start context may include skill name, description, relative path, and key warnings. This project also includes the compact skill inventory in every user-prompt context. Full `SKILL.md` contents, references, scripts, and assets are not injected automatically.
 
 Recommended fixes for invalid skills:
 
@@ -144,3 +146,5 @@ Recommended `.gitignore` choices:
 ## Best practice
 
 Commit stable memory files when they encode team/project rules. Do not commit noisy logs or private task history.
+
+Generated changelog entries should stay human-readable and should not expose code identifiers, file paths, raw URLs, secrets, or private customer/student data.

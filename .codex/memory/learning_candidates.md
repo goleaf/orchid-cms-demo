@@ -2239,3 +2239,105 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-28T08:21:33+00:00
+
+```json
+{
+  "ts": "2026-05-28T08:21:33+00:00",
+  "event": "Stop",
+  "session_id": "019e6d9c-1446-78f3-b720-8f17cbb16ed9",
+  "turn_id": "019e6da5-18c8-7b31-93db-df4a30f13384",
+  "branch": "main",
+  "changed_file_count": 31,
+  "changed_file_groups": {
+    "code": 29,
+    "orchid": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".agents/skills/orchid-platform/SKILL.md",
+    ".codex/hooks/auto-commit-push.sh",
+    ".codex/hooks/user_prompt_context.py",
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/skill_inventory.json",
+    ".codex/memory/tool_notes.md",
+    "AGENTS.md",
+    "README.md",
+    "agents/skills/codebase-self-learning/SKILL.md",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/TrainingGroupRequest.php",
+    "[REDACTED_SECRET].php",
+    "codebase-self-learning-pack/AGENTS.self-learning.snippet.md",
+    "codebase-self-learning-pack/README.md",
+    "database/seeders/CrmDemoLeadSeeder.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "database/seeders/WebsiteCourseSeeder.php",
+    "database/seeders/WebsitePageSeeder.php",
+    "docs/crm-block-2.md",
+    "docs/crm-leads.md",
+    "docs/lead-to-student-conversion.md",
+    "docs/orchid-local-documentation.md",
+    "docs/project-specs.md",
+    "docs/public-website-foundation.md",
+    "docs/public-website.md",
+    "docs/students.md",
+    "docs/training-groups.md",
+    "routes/platform.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-28T08:29:58+00:00
+
+```json
+{
+  "ts": "2026-05-28T08:29:58+00:00",
+  "event": "Stop",
+  "session_id": "019e6d9c-1446-78f3-b720-8f17cbb16ed9",
+  "turn_id": "019e6dac-aec8-7691-97ae-ba850575f072",
+  "branch": "main",
+  "changed_file_count": 37,
+  "changed_file_groups": {
+    "code": 35,
+    "orchid": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".agents/skills/orchid-platform/SKILL.md",
+    ".codex/config.toml",
+    ".codex/hooks.json",
+    ".codex/hooks/auto-commit-push.sh",
+    ".codex/hooks/generate_commit_artifacts.py",
+    ".codex/hooks/user_prompt_context.py",
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/learning_candidates.md",
+    ".codex/memory/skill_inventory.json",
+    ".codex/memory/tool_notes.md",
+    "AGENTS.md",
+    "README.md",
+    "agents/skills/codebase-self-learning/SKILL.md",
+    "[REDACTED_SECRET].php",
+    "app/Http/Requests/TrainingGroupRequest.php",
+    "[REDACTED_SECRET].php",
+    "changelog.md",
+    "codebase-self-learning-pack/AGENTS.self-learning.snippet.md",
+    "codebase-self-learning-pack/README.md",
+    "database/seeders/CrmDemoLeadSeeder.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "database/seeders/WebsiteCourseSeeder.php",
+    "database/seeders/WebsitePageSeeder.php",
+    "docs/codex-automation.md",
+    "docs/crm-block-2.md",
+    "docs/crm-leads.md",
+    "docs/lead-to-student-conversion.md",
+    "docs/orchid-local-documentation.md"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

@@ -1,5 +1,7 @@
 # Block 2: CRM Lead Management Foundation
 
+Project baseline: follow [`docs/project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). This block is Laravel + Orchid + Blade, uses Eloquent only, and must keep all visible admin/public text translatable.
+
 This block implements CRM lead management for one local driving school company. It is not a SaaS module and does not include tenants, subscriptions, reseller flows, platform-owner dashboards, or multi-company isolation.
 
 ## Scope

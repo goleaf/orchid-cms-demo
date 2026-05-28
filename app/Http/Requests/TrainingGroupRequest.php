@@ -22,7 +22,12 @@ class TrainingGroupRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return $this->user()?->hasAnyAccess(['platform.operations.groups', 'website.manage_groups']) ?? false;
+        return $this->user()?->hasAnyAccess([
+            'platform.operations.groups',
+            'website.manage_groups',
+            'education.groups.create',
+            'education.groups.update',
+        ]) ?? false;
     }
 
     /**

@@ -1,6 +1,20 @@
 # Orchid Local Documentation Workflow
 
+Project baseline: follow [`docs/project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). Orchid work must use local docs and vendor source before version-sensitive implementation.
+
 This repository has a local Orchid Platform skill and documentation mirror for first-pass admin code quality.
+
+## Default Connection
+
+Yes, the local Orchid docs workflow is connected by default for Codex sessions started in this repository:
+
+- `SessionStart` loads the compact repository skill inventory.
+- `UserPromptSubmit` now also includes the compact skill inventory on every prompt.
+- The `orchid-platform` skill points to the local docs mirror and Context7 fallback.
+
+This keeps the default context small. The full Orchid docs are not injected into every prompt; they are searched locally when an Orchid task needs them.
+
+Stop automation is documented in [`docs/codex-automation.md`](codex-automation.md). It updates `changelog.md` and generates the commit message after the prompt finishes.
 
 ## Primary Sources
 

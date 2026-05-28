@@ -6,6 +6,10 @@ if [[ "${CODEX_AUTO_PUSH_DISABLED:-}" == "1" ]]; then
     exit 0
 fi
 
+if [[ "${CODEX_CHANGELOG_COMMIT_RUNNING:-}" == "1" ]]; then
+    exit 0
+fi
+
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     exit 0
 fi
@@ -60,10 +64,22 @@ if git diff --cached --quiet --exit-code; then
     exit 0
 fi
 
-timestamp="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-commit_subject="${CODEX_AUTO_PUSH_MESSAGE:-chore: update from Codex stop hook}"
+if ! python3 .codex/hooks/generate_commit_artifacts.py; then
+    log "warning: commit artifact generation failed; using fallback message"
+    git_dir="$(git rev-parse --git-dir)"
+    printf '%s\n' "${CODEX_AUTO_PUSH_MESSAGE:-chore: update project changes}" > "${git_dir}/codex-commit-message.txt"
+fi
 
-if ! git commit -m "${commit_subject}" -m "Automatically committed by the Codex Stop hook at ${timestamp}."; then
+git add -A
+
+if git diff --cached --quiet --exit-code; then
+    log "skip: no staged changes after changelog update"
+    exit 0
+fi
+
+message_file="$(git rev-parse --git-path codex-commit-message.txt)"
+
+if ! git commit -F "${message_file}"; then
     log "skip: git commit failed"
     exit 0
 fi

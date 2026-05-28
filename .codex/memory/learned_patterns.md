@@ -33,3 +33,7 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - CRM lead filtering is centralized in App\Actions\FilterLeadsAction; LeadListScreen and GetLeadPipelineAction should reuse it for consistent search, filters, and quick segments.
   Evidence: Implemented advanced CRM filters and pipeline grouping; php artisan test passed with 146 tests and 7298 assertions.
   Added: 2026-05-28T02:02:20+00:00
+
+- Codex prompt context includes compact repository skill inventory on every prompt; use the local orchid-platform skill and mirrored docs before Orchid admin implementation.
+  Evidence: Updated .codex/hooks/user_prompt_context.py, verified dummy UserPromptSubmit output includes orchid-platform, and repository skill discovery passes with two valid skills.
+  Added: 2026-05-28T08:20:34+00:00

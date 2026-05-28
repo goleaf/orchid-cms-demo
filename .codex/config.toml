@@ -9,6 +9,6 @@ hooks = true
 [hooks]
 Stop = [
   { hooks = [
-    { type = "command", command = "bash .codex/hooks/auto-commit-push.sh", timeout = 120 },
+    { type = "command", command = "bash .codex/hooks/auto-commit-push.sh", timeout = 600 },
   ] },
 ]

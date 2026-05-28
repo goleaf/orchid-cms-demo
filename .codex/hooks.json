@@ -46,6 +46,12 @@
             "command": "python3 \"$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.codex/hooks/stop_learning.py\"",
             "timeout": 15,
             "statusMessage": "Saving learning candidates"
+          },
+          {
+            "type": "command",
+            "command": "bash \"$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.codex/hooks/auto-commit-push.sh\"",
+            "timeout": 600,
+            "statusMessage": "Updating changelog and committing changes"
           }
         ]
       }

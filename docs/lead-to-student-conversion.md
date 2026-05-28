@@ -1,5 +1,7 @@
 # Lead To Student Conversion
 
+Project baseline: follow [`docs/project-specs.md`](project-specs.md) and [`AGENTS.md`](../AGENTS.md). Conversion work is Laravel + Orchid + Blade, uses Eloquent only, and keeps all visible admin/public text translatable.
+
 Lead-to-student conversion connects the previous modules into one operational flow:
 
 Public website form -> CRM Lead -> Lead processing -> Student -> StudentEnrollment -> optional TrainingGroup assignment.

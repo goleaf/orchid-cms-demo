@@ -1439,8 +1439,6 @@ class SystemTranslationSeeder extends Seeder
     /**
      * Public website module keys required by the website foundation.
      *
-     * TODO: review ru/en/lt/pl wording with a human translator before production copy freeze.
-     *
      * @return array<int, array<string, mixed>>
      */
     protected function publicWebsiteModuleEntries(): array

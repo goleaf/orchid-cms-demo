@@ -161,5 +161,6 @@ The current product direction is:
 - Avoid hardcoded visible labels in admin screens, public pages, notifications, validations, and documents.
 - Prefer translation keys through `tkey()` or Laravel localization.
 - Business content that users edit should support multilingual values when needed.
+- Orchid implementation should use the local `orchid-platform` skill and mirrored docs before version-sensitive admin code changes.
 
 Keep these rules unless the user explicitly changes the project direction.

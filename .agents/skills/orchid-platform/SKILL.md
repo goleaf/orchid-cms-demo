@@ -7,6 +7,20 @@ description: Use when working on Laravel Orchid Platform screens, layouts, menus
 
 Use this skill before editing any Orchid admin code in this repository.
 
+## Default Connection
+
+The repository hook layer loads compact skill inventory by default:
+
+- `SessionStart` includes repository skills.
+- `UserPromptSubmit` includes repository skills on every prompt.
+- Full Orchid docs stay in `references/docs` and are searched only when needed.
+
+If this skill does not appear in prompt context, refresh discovery:
+
+```bash
+python3 .agents/skills/codebase-self-learning/scripts/discover_skills.py --json
+```
+
 ## Local-First Workflow
 
 1. Confirm the installed package version:

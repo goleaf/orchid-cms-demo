@@ -13,7 +13,7 @@ Do not assume these commands until the repository confirms them.
 
 ## Repository skill discovery
 
-- Last scan: 2026-05-28T08:07:45Z
+- Last scan: 2026-05-28T08:29:19Z
 - Skills found: 2; valid: 2.
 - Discovered skills: `codebase-self-learning` (.agents/skills/codebase-self-learning), `orchid-platform` (.agents/skills/orchid-platform).
 - Recommended fixes: none.

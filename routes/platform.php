@@ -344,6 +344,18 @@ Route::screen('lms/programs', ProgramListScreen::class)
         ->push(tkey('menu.lms.programs'), route('platform.lms.programs')));
 
 // Education > Groups
+Route::screen('education/groups/create', GroupEditScreen::class)
+    ->name('platform.education.groups.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.education.groups')
+        ->push(tkey('website.admin.groups.create_title'), route('platform.education.groups.create')));
+
+Route::screen('education/groups/{group}/edit', GroupEditScreen::class)
+    ->name('platform.education.groups.edit')
+    ->breadcrumbs(fn (Trail $trail, $group) => $trail
+        ->parent('platform.education.groups')
+        ->push(tkey('website.admin.groups.edit_title'), route('platform.education.groups.edit', $group)));
+
 Route::screen('education/groups', GroupListScreen::class)
     ->name('platform.education.groups')
     ->breadcrumbs(fn (Trail $trail) => $trail
