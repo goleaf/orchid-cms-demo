@@ -59,6 +59,7 @@ class DatabaseSeeder extends Seeder
             CommunicationSeeder::class,
             EducationSeeder::class,
             ExamTranslationSeeder::class,
+            ExamDictionarySeeder::class,
             AnalyticsSeeder::class,
             SystemDesignVibecodingSeeder::class,
         ]);

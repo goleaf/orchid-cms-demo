@@ -39,6 +39,16 @@ class ExamTypeFactory extends Factory
         return $this->examTypeState('internal_practical', 'Internal practical exam', true, false, false, true);
     }
 
+    public function officialTheory(): static
+    {
+        return $this->examTypeState('official_theory_placeholder', 'Official theory placeholder', false, true, true, false);
+    }
+
+    public function officialPractical(): static
+    {
+        return $this->examTypeState('official_practical_placeholder', 'Official practical placeholder', false, true, false, true);
+    }
+
     public function stateTheory(): static
     {
         return $this->examTypeState('state_theory', 'Official theory exam', false, true, true, false);
@@ -47,6 +57,35 @@ class ExamTypeFactory extends Factory
     public function statePractical(): static
     {
         return $this->examTypeState('state_practical', 'Official practical exam', false, true, false, true);
+    }
+
+    public function active(): static
+    {
+        return $this->state(fn (): array => ['is_active' => true]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn (): array => ['is_active' => false]);
+    }
+
+    public function translated(): static
+    {
+        return $this->state(fn (): array => [
+            'name' => 'Translated exam type',
+            'name_translations' => [
+                'ru' => 'Переведенный тип экзамена',
+                'en' => 'Translated exam type',
+                'lt' => 'Isverstas egzamino tipas',
+                'pl' => 'Przetlumaczony typ egzaminu',
+            ],
+            'description_translations' => [
+                'ru' => 'Переведенное описание типа экзамена',
+                'en' => 'Translated exam type description',
+                'lt' => 'Isverstas egzamino tipo aprasymas',
+                'pl' => 'Przetlumaczony opis typu egzaminu',
+            ],
+        ]);
     }
 
     private function examTypeState(string $code, string $name, bool $internal, bool $official, bool $theory, bool $practical): static

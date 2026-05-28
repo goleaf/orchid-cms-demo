@@ -19,6 +19,10 @@
   Evidence: Added additive exam database migration, model relationships, factories, dictionary seeder, docs, and ExamDatabaseModelsTest.
   Added: 2026-05-28T13:00:00+00:00
 
+- Block 10 exam seed data uses idempotent factory-backed dictionary seeders for default internal exams, official placeholder exams, statuses, result statuses, admission rules, and multilingual translations; demo exam data stays local/demo/testing only.
+  Evidence: Added ExamTypeSeeder, ExamStatusSeeder, ExamAttemptStatusSeeder, ExamResultStatusSeeder, ExamAdmissionRuleSeeder, DemoExamSeeder, docs, and ExamFactoriesSeedersTest.
+  Added: 2026-05-28T16:30:00+03:00
+
 - Block 11 communications foundation uses notification channels, communication templates, reminders, delivery logs, user notification preferences, and student communication history while CRM lead history continues to reuse existing lead communication records.
   Evidence: Implemented foundation schema, Actions, Form Requests, validation Rules, factories, seeders, Orchid communication pages, notification placeholders, documentation, and CommunicationModuleFoundationTest.
   Added: 2026-05-28T12:31:35+03:00

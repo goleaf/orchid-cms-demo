@@ -12,7 +12,10 @@ class ExamResultStatusFactory extends Factory
 {
     public function definition(): array
     {
-        return $this->attributes('pending', 'Pending', '#64748b');
+        $code = $this->faker->unique()->slug(2);
+        $name = str($code)->replace('-', ' ')->title()->toString();
+
+        return $this->attributes($code, $name, '#64748b');
     }
 
     public function pending(): static
@@ -38,6 +41,25 @@ class ExamResultStatusFactory extends Factory
     public function cancelled(): static
     {
         return $this->state(fn (): array => $this->attributes('cancelled', 'Cancelled', '#64748b'));
+    }
+
+    public function translated(): static
+    {
+        return $this->state(fn (): array => [
+            'name' => 'Translated result status',
+            'name_translations' => [
+                'ru' => 'Переведенный статус результата',
+                'en' => 'Translated result status',
+                'lt' => 'Isversta rezultato busena',
+                'pl' => 'Przetlumaczony status wyniku',
+            ],
+            'description_translations' => [
+                'ru' => 'Переведенное описание статуса результата',
+                'en' => 'Translated result status description',
+                'lt' => 'Isverstas rezultato busenos aprasymas',
+                'pl' => 'Przetlumaczony opis statusu wyniku',
+            ],
+        ]);
     }
 
     /**

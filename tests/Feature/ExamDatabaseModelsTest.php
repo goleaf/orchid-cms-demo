@@ -227,7 +227,7 @@ class ExamDatabaseModelsTest extends TestCase
     {
         $this->seed(ExamDictionarySeeder::class);
 
-        foreach (['internal_theory', 'internal_practical', 'state_theory', 'state_practical'] as $code) {
+        foreach (['internal_theory', 'internal_practical', 'official_theory_placeholder', 'official_practical_placeholder'] as $code) {
             $this->assertDatabaseHas('exam_types', ['code' => $code]);
         }
 
@@ -243,7 +243,7 @@ class ExamDatabaseModelsTest extends TestCase
             $this->assertDatabaseHas('exam_result_statuses', ['code' => $code]);
         }
 
-        $this->assertSame(4, ExamAdmissionRule::query()->count());
+        $this->assertSame(4, ExamAdmissionRule::query()->active()->count());
         $this->assertTrue(ExamAdmissionRule::query()->active()->where('require_internal_exam_passed', true)->exists());
     }
 }

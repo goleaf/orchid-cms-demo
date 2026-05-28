@@ -53,6 +53,35 @@ class ExamStatusFactory extends Factory
         return $this->state(fn (): array => $this->attributes('archived', 'Archived', '#334155'));
     }
 
+    public function default(): static
+    {
+        return $this->draft();
+    }
+
+    public function final(): static
+    {
+        return $this->completed();
+    }
+
+    public function translated(): static
+    {
+        return $this->state(fn (): array => [
+            'name' => 'Translated exam status',
+            'name_translations' => [
+                'ru' => 'Переведенный статус экзамена',
+                'en' => 'Translated exam status',
+                'lt' => 'Isversta egzamino busena',
+                'pl' => 'Przetlumaczony status egzaminu',
+            ],
+            'description_translations' => [
+                'ru' => 'Переведенное описание статуса экзамена',
+                'en' => 'Translated exam status description',
+                'lt' => 'Isverstas egzamino busenos aprasymas',
+                'pl' => 'Przetlumaczony opis statusu egzaminu',
+            ],
+        ]);
+    }
+
     /**
      * @return array<string, mixed>
      */

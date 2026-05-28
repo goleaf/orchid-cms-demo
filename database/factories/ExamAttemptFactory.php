@@ -74,6 +74,28 @@ class ExamAttemptFactory extends Factory
         ]);
     }
 
+    public function planned(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => ExamAttemptStatus::Scheduled,
+            'started_at' => null,
+            'finished_at' => null,
+            'passed' => false,
+            'no_show' => false,
+        ]);
+    }
+
+    public function inProgress(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => ExamAttemptStatus::InProgress,
+            'started_at' => now(),
+            'finished_at' => null,
+            'passed' => false,
+            'no_show' => false,
+        ]);
+    }
+
     public function failed(): static
     {
         return $this->state(fn (): array => [
@@ -83,6 +105,46 @@ class ExamAttemptFactory extends Factory
             'passed' => false,
             'finished_at' => now(),
             'next_eligible_at' => now()->addDays(7),
+        ]);
+    }
+
+    public function noShow(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => ExamAttemptStatus::NoShow,
+            'score' => null,
+            'max_score' => null,
+            'passed' => false,
+            'no_show' => true,
+            'finished_at' => now(),
+            'next_eligible_at' => now()->addDays(7),
+        ]);
+    }
+
+    public function cancelled(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => ExamAttemptStatus::Cancelled,
+            'passed' => false,
+            'no_show' => false,
+            'finished_at' => now(),
+        ]);
+    }
+
+    public function firstAttempt(): static
+    {
+        return $this->state(fn (): array => [
+            'attempt_number' => 1,
+            'attempt_no' => 1,
+            'retake_of_attempt_id' => null,
+        ]);
+    }
+
+    public function secondAttempt(): static
+    {
+        return $this->state(fn (): array => [
+            'attempt_number' => 2,
+            'attempt_no' => 2,
         ]);
     }
 

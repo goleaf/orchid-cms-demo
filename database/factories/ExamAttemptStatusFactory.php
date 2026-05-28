@@ -63,6 +63,25 @@ class ExamAttemptStatusFactory extends Factory
         return $this->state(fn (): array => $this->attributes('archived', 'Archived', '#334155'));
     }
 
+    public function translated(): static
+    {
+        return $this->state(fn (): array => [
+            'name' => 'Translated attempt status',
+            'name_translations' => [
+                'ru' => 'Переведенный статус попытки',
+                'en' => 'Translated attempt status',
+                'lt' => 'Isversta bandymo busena',
+                'pl' => 'Przetlumaczony status proby',
+            ],
+            'description_translations' => [
+                'ru' => 'Переведенное описание статуса попытки',
+                'en' => 'Translated attempt status description',
+                'lt' => 'Isverstas bandymo busenos aprasymas',
+                'pl' => 'Przetlumaczony opis statusu proby',
+            ],
+        ]);
+    }
+
     /**
      * @return array<string, mixed>
      */

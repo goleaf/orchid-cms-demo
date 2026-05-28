@@ -55,18 +55,23 @@ class ExamTranslationSeeder extends SystemTranslationSeeder
 
             $this->entry('exams', 'exams.types.internal_theory', ['ru' => 'Внутренний теория', 'en' => 'Internal theory', 'lt' => 'Vidinis teorijos', 'pl' => 'Wewnetrzny teoretyczny']),
             $this->entry('exams', 'exams.types.internal_practical', ['ru' => 'Внутренний практика', 'en' => 'Internal practical', 'lt' => 'Vidinis praktikos', 'pl' => 'Wewnetrzny praktyczny']),
+            $this->entry('exams', 'exams.types.official_theory_placeholder', ['ru' => 'Официальный теория заготовка', 'en' => 'Official theory placeholder', 'lt' => 'Oficialaus teorijos egzamino irasas', 'pl' => 'Oficjalny teoretyczny wpis']),
+            $this->entry('exams', 'exams.types.official_practical_placeholder', ['ru' => 'Официальный практика заготовка', 'en' => 'Official practical placeholder', 'lt' => 'Oficialaus praktikos egzamino irasas', 'pl' => 'Oficjalny praktyczny wpis']),
             $this->entry('exams', 'exams.types.state_theory', ['ru' => 'Государственный теория', 'en' => 'State theory', 'lt' => 'Valstybinis teorijos', 'pl' => 'Panstwowy teoretyczny']),
             $this->entry('exams', 'exams.types.state_practical', ['ru' => 'Государственный практика', 'en' => 'State practical', 'lt' => 'Valstybinis praktikos', 'pl' => 'Panstwowy praktyczny']),
 
             $this->entry('exams', 'exams.providers.internal', ['ru' => 'Автошкола', 'en' => 'Internal', 'lt' => 'Vidinis', 'pl' => 'Wewnetrzny']),
             $this->entry('exams', 'exams.providers.state', ['ru' => 'Государственный', 'en' => 'State', 'lt' => 'Valstybinis', 'pl' => 'Panstwowy']),
 
+            $this->entry('exams', 'exams.session_statuses.draft', ['ru' => 'Черновик', 'en' => 'Draft', 'lt' => 'Juodrastis', 'pl' => 'Szkic']),
             $this->entry('exams', 'exams.session_statuses.planned', ['ru' => 'Запланирована', 'en' => 'Planned', 'lt' => 'Suplanuota', 'pl' => 'Zaplanowana']),
+            $this->entry('exams', 'exams.session_statuses.scheduled', ['ru' => 'Запланирована', 'en' => 'Scheduled', 'lt' => 'Suplanuota', 'pl' => 'Zaplanowana']),
             $this->entry('exams', 'exams.session_statuses.open', ['ru' => 'Открыта', 'en' => 'Open', 'lt' => 'Atvira', 'pl' => 'Otwarta']),
             $this->entry('exams', 'exams.session_statuses.full', ['ru' => 'Заполнена', 'en' => 'Full', 'lt' => 'Pilna', 'pl' => 'Pelna']),
             $this->entry('exams', 'exams.session_statuses.in_progress', ['ru' => 'Идет', 'en' => 'In progress', 'lt' => 'Vyksta', 'pl' => 'W toku']),
             $this->entry('exams', 'exams.session_statuses.completed', ['ru' => 'Завершена', 'en' => 'Completed', 'lt' => 'Baigta', 'pl' => 'Zakonczona']),
             $this->entry('exams', 'exams.session_statuses.cancelled', ['ru' => 'Отменена', 'en' => 'Cancelled', 'lt' => 'Atsaukta', 'pl' => 'Anulowana']),
+            $this->entry('exams', 'exams.session_statuses.archived', ['ru' => 'Архив', 'en' => 'Archived', 'lt' => 'Archyvuota', 'pl' => 'Zarchiwizowana']),
 
             $this->entry('exams', 'exams.admission_statuses.draft', ['ru' => 'Черновик', 'en' => 'Draft', 'lt' => 'Juodrastis', 'pl' => 'Szkic']),
             $this->entry('exams', 'exams.admission_statuses.checking', ['ru' => 'Проверка', 'en' => 'Checking', 'lt' => 'Tikrinama', 'pl' => 'Sprawdzanie']),

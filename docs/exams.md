@@ -39,10 +39,10 @@ The module reuses existing school data:
 
 - `internal_theory`
 - `internal_practical`
-- `state_theory`
-- `state_practical`
+- `official_theory_placeholder`
+- `official_practical_placeholder`
 
-State exams are placeholders only. They can store references and payloads for manual tracking, but there is no government registry integration or automatic official sync in this block.
+Official exams are placeholders only. They can store references and payloads for manual tracking, but there is no government registry integration or automatic official sync in this block. Legacy `state_*` dictionary aliases are kept inactive only for older records.
 
 ## Workflow
 
@@ -104,12 +104,18 @@ Factories:
 
 Seeders:
 
+- `ExamTypeSeeder`
+- `ExamStatusSeeder`
+- `ExamAttemptStatusSeeder`
+- `ExamResultStatusSeeder`
+- `ExamAdmissionRuleSeeder`
 - `ExamDictionarySeeder`
 - `ExamTranslationSeeder`
+- `DemoExamSeeder`
 - `ExamDemoSeeder`
 - `ExamSeeder`
 
-Dictionary and demo records are created through factories and reuse existing student, enrollment, group, payment, and document records when available.
+Dictionary records are created through factories and are idempotent. The wrapper keeps the default exam types, session statuses, attempt statuses, result statuses, admission rules, and translations aligned across Russian, English, Lithuanian, and Polish. Demo records are guarded for local, demo, and testing environments and reuse existing student, enrollment, group, payment, and document records when available.
 
 ## Permissions
 
@@ -149,6 +155,13 @@ Future screens should keep admissions, sessions, attempts, results, and retakes 
 - Model creation and relationships for types, statuses, admission rules, sessions, participants, attempts, results, retakes, checklist items, and activities.
 - Translated display helpers and query scopes.
 - Dictionary seed records for local internal exams and official placeholders.
+
+`ExamFactoriesSeedersTest` verifies:
+
+- Required factory states for exam types, statuses, sessions, attempts, results, retakes, checklist items, and activities.
+- Idempotent exam seeders and wrapper seeding.
+- Default internal and official placeholder exam dictionaries.
+- Seeded dictionary and interface translations for Russian, English, Lithuanian, and Polish.
 
 ## TODOs
 

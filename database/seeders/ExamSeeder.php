@@ -9,9 +9,16 @@ class ExamSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            ExamDictionarySeeder::class,
+            ExamTypeSeeder::class,
+            ExamStatusSeeder::class,
+            ExamAttemptStatusSeeder::class,
+            ExamResultStatusSeeder::class,
+            ExamAdmissionRuleSeeder::class,
             ExamTranslationSeeder::class,
-            ExamDemoSeeder::class,
         ]);
+
+        if (app()->environment(['local', 'demo', 'testing'])) {
+            $this->call(DemoExamSeeder::class);
+        }
     }
 }
