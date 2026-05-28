@@ -207,8 +207,10 @@ class ExamAttempt extends Model
 
     public function scopeNoShow(Builder $query): Builder
     {
-        return $query->where('no_show', true)
-            ->orWhere('status', ExamAttemptStatus::NoShow->value);
+        return $query->where(function (Builder $query): void {
+            $query->where('no_show', true)
+                ->orWhere('status', ExamAttemptStatus::NoShow->value);
+        });
     }
 
     public function scopeInProgress(Builder $query): Builder
