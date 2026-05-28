@@ -2,6 +2,8 @@
 
 ## 2026-05-28
 
+- Added a local permission registry so driving school access rights can be grouped, translated, reviewed by risk, refreshed safely, and audited without changing the existing admin access checks
+
 - Added local account statuses and staff profiles so the driving school can manage staff lifecycle, branch profile details, translated public staff names, and safer Superadmin protection without adding any multi-company or subscription behavior
 
 - Added multilingual notification labels and granular notification access controls for messages, templates, reminders, deliveries, threads, preferences, channels, and exports

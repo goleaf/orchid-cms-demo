@@ -66,6 +66,8 @@ class SuperadminPermissions
             'platform.crm.tasks',
             'platform.systems.roles',
             'platform.systems.users',
+            'security.permissions.manage',
+            'security.permissions.sync',
             'security.user_statuses.manage',
             'security.staff_profiles.manage',
             'platform.systems.attachment',

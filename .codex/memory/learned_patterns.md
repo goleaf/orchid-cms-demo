@@ -53,3 +53,7 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - Local staff identity extends Orchid users through one-to-one staff_profiles records instead of changing the core Orchid user contract or adding tenant/company account logic.
   Evidence: Added StaffProfile model, StaffProfileFactory, StaffProfileDemoSeeder, CreateStaffProfileAction, UpdateStaffProfileAction, and docs/users.md.
   Added: 2026-05-28T22:00:00+03:00
+
+- Permission metadata should wrap existing Orchid permission strings instead of replacing Orchid access checks; sync reads PlatformProvider and SuperadminPermissions, creates missing registry records, and leaves custom records intact.
+  Evidence: Added PermissionGroup, PermissionRegistryItem, ImportExistingOrchidPermissionsAction, SyncPermissionRegistryAction, PermissionRegistrySeeder, and SecurityPermissionRegistryTest.
+  Added: 2026-05-28T23:00:00+03:00

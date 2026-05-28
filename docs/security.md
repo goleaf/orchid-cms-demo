@@ -8,6 +8,7 @@ This repository is a local driving-school operating system. The security module 
 - Orchid user and role screens keep persistence logic out of the screen methods.
 - User statuses are local dictionary records with one active default status.
 - Staff profiles extend user accounts with local branch, public profile, locale, timezone, and staff number data.
+- Permission registry records document existing Orchid permissions with local groups, translations, modules, and risk levels without replacing Orchid access checks.
 - The Superadmin role is protected from deletion or slug changes.
 - The last active Superadmin user cannot be deleted, deactivated, locked, blocked, archived, or stripped of the Superadmin role.
 - Branch access is stored locally in `user_branch_access`.
@@ -25,10 +26,10 @@ This repository is a local driving-school operating system. The security module 
 - Actions: `app/Actions/Security`
 - Requests: `app/Http/Requests/Security`
 - Rules: `app/Rules`
-- Models: `app/Models/AuditLog.php`, `SecurityEvent.php`, `LoginAttempt.php`, `UserSession.php`, `UserBranchAccess.php`, `UserStatus.php`, `StaffProfile.php`
-- Migrations: `database/migrations/2026_05_28_210000_create_security_block_thirteen_tables.php`, `database/migrations/2026_05_28_220000_create_user_statuses_and_staff_profiles.php`
-- Translation and setup seeders: `database/seeders/SecurityTranslationSeeder.php`, `UserStatusSeeder.php`, `StaffProfileDemoSeeder.php`
-- Tests: `tests/Feature/SecurityBlockHardeningTest.php`, `tests/Feature/SecurityUserStatusesStaffProfilesTest.php`
+- Models: `app/Models/AuditLog.php`, `SecurityEvent.php`, `LoginAttempt.php`, `UserSession.php`, `UserBranchAccess.php`, `UserStatus.php`, `StaffProfile.php`, `PermissionGroup.php`, `PermissionRegistryItem.php`
+- Migrations: `database/migrations/2026_05_28_210000_create_security_block_thirteen_tables.php`, `database/migrations/2026_05_28_220000_create_user_statuses_and_staff_profiles.php`, `database/migrations/2026_05_28_230000_create_permission_registry_tables.php`
+- Translation and setup seeders: `database/seeders/SecurityTranslationSeeder.php`, `UserStatusSeeder.php`, `StaffProfileDemoSeeder.php`, `PermissionGroupSeeder.php`, `PermissionRegistrySeeder.php`
+- Tests: `tests/Feature/SecurityBlockHardeningTest.php`, `tests/Feature/SecurityUserStatusesStaffProfilesTest.php`, `tests/Feature/SecurityPermissionRegistryTest.php`
 
 ## User Statuses And Staff Profiles
 
@@ -51,6 +52,21 @@ Local demo staff profile data can be refreshed with:
 php artisan db:seed --class=StaffProfileDemoSeeder
 ```
 
+## Permission Registry
+
+Orchid permissions remain the authorization source for roles, users, menus, and screens. The registry stores metadata around those same strings so permissions can be grouped, translated, audited, sorted, and reviewed by risk level.
+
+Default permission groups cover website, CRM, students, education, schedule, lessons, driving, documents, finance, exams, notifications, analytics, security, and system modules. Registry sync reads existing local Orchid permission declarations and the Superadmin permission list, creates missing registry records, assigns groups and risk levels, and never removes custom permissions.
+
+Refresh the registry with:
+
+```bash
+php artisan db:seed --class=PermissionGroupSeeder
+php artisan db:seed --class=PermissionRegistrySeeder
+```
+
+System permission codes are protected from renaming. Critical permissions require Superadmin validation when changed through registry requests.
+
 ## Operational Notes
 
 Run the translation seeder after migrating when security UI labels are missing:
@@ -64,6 +80,7 @@ Use the focused verification suite while changing this module:
 ```bash
 php artisan test --filter=SecurityBlockHardeningTest
 php artisan test --filter=SecurityUserStatusesStaffProfilesTest
+php artisan test --filter=SecurityPermissionRegistryTest
 php artisan test --filter=SuperadminRoleTest
 ```
 

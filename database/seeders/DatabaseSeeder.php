@@ -60,6 +60,8 @@ class DatabaseSeeder extends Seeder
             SystemTranslationSeeder::class,
             SecurityTranslationSeeder::class,
             UserStatusSeeder::class,
+            PermissionGroupSeeder::class,
+            PermissionRegistrySeeder::class,
             WebsiteTranslationSeeder::class,
             CrmTranslationSeeder::class,
             CrmDictionarySeeder::class,

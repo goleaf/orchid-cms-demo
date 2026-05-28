@@ -7,6 +7,8 @@ This map documents local security data only. It does not describe SaaS tenancy, 
 - `users`: Orchid-compatible local user accounts. Step 2 adds optional status, timezone, last login, last seen, and password-change requirement fields only when missing.
 - `user_statuses`: local account status dictionary. Active is seeded as the default. Blocked and archived statuses lock out the account.
 - `staff_profiles`: one local staff profile per user, with optional branch, public profile translations, locale, timezone, and internal notes.
+- `permission_groups`: local registry groups for documenting existing Orchid permissions.
+- `permission_registry_items`: local metadata records for permission strings, including group, module, risk level, translations, and system/custom state.
 - `user_branch_access`: local user-to-branch access records.
 - `role_users`: Orchid role assignment pivot.
 
@@ -29,3 +31,4 @@ This map documents local security data only. It does not describe SaaS tenancy, 
 - The Superadmin role is the highest local driving-school role.
 - The last active Superadmin cannot be deleted, deactivated, locked, blocked, archived, or stripped of the Superadmin role.
 - Branch access is local branch access, not tenant isolation.
+- Permission registry groups are documentation and management metadata around Orchid permissions, not tenant or company isolation.

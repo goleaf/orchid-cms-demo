@@ -94,3 +94,7 @@
 - Block 13 user statuses and staff profiles are local security extensions: user_statuses controls lifecycle state and staff_profiles stores one-to-one school employee profile data without tenants, subscriptions, platform owners, or multi-company isolation.
   Evidence: Added user status and staff profile migration, models, Actions, Form Requests, Rules, factories, seeders, translations, docs, and SecurityUserStatusesStaffProfilesTest.
   Added: 2026-05-28T22:00:00+03:00
+
+- Block 13 permission registry documents existing Orchid permissions with local groups, translations, modules, risk levels, sync, and audit metadata; Orchid remains the actual authorization mechanism.
+  Evidence: Added permission registry migration, models, Actions, Form Requests, Rules, factories, seeders, translations, docs, and SecurityPermissionRegistryTest.
+  Added: 2026-05-28T23:00:00+03:00
