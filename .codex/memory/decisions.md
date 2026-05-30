@@ -98,3 +98,11 @@
 - Block 13 permission registry documents existing Orchid permissions with local groups, translations, modules, risk levels, sync, and audit metadata; Orchid remains the actual authorization mechanism.
   Evidence: Added permission registry migration, models, Actions, Form Requests, Rules, factories, seeders, translations, docs, and SecurityPermissionRegistryTest.
   Added: 2026-05-28T23:00:00+03:00
+
+- Block 13 login attempt and user security session tracking is local security evidence around Laravel/Orchid auth; it records attempts, failed-login thresholds, hashed security sessions, logout/revocation/pruning, audit logs, and security events without storing raw session IDs or adding external identity services.
+  Evidence: Added login/session migration, UserSecuritySession model, login/session Actions, auth listeners, pruning commands, translations, docs, and SecurityLoginAttemptsSessionsTest.
+  Added: 2026-05-28T23:30:00+03:00
+
+- Block 13 user management lifecycle stays on the existing Orchid users table and adds backend-only Actions, Requests, Rules, translations, permissions, factories, audit records, security events, and documentation for internal staff account create/update/block/unblock/archive/status/profile/preference/password-change flows.
+  Evidence: Added user lifecycle actions, validation rules, form requests, factory states, docs, and SecurityUserManagementLifecycleTest.
+  Added: 2026-05-30T00:00:00+03:00

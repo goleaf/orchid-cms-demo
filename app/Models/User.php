@@ -170,7 +170,22 @@ class User extends Authenticatable
 
     public function securitySessions(): HasMany
     {
+        return $this->hasMany(UserSecuritySession::class);
+    }
+
+    public function legacySessions(): HasMany
+    {
         return $this->hasMany(UserSession::class);
+    }
+
+    public function activeSecuritySessions(): HasMany
+    {
+        return $this->securitySessions()->active();
+    }
+
+    public function latestSecuritySession(): HasOne
+    {
+        return $this->hasOne(UserSecuritySession::class)->latestOfMany('last_activity_at');
     }
 
     public function status(): BelongsTo

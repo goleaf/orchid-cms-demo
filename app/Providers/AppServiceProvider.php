@@ -2,10 +2,11 @@
 
 namespace App\Providers;
 
-use App\Actions\Security\CloseUserSessionAction;
-use App\Actions\Security\RecordLoginAttemptAction;
+use App\Actions\Security\RecordFailedLoginAction;
 use App\Actions\Security\RecordSecurityEventAction;
-use App\Actions\Security\RecordUserSessionAction;
+use App\Listeners\Security\RecordFailedLoginListener;
+use App\Listeners\Security\RecordLogoutListener;
+use App\Listeners\Security\RecordSuccessfulLoginListener;
 use App\Models\User;
 use App\Services\LocaleManager;
 use Illuminate\Auth\Events\Authenticated;
@@ -64,6 +65,7 @@ class AppServiceProvider extends ServiceProvider
             }
 
             app(RecordSecurityEventAction::class)->handle('login.blocked', $event->user, 'warning');
+            app(RecordFailedLoginAction::class)->handle($event->user, $event->user->email, null, request(), $event->guard);
 
             Auth::guard($event->guard)->logout();
 
@@ -72,33 +74,8 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
-        Event::listen(Login::class, function (Login $event): void {
-            if (! $event->user instanceof User) {
-                return;
-            }
-
-            $request = request();
-
-            app(RecordLoginAttemptAction::class)->handle($event->user, $event->user->email, true, null, $request);
-            app(RecordUserSessionAction::class)->handle($event->user, $request->hasSession() ? $request->session()->getId() : null, $request);
-        });
-
-        Event::listen(Failed::class, function (Failed $event): void {
-            $identifier = is_array($event->credentials)
-                ? (string) ($event->credentials['email'] ?? $event->credentials['login'] ?? '')
-                : '';
-
-            app(RecordLoginAttemptAction::class)->handle(
-                $event->user instanceof User ? $event->user : null,
-                $identifier,
-                false,
-                'invalid_credentials',
-                request(),
-            );
-        });
-
-        Event::listen(Logout::class, function (): void {
-            app(CloseUserSessionAction::class)->handle(null, request());
-        });
+        Event::listen(Login::class, RecordSuccessfulLoginListener::class);
+        Event::listen(Failed::class, RecordFailedLoginListener::class);
+        Event::listen(Logout::class, RecordLogoutListener::class);
     }
 }

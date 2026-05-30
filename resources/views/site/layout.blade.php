@@ -41,11 +41,16 @@
                 <a href="{{ route('website.pricing') }}">{{ tkey('website.nav.pricing') }}</a>
                 <a href="{{ route('website.branches.index') }}">{{ tkey('website.nav.branches') }}</a>
                 <a href="{{ route('website.home') }}#application-form">{{ tkey('website.nav.apply') }}</a>
-                <a href="{{ route('site.instructors') }}">{{ tkey('website.nav.instructors') }}</a>
-                <a href="{{ route('site.fleet') }}">{{ tkey('website.nav.fleet') }}</a>
-                <a href="{{ route('site.reviews') }}">{{ tkey('website.nav.reviews') }}</a>
-                <a href="{{ route('site.blog.index') }}">{{ tkey('website.nav.blog') }}</a>
                 <a href="{{ route('website.contacts') }}">{{ tkey('website.nav.contacts') }}</a>
+                <details class="nav-more">
+                    <summary>{{ tkey('website.actions.show_more') }}</summary>
+                    <div class="nav-more-panel">
+                        <a href="{{ route('site.instructors') }}">{{ tkey('website.nav.instructors') }}</a>
+                        <a href="{{ route('site.fleet') }}">{{ tkey('website.nav.fleet') }}</a>
+                        <a href="{{ route('site.reviews') }}">{{ tkey('website.nav.reviews') }}</a>
+                        <a href="{{ route('site.blog.index') }}">{{ tkey('website.nav.blog') }}</a>
+                    </div>
+                </details>
                 @if($locales->isNotEmpty())
                     <form class="language-switcher" method="POST" action="{{ route('website.language.switch') }}">
                         @csrf

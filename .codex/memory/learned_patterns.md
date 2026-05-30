@@ -57,3 +57,11 @@ Add stable codebase conventions here after they are proven by code or confirmed 
 - Permission metadata should wrap existing Orchid permission strings instead of replacing Orchid access checks; sync reads PlatformProvider and SuperadminPermissions, creates missing registry records, and leaves custom records intact.
   Evidence: Added PermissionGroup, PermissionRegistryItem, ImportExistingOrchidPermissionsAction, SyncPermissionRegistryAction, PermissionRegistrySeeder, and SecurityPermissionRegistryTest.
   Added: 2026-05-28T23:00:00+03:00
+
+- Authentication tracking should use fail-safe listeners and Actions: login attempts are sanitized, security sessions store only HMAC session hashes, and activity touches are throttled so auth flow is never blocked by tracking failures.
+  Evidence: Added RecordSuccessfulLoginAction, RecordFailedLoginAction, RecordUserLoginSessionAction, TouchUserSecuritySessionAction, auth event listeners, and SecurityLoginAttemptsSessionsTest.
+  Added: 2026-05-28T23:30:00+03:00
+
+- User lifecycle write flows should stay backend-only until screens are requested: create/update/block/unblock/archive/status/profile/preference/password-change actions use translated rules, protect the last Superadmin, prevent accidental self-lockout, revoke tracked sessions on block/archive, and keep profile changes separate from roles and permissions.
+  Evidence: Added Step 9 lifecycle Actions, Requests, Rules, factory states, docs, and SecurityUserManagementLifecycleTest.
+  Added: 2026-05-30T00:00:00+03:00

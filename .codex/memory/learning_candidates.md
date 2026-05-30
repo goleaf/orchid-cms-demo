@@ -6138,3 +6138,533 @@ Candidates are unreviewed possible memories. Promote only after evidence.
   "note": "Review this task for stable project conventions before promoting anything to memory."
 }
 ```
+
+## Candidate from task ending at 2026-05-30T11:09:15+00:00
+
+```json
+{
+  "ts": "2026-05-30T11:09:15+00:00",
+  "event": "Stop",
+  "session_id": "019e7890-89b8-71a1-9085-9c6de7f4722b",
+  "turn_id": "019e7890-9152-7063-96e6-78af4391e964",
+  "branch": "main",
+  "changed_file_count": 60,
+  "changed_file_groups": {
+    "code": 54,
+    "models": 3,
+    "orchid": 1,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/security.md",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Listeners/",
+    "app/Models/LoginAttempt.php",
+    "app/Models/User.php",
+    "app/Models/UserSecuritySession.php",
+    "app/Orchid/PlatformProvider.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-30T11:09:15+00:00
+
+```json
+{
+  "ts": "2026-05-30T11:09:15+00:00",
+  "event": "Stop",
+  "session_id": "019e7890-89b8-71a1-9085-9c6de7f4722b",
+  "turn_id": "019e7890-9152-7063-96e6-78af4391e964",
+  "branch": "main",
+  "changed_file_count": 60,
+  "changed_file_groups": {
+    "code": 54,
+    "models": 3,
+    "orchid": 1,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/security.md",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Listeners/",
+    "app/Models/LoginAttempt.php",
+    "app/Models/User.php",
+    "app/Models/UserSecuritySession.php",
+    "app/Orchid/PlatformProvider.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-30T11:11:24+00:00
+
+```json
+{
+  "ts": "2026-05-30T11:11:24+00:00",
+  "event": "Stop",
+  "session_id": "019e7890-89b8-71a1-9085-9c6de7f4722b",
+  "turn_id": "019e7894-ac34-7bb1-bf6e-39daa55f8456",
+  "branch": "main",
+  "changed_file_count": 60,
+  "changed_file_groups": {
+    "code": 54,
+    "models": 3,
+    "orchid": 1,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/security.md",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Listeners/",
+    "app/Models/LoginAttempt.php",
+    "app/Models/User.php",
+    "app/Models/UserSecuritySession.php",
+    "app/Orchid/PlatformProvider.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-30T11:11:24+00:00
+
+```json
+{
+  "ts": "2026-05-30T11:11:24+00:00",
+  "event": "Stop",
+  "session_id": "019e7890-89b8-71a1-9085-9c6de7f4722b",
+  "turn_id": "019e7894-ac34-7bb1-bf6e-39daa55f8456",
+  "branch": "main",
+  "changed_file_count": 60,
+  "changed_file_groups": {
+    "code": 54,
+    "models": 3,
+    "orchid": 1,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/security.md",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Listeners/",
+    "app/Models/LoginAttempt.php",
+    "app/Models/User.php",
+    "app/Models/UserSecuritySession.php",
+    "app/Orchid/PlatformProvider.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-30T11:11:48+00:00
+
+```json
+{
+  "ts": "2026-05-30T11:11:48+00:00",
+  "event": "Stop",
+  "session_id": "019e7890-89b8-71a1-9085-9c6de7f4722b",
+  "turn_id": "019e7895-0f52-7980-be3e-f0fa6a5dc462",
+  "branch": "main",
+  "changed_file_count": 60,
+  "changed_file_groups": {
+    "code": 54,
+    "models": 3,
+    "orchid": 1,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/security.md",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Listeners/",
+    "app/Models/LoginAttempt.php",
+    "app/Models/User.php",
+    "app/Models/UserSecuritySession.php",
+    "app/Orchid/PlatformProvider.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-30T11:11:48+00:00
+
+```json
+{
+  "ts": "2026-05-30T11:11:48+00:00",
+  "event": "Stop",
+  "session_id": "019e7890-89b8-71a1-9085-9c6de7f4722b",
+  "turn_id": "019e7895-0f52-7980-be3e-f0fa6a5dc462",
+  "branch": "main",
+  "changed_file_count": 60,
+  "changed_file_groups": {
+    "code": 54,
+    "models": 3,
+    "orchid": 1,
+    "database": 1,
+    "tests": 1
+  },
+  "changed_files_sample": [
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/security.md",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Listeners/",
+    "app/Models/LoginAttempt.php",
+    "app/Models/User.php",
+    "app/Models/UserSecuritySession.php",
+    "app/Orchid/PlatformProvider.php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-30T11:24:48+00:00
+
+```json
+{
+  "ts": "2026-05-30T11:24:48+00:00",
+  "event": "Stop",
+  "session_id": "019e7896-0a73-73f1-9ebf-0fcc1fb78606",
+  "turn_id": "019e7896-10d7-70f1-b9c6-a582cbd752eb",
+  "branch": "main",
+  "changed_file_count": 117,
+  "changed_file_groups": {
+    "code": 110,
+    "models": 3,
+    "orchid": 1,
+    "database": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    ".codex/memory/decisions.md",
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/security.md",
+    "app/Actions/Security/ArchiveUserAction.php",
+    "app/Actions/Security/BlockUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/CreateUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/MarkUserSeenAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-30T11:24:48+00:00
+
+```json
+{
+  "ts": "2026-05-30T11:24:48+00:00",
+  "event": "Stop",
+  "session_id": "019e7896-0a73-73f1-9ebf-0fcc1fb78606",
+  "turn_id": "019e7896-10d7-70f1-b9c6-a582cbd752eb",
+  "branch": "main",
+  "changed_file_count": 117,
+  "changed_file_groups": {
+    "code": 110,
+    "models": 3,
+    "orchid": 1,
+    "database": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    ".codex/memory/decisions.md",
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/security.md",
+    "app/Actions/Security/ArchiveUserAction.php",
+    "app/Actions/Security/BlockUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/CreateUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/MarkUserSeenAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-30T11:26:22+00:00
+
+```json
+{
+  "ts": "2026-05-30T11:26:22+00:00",
+  "event": "Stop",
+  "session_id": "019e7896-0a73-73f1-9ebf-0fcc1fb78606",
+  "turn_id": "019e78a1-db82-7de1-b4c6-e1fd71285c64",
+  "branch": "main",
+  "changed_file_count": 118,
+  "changed_file_groups": {
+    "code": 111,
+    "models": 3,
+    "orchid": 1,
+    "database": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    ".codex/memory/decisions.md",
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/security.md",
+    "app/Actions/Security/ArchiveUserAction.php",
+    "app/Actions/Security/BlockUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/CreateUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/MarkUserSeenAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```
+
+## Candidate from task ending at 2026-05-30T11:26:22+00:00
+
+```json
+{
+  "ts": "2026-05-30T11:26:22+00:00",
+  "event": "Stop",
+  "session_id": "019e7896-0a73-73f1-9ebf-0fcc1fb78606",
+  "turn_id": "019e78a1-db82-7de1-b4c6-e1fd71285c64",
+  "branch": "main",
+  "changed_file_count": 118,
+  "changed_file_groups": {
+    "code": 111,
+    "models": 3,
+    "orchid": 1,
+    "database": 1,
+    "tests": 2
+  },
+  "changed_files_sample": [
+    ".codex/memory/decisions.md",
+    ".codex/memory/learned_patterns.md",
+    ".codex/memory/security.md",
+    "app/Actions/Security/ArchiveUserAction.php",
+    "app/Actions/Security/BlockUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/CreateUserAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "app/Actions/Security/MarkUserSeenAction.php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php",
+    "[REDACTED_SECRET].php"
+  ],
+  "note": "Review this task for stable project conventions before promoting anything to memory."
+}
+```

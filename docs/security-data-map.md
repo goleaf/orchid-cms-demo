@@ -16,14 +16,16 @@ This map documents local security data only. It does not describe SaaS tenancy, 
 
 - `audit_logs`: compact audit records with sensitive values redacted.
 - `security_events`: security lifecycle events.
-- `login_attempts`: login attempt records with hashed identifiers.
-- `user_sessions`: session records with hashed session identifiers only.
+- `login_attempts`: login attempt records with normalized email, guard, IP address, user agent, failure reason, sanitized metadata, and attempt timestamps.
+- `user_sessions`: legacy session records with hashed session identifiers only.
+- `user_security_sessions`: current security-session records with HMAC-hashed session identifiers, activity timestamps, revocation fields, and sanitized metadata.
 
 ## Sensitive Data Boundaries
 
 - Raw session identifiers are never stored.
-- Raw login identifiers are hashed in login attempt records.
+- Session hashes are not exported by default.
 - Passwords, tokens, private keys, cookies, and API credentials must not be written to memory, docs, audit metadata, or exports.
+- Login and session metadata redacts sensitive values as `[REDACTED]`.
 - Private file downloads store audit evidence without the raw private path.
 
 ## Local Access Boundaries
@@ -32,3 +34,13 @@ This map documents local security data only. It does not describe SaaS tenancy, 
 - The last active Superadmin cannot be deleted, deactivated, locked, blocked, archived, or stripped of the Superadmin role.
 - Branch access is local branch access, not tenant isolation.
 - Permission registry groups are documentation and management metadata around Orchid permissions, not tenant or company isolation.
+
+## Lifecycle Data Flow
+
+- User creation and update actions write only the existing `users` table and optional linked `staff_profiles`, `role_users`, and `user_branch_access` records.
+- Status changes write `users.status_id`; when the target status is blocked or archived, active `user_security_sessions` records are marked revoked.
+- Profile updates do not change roles, permissions, statuses, or branch access.
+- Force-password-change actions write `users.must_change_password` when the column exists and do not store or expose passwords.
+- Seen tracking writes `users.last_seen_at` only after a throttle window.
+- Login eligibility checks only read `users`, `user_statuses`, and optional flags; they do not login the user or mutate state.
+- Audit logs and security events store lifecycle evidence with sensitive values redacted.

@@ -14,6 +14,6 @@ class ValidUserTimezoneRule implements ValidationRule
             return;
         }
 
-        $fail(tkey('security.validation.user_timezone_invalid'));
+        $fail(tkey('security.validation.invalid_user_timezone'));
     }
 }

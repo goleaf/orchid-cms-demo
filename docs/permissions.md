@@ -39,6 +39,10 @@ Risk levels are:
 
 Critical permissions cover destructive, lockout, override, role, user, and security-management access. Critical changes are guarded by validation and require a Superadmin context.
 
+Step 8 adds local security permissions for login-attempt review, session review, session revocation, own-session revocation, all-session revocation, and exports. These permissions still use Orchid access checks; the registry only documents and groups them.
+
+Step 9 adds granular local user lifecycle permissions for viewing users, creating users, updating users, blocking, unblocking, archiving, changing statuses, overriding status transitions, forcing password changes, updating profiles, and viewing user security summaries. The older broad system user permission remains for compatibility with existing Orchid screens.
+
 ## System And Custom Permissions
 
 System permissions come from existing Orchid permission declarations, the local platform provider, and `SuperadminPermissions`. Sync marks discovered permissions as system records and protects their codes from being renamed.

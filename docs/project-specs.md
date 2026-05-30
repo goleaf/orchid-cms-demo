@@ -15,6 +15,7 @@ This project is a Laravel Orchid operating system for one local driving school c
 ## Module Documentation
 
 - Public website: [`public-website.md`](public-website.md) and [`public-website-foundation.md`](public-website-foundation.md)
+- Design brief: [`design-brief.md`](design-brief.md)
 - CRM leads: [`crm-leads.md`](crm-leads.md) and [`crm-block-2.md`](crm-block-2.md)
 - Students and enrollments: [`students.md`](students.md)
 - Lead conversion: [`lead-to-student-conversion.md`](lead-to-student-conversion.md)
@@ -25,6 +26,7 @@ This project is a Laravel Orchid operating system for one local driving school c
 - Payments: [`payments.md`](payments.md)
 - Communications and reminders: [`communications.md`](communications.md) and [`notifications.md`](notifications.md)
 - Dashboard and analytics foundation: [`analytics.md`](analytics.md), [`analytics-dashboard.md`](analytics-dashboard.md), and [`analytics-reports.md`](analytics-reports.md)
+- Security and local account management: [`security.md`](security.md), [`users.md`](users.md), [`permissions.md`](permissions.md), [`login-attempts.md`](login-attempts.md), [`user-sessions.md`](user-sessions.md), and [`staff-profiles.md`](staff-profiles.md)
 - Local Orchid workflow: [`orchid-local-documentation.md`](orchid-local-documentation.md)
 - Codex automation: [`codex-automation.md`](codex-automation.md)
 

@@ -89,7 +89,7 @@ h3 {
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
     gap: 18px;
-    width: min(var(--container), calc(100% - 32px));
+    width: min(1360px, calc(100% - 32px));
     min-height: 72px;
     margin: 0 auto;
 }
@@ -119,10 +119,10 @@ h3 {
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
-    justify-content: flex-end;
+    justify-content: flex-start;
     gap: 4px;
     min-width: 0;
-    overflow-x: auto;
+    overflow: visible;
     padding: 10px 0;
     color: var(--muted);
     font-size: 0.88rem;
@@ -131,6 +131,10 @@ h3 {
 }
 
 .nav-links::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-links > a:first-child {
     display: none;
 }
 
@@ -149,6 +153,55 @@ h3 {
 .nav-links a.is-active {
     background: var(--accent-soft);
     color: var(--accent-strong);
+}
+
+.nav-more {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.nav-more summary {
+    display: inline-flex;
+    min-height: 38px;
+    align-items: center;
+    padding: 0 10px;
+    border-radius: 8px;
+    color: var(--muted);
+    cursor: pointer;
+    list-style: none;
+    white-space: nowrap;
+    transition: background-color 160ms ease, color 160ms ease;
+}
+
+.nav-more summary::-webkit-details-marker {
+    display: none;
+}
+
+.nav-more summary:hover,
+.nav-more[open] summary {
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+}
+
+.nav-more-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 30;
+    display: grid;
+    width: 220px;
+    gap: 4px;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: var(--shadow);
+}
+
+.nav-more-panel a {
+    justify-content: flex-start;
+    min-height: 40px;
+    color: var(--dark-strong);
 }
 
 .language-switcher {
@@ -356,7 +409,7 @@ h3 {
 .hero {
     position: relative;
     display: grid;
-    min-height: clamp(600px, calc(100svh - 72px), 760px);
+    min-height: clamp(620px, calc(100svh - 180px), 760px);
     overflow: hidden;
     color: #ffffff;
     background-image:
@@ -385,10 +438,13 @@ h3 {
 .hero-inner {
     display: grid;
     align-items: center;
-    padding: 76px 0 96px;
+    padding: clamp(44px, 6vw, 64px) 0 clamp(54px, 7vw, 76px);
 }
 
-.hero-copy { max-width: 720px; }
+.hero-copy {
+    max-width: 760px;
+    min-width: 0;
+}
 
 .eyebrow {
     margin-bottom: 16px;
@@ -400,10 +456,10 @@ h3 {
 }
 
 h1 {
-    max-width: 16ch;
+    max-width: 18ch;
     margin-bottom: 24px;
-    font-size: clamp(2.6rem, 6.8vw, 5.5rem);
-    line-height: 0.96;
+    font-size: clamp(2.45rem, 5.5vw, 4.85rem);
+    line-height: 0.98;
     letter-spacing: 0;
 }
 
@@ -436,7 +492,8 @@ h1 {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px;
-    max-width: 720px;
+    max-width: 760px;
+    min-width: 0;
     margin-top: 34px;
 }
 
@@ -947,7 +1004,7 @@ textarea { min-height: 120px; resize: vertical; }
     background: var(--accent);
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1280px) {
     .site-nav-inner {
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 8px;
@@ -966,7 +1023,9 @@ textarea { min-height: 120px; resize: vertical; }
     .mobile-menu {
         display: block;
     }
+}
 
+@media (max-width: 880px) {
     .section-head,
     .grid.two,
     .grid.three,
@@ -979,7 +1038,7 @@ textarea { min-height: 120px; resize: vertical; }
     }
 
     .hero {
-        min-height: calc(100svh - 112px);
+        min-height: clamp(660px, calc(100svh - 120px), 760px);
         background-position: 62% center;
     }
 
@@ -989,12 +1048,31 @@ textarea { min-height: 120px; resize: vertical; }
     }
 
     .hero-inner {
-        align-items: end;
-        padding: 54px 0 72px;
+        align-items: center;
+        padding: 36px 0 48px;
+    }
+
+    .hero-copy {
+        width: 100%;
+        max-width: 100%;
     }
 
     .hero-metrics {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(142px, 1fr));
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 6px;
+        scroll-snap-type: x proximity;
+        scrollbar-width: thin;
+    }
+
+    .hero-metrics div {
+        min-height: 86px;
+        padding: 12px;
+        scroll-snap-align: start;
     }
 
     .section {
@@ -1012,7 +1090,7 @@ textarea { min-height: 120px; resize: vertical; }
 
 @media (max-width: 560px) {
     h1 {
-        font-size: clamp(2.25rem, 12vw, 3.8rem);
+        font-size: clamp(2rem, 10vw, 3.1rem);
     }
 
     .hero-actions,

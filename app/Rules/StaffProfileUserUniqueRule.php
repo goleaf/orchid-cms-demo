@@ -24,7 +24,7 @@ class StaffProfileUserUniqueRule implements ValidationRule
             ->exists();
 
         if ($exists) {
-            $fail(tkey('security.validation.staff_profile_user_unique'));
+            $fail(tkey('security.validation.staff_profile_user_not_unique'));
         }
     }
 }

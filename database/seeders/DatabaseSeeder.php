@@ -790,6 +790,8 @@ class DatabaseSeeder extends Seeder
         );
         $this->call(SuperadminRoleSeeder::class);
         $this->call(StaffProfileDemoSeeder::class);
+        $this->call(LoginAttemptDemoSeeder::class);
+        $this->call(UserSecuritySessionDemoSeeder::class);
 
         collect([$convertedLead, $qualifiedLead, $rejectedLead])->each(function (MarketingLead $lead) use ($admin, $callTemplate, $smsTemplate, $messengerTemplate, $qualifiedLead): void {
             $lead->update(['responsible_manager_id' => $admin->id]);

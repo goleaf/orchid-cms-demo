@@ -1,6 +1,14 @@
 # Changelog
 
+## 2026-05-30
+
+- Added a safer staff account lifecycle so internal users can be created, updated, blocked, unblocked, archived, reviewed, and protected from accidental lockouts
+- Improved the public homepage navigation and opening section so key actions fit cleanly on desktop and mobile
+- Added a shared design brief so public website and admin interface decisions stay consistent
+
 ## 2026-05-28
+
+- Added login attempt and staff session tracking so account activity can be reviewed, suspicious patterns can be flagged, and old records can be pruned without storing raw session identifiers
 
 - Added a local permission registry so driving school access rights can be grouped, translated, reviewed by risk, refreshed safely, and audited without changing the existing admin access checks
 

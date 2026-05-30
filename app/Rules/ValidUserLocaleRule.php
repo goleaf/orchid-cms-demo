@@ -14,6 +14,6 @@ class ValidUserLocaleRule implements ValidationRule
             return;
         }
 
-        $fail(tkey('security.validation.user_locale_invalid'));
+        $fail(tkey('security.validation.invalid_user_locale'));
     }
 }
